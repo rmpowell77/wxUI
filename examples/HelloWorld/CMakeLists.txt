@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.23)
+project(wxUI_examples VERSION 0.1)
+
+add_executable(wxUI_HelloWorld
+  MACOSX_BUNDLE
+  HelloWorld.cpp
+)
+
+target_link_libraries(wxUI_HelloWorld 
+  wx::core
+  wxUI
+)
+
+

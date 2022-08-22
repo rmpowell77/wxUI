@@ -32,7 +32,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
                     "With wxUI the code reflects\n"
                     "what the UI looks like."}
                 .style(wxTE_MULTILINE)
-                .withMinSize(wxSize(200, 100))
+                .withSize(wxSize(200, 100))
         },
         RadioBox{ "&Log Levels:", {
             "&Information",

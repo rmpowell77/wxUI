@@ -5,21 +5,22 @@ C++ header-only library to make declarative UIs for wxWidgets.
 
 This overview provides an overview of `wxUI`, but is not intented to be a tutorial on `wxWidgets`.  We assume the reader has working knowledge of `wxWidgets`.  Great documentation and guides are available at [https://www.wxwidgets.org](https://www.wxwidgets.org).
 
-### Stack
+### Sizer
 
-The basics of `wxUI` layout is the `Stack` function.   The `Stack` wraps the objects that manage ownership and layout, and pass that as a `Context` object to the items to be layed out in the stack.  This is accomplished by a lambda that takes as an argument the `Context` that should be passed to each of the `wxUI` Control objects.
+The basics of `wxUI` layout is the `Sizer` struct.  There are several types, with the `VStack` and `HStack` being the most common. The `Sizer` wraps the objects that manage ownership and layout.  When a Sizer is set as the top level sizer, it uses the layout as a sort of "blueprint" for stamping out the UI in the correct sizers by constructing the ownership hierarchy and layout.
 
 ```cpp
-    VStack(this, Sizer::ExpandBorder(), [this](auto const& context) {
-        HStack(context, [this](auto const& context) {
+    VStack{ wxSizerFlags().Expand().Border() Sizer::ExpandBorder(),
+        HStack{ 
             ...
-        });
-    });
+        }
+    }.asTopLevel(this);
 ```
 
 In the above example we have constructed a vertical layout stack that will use a `wxSizer` with the `wxSizerFlags` set to expand with a default border.  Then the first item in the stack is a second layer stack with a horizontal layout.  The `wxSizerFlags` are propogated to each layer by the context so the horizontal layout in this example would also be set to expand with a default border.
 
 `wxUI` supports 3 flavors of Stacks: `VStack` (Vertical Stacks), `HStack` (Horizontal Stacks), and `FlexGridStack` (Flexible Grid Stacks).  Both `VStack` and `HStack` can be created with a string to create a "named" box.
+
 
 ### Context
 
@@ -83,7 +84,44 @@ In this example the first element of the Horizontal Stack are added with a borde
 
 ### Menu
 
+ What is Menu?  Allows declarative style menu items for common usage.  Example:
+
+```cpp
+    using namespace wxUI::Menu;
+    wxFrame* frame = ...
+    SetMenuBar(frame, {
+        { "&Stuff", {
+            Item{ MESSAGE_BOX, "&Message box\tCtrl-M" },
+            CheckItem{ CHECK_ACTION, "&Checkable Action" },
+            RadioItem{ RADIO_ACTION, "&Radio Action" },
+            If{ shouldShowExtra(), { ADDITIONAL_ITEM, "Conditions cleared" } },
+        }},
+        { "&Edit", {
+            Item{ wxID_UNDO, "&Undo\tCtrl+Z" },
+            Item{ wxID_REDO, "&Redo\tCtrl+Y" },
+            Separator{},
+            Item{ wxID_SELECTALL, "Select All\tCtrl+A" },
+        }},
+    #if wxUSE_ABOUTDLG
+        { "&Help", {
+            Item{ DIALOGS_ABOUTDLG_SIMPLE, "&About (simple)...\tF1" },
+        }},
+    #endif // wxUSE_ABOUTDLG
+    });
+```
+
+
+You can create a menu item, a separator, a submenu item, or a conditional menu item.
+
+
 ### Sizers
+
+### Guides
+
+We want to have method chaining.
+So the idea is that you have your widgets that are just declared with Method chaining.
+Text("Hello").withSize().withStyle();
+
 
 ## Samples
 
