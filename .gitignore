@@ -1,0 +1,6 @@
+# Common cmake build dirs
+cmake-build-*/
+build/
+
+.vscode
+
