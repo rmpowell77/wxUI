@@ -10,12 +10,12 @@ struct Choice : public details::WidgetDetails<Choice<Style>> {
     using underlying_t = wxChoice;
 
     std::vector<wxString> choices;
-    int majorDim{};
-    int selection{};
+    int majorDim {};
+    int selection {};
 
     Choice(wxWindowID identity, std::vector<wxString> const& choices = {})
-    : super(identity)
-    , choices(choices)
+        : super(identity)
+        , choices(choices)
     {
     }
 
@@ -24,12 +24,12 @@ struct Choice : public details::WidgetDetails<Choice<Style>> {
     {
     }
 
-    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags) {
+    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+    {
         auto widget = new underlying_t(parent, this->identity, this->pos, this->size, choices.size(), choices.data(), Style);
         super::add(widget, sizer, flags);
         return widget;
     }
-
 };
 
 }

@@ -12,12 +12,12 @@ struct CheckBox : public details::WidgetDetails<CheckBox<Style>> {
 
     std::string text = "";
     std::vector<wxString> choices;
-    int majorDim{};
-    int selection{};
+    int majorDim {};
+    int selection {};
 
     CheckBox(wxWindowID identity, std::string const& text = "")
-    : super(identity)
-    , text(text)
+        : super(identity)
+        , text(text)
     {
     }
 
@@ -26,12 +26,12 @@ struct CheckBox : public details::WidgetDetails<CheckBox<Style>> {
     {
     }
 
-    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags) {
+    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+    {
         auto widget = new underlying_t(parent, this->identity, text, this->pos, this->size, Style);
         super::add(widget, sizer, flags);
         return widget;
     }
-
 };
 
 }

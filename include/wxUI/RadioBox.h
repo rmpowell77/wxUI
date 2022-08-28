@@ -10,13 +10,13 @@ struct RadioBox : details::WidgetDetails<RadioBox> {
 
     std::string text = "";
     std::vector<wxString> choices;
-    int majorDim_{};
-    int selection{};
+    int majorDim_ {};
+    int selection {};
 
     RadioBox(wxWindowID identity, std::string const& text = "", std::vector<wxString> const& choices = {})
-    : super(identity)
-    , text(text)
-    , choices(choices)
+        : super(identity)
+        , text(text)
+        , choices(choices)
     {
         usingStyle = wxRA_SPECIFY_COLS;
     }
@@ -26,7 +26,8 @@ struct RadioBox : details::WidgetDetails<RadioBox> {
     {
     }
 
-    wxWindow* createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags) {
+    wxWindow* createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+    {
         auto widget = new underlying_t(parent, this->identity, text, this->pos, this->size, choices.size(), choices.data(), majorDim_, this->usingStyle);
         widget->SetSelection(selection);
         sizer->Add(widget, flags);
@@ -48,4 +49,3 @@ struct RadioBox : details::WidgetDetails<RadioBox> {
 };
 
 }
-
