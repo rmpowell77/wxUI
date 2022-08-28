@@ -36,7 +36,12 @@ struct BindWidgetToEvent {
 template <Widget W, typename Event, typename Function>
 BindWidgetToEvent(W, Event, Function) -> BindWidgetToEvent<W, Event, Function>;
 
-// a place to put the common details of a Widget.
+// The WidgetDetails are the base class of the Controllers.  The common details
+// across many controllers are stored in the base class.
+// The "recipe" for constructing a controller is pretty straight forward:
+// 1. give a name.
+// 2. inherit from WidgetDetails.
+// 3. implement the create function for constructing the concrete widget.
 template <typename ConcreteWidget>
 struct WidgetDetails {
     WidgetDetails(wxWindowID identity = wxID_ANY)
@@ -68,12 +73,19 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
-protected:
-    void add(wxWindow* widget, wxSizer* sizer, wxSizerFlags const& parentFlags) const
+    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& parentFlags)
     {
+        auto widget = create(parent);
         sizer->Add(widget, flags ? *flags : parentFlags);
+        return widget;
     }
 
+private:
+    // these should be implemented in the derived classes.
+    // aka the Template Pattern
+    virtual wxWindow* create(wxWindow* parent) = 0;
+
+public:
     std::optional<wxSizerFlags> flags;
     // these are common across the controls
     wxWindowID identity = wxID_ANY;

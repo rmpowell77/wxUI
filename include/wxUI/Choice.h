@@ -1,16 +1,15 @@
 #pragma once
 
+#include <wx/choice.h>
 #include <wxUI/Widget.h>
 
 namespace wxUI {
 
-template <long Style = 0>
-struct Choice : public details::WidgetDetails<Choice<Style>> {
-    using super = details::WidgetDetails<Choice<Style>>;
+struct Choice : public details::WidgetDetails<Choice> {
+    using super = details::WidgetDetails<Choice>;
     using underlying_t = wxChoice;
 
     std::vector<wxString> choices;
-    int majorDim {};
     int selection {};
 
     Choice(wxWindowID identity, std::vector<wxString> const& choices = {})
@@ -24,12 +23,29 @@ struct Choice : public details::WidgetDetails<Choice<Style>> {
     {
     }
 
-    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+    Choice(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> const& choices = {})
+        : super(flags, identity)
+        , choices(choices)
     {
-        auto widget = new underlying_t(parent, this->identity, this->pos, this->size, choices.size(), choices.data(), Style);
-        super::add(widget, sizer, flags);
-        return widget;
     }
+
+    Choice(wxSizerFlags const& flags, std::vector<wxString> const& choices = {})
+        : Choice(flags, wxID_ANY, choices)
+    {
+    }
+
+    auto& withSelection(int which)
+    {
+        selection = which;
+        return *this;
+    }
+
+    wxWindow* create(wxWindow* parent) override
+    {
+        return new underlying_t(parent, this->identity, this->pos, this->size, choices.size(), choices.data(), this->usingStyle);
+    }
+
+    using super::createAndAdd;
 };
 
 }

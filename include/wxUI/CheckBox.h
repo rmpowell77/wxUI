@@ -5,9 +5,8 @@
 
 namespace wxUI {
 
-template <long Style = 0>
-struct CheckBox : public details::WidgetDetails<CheckBox<Style>> {
-    using super = details::WidgetDetails<CheckBox<Style>>;
+struct CheckBox : public details::WidgetDetails<CheckBox> {
+    using super = details::WidgetDetails<CheckBox>;
     using underlying_t = wxCheckBox;
 
     std::string text = "";
@@ -26,12 +25,23 @@ struct CheckBox : public details::WidgetDetails<CheckBox<Style>> {
     {
     }
 
-    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+    CheckBox(wxSizerFlags const& flags, wxWindowID identity, std::string const& text = "")
+        : super(flags, identity)
+        , text(text)
     {
-        auto widget = new underlying_t(parent, this->identity, text, this->pos, this->size, Style);
-        super::add(widget, sizer, flags);
-        return widget;
     }
+
+    CheckBox(wxSizerFlags const& flags, std::string const& text = "")
+        : CheckBox(flags, wxID_ANY, text)
+    {
+    }
+
+    wxWindow* create(wxWindow* parent) override
+    {
+        return new underlying_t(parent, this->identity, text, this->pos, this->size, this->usingStyle);
+    }
+
+    using super::createAndAdd;
 };
 
 }

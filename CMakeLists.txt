@@ -38,6 +38,7 @@ add_library(
   include/wxUI/RadioBox.h
   include/wxUI/Sizer.h
   include/wxUI/Text.h
+  include/wxUI/TextCtrl.h
   include/wxUI/Widget.h
 )
 

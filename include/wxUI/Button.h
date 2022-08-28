@@ -11,17 +11,6 @@ struct Button : public details::WidgetDetails<Button> {
 
     std::string text = "";
 
-    Button(wxSizerFlags const& flags, wxWindowID identity, std::string const& text = "")
-        : super(flags, identity)
-        , text(text)
-    {
-    }
-
-    Button(wxSizerFlags const& flags, std::string const& text = "")
-        : Button(flags, wxID_ANY, text)
-    {
-    }
-
     Button(wxWindowID identity, std::string const& text = "")
         : super(identity)
         , text(text)
@@ -33,11 +22,20 @@ struct Button : public details::WidgetDetails<Button> {
     {
     }
 
-    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+    Button(wxSizerFlags const& flags, wxWindowID identity, std::string const& text = "")
+        : super(flags, identity)
+        , text(text)
     {
-        auto widget = new underlying_t(parent, identity, text, wxDefaultPosition, wxDefaultSize);
-        super::add(widget, sizer, flags);
-        return widget;
+    }
+
+    Button(wxSizerFlags const& flags, std::string const& text = "")
+        : Button(flags, wxID_ANY, text)
+    {
+    }
+
+    wxWindow* create(wxWindow* parent) override
+    {
+        return new underlying_t(parent, identity, text, wxDefaultPosition, wxDefaultSize);
     }
 
     template <typename Function>
@@ -45,6 +43,8 @@ struct Button : public details::WidgetDetails<Button> {
     {
         return details::BindWidgetToEvent { *this, wxEVT_BUTTON, func };
     }
+
+    using super::createAndAdd;
 };
 
 }
