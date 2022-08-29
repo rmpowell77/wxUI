@@ -12,7 +12,7 @@ include(GNUInstallDirs)
 #============================================================================
 # Settable options
 #============================================================================
-option(WITH_TESTS "Build tests." OFF)
+option(WITH_TESTS "Build tests." ON)
 option(WITH_EXAMPLE "Build example." OFF)
 
 include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
