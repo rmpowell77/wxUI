@@ -1,0 +1,60 @@
+# much of this inspired from: https://cristianadam.eu/20191222/using-github-actions-with-c-plus-plus-and-cmake/
+# and also the excellent series from:
+# https://www.edwardthomson.com/blog/github_actions_advent_calendar.html
+name: CI action for wxUI tests
+
+on:
+  push:
+    branches:
+    - main
+    tags:
+    - '*'
+  pull_request:
+    branches:
+    - main
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Ubuntu Latest GCC",
+            os: ubuntu-latest,
+          }
+        - {
+            name: "macOS Latest Clang",
+            os: macos-latest,
+          }
+        - {
+            name: "Windows Latest MSVC",
+            os: windows-latest,
+          }
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+
+    - name: Checkout unshallow
+      run: git fetch --unshallow
+
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+ 
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Run tests
+      run: ctest --test-dir ${{github.workspace}}/build
+
+
