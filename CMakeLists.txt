@@ -60,5 +60,7 @@ endif()
 #============================================================================
 if(WITH_TESTS)
   add_subdirectory(tests)
+  include(CTest)
+  add_test(NAME UnitTest COMMAND wxUI_Tests)
 endif()
 
