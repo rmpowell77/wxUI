@@ -76,16 +76,21 @@ HelloWorldFrame::HelloWorldFrame()
 #else
 
     using namespace wxUI::Menu;
-    wxUI::MenuBar(this, { { "&File", {
-                                         Item { ID_Hello, "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item" },
-                                         Separator {},
-                                         Item { ID_Example1, "&Example...\tCtrl-D" },
-                                         Item { ID_Example2, "&Example...\tCtrl-F" },
-                                         Item { wxID_EXIT },
-                                     } },
-                            { "&Help", {
-                                           Item { wxID_ABOUT },
-                                       } } });
+    wxUI::MenuBar(this,
+        { { "&File",
+              {
+                  Item { ID_Hello, "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item" },
+                  Separator {},
+                  Item { ID_Example1, "&Example...\tCtrl-D" },
+                  Item { ID_Example2, "&Example...\tCtrl-F" },
+                  Item { wxID_EXIT },
+              } },
+            { "&Help",
+                {
+
+                    Item { wxID_ABOUT },
+
+                } } });
 
 #endif
 

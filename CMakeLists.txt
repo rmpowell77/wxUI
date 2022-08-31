@@ -24,7 +24,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 if(NOT CMAKE_CXX_STANDARD OR CMAKE_CXX_STANDARD LESS 20)
-	set(CMAKE_CXX_STANDARD 20)
+	set(CMAKE_CXX_STANDARD 23)
 endif()
 
 add_library(
@@ -61,6 +61,6 @@ endif()
 if(WITH_TESTS)
   add_subdirectory(tests)
   include(CTest)
-  add_test(NAME UnitTest COMMAND wxUI_Tests)
+  add_test(NAME UnitTest COMMAND wxUI_Tests.exe)
 endif()
 

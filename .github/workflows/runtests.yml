@@ -45,6 +45,10 @@ jobs:
     - name: Checkout unshallow
       run: git fetch --unshallow
 
+    - name: Installing Dependencies (Linux)
+      if: matrix.config.os == 'ubuntu-latest'
+      run: sudo apt-get update && sudo apt-get install build-essential libgtk-3-dev freeglut3-dev; gcc -v
+
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
@@ -55,6 +59,6 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
     - name: Run tests
-      run: ctest --test-dir ${{github.workspace}}/build
+      run: ctest --test-dir ${{github.workspace}}/build -C ${{env.BUILD_TYPE}}
 
 
