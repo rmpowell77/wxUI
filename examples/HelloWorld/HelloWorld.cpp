@@ -4,8 +4,6 @@
 #include <wx/wx.h>
 #include <wxUI/wxUI.h>
 
-#define WITH_WXUI 1
-
 class HelloWorldApp : public wxApp {
 public:
     virtual bool OnInit();
@@ -14,13 +12,6 @@ public:
 class HelloWorldFrame : public wxFrame {
 public:
     HelloWorldFrame();
-
-private:
-    void OnHello(wxCommandEvent& event);
-    void OnExample1(wxCommandEvent& event);
-    void OnExample2(wxCommandEvent& event);
-    void OnExit(wxCommandEvent& event);
-    void OnAbout(wxCommandEvent& event);
 };
 
 class ExampleDialog1 : public wxDialog {
@@ -31,12 +22,6 @@ public:
 class ExampleDialog2 : public wxDialog {
 public:
     ExampleDialog2(wxWindow* parent);
-};
-
-enum {
-    ID_Hello = 1,
-    ID_Example1,
-    ID_Example2,
 };
 
 wxIMPLEMENT_APP(HelloWorldApp);
@@ -51,85 +36,62 @@ bool HelloWorldApp::OnInit()
 HelloWorldFrame::HelloWorldFrame()
     : wxFrame(NULL, wxID_ANY, "Hello World")
 {
-    /*
-     * The example way to do this is:
-     */
-#if !defined(WITH_WXUI) || WITH_WXUI == 0
+    using namespace wxUI;
+    MenuBar {
+        Menu {
+            "&File",
+            Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [this](wxCommandEvent& event) {
+                      wxLogMessage("Hello world from wxWidgets!");
+                  } },
+            Separator {},
+            Item { "&Example...\tCtrl-D", [this]() {
+                      ExampleDialog1 dialog(this);
+                      dialog.ShowModal();
+                  } },
+            Item { "&Example with wxUI...\tCtrl-F", [this]() {
+                      ExampleDialog2 dialog(this);
+                      dialog.ShowModal();
+                  } },
+            Item { wxID_EXIT, [this]() {
+                      Close(true);
+                  } },
+        },
+        Menu {
+            "&Extra",
+            Menu {
+                "Pets",
+                CheckItem { "Cats", [this](wxCommandEvent& event) {
+                               wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
+                           } },
+                CheckItem { "Dogs", [this](wxCommandEvent& event) {
+                               wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
+                           } },
+            },
+            Menu {
+                "Colors",
+                RadioItem { "Red", [this](wxCommandEvent& event) {
+                               wxLogMessage("Red %s checked", event.IsChecked() ? "is" : "is not");
+                           } },
+                RadioItem { "Green", [this](wxCommandEvent& event) {
+                               wxLogMessage("Green %s checked", event.IsChecked() ? "is" : "is not");
+                           } },
+                RadioItem { "Blue", [this](wxCommandEvent& event) {
+                               wxLogMessage("Blue %s checked", event.IsChecked() ? "is" : "is not");
+                           } },
+            },
+        },
+        Menu {
+            "&Help",
+            Item { wxID_ABOUT, [this]() {
+                      wxMessageBox("The wxUI Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
+                  } },
 
-    wxMenu* menuFile = new wxMenu;
-    menuFile->Append(ID_Hello, "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item");
-    menuFile->AppendSeparator();
-    menuFile->Append(ID_Example1, "&Example1...");
-    menuFile->Append(ID_Example2, "&Example2...");
-    menuFile->Append(ID_Example3, "&Example3...");
-    menuFile->Append(wxID_EXIT);
-
-    wxMenu* menuHelp = new wxMenu;
-    menuHelp->Append(wxID_ABOUT);
-
-    wxMenuBar* menuBar = new wxMenuBar;
-    menuBar->Append(menuFile, "&File");
-    menuBar->Append(menuHelp, "&Help");
-
-    SetMenuBar(menuBar);
-
-#else
-
-    using namespace wxUI::Menu;
-    wxUI::MenuBar(this,
-        { { "&File",
-              {
-                  Item { ID_Hello, "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item" },
-                  Separator {},
-                  Item { ID_Example1, "&Example...\tCtrl-D" },
-                  Item { ID_Example2, "&Example...\tCtrl-F" },
-                  Item { wxID_EXIT },
-              } },
-            { "&Help",
-                {
-
-                    Item { wxID_ABOUT },
-
-                } } });
-
-#endif
+        }
+    }.attachTo(this);
 
     CreateStatusBar();
 
     SetStatusText("Welcome to wxUI!");
-
-    Bind(wxEVT_MENU, &HelloWorldFrame::OnHello, this, ID_Hello);
-    Bind(wxEVT_MENU, &HelloWorldFrame::OnExample1, this, ID_Example1);
-    Bind(wxEVT_MENU, &HelloWorldFrame::OnExample2, this, ID_Example2);
-    Bind(wxEVT_MENU, &HelloWorldFrame::OnAbout, this, wxID_ABOUT);
-    Bind(wxEVT_MENU, &HelloWorldFrame::OnExit, this, wxID_EXIT);
-}
-
-void HelloWorldFrame::OnExit(wxCommandEvent& event)
-{
-    Close(true);
-}
-
-void HelloWorldFrame::OnAbout(wxCommandEvent& event)
-{
-    wxMessageBox("The wxUI Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
-}
-
-void HelloWorldFrame::OnHello(wxCommandEvent& event)
-{
-    wxLogMessage("Hello world from wxWidgets!");
-}
-
-void HelloWorldFrame::OnExample1(wxCommandEvent& event)
-{
-    ExampleDialog1 dialog(this);
-    dialog.ShowModal();
-}
-
-void HelloWorldFrame::OnExample2(wxCommandEvent& event)
-{
-    ExampleDialog2 dialog(this);
-    dialog.ShowModal();
 }
 
 ExampleDialog1::ExampleDialog1(wxWindow* parent)
