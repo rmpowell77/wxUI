@@ -1,18 +1,92 @@
 #pragma once
 
+#include <functional>
+#include <tuple>
+#include <variant>
 #include <wx/frame.h>
 #include <wx/menu.h>
 
-// there are items, which are given a parent are appended with a string
-// Items { ID }  // for primatives that don't have actions.
-// Items { "Name", Function }
-// Items { "Name", "Help", Function }
+// wxUI::Menu is a way to lay out menus in a declarative, visual way.
 //
-// and when they are added...?
-// that would look like something like
-// Item, which has a variant of ID, which is int
-// or Name/Function pair.
-// And function could either be something that wxCommandEvent& event or nothing.
+// The general concept is you declare a set of structures and then `attachTo`
+// a frame.
+//
+// ```
+// wxUI::MenuBar {
+//     wxUI::Menu {
+//         "&File",
+//         wxUI::Item { "&Example...\tCtrl-D", [this]() {
+//                   ExampleDialog1 dialog(this);
+//                   dialog.ShowModal();
+//               } },
+//         wxUI::Separator {},
+//         wxUI::Item { wxID_EXIT },
+//     },
+// }.attachTo(theFrame);
+// ```
+//
+// In wxWidgets the general paradigm is to create an enumeration
+// of identity ints that you associate with a member, then you would bind,
+// either statically or dynamically, to a function.  With wxUI::Menu the
+// construction of the identify and assocation with a function is handled
+// automatically.  By default wxUI::Menu starts the enumeration with
+// `wxID_AUTO_LOWEST` and increments for each item.  Take caution if you use
+// these enumerations as it may collide with other ids assocated with the frame.
+//
+// The top level `MenuBar` holds a collection of `Menu` objects.  The `Menu`
+// object consists of a name of the menu, and a collection of "Items", which
+// can be one of `Item` (normal), `Separator`, `CheckItem`, and `RadioItem`.
+//
+// Menu Items are generally a name with a handler lambda, or name and help with
+// a lambda.  Menu Items can also be assocated with `wxStandardID`.  Many of
+// these like `wxID_EXIT` and `wxID_HELP` have predefined name, help, and
+// handlers, so declaration with just an ID is allowed.
+//
+// Handlers are callable items that handle events.  The handler can be declared
+// with both no arguments or the `wxCommandEvent` argument for deeper inspection
+// of the event.
+//
+// ```
+//         wxUI::Item { "&Example1...\tCtrl-D", [this]() {
+//                   wxLogMessage("Hello World!");
+//               } },
+//         wxUI::CheckItem { "&Example2...\tCtrl-D", [this](wxCommandEvent& event) {
+//                   wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
+//               } },
+// ```
+//
+// Menu items (except `Separator`) follow the general pattern:
+//
+// ```
+// Items { ID }  // for primatives that have a system handler
+// Items { ID, "Name" }
+// Items { ID, "Name", "Help" }
+// Items { ID, Handler }
+// Items { ID, "Name", Handler }
+// Items { ID, "Name", "Help", Handler }
+// Items { "Name", Handler }
+// Items { "Name", "Help", Handler }
+// ```
+//
+// wxUI::Menu also allows nesting of menus.  This allows complicated menus to
+// be composed easily.
+//
+// ```
+// wxUI::MenuBar {
+//     wxUI::Menu {
+//         "Menu",
+//         wxUI::Menu {
+//             "SubMenu",
+//             wxUI::Item { wxID_EXIT },
+//         },
+//     },
+// }.attachTo(theFrame);
+// ```
+//
+// The wxUI::MenuBar and related objects are generally "lazy" objects.  They
+// hold the details of the menu layout, but do not call any wxWidget primatives
+// on construction.  When `attachTo` a frame is invoked does the underlying
+// logic construct the menu structure.
 
 namespace wxUI {
 

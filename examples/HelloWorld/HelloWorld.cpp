@@ -36,55 +36,60 @@ bool HelloWorldApp::OnInit()
 HelloWorldFrame::HelloWorldFrame()
     : wxFrame(NULL, wxID_ANY, "Hello World")
 {
-    using namespace wxUI;
-    MenuBar {
-        Menu {
+    wxUI::MenuBar {
+        wxUI::Menu {
             "&File",
-            Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [this](wxCommandEvent& event) {
-                      wxLogMessage("Hello world from wxWidgets!");
-                  } },
-            Separator {},
-            Item { "&Example...\tCtrl-D", [this]() {
-                      ExampleDialog1 dialog(this);
-                      dialog.ShowModal();
-                  } },
-            Item { "&Example with wxUI...\tCtrl-F", [this]() {
-                      ExampleDialog2 dialog(this);
-                      dialog.ShowModal();
-                  } },
-            Item { wxID_EXIT, [this]() {
-                      Close(true);
-                  } },
+            wxUI::Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [this](wxCommandEvent& event) {
+                            wxLogMessage("Hello world from wxWidgets!");
+                        } },
+            wxUI::Item { "&Example1...\tCtrl-D", [this]() {
+                            wxLogMessage("Hello World!");
+                        } },
+            wxUI::CheckItem { "&Example2...\tCtrl-D", [this](wxCommandEvent& event) {
+                                 wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
+                             } },
+            wxUI::Separator {},
+            wxUI::Item { "&Example...\tCtrl-D", [this]() {
+                            ExampleDialog1 dialog(this);
+                            dialog.ShowModal();
+                        } },
+            wxUI::Item { "&Example with wxUI...\tCtrl-F", [this]() {
+                            ExampleDialog2 dialog(this);
+                            dialog.ShowModal();
+                        } },
+            wxUI::Item { wxID_EXIT, [this]() {
+                            Close(true);
+                        } },
         },
-        Menu {
+        wxUI::Menu {
             "&Extra",
-            Menu {
+            wxUI::Menu {
                 "Pets",
-                CheckItem { "Cats", [this](wxCommandEvent& event) {
-                               wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
-                           } },
-                CheckItem { "Dogs", [this](wxCommandEvent& event) {
-                               wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
-                           } },
+                wxUI::CheckItem { "Cats", [this](wxCommandEvent& event) {
+                                     wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
+                                 } },
+                wxUI::CheckItem { "Dogs", [this](wxCommandEvent& event) {
+                                     wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
+                                 } },
             },
-            Menu {
+            wxUI::Menu {
                 "Colors",
-                RadioItem { "Red", [this](wxCommandEvent& event) {
-                               wxLogMessage("Red %s checked", event.IsChecked() ? "is" : "is not");
-                           } },
-                RadioItem { "Green", [this](wxCommandEvent& event) {
-                               wxLogMessage("Green %s checked", event.IsChecked() ? "is" : "is not");
-                           } },
-                RadioItem { "Blue", [this](wxCommandEvent& event) {
-                               wxLogMessage("Blue %s checked", event.IsChecked() ? "is" : "is not");
-                           } },
+                wxUI::RadioItem { "Red", [this](wxCommandEvent& event) {
+                                     wxLogMessage("Red %s checked", event.IsChecked() ? "is" : "is not");
+                                 } },
+                wxUI::RadioItem { "Green", [this](wxCommandEvent& event) {
+                                     wxLogMessage("Green %s checked", event.IsChecked() ? "is" : "is not");
+                                 } },
+                wxUI::RadioItem { "Blue", [this](wxCommandEvent& event) {
+                                     wxLogMessage("Blue %s checked", event.IsChecked() ? "is" : "is not");
+                                 } },
             },
         },
-        Menu {
+        wxUI::Menu {
             "&Help",
-            Item { wxID_ABOUT, [this]() {
-                      wxMessageBox("The wxUI Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
-                  } },
+            wxUI::Item { wxID_ABOUT, [this]() {
+                            wxMessageBox("The wxUI Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
+                        } },
 
         }
     }.attachTo(this);
