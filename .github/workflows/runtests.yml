@@ -26,17 +26,19 @@ jobs:
       matrix:
         config:
         - {
-            name: "Ubuntu Latest GCC",
-            os: ubuntu-latest,
-          }
-        - {
             name: "macOS Latest Clang",
             os: macos-latest,
           }
-        - {
-            name: "Windows Latest MSVC",
-            os: windows-latest,
-          }
+        # disable these configurations until we've worked out the details. issue #11 
+        #- {
+        #    name: "Ubuntu Latest GCC",
+        #    os: ubuntu-latest,
+        #  }
+        # disable these configurations until we've worked out the details. issue #10 
+        #- {
+        #    name: "Windows Latest MSVC",
+        #    os: windows-latest,
+        #  }
 
     steps:
     - name: checkout
