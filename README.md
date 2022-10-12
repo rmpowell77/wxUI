@@ -20,7 +20,8 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
     using namespace wxUI;
     VStack {
         wxSizerFlags().Expand().Border(),
-        VStack { "Text examples",
+        VStack {
+            "Text examples",
             Text { "Example of Text in wxUI" },
             TextCtrl { "Single line of text" }
                 .style(wxALIGN_LEFT),
@@ -29,7 +30,8 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
                 "With wxUI the code reflects\n"
                 "what the UI looks like." }
                 .style(wxTE_MULTILINE)
-                .withSize(wxSize(200, 100)) },
+                .withSize(wxSize(200, 100))
+        },
         RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
             .style(wxRA_SPECIFY_ROWS)
             .majorDim(1)
@@ -68,19 +70,24 @@ This library grew out of work to create a C++ library that allowed a simple decl
 For instance, a usual programming pattern for [`wxWidgets`](https://www.wxwidgets.org) is to create the UI objects first, and then put them in a layout: 
 
 ```
-void ExampleDialog::CreateControls()
+ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "ExampleDialog",
+        wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     // Create the controls.
-    auto text = new wxStaticText(this, wxID_ANY, "Example of Text");
+    auto text = new wxStaticText(this, wxID_ANY, "Example of Text in wxWidgets");
     auto textTitle = new wxTextCtrl(this, wxID_ANY, "Single line of text");
-
-...
-
+    // ...
     // Layout the controls.
     auto sizer = new wxBoxSizer(wxVERTICAL);
 
-    sizer->Add(text, wxSizerFlags().Expand().Border());
-    sizer->Add(textTitle, wxSizerFlags().Expand().Border());
+    auto sizerText = new wxStaticBoxSizer(wxVERTICAL, this, "Text Examples");
+    sizerText->Add(text, wxSizerFlags().Expand().Border());
+    sizerText->Add(textTitle, wxSizerFlags().Expand().Border());
+    // ...
+    SetSizerAndFit(sizer);
+    // ...
 }
 ```
 
@@ -90,17 +97,24 @@ This separates the "what" from the "where", and often makes it challenging to id
 
 
 ```
-void ExampleDialog::CreateControls()
+ExampleDialog::ExampleDialog(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "ExampleDialog",
+        wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
-
-    VStack(Sizer::ExpandBorder()
-        Text{ "Example of Text" };
-        TextCtrl{ "Single line of text" };
-            .style(wxALIGN_LEFT}
+    VStack {
+        wxSizerFlags().Expand().Border(),
+        VStack {
+            "Text examples",
+            Text { "Example of Text in wxUI" },
+            TextCtrl { "Single line of text" }
+                .style(wxALIGN_LEFT),
+    // ...
+        },
+    // ...
     }
-    .asTopLevel(this);
-
+        .asTopLevel(this);
 }
 ```
 
