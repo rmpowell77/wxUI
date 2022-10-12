@@ -19,9 +19,9 @@ public:
     ExampleDialog1(wxWindow* parent);
 };
 
-class ExampleDialog2 : public wxDialog {
+class ExampleDialog : public wxDialog {
 public:
-    ExampleDialog2(wxWindow* parent);
+    ExampleDialog(wxWindow* parent);
 };
 
 wxIMPLEMENT_APP(HelloWorldApp);
@@ -54,7 +54,7 @@ HelloWorldFrame::HelloWorldFrame()
                             dialog.ShowModal();
                         } },
             wxUI::Item { "&Example with wxUI...\tCtrl-F", [this]() {
-                            ExampleDialog2 dialog(this);
+                            ExampleDialog dialog(this);
                             dialog.ShowModal();
                         } },
             wxUI::Item { wxID_EXIT, [this]() {
@@ -171,7 +171,7 @@ ExampleDialog1::ExampleDialog1(wxWindow* parent)
     btnRight->Bind(wxEVT_BUTTON, [](wxEvent&) { wxLogMessage("Pressed Right"); });
 }
 
-ExampleDialog2::ExampleDialog2(wxWindow* parent)
+ExampleDialog::ExampleDialog(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExampleDialog",
         wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)

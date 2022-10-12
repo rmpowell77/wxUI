@@ -7,61 +7,53 @@ C++ header-only library to make declarative UIs for wxWidgets.
 #include <wx/wx.h>
 #include <wxUI/wxUI.h>
 
-class ExampleDialog : public wxDialog
-{
+class ExampleDialog : public wxDialog {
 public:
     ExampleDialog(wxWindow* parent);
 };
 
-
 ExampleDialog::ExampleDialog(wxWindow* parent)
-        : wxDialog(parent, wxID_ANY, "ExampleDialog",
-                   wxDefaultPosition, wxDefaultSize,
-                   wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+    : wxDialog(parent, wxID_ANY, "ExampleDialog",
+        wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
-
-    // Create the controls.
-    VStack{ wxUI::Sizer::ExpandBorder(),
-        VStack{ "Text examples",
-            Text{ "Example of Text in wxUI" },
-            TextCtrl{ "Single line of text" }
+    VStack {
+        wxSizerFlags().Expand().Border(),
+        VStack { "Text examples",
+            Text { "Example of Text in wxUI" },
+            TextCtrl { "Single line of text" }
                 .style(wxALIGN_LEFT),
-            TextCtrl{
-                    "Several lines of text.\n"
-                    "With wxUI the code reflects\n"
-                    "what the UI looks like."}
+            TextCtrl {
+                "Several lines of text.\n"
+                "With wxUI the code reflects\n"
+                "what the UI looks like." }
                 .style(wxTE_MULTILINE)
-                .withSize(wxSize(200, 100))
-        },
-        RadioBox{ "&Log Levels:", {
-            "&Information",
-            "&Warning",
-            "&Error",
-            "&None",
-            "&Custom"
-        }}
+                .withSize(wxSize(200, 100)) },
+        RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
             .style(wxRA_SPECIFY_ROWS)
             .majorDim(1)
             .withSelection(1),
 
-        HStack{ "Details",
-            CheckBox{ "Show" },
-            Choice{ {"Less", "More" } },
-            TextCtrl{ wxUI::Sizer::ExpandBorder<1>(), "Fill in the blank" }
+        HStack {
+            "Details",
+            CheckBox { "Show" },
+            Choice { { "Less", "More" } },
+            TextCtrl { wxSizerFlags(1).Expand().Border(), "Fill in the blank" }
                 .style(wxALIGN_LEFT),
         },
 
-        HStack{ wxUI::Sizer::CenterBorder(),
-            Button{ wxUI::Sizer::RightBorder(), "Left" }
-                .bind([](wxCommandEvent&){wxLogMessage("Pressed Left"); }),
-            Button{ wxUI::Sizer::LeftBorder(), "Right" }
-                .bind([](wxCommandEvent&){wxLogMessage("Pressed Right"); }),
+        HStack {
+            wxSizerFlags().Center().Border(),
+            Button { wxSizerFlags().Border(wxRIGHT), "Left" }
+                .bind([](wxCommandEvent&) { wxLogMessage("Pressed Left"); }),
+            Button { wxSizerFlags().Border(wxLEFT), "Right" }
+                .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
         },
 
-        Generic { CreateStdDialogButtonSizer(wxOK) }
+        Generic { CreateStdDialogButtonSizer(wxOK) },
     }
-    .asTopLevel(this);
+        .asTopLevel(this);
 }
 ```
 <img src="docs/images/ExampleDialog.png"/>
