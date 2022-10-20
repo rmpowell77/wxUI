@@ -37,45 +37,51 @@ bool HelloWorldApp::OnInit()
     return true;
 }
 
+// snippet wxUIMenu
 HelloWorldFrame::HelloWorldFrame()
     : wxFrame(NULL, wxID_ANY, "Hello World")
 {
     wxUI::MenuBar {
         wxUI::Menu {
             "&File",
+            // endsnippet wxUIMenu
             wxUI::Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [this](wxCommandEvent& event) {
                             wxLogMessage("Hello world from wxWidgets!");
                         } },
+            // snippet wxUIMenuExample1
             wxUI::Item { "&Example1...\tCtrl-D", [this]() {
                             wxLogMessage("Hello World!");
                         } },
             wxUI::CheckItem { "&Example2...\tCtrl-D", [this](wxCommandEvent& event) {
                                  wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
                              } },
-            wxUI::Separator {},
-            wxUI::Item { "&Example...\tCtrl-D", [this]() {
-                            ExampleDialogWidgets dialog(this);
-                            dialog.ShowModal();
-                        } },
+            // endsnippet wxUIMenuExample1
+            wxUI::Separator {}, wxUI::Item { "&Example...\tCtrl-D", [this]() {
+                                                ExampleDialogWidgets dialog(this);
+                                                dialog.ShowModal();
+                                            } },
+            // snippet wxUIMenu
             wxUI::Item { "&Example with wxUI...\tCtrl-F", [this]() {
                             ExampleDialog dialog(this);
                             dialog.ShowModal();
                         } },
-            wxUI::Item { wxID_EXIT, [this]() {
-                            Close(true);
-                        } },
+            wxUI::Separator {}, wxUI::Item { wxID_EXIT, [this]() {
+                                                Close(true);
+                                            } },
+            // endsnippet wxUIMenu
         },
+        // snippet wxUIMenuSubMenu
         wxUI::Menu {
-            "&Extra",
-            wxUI::Menu {
-                "Pets",
-                wxUI::CheckItem { "Cats", [this](wxCommandEvent& event) {
-                                     wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
-                                 } },
-                wxUI::CheckItem { "Dogs", [this](wxCommandEvent& event) {
-                                     wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
-                                 } },
-            },
+            "&Extra", wxUI::Menu {
+                          "Pets",
+                          wxUI::CheckItem { "Cats", [this](wxCommandEvent& event) {
+                                               wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
+                                           } },
+                          wxUI::CheckItem { "Dogs", [this](wxCommandEvent& event) {
+                                               wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
+                                           } },
+                      },
+            // endsnippet wxUIMenuSubMenu
             wxUI::Menu {
                 "Colors",
                 wxUI::RadioItem { "Red", [this](wxCommandEvent& event) {
@@ -88,15 +94,18 @@ HelloWorldFrame::HelloWorldFrame()
                                      wxLogMessage("Blue %s checked", event.IsChecked() ? "is" : "is not");
                                  } },
             },
+            // snippet wxUIMenuSubMenu
         },
+        // endsnippet wxUIMenuSubMenu
         wxUI::Menu {
-            "&Help",
-            wxUI::Item { wxID_ABOUT, [this]() {
-                            wxMessageBox("The wxUI Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
-                        } },
+            "&Help", wxUI::Item { wxID_ABOUT, [this]() {
+                                     wxMessageBox("The wxUI Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
+                                 } },
 
+            // snippet wxUIMenu
         }
     }.attachTo(this);
+    // endsnippet wxUIMenu
 
     CreateStatusBar();
 
@@ -191,10 +200,14 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
+    // snippet wxUISizerBasic
+    // snippet wxUIGeneric
     VStack {
         wxSizerFlags().Expand().Border(),
+        // endsnippet wxUIGeneric
         VStack {
             "Text examples",
+            // endsnippet wxUISizerBasic
             Text { "Example of Text in wxUI" },
             TextCtrl { "Single line of text" }
                 .style(wxALIGN_LEFT),
@@ -213,6 +226,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             .majorDim(1)
             .withSelection(1),
 
+        // snippet wxUIController
         HStack {
             "Details",
             CheckBox { "Show" },
@@ -220,19 +234,26 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             TextCtrl { wxSizerFlags(1).Expand().Border(), "Fill in the blank" }
                 .style(wxALIGN_LEFT),
         },
+        // endsnippet wxUIController
 
         HStack {
             wxSizerFlags().Center().Border(),
+            // snippet wxUIBind
             Button { wxSizerFlags().Border(wxRIGHT), "Left" }
-                .bind([](wxCommandEvent&) { wxLogMessage("Pressed Left"); }),
+                .bind([]() { wxLogMessage("Pressed Left"); }),
             Button { wxSizerFlags().Border(wxLEFT), "Right" }
                 .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
+            // endsnippet wxUIBind
         },
 
+        // snippet wxUIGeneric
         Generic { CreateStdDialogButtonSizer(wxOK) },
         // snippet withwxUI
+        // snippet wxUISizerBasic
     }
         .asTopLevel(this);
+    // endsnippet wxUIGeneric
+    // endsnippet wxUISizerBasic
 }
 // endsnippet withwxUI
 // endsnippet Example

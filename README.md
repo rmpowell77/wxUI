@@ -48,7 +48,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         HStack {
             wxSizerFlags().Center().Border(),
             Button { wxSizerFlags().Border(wxRIGHT), "Left" }
-                .bind([](wxCommandEvent&) { wxLogMessage("Pressed Left"); }),
+                .bind([]() { wxLogMessage("Pressed Left"); }),
             Button { wxSizerFlags().Border(wxLEFT), "Right" }
                 .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
         },
@@ -71,7 +71,7 @@ For instance, a usual programming pattern for [`wxWidgets`](https://www.wxwidget
 
 ```
 ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
-    : wxDialog(parent, wxID_ANY, "ExampleDialog",
+    : wxDialog(parent, wxID_ANY, "ExampleDialogWidgets",
         wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
