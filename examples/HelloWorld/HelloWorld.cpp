@@ -45,27 +45,27 @@ HelloWorldFrame::HelloWorldFrame()
         wxUI::Menu {
             "&File",
             // endsnippet wxUIMenu
-            wxUI::Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [this](wxCommandEvent& event) {
+            wxUI::Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [](wxCommandEvent& event) {
                             wxLogMessage("Hello world from wxWidgets!");
                         } },
             // snippet wxUIMenuExample1
-            wxUI::Item { "&Example1...\tCtrl-D", [this]() {
+            wxUI::Item { "&Example1...\tCtrl-D", [] {
                             wxLogMessage("Hello World!");
                         } },
-            wxUI::CheckItem { "&Example2...\tCtrl-D", [this](wxCommandEvent& event) {
+            wxUI::CheckItem { "&Example2...\tCtrl-D", [](wxCommandEvent& event) {
                                  wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
                              } },
             // endsnippet wxUIMenuExample1
-            wxUI::Separator {}, wxUI::Item { "&Example...\tCtrl-D", [this]() {
+            wxUI::Separator {}, wxUI::Item { "&Example...\tCtrl-D", [this] {
                                                 ExampleDialogWidgets dialog(this);
                                                 dialog.ShowModal();
                                             } },
             // snippet wxUIMenu
-            wxUI::Item { "&Example with wxUI...\tCtrl-F", [this]() {
+            wxUI::Item { "&Example with wxUI...\tCtrl-F", [this] {
                             ExampleDialog dialog(this);
                             dialog.ShowModal();
                         } },
-            wxUI::Separator {}, wxUI::Item { wxID_EXIT, [this]() {
+            wxUI::Separator {}, wxUI::Item { wxID_EXIT, [this] {
                                                 Close(true);
                                             } },
             // endsnippet wxUIMenu
@@ -74,23 +74,23 @@ HelloWorldFrame::HelloWorldFrame()
         wxUI::Menu {
             "&Extra", wxUI::Menu {
                           "Pets",
-                          wxUI::CheckItem { "Cats", [this](wxCommandEvent& event) {
+                          wxUI::CheckItem { "Cats", [](wxCommandEvent& event) {
                                                wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
                                            } },
-                          wxUI::CheckItem { "Dogs", [this](wxCommandEvent& event) {
+                          wxUI::CheckItem { "Dogs", [](wxCommandEvent& event) {
                                                wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
                                            } },
                       },
             // endsnippet wxUIMenuSubMenu
             wxUI::Menu {
                 "Colors",
-                wxUI::RadioItem { "Red", [this](wxCommandEvent& event) {
+                wxUI::RadioItem { "Red", [](wxCommandEvent& event) {
                                      wxLogMessage("Red %s checked", event.IsChecked() ? "is" : "is not");
                                  } },
-                wxUI::RadioItem { "Green", [this](wxCommandEvent& event) {
+                wxUI::RadioItem { "Green", [](wxCommandEvent& event) {
                                      wxLogMessage("Green %s checked", event.IsChecked() ? "is" : "is not");
                                  } },
-                wxUI::RadioItem { "Blue", [this](wxCommandEvent& event) {
+                wxUI::RadioItem { "Blue", [](wxCommandEvent& event) {
                                      wxLogMessage("Blue %s checked", event.IsChecked() ? "is" : "is not");
                                  } },
             },
@@ -98,7 +98,7 @@ HelloWorldFrame::HelloWorldFrame()
         },
         // endsnippet wxUIMenuSubMenu
         wxUI::Menu {
-            "&Help", wxUI::Item { wxID_ABOUT, [this]() {
+            "&Help", wxUI::Item { wxID_ABOUT, [] {
                                      wxMessageBox("The wxUI Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
                                  } },
 
@@ -240,7 +240,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             wxSizerFlags().Center().Border(),
             // snippet wxUIBind
             Button { wxSizerFlags().Border(wxRIGHT), "Left" }
-                .bind([]() { wxLogMessage("Pressed Left"); }),
+                .bind([] { wxLogMessage("Pressed Left"); }),
             Button { wxSizerFlags().Border(wxLEFT), "Right" }
                 .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
             // endsnippet wxUIBind
