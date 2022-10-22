@@ -48,7 +48,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         HStack {
             wxSizerFlags().Center().Border(),
             Button { wxSizerFlags().Border(wxRIGHT), "Left" }
-                .bind([]() { wxLogMessage("Pressed Left"); }),
+                .bind([] { wxLogMessage("Pressed Left"); }),
             Button { wxSizerFlags().Border(wxLEFT), "Right" }
                 .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
         },

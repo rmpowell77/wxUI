@@ -21,11 +21,11 @@ HelloWorldFrame::HelloWorldFrame()
         wxUI::Menu {
             "&File",
     // ...
-            wxUI::Item { "&Example with wxUI...\tCtrl-F", [this]() {
+            wxUI::Item { "&Example with wxUI...\tCtrl-F", [this] {
                             ExampleDialog dialog(this);
                             dialog.ShowModal();
                         } },
-            wxUI::Separator {}, wxUI::Item { wxID_EXIT, [this]() {
+            wxUI::Separator {}, wxUI::Item { wxID_EXIT, [this] {
                                                 Close(true);
                                             } },
     // ...
@@ -42,10 +42,10 @@ Menu Items are generally a name with a handler lambda, or name and id with a lam
 Handlers are callable items that handle events.  The handler can be declared with both no arguments or the `wxCommandEvent` argument for deeper inspection of the event.
 
 ```cpp
-            wxUI::Item { "&Example1...\tCtrl-D", [this]() {
+            wxUI::Item { "&Example1...\tCtrl-D", [] {
                             wxLogMessage("Hello World!");
                         } },
-            wxUI::CheckItem { "&Example2...\tCtrl-D", [this](wxCommandEvent& event) {
+            wxUI::CheckItem { "&Example2...\tCtrl-D", [](wxCommandEvent& event) {
                                  wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
                              } },
 ```
@@ -69,10 +69,10 @@ wxUI::Menu also allows nesting of menus.  This allows complicated menus to be co
         wxUI::Menu {
             "&Extra", wxUI::Menu {
                           "Pets",
-                          wxUI::CheckItem { "Cats", [this](wxCommandEvent& event) {
+                          wxUI::CheckItem { "Cats", [](wxCommandEvent& event) {
                                                wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
                                            } },
-                          wxUI::CheckItem { "Dogs", [this](wxCommandEvent& event) {
+                          wxUI::CheckItem { "Dogs", [](wxCommandEvent& event) {
                                                wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
                                            } },
                       },
@@ -162,7 +162,7 @@ Some "Controllers" support "Binding" a function call to their event handlers.  W
 
 ```cpp
             Button { wxSizerFlags().Border(wxRIGHT), "Left" }
-                .bind([]() { wxLogMessage("Pressed Left"); }),
+                .bind([] { wxLogMessage("Pressed Left"); }),
             Button { wxSizerFlags().Border(wxLEFT), "Right" }
                 .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
 ```

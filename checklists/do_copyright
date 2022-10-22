@@ -1,0 +1,17 @@
+#!/bin/bash
+
+tmpfile=$(mktemp)
+
+find examples include tests -type f \( -iname \*.h\* -o -iname \*.c\* \) |
+while read file
+  do grep -z -f <(cat LICENSE.md | tr '\n' '\0') $file > /dev/null
+  if [[ $? != 0 ]]
+    then echo $file
+  fi
+done |
+while read input
+  do echo -e "/*\n$(cat LICENSE.md)\n*/" > $tmpfile
+  cat $input >> $tmpfile
+  mv $tmpfile $input
+done
+
