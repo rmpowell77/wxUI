@@ -9,7 +9,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
 
 class ExampleDialog : public wxDialog {
 public:
-    ExampleDialog(wxWindow* parent);
+    explicit ExampleDialog(wxWindow* parent);
 };
 
 ExampleDialog::ExampleDialog(wxWindow* parent)
@@ -48,14 +48,14 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         HStack {
             wxSizerFlags().Center().Border(),
             Button { wxSizerFlags().Border(wxRIGHT), "Left" }
-                .bind([]() { wxLogMessage("Pressed Left"); }),
+                .bind([] { wxLogMessage("Pressed Left"); }),
             Button { wxSizerFlags().Border(wxLEFT), "Right" }
                 .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
         },
 
         Generic { CreateStdDialogButtonSizer(wxOK) },
     }
-        .asTopLevel(this);
+        .attachTo(this);
 }
 ```
 <img src="docs/images/ExampleDialog.png"/>
@@ -76,8 +76,8 @@ ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     // Create the controls.
-    auto text = new wxStaticText(this, wxID_ANY, "Example of Text in wxWidgets");
-    auto textTitle = new wxTextCtrl(this, wxID_ANY, "Single line of text");
+    auto* text = new wxStaticText(this, wxID_ANY, "Example of Text in wxWidgets");
+    auto* textTitle = new wxTextCtrl(this, wxID_ANY, "Single line of text");
     // ...
     // Layout the controls.
     auto sizer = new wxBoxSizer(wxVERTICAL);
@@ -114,7 +114,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         },
     // ...
     }
-        .asTopLevel(this);
+        .attachTo(this);
 }
 ```
 

@@ -8,7 +8,7 @@
 
 class HelloWorldApp : public wxApp {
 public:
-    virtual bool OnInit();
+    bool OnInit() override;
 };
 
 class HelloWorldFrame : public wxFrame {
@@ -18,13 +18,13 @@ public:
 
 class ExampleDialogWidgets : public wxDialog {
 public:
-    ExampleDialogWidgets(wxWindow* parent);
+    explicit ExampleDialogWidgets(wxWindow* parent);
 };
 
 // snippet Example
 class ExampleDialog : public wxDialog {
 public:
-    ExampleDialog(wxWindow* parent);
+    explicit ExampleDialog(wxWindow* parent);
 };
 // endsnippet Example
 
@@ -119,10 +119,10 @@ ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     // Create the controls.
-    auto text = new wxStaticText(this, wxID_ANY, "Example of Text in wxWidgets");
-    auto textTitle = new wxTextCtrl(this, wxID_ANY, "Single line of text");
+    auto* text = new wxStaticText(this, wxID_ANY, "Example of Text in wxWidgets");
+    auto* textTitle = new wxTextCtrl(this, wxID_ANY, "Single line of text");
     // endsnippet withwxWidgets
-    auto textBody = new wxTextCtrl(this, wxID_ANY,
+    auto* textBody = new wxTextCtrl(this, wxID_ANY,
         "Several lines of text.\n"
         "With wxUI the code reflects\n"
         "what the UI looks like.",
@@ -168,13 +168,13 @@ ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
 
     sizer->Add(logLevels, wxSizerFlags().Expand().Border());
 
-    auto sizerDetails = new wxStaticBoxSizer(wxHORIZONTAL, this, "Details");
+    auto* sizerDetails = new wxStaticBoxSizer(wxHORIZONTAL, this, "Details");
     sizerDetails->Add(checkBox, wxSizerFlags().Border());
     sizerDetails->Add(choice, wxSizerFlags().Border());
     sizerDetails->Add(blankLine, wxSizerFlags(1).Expand().Border());
     sizer->Add(sizerDetails, wxSizerFlags().Expand().Border());
 
-    auto sizerBtns = new wxBoxSizer(wxHORIZONTAL);
+    auto* sizerBtns = new wxBoxSizer(wxHORIZONTAL);
     sizerBtns->Add(btnLeft, wxSizerFlags().Border(wxLEFT));
     sizerBtns->Add(btnRight, wxSizerFlags().Border(wxRIGHT));
     sizer->Add(sizerBtns, wxSizerFlags().Centre().Border());
@@ -251,7 +251,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         // snippet withwxUI
         // snippet wxUISizerBasic
     }
-        .asTopLevel(this);
+        .attachTo(this);
     // endsnippet wxUIGeneric
     // endsnippet wxUISizerBasic
 }
