@@ -12,6 +12,22 @@ concept Widget = requires(T widget, wxWindow* w, wxSizer* s)
     widget.createAndAdd(w, s, wxSizerFlags {});
 };
 
+// https://stackoverflow.com/questions/27866909/get-function-arity-from-template-parameter
+template <typename T>
+struct get_arity : get_arity<decltype(&T::operator())> {
+};
+template <typename R, typename... Args>
+struct get_arity<R (*)(Args...)> : std::integral_constant<unsigned, sizeof...(Args)> {
+};
+// Possibly add specialization for variadic functions
+// Member functions:
+template <typename R, typename C, typename... Args>
+struct get_arity<R (C::*)(Args...)> : std::integral_constant<unsigned, sizeof...(Args)> {
+};
+template <typename R, typename C, typename... Args>
+struct get_arity<R (C::*)(Args...) const> : std::integral_constant<unsigned, sizeof...(Args)> {
+};
+
 template <Widget W, typename Event, typename Function>
 struct BindWidgetToEvent {
     W widget;
@@ -28,7 +44,13 @@ struct BindWidgetToEvent {
     auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
     {
         wxWindow* w = widget.createAndAdd(parent, sizer, flags);
-        w->Bind(event, function);
+        if constexpr (get_arity<Function> {} == 0) {
+            w->Bind(event, [this](auto) {
+                function();
+            });
+        } else {
+            w->Bind(event, function);
+        }
         return w;
     }
 };

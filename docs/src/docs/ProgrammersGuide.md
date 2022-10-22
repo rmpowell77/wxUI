@@ -14,23 +14,7 @@ In `wxUI`, you use "Menu" to declary the layout of your menu items and the "acti
 The general concept is you declare a set of structures and then `attachTo` a frame.
 
 ```cpp
-HelloWorldFrame::HelloWorldFrame()
-    : wxFrame(NULL, wxID_ANY, "Hello World")
-{
-    wxUI::MenuBar {
-        wxUI::Menu {
-            "&File",
-    // ...
-            wxUI::Item { "&Example with wxUI...\tCtrl-F", [this]() {
-                            ExampleDialog dialog(this);
-                            dialog.ShowModal();
-                        } },
-            wxUI::Separator {}, wxUI::Item { wxID_EXIT, [this]() {
-                                                Close(true);
-                                            } },
-    // ...
-        }
-    }.attachTo(this);
+{{{ examples/HelloWorld/HelloWorld.cpp wxUIMenu "    // ..." }}}
 ```
 
 In `wxWidgets` the general paradigm is to create an enumeration of identity ints that you associate with a member, then you would bind, either statically or dynamically, to a function.  With `wxUI::Menu` the construction of the identify and assocation with a function is handled automatically.  By default `wxUI::Menu` starts the enumeration with `wxID_AUTO_LOWEST` and increments for each item.  Take caution if you use these enumerations as it may collide with other ids assocated with the frame.
@@ -42,12 +26,7 @@ Menu Items are generally a name with a handler lambda, or name and id with a lam
 Handlers are callable items that handle events.  The handler can be declared with both no arguments or the `wxCommandEvent` argument for deeper inspection of the event.
 
 ```cpp
-            wxUI::Item { "&Example1...\tCtrl-D", [this]() {
-                            wxLogMessage("Hello World!");
-                        } },
-            wxUI::CheckItem { "&Example2...\tCtrl-D", [this](wxCommandEvent& event) {
-                                 wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
-                             } },
+{{{ examples/HelloWorld/HelloWorld.cpp wxUIMenuExample1 "    // ..." }}}
 ```
 
 Menu items (except `Separator`) follow the general pattern:
@@ -66,18 +45,7 @@ Items { "Name", "Help", Handler }
 wxUI::Menu also allows nesting of menus.  This allows complicated menus to be composed easily.
 
 ```cpp
-        wxUI::Menu {
-            "&Extra", wxUI::Menu {
-                          "Pets",
-                          wxUI::CheckItem { "Cats", [this](wxCommandEvent& event) {
-                                               wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
-                                           } },
-                          wxUI::CheckItem { "Dogs", [this](wxCommandEvent& event) {
-                                               wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
-                                           } },
-                      },
-    // ...
-        },
+{{{ examples/HelloWorld/HelloWorld.cpp wxUIMenuSubMenu "    // ..." }}}
 ```
 
 The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primatives on construction.  When `attachTo` a frame is invoked does the underlying logic construct the menu structure.
@@ -88,13 +56,7 @@ The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold
 The basics of `wxUI` layout is the "Sizer".  You use a specific type of "Sizer", with the `VStack` and `HStack` being the most common. When a "Sizer" is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
 
 ```cpp
-    VStack {
-        wxSizerFlags().Expand().Border(),
-        VStack {
-            "Text examples",
-    // ...
-    }
-        .asTopLevel(this);
+{{{ examples/HelloWorld/HelloWorld.cpp wxUISizerBasic "    // ..." }}}
 ```
 
 In the above example we have constructed a vertical layout stack that will use a `wxSizer` with the `wxSizerFlags` set to expand with a default border.  Then the first item in the stack is a second layer stack with another vertical layout.  The `wxSizerFlags` are propogated to each layer so the vertical layout in this example would also be set to expand with a default border.  The second stack would be created as a "named" box vertical stack.
@@ -115,12 +77,7 @@ Stack { "Name", SizerFlags, Items... }
 One special type of "Sizer" is `Generic`.  There are cases where you may have an existing `wxSizer` (such as a common dialog) that you wish to use with `wxUI`.  This is a case to use `Generic`:
 
 ```cpp
-    VStack {
-        wxSizerFlags().Expand().Border(),
-    // ...
-        Generic { CreateStdDialogButtonSizer(wxOK) },
-    }
-        .asTopLevel(this);
+{{{ examples/HelloWorld/HelloWorld.cpp wxUIGeneric "    // ..." }}}
 ```
 
 ### Controllers
@@ -128,13 +85,7 @@ One special type of "Sizer" is `Generic`.  There are cases where you may have an
 "Controllers" are the general term to refer to items that behave like a [`wxContol`](https://docs.wxwidgets.org/3.0/classwx_control.html).  In `wxUI` we attempt to conform a consistent style that favors the common things you do with a specific `wxControl`.
 
 ```cpp
-        HStack {
-            "Details",
-            CheckBox { "Show" },
-            Choice { { "Less", "More" } },
-            TextCtrl { wxSizerFlags(1).Expand().Border(), "Fill in the blank" }
-                .style(wxALIGN_LEFT),
-        },
+{{{ examples/HelloWorld/HelloWorld.cpp wxUIController "    // ..." }}}
 ```
 
 By default "Controllers" are constructed using the default arguments for position, style, size, etc.  "Controllers" are designed to use Method Chaining to specialize the way the controller is constructed.  In the example above we see that `TextCtrl` is being augmented with the style `wxALIGN_LEFT`.
@@ -161,10 +112,7 @@ Additional "Contollers" should be easy to add in future updates.
 Some "Controllers" support "Binding" a function call to their event handlers.  When the event for that controller is emitted, the function-like object supplied will be called.
 
 ```cpp
-            Button { wxSizerFlags().Border(wxRIGHT), "Left" }
-                .bind([]() { wxLogMessage("Pressed Left"); }),
-            Button { wxSizerFlags().Border(wxLEFT), "Right" }
-                .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
+{{{ examples/HelloWorld/HelloWorld.cpp wxUIBind "    // ..." }}}
 ```
 
 For convenience the event parameter of the function can be omitted in cases where it is unused.

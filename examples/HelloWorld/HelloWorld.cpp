@@ -1,8 +1,10 @@
 // wxUI "Hello World" example
 // This example is inspired from https://docs.wxwidgets.org/latest/overview_helloworld.html
 
+// snippet Example headers to include
 #include <wx/wx.h>
 #include <wxUI/wxUI.h>
+// endsnippet Example
 
 class HelloWorldApp : public wxApp {
 public:
@@ -14,15 +16,17 @@ public:
     HelloWorldFrame();
 };
 
-class ExampleDialog1 : public wxDialog {
+class ExampleDialogWidgets : public wxDialog {
 public:
-    ExampleDialog1(wxWindow* parent);
+    ExampleDialogWidgets(wxWindow* parent);
 };
 
-class ExampleDialog2 : public wxDialog {
+// snippet Example
+class ExampleDialog : public wxDialog {
 public:
-    ExampleDialog2(wxWindow* parent);
+    ExampleDialog(wxWindow* parent);
 };
+// endsnippet Example
 
 wxIMPLEMENT_APP(HelloWorldApp);
 
@@ -33,80 +37,91 @@ bool HelloWorldApp::OnInit()
     return true;
 }
 
+// snippet wxUIMenu
 HelloWorldFrame::HelloWorldFrame()
     : wxFrame(NULL, wxID_ANY, "Hello World")
 {
     wxUI::MenuBar {
         wxUI::Menu {
             "&File",
-            wxUI::Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [this](wxCommandEvent& event) {
+            // endsnippet wxUIMenu
+            wxUI::Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [](wxCommandEvent& event) {
                             wxLogMessage("Hello world from wxWidgets!");
                         } },
-            wxUI::Item { "&Example1...\tCtrl-D", [this]() {
+            // snippet wxUIMenuExample1
+            wxUI::Item { "&Example1...\tCtrl-D", [] {
                             wxLogMessage("Hello World!");
                         } },
-            wxUI::CheckItem { "&Example2...\tCtrl-D", [this](wxCommandEvent& event) {
+            wxUI::CheckItem { "&Example2...\tCtrl-D", [](wxCommandEvent& event) {
                                  wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
                              } },
-            wxUI::Separator {},
-            wxUI::Item { "&Example...\tCtrl-D", [this]() {
-                            ExampleDialog1 dialog(this);
+            // endsnippet wxUIMenuExample1
+            wxUI::Separator {}, wxUI::Item { "&Example...\tCtrl-D", [this] {
+                                                ExampleDialogWidgets dialog(this);
+                                                dialog.ShowModal();
+                                            } },
+            // snippet wxUIMenu
+            wxUI::Item { "&Example with wxUI...\tCtrl-F", [this] {
+                            ExampleDialog dialog(this);
                             dialog.ShowModal();
                         } },
-            wxUI::Item { "&Example with wxUI...\tCtrl-F", [this]() {
-                            ExampleDialog2 dialog(this);
-                            dialog.ShowModal();
-                        } },
-            wxUI::Item { wxID_EXIT, [this]() {
-                            Close(true);
-                        } },
+            wxUI::Separator {}, wxUI::Item { wxID_EXIT, [this] {
+                                                Close(true);
+                                            } },
+            // endsnippet wxUIMenu
         },
+        // snippet wxUIMenuSubMenu
         wxUI::Menu {
-            "&Extra",
-            wxUI::Menu {
-                "Pets",
-                wxUI::CheckItem { "Cats", [this](wxCommandEvent& event) {
-                                     wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
-                                 } },
-                wxUI::CheckItem { "Dogs", [this](wxCommandEvent& event) {
-                                     wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
-                                 } },
-            },
+            "&Extra", wxUI::Menu {
+                          "Pets",
+                          wxUI::CheckItem { "Cats", [](wxCommandEvent& event) {
+                                               wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
+                                           } },
+                          wxUI::CheckItem { "Dogs", [](wxCommandEvent& event) {
+                                               wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
+                                           } },
+                      },
+            // endsnippet wxUIMenuSubMenu
             wxUI::Menu {
                 "Colors",
-                wxUI::RadioItem { "Red", [this](wxCommandEvent& event) {
+                wxUI::RadioItem { "Red", [](wxCommandEvent& event) {
                                      wxLogMessage("Red %s checked", event.IsChecked() ? "is" : "is not");
                                  } },
-                wxUI::RadioItem { "Green", [this](wxCommandEvent& event) {
+                wxUI::RadioItem { "Green", [](wxCommandEvent& event) {
                                      wxLogMessage("Green %s checked", event.IsChecked() ? "is" : "is not");
                                  } },
-                wxUI::RadioItem { "Blue", [this](wxCommandEvent& event) {
+                wxUI::RadioItem { "Blue", [](wxCommandEvent& event) {
                                      wxLogMessage("Blue %s checked", event.IsChecked() ? "is" : "is not");
                                  } },
             },
+            // snippet wxUIMenuSubMenu
         },
+        // endsnippet wxUIMenuSubMenu
         wxUI::Menu {
-            "&Help",
-            wxUI::Item { wxID_ABOUT, [this]() {
-                            wxMessageBox("The wxUI Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
-                        } },
+            "&Help", wxUI::Item { wxID_ABOUT, [] {
+                                     wxMessageBox("The wxUI Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
+                                 } },
 
+            // snippet wxUIMenu
         }
     }.attachTo(this);
+    // endsnippet wxUIMenu
 
     CreateStatusBar();
 
     SetStatusText("Welcome to wxUI!");
 }
 
-ExampleDialog1::ExampleDialog1(wxWindow* parent)
-    : wxDialog(parent, wxID_ANY, "ExampleDialog",
+// snippet withwxWidgets : How you build with wxWidgets
+ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "ExampleDialogWidgets",
         wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     // Create the controls.
-    auto text = new wxStaticText(this, wxID_ANY, "Example of Text in wxUI");
+    auto text = new wxStaticText(this, wxID_ANY, "Example of Text in wxWidgets");
     auto textTitle = new wxTextCtrl(this, wxID_ANY, "Single line of text");
+    // endsnippet withwxWidgets
     auto textBody = new wxTextCtrl(this, wxID_ANY,
         "Several lines of text.\n"
         "With wxUI the code reflects\n"
@@ -138,14 +153,16 @@ ExampleDialog1::ExampleDialog1(wxWindow* parent)
     auto choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, WXSIZEOF(choices), choices);
     auto blankLine = new wxTextCtrl(this, wxID_ANY, "Fill in the blank");
 
-    // Lay out the UI
     textBody->SetMinSize(wxSize(200, 100));
 
+    // snippet withwxWidgets
+    // Layout the controls.
     auto sizer = new wxBoxSizer(wxVERTICAL);
 
     auto sizerText = new wxStaticBoxSizer(wxVERTICAL, this, "Text Examples");
     sizerText->Add(text, wxSizerFlags().Expand().Border());
     sizerText->Add(textTitle, wxSizerFlags().Expand().Border());
+    // endsnippet withwxWidgets
     sizerText->Add(textBody, wxSizerFlags(1).Expand().Border());
     sizer->Add(sizerText, wxSizerFlags(1).Expand().Border());
 
@@ -164,36 +181,52 @@ ExampleDialog1::ExampleDialog1(wxWindow* parent)
 
     sizer->Add(CreateStdDialogButtonSizer(wxOK), wxSizerFlags().Expand().Border());
 
+    // snippet withwxWidgets
     SetSizerAndFit(sizer);
+    // endsnippet withwxWidgets
 
     // And connect the event handlers.
     btnLeft->Bind(wxEVT_BUTTON, [](wxEvent&) { wxLogMessage("Pressed Left"); });
     btnRight->Bind(wxEVT_BUTTON, [](wxEvent&) { wxLogMessage("Pressed Right"); });
+    // snippet withwxWidgets
 }
+// endsnippet withwxWidgets
 
-ExampleDialog2::ExampleDialog2(wxWindow* parent)
+// snippet Example Dialog example
+// snippet withwxUI Dialog example
+ExampleDialog::ExampleDialog(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExampleDialog",
         wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
+    // snippet wxUISizerBasic
+    // snippet wxUIGeneric
     VStack {
         wxSizerFlags().Expand().Border(),
-        VStack { "Text examples",
+        // endsnippet wxUIGeneric
+        VStack {
+            "Text examples",
+            // endsnippet wxUISizerBasic
             Text { "Example of Text in wxUI" },
             TextCtrl { "Single line of text" }
                 .style(wxALIGN_LEFT),
+            // endsnippet withwxUI
             TextCtrl {
                 "Several lines of text.\n"
                 "With wxUI the code reflects\n"
                 "what the UI looks like." }
                 .style(wxTE_MULTILINE)
-                .withSize(wxSize(200, 100)) },
+                .withSize(wxSize(200, 100))
+            // snippet withwxUI
+        },
+        // endsnippet withwxUI
         RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
             .style(wxRA_SPECIFY_ROWS)
             .majorDim(1)
             .withSelection(1),
 
+        // snippet wxUIController
         HStack {
             "Details",
             CheckBox { "Show" },
@@ -201,16 +234,26 @@ ExampleDialog2::ExampleDialog2(wxWindow* parent)
             TextCtrl { wxSizerFlags(1).Expand().Border(), "Fill in the blank" }
                 .style(wxALIGN_LEFT),
         },
+        // endsnippet wxUIController
 
         HStack {
             wxSizerFlags().Center().Border(),
+            // snippet wxUIBind
             Button { wxSizerFlags().Border(wxRIGHT), "Left" }
-                .bind([](wxCommandEvent&) { wxLogMessage("Pressed Left"); }),
+                .bind([] { wxLogMessage("Pressed Left"); }),
             Button { wxSizerFlags().Border(wxLEFT), "Right" }
                 .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
+            // endsnippet wxUIBind
         },
 
+        // snippet wxUIGeneric
         Generic { CreateStdDialogButtonSizer(wxOK) },
+        // snippet withwxUI
+        // snippet wxUISizerBasic
     }
         .asTopLevel(this);
+    // endsnippet wxUIGeneric
+    // endsnippet wxUISizerBasic
 }
+// endsnippet withwxUI
+// endsnippet Example
