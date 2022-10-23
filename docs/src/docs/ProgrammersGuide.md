@@ -72,6 +72,19 @@ Stack { "Name", SizerFlags, Items... }
 
 `wxUI` supports 3 flavors of Stacks: `VStack` (Vertical Stacks), `HStack` (Horizontal Stacks), and `FlexGridStack` (Flexible Grid Stacks).  Both `VStack` and `HStack` can be created with a string to create a "named" box.
 
+Note: Because Stacks are intented to be "recursive" data structures, it is possible for a `VStack` to contain a `VStack`.  However, be aware that if an empty `VStack` is created with *just* a `VStack` as the argument, we collapse that to be a single `VStack`.  ie, this:
+
+```
+wxUI::VStack { wxUI::VStack { "Current Frame" } }.attachTo(this);
+```
+
+is equivalant to:
+
+```
+wxUI::VStack { "Current Frame" }.attachTo(this);
+```
+
+
 #### Generic
 
 One special type of "Sizer" is `Generic`.  There are cases where you may have an existing `wxSizer` (such as a common dialog) that you wish to use with `wxUI`.  This is a case to use `Generic`:

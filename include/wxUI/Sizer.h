@@ -1,5 +1,7 @@
 #pragma once
 
+#include <wx/sizer.h>
+#include <wx/statbox.h>
 #include <wxUI/Widget.h>
 
 namespace wxUI {
@@ -40,7 +42,7 @@ namespace details {
             return sizer;
         }
 
-        auto& asTopLevel(wxWindow* parent)
+        auto& attachTo(wxWindow* parent)
         {
             auto sizer = constructSizer(parent);
             auto currentFlags = flags ? *flags : wxSizerFlags {};
