@@ -1,0 +1,5 @@
+#!/bin/bash
+
+diff <(./docs/src/make_md.py docs/src/README.md) <(cat README.md)
+diff <(./docs/src/make_md.py docs/src/docs/ProgrammersGuide.md) <(cat docs/ProgrammersGuide.md) 
+
