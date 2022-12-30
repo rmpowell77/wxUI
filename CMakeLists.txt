@@ -8,6 +8,8 @@ message(FATAL_ERROR "In-source build detected!")
 endif()
 
 include(GNUInstallDirs)
+include(${PROJECT_SOURCE_DIR}/cmake/compiler.cmake)
+
 
 #============================================================================
 # Settable options

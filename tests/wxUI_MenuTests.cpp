@@ -26,7 +26,7 @@ SOFTWARE.
 
 #include <wx/wx.h>
 
-constexpr auto CheckMenuBar0 = [](wxFrame const& frame, auto menusCount, auto menuName, auto menuCount) {
+constexpr auto CheckMenuBar0 = [](wxFrame const& frame, size_t menusCount, auto menuName, size_t menuCount) {
     CHECK(menusCount == frame.GetMenuBar()->GetMenuCount());
     if (menusCount < 1) {
         return;

@@ -68,7 +68,7 @@ HelloWorldFrame::HelloWorldFrame()
         wxUI::Menu {
             "&File",
             // endsnippet wxUIMenu
-            wxUI::Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [](wxCommandEvent& event) {
+            wxUI::Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [] {
                             wxLogMessage("Hello world from wxWidgets!");
                         } },
             // snippet wxUIMenuExample1

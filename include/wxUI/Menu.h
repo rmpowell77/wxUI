@@ -253,7 +253,7 @@ struct RadioItem {
 };
 
 struct Separator {
-    void createAndAdd(wxFrame&, wxMenu& menu, int& identity)
+    void createAndAdd(wxFrame&, wxMenu& menu, [[maybe_unused]] int& identity)
     {
         menu.AppendSeparator();
     }

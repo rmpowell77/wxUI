@@ -14,6 +14,5 @@ if(NOT CMAKE_CXX_STANDARD OR CMAKE_CXX_STANDARD LESS 20)
 	set(CMAKE_CXX_STANDARD 20)
 endif()
 
-
 add_subdirectory(HelloWorld)
 

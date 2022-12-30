@@ -157,7 +157,7 @@ struct Generic {
     {
     }
 
-    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
+    void createAndAdd([[maybe_unused]] wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
     {
         // the item has already been created, we're mearly holding on to it.
         parentSizer->Add(sizer, flags ? *flags : parentFlags);
