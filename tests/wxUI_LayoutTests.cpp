@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
+#include <wxUI/Layout.h>
 #include <wxUI/Menu.h>
-#include <wxUI/Sizer.h>
 
 #include <wx/wx.h>
 

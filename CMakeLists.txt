@@ -36,9 +36,9 @@ add_library(
   include/wxUI/Button.h
   include/wxUI/CheckBox.h
   include/wxUI/Choice.h
+  include/wxUI/Layout.h
   include/wxUI/Menu.h
   include/wxUI/RadioBox.h
-  include/wxUI/Sizer.h
   include/wxUI/Text.h
   include/wxUI/TextCtrl.h
   include/wxUI/Widget.h
