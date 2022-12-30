@@ -33,13 +33,3 @@ This separates the "what" from the "where", and often makes it challenging to id
 `wxUI` is not intended to be a replacement for `wxWidgets`, but instead is a library to simplify usage.  It is written such that it should be easy to "step outside" of `wxUI` and access `wxWidgets` directly.
 
 Please consult the [Programmer's Guide](docs/ProgrammersGuide.md) for more information on Library details.
-
-## Installation
-
-
-## Attributions
-
-
-## Contact Info
-
-
