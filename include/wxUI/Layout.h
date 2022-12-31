@@ -236,4 +236,26 @@ struct HStack : public details::Stack<wxHORIZONTAL, W...> {
     }
 };
 
+struct Generic {
+    std::optional<wxSizerFlags> flags;
+    wxSizer* sizer;
+
+    Generic(wxSizerFlags const& flags, wxSizer* sizer)
+        : flags(flags)
+        , sizer(sizer)
+    {
+    }
+
+    Generic(wxSizer* sizer)
+        : sizer(sizer)
+    {
+    }
+
+    void createAndAdd([[maybe_unused]] wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
+    {
+        // the item has already been created, we're mearly holding on to it.
+        parentSizer->Add(sizer, flags ? *flags : parentFlags);
+    }
+};
+
 }

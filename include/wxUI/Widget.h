@@ -29,11 +29,13 @@ namespace wxUI::details {
 
 // A widget is anything that supports the createAndAdd function.
 
+// clang-format off
 template <typename T>
 concept Widget = requires(T widget, wxWindow* w, wxSizer* s)
 {
     widget.createAndAdd(w, s, wxSizerFlags {});
 };
+// clang-format on
 
 // https://stackoverflow.com/questions/27866909/get-function-arity-from-template-parameter
 template <typename T>
@@ -137,31 +139,6 @@ public:
     wxPoint pos = wxDefaultPosition;
     wxSize size = wxDefaultSize;
     long usingStyle {};
-};
-
-}
-
-namespace wxUI {
-struct Generic {
-    std::optional<wxSizerFlags> flags;
-    wxSizer* sizer;
-
-    Generic(wxSizerFlags const& flags, wxSizer* sizer)
-        : flags(flags)
-        , sizer(sizer)
-    {
-    }
-
-    Generic(wxSizer* sizer)
-        : sizer(sizer)
-    {
-    }
-
-    void createAndAdd([[maybe_unused]] wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
-    {
-        // the item has already been created, we're mearly holding on to it.
-        parentSizer->Add(sizer, flags ? *flags : parentFlags);
-    }
 };
 
 }

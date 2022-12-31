@@ -223,14 +223,14 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
-    // snippet wxUISizerBasic
+    // snippet wxUILayoutBasic
     // snippet wxUIGeneric
     VStack {
         wxSizerFlags().Expand().Border(),
         // endsnippet wxUIGeneric
         VStack {
             "Text examples",
-            // endsnippet wxUISizerBasic
+            // endsnippet wxUILayoutBasic
             Text { "Example of Text in wxUI" },
             TextCtrl { "Single line of text" }
                 .style(wxALIGN_LEFT),
@@ -272,11 +272,11 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         // snippet wxUIGeneric
         Generic { CreateStdDialogButtonSizer(wxOK) },
         // snippet withwxUI
-        // snippet wxUISizerBasic
+        // snippet wxUILayoutBasic
     }
         .attachTo(this);
     // endsnippet wxUIGeneric
-    // endsnippet wxUISizerBasic
+    // endsnippet wxUILayoutBasic
 }
 // endsnippet withwxUI
 // endsnippet Example
