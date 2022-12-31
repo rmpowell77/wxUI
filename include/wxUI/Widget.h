@@ -71,7 +71,7 @@ struct BindWidgetToEvent {
     {
         wxWindow* w = widget.createAndAdd(parent, sizer, flags);
         if constexpr (get_arity<Function> {} == 0) {
-            w->Bind(event, [this](auto) {
+            w->Bind(event, [function = function](auto) {
                 function();
             });
         } else {
