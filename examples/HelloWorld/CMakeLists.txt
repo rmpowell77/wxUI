@@ -6,6 +6,8 @@ add_executable(wxUI_HelloWorld
   HelloWorld.cpp
 )
 
+SetupCompilerForTarget(wxUI_HelloWorld)
+
 target_link_libraries(wxUI_HelloWorld 
   wx::core
   wxUI

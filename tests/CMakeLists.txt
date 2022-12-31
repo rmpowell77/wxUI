@@ -12,6 +12,8 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_TextCtrl.cpp
 )
 
+SetupCompilerForTarget(wxUI_Tests)
+
 target_link_libraries(
   wxUI_Tests
   PRIVATE
