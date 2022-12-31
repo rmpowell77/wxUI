@@ -83,9 +83,9 @@ wxUI::Menu also allows nesting of menus.  This allows complicated menus to be co
 The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primatives on construction.  When `attachTo` a frame is invoked does the underlying logic construct the menu structure.
 
 
-### Sizer
+### Layout
 
-The basics of `wxUI` layout is the "Sizer".  You use a specific type of "Sizer", with the `VStack` and `HStack` being the most common. When a "Sizer" is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
+The basics of `wxUI` layout is the "Layout".  You use a specific type of "Layout", with the `VStack` and `HStack` being the most common. When a "Layout" is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
 
 ```cpp
     VStack {
@@ -99,7 +99,7 @@ The basics of `wxUI` layout is the "Sizer".  You use a specific type of "Sizer",
 
 In the above example we have constructed a vertical layout stack that will use a `wxSizer` with the `wxSizerFlags` set to expand with a default border.  Then the first item in the stack is a second layer stack with another vertical layout.  The `wxSizerFlags` are propogated to each layer so the vertical layout in this example would also be set to expand with a default border.  The second stack would be created as a "named" box vertical stack.
 
-A "Sizer" takes a collection of Items, which can be either additional "Sizers" (to create a tree of "Sizers") or "Controllers".  Here is the general form of constructions for Stacks:
+A "Layout" takes a collection of Items, which can be either additional "Layout" (to create a tree of "Layouts") or "Controllers".  Here is the general form of constructions for Stacks:
 
 ```
 Stack { Items... }
@@ -125,7 +125,7 @@ wxUI::VStack { "Current Frame" }.attachTo(this);
 
 #### Generic
 
-One special type of "Sizer" is `Generic`.  There are cases where you may have an existing `wxSizer` (such as a common dialog) that you wish to use with `wxUI`.  This is a case to use `Generic`:
+One special type of "Layout" is `Generic`.  There are cases where you may have an existing layout as a `wxSizer` (such as a common dialog) that you wish to use with `wxUI`.  This is a case to use `Generic`:
 
 ```cpp
     VStack {

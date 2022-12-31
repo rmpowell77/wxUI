@@ -1,12 +1,21 @@
 #!/bin/bash
 
 tmpfile=$(mktemp)
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+COPYRIGHT_STRING=`grep -e "Copyright" ${SCRIPT_DIR}/../LICENSE.md`
+echo ${COPYRIGHT_STRING}
 
-find examples include tests -type f \( -iname \*.h\* -o -iname \*.c\* \) |
+find ${SCRIPT_DIR}/../examples ${SCRIPT_DIR}/../include ${SCRIPT_DIR}/../tests -type f \( -iname \*.h\* -o -iname \*.c\* \) |
 while read file
-  do grep -z -f <(cat LICENSE.md | tr '\n' '\0') $file > /dev/null
+  do
+  grep -e "${COPYRIGHT_STRING}" $file > /dev/null
   if [[ $? != 0 ]]
-    then echo $file
+    then
+    echo Error, file does not have copyright: $file
+    head $file
+    echo Should be:
+    head ${SCRIPT_DIR}/../LICENSE.md
+    exit -1
   fi
 done
 
