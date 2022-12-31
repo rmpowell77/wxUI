@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
+#include <optional>
 #include <wx/sizer.h>
 
 namespace wxUI::details {

@@ -11,14 +11,8 @@ include(FetchContent)
 
 if (WITH_TESTS OR WITH_EXAMPLES)
   # Have wxWidgets build as static libraries
-  set(wxUSE_STL ON)
-  set(wxUSE_STD_CONTAINERS ON)
-  FetchContent_Declare(
-    wxWidgets
-    GIT_REPOSITORY "https://github.com/wxWidgets/wxWidgets"
-    GIT_TAG 5b5ec3804a31a3765d60ff351bbdf79eddb1e1f9 # v3.2
-  )
-  FetchContent_MakeAvailable(wxWidgets)
+  find_package(wxWidgets REQUIRED COMPONENTS net core base)
+  include(${wxWidgets_USE_FILE})
 endif()
 
 if (WITH_TESTS)
