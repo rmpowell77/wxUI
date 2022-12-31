@@ -29,10 +29,13 @@ namespace wxUI::details {
 
 // A widget is anything that supports the createAndAdd function.
 
+// clang-format off
 template <typename T>
-concept Widget = requires(T widget, wxWindow* w, wxSizer* s) {
-                     widget.createAndAdd(w, s, wxSizerFlags {});
-                 };
+concept Widget = requires(T widget, wxWindow* w, wxSizer* s)
+{
+    widget.createAndAdd(w, s, wxSizerFlags {});
+};
+// clang-format on
 
 // https://stackoverflow.com/questions/27866909/get-function-arity-from-template-parameter
 template <typename T>
