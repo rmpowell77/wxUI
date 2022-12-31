@@ -93,3 +93,19 @@ jobs:
       run: ctest --test-dir ${{github.workspace}}/build -C ${{env.BUILD_TYPE}}
 
 
+  release:
+    if: contains(github.ref, 'tags/v')
+    name: Release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+
+      # using https://github.com/ncipollo/release-action
+    - name: Release
+      uses: ncipollo/release-action@v1
+      with:
+        bodyFile: ./LATEST_RELEASE_NOTES.md
+        draft: true
+        token: ${{ secrets.GITHUB_TOKEN }}
