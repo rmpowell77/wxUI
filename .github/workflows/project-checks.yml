@@ -21,3 +21,6 @@ jobs:
     - name: check
       run: ${{github.workspace}}/checklists/check_copyright
 
+    - name: check
+      run: ${{github.workspace}}/checklists/check_md
+

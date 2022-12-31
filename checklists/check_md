@@ -1,5 +1,8 @@
 #!/bin/bash
 
-diff <(./docs/src/make_md.py docs/src/README.md) <(cat README.md)
-diff <(./docs/src/make_md.py docs/src/docs/ProgrammersGuide.md) <(cat docs/ProgrammersGuide.md) 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+diff <(${SCRIPT_DIR}/../docs/src/make_md.py ${SCRIPT_DIR}/../docs/src/README.md) <(cat ${SCRIPT_DIR}/../README.md) \
+&& \
+diff <(${SCRIPT_DIR}/../docs/src/make_md.py docs/src/docs/ProgrammersGuide.md) <(cat ${SCRIPT_DIR}/../docs/ProgrammersGuide.md) 
 
