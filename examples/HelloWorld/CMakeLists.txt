@@ -9,7 +9,7 @@ add_executable(wxUI_HelloWorld
 SetupCompilerForTarget(wxUI_HelloWorld)
 
 target_link_libraries(wxUI_HelloWorld 
-  wx::core
+  ${wxWidgets_LIBRARIES}
   wxUI
 )
 

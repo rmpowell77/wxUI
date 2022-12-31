@@ -18,7 +18,7 @@ target_link_libraries(
   wxUI_Tests
   PRIVATE
   Catch2::Catch2WithMain
-  wx::core
+  ${wxWidgets_LIBRARIES}
   wxUI
 )
 
