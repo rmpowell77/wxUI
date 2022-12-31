@@ -23,8 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Widget.h"
 #include <wx/button.h>
-#include <wxUI/Widget.h>
 
 namespace wxUI {
 
@@ -32,31 +32,31 @@ struct Button : public details::WidgetDetails<Button> {
     using super = details::WidgetDetails<Button>;
     using underlying_t = wxButton;
 
-    std::string text = "";
+    std::string text;
 
-    Button(wxWindowID identity, std::string const& text = "")
+    explicit Button(wxWindowID identity, std::string text = "")
         : super(identity)
-        , text(text)
+        , text(std::move(text))
     {
     }
 
-    Button(std::string const& text = "")
-        : Button(wxID_ANY, text)
+    explicit Button(std::string text = "")
+        : Button(wxID_ANY, std::move(text))
     {
     }
 
-    Button(wxSizerFlags const& flags, wxWindowID identity, std::string const& text = "")
+    explicit Button(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
         : super(flags, identity)
-        , text(text)
+        , text(std::move(text))
     {
     }
 
-    Button(wxSizerFlags const& flags, std::string const& text = "")
+    explicit Button(wxSizerFlags const& flags, std::string const& text = "")
         : Button(flags, wxID_ANY, text)
     {
     }
 
-    wxWindow* create(wxWindow* parent) override
+    auto create(wxWindow* parent) -> wxWindow* override
     {
         return new underlying_t(parent, identity, text, wxDefaultPosition, wxDefaultSize);
     }
@@ -66,6 +66,12 @@ struct Button : public details::WidgetDetails<Button> {
     {
         return details::BindWidgetToEvent { *this, wxEVT_BUTTON, func };
     }
+
+    virtual ~Button() = default;
+    Button(Button const&) = default;
+    Button(Button&&) = default;
+    auto operator=(Button const&) -> Button& = default;
+    auto operator=(Button&&) -> Button& = default;
 
     using super::createAndAdd;
 };

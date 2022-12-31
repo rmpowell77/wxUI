@@ -26,19 +26,20 @@ SOFTWARE.
 
 #include <wx/wx.h>
 
+// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 constexpr auto CheckMenuBar0 = [](wxFrame const& frame, size_t menusCount, auto menuName, size_t menuCount) {
     CHECK(menusCount == frame.GetMenuBar()->GetMenuCount());
     if (menusCount < 1) {
         return;
     }
-    auto menu_uut = frame.GetMenuBar()->GetMenu(0);
+    auto* menu_uut = frame.GetMenuBar()->GetMenu(0);
     CHECK(menuName == menu_uut->GetTitle());
     CHECK(menuCount == menu_uut->GetMenuItemCount());
 };
 
 constexpr auto CheckMenu0 = [](wxFrame const& frame, auto menuID, auto menuName, auto menuHelp, auto menuType) {
-    auto menu_uut = frame.GetMenuBar()->GetMenu(0);
-    auto menu_item_uut = menu_uut->FindItemByPosition(0);
+    auto* menu_uut = frame.GetMenuBar()->GetMenu(0);
+    auto* menu_item_uut = menu_uut->FindItemByPosition(0);
     CHECK(menuID == menu_item_uut->GetId());
     CHECK(menuName == menu_item_uut->GetItemLabel());
     CHECK(menuHelp == menu_item_uut->GetHelp());
@@ -77,12 +78,12 @@ auto RunMenuTest_id()
 }
 
 template <typename MenuType, typename Function>
-auto RunMenuTest_id_func(Function f)
+auto RunMenuTest_id_func(Function function)
 {
     wxFrame frame { nullptr, wxID_ANY, "" };
     wxUI::MenuBar menu {
         wxUI::Menu {
-            "Menu1", MenuType { wxID_EXIT, f } }
+            "Menu1", MenuType { wxID_EXIT, function } }
     };
     menu.attachTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
@@ -115,12 +116,12 @@ auto RunMenuTest_id_name()
 }
 
 template <typename MenuType, typename Function>
-auto RunMenuTest_id_name_func(Function f)
+auto RunMenuTest_id_name_func(Function function)
 {
     wxFrame frame { nullptr, wxID_ANY, "" };
     wxUI::MenuBar menu {
         wxUI::Menu {
-            "Menu1", MenuType { wxID_EXIT, "Item1", f } }
+            "Menu1", MenuType { wxID_EXIT, "Item1", function } }
     };
     menu.attachTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
@@ -153,12 +154,12 @@ auto RunMenuTest_id_name_help()
 }
 
 template <typename MenuType, typename Function>
-auto RunMenuTest_id_name_help_func(Function f)
+auto RunMenuTest_id_name_help_func(Function function)
 {
     wxFrame frame { nullptr, wxID_ANY, "" };
     wxUI::MenuBar menu {
         wxUI::Menu {
-            "Menu1", MenuType { wxID_EXIT, "Item1", "Help1", f } }
+            "Menu1", MenuType { wxID_EXIT, "Item1", "Help1", function } }
     };
     menu.attachTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
@@ -178,12 +179,12 @@ auto RunMenuTest_id_name_help_func2()
 }
 
 template <typename MenuType, typename Function>
-auto RunMenuTest_name_func(Function f)
+auto RunMenuTest_name_func(Function function)
 {
     wxFrame frame { nullptr, wxID_ANY, "" };
     wxUI::MenuBar menu {
         wxUI::Menu {
-            "Menu1", MenuType { "Item1", f } }
+            "Menu1", MenuType { "Item1", function } }
     };
     menu.attachTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
@@ -203,12 +204,12 @@ auto RunMenuTest_name_func2()
 }
 
 template <typename MenuType, typename Function>
-auto RunMenuTest_name_help_func(Function f)
+auto RunMenuTest_name_help_func(Function function)
 {
     wxFrame frame { nullptr, wxID_ANY, "" };
     wxUI::MenuBar menu {
         wxUI::Menu {
-            "Menu1", MenuType { "Item1", "Help1", f } }
+            "Menu1", MenuType { "Item1", "Help1", function } }
     };
     menu.attachTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
@@ -442,3 +443,4 @@ TEST_CASE("Menu")
         RunMenuTest_name_help_func2<wxUI::RadioItem>();
     }
 }
+// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

@@ -26,6 +26,7 @@ SOFTWARE.
 
 #include <wx/wx.h>
 
+// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 using TypeUnderTest = wxUI::BitmapButton;
 TEST_CASE("BitmapButton")
 {
@@ -33,33 +34,34 @@ TEST_CASE("BitmapButton")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxBitmap {} };
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("" == window->GetLabel());
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetLabel().empty());
     }
 
     SECTION("id.bitmap")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, wxBitmap {} };
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
-        CHECK("" == window->GetLabel());
+        CHECK(window->GetLabel().empty());
     }
 
     SECTION("size.bitmap")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), wxBitmap {} };
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("" == window->GetLabel());
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetLabel().empty());
     }
 
     SECTION("size.id.bitmap")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, wxBitmap {} };
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
-        CHECK("" == window->GetLabel());
+        CHECK(window->GetLabel().empty());
     }
 }
+// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

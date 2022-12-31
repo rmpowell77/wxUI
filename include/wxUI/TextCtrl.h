@@ -23,8 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Widget.h"
 #include <wx/textctrl.h>
-#include <wxUI/Widget.h>
 
 namespace wxUI {
 
@@ -32,34 +32,40 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl> {
     using super = details::WidgetDetails<TextCtrl>;
     using underlying_t = wxTextCtrl;
 
-    std::string text = "";
+    std::string text;
 
-    TextCtrl(wxWindowID identity, std::string const& text = "")
+    explicit TextCtrl(wxWindowID identity, std::string text = "")
         : super(identity)
-        , text(text)
+        , text(std::move(text))
     {
     }
 
-    TextCtrl(std::string const& text = "")
-        : TextCtrl(wxID_ANY, text)
+    explicit TextCtrl(std::string text = "")
+        : TextCtrl(wxID_ANY, std::move(text))
     {
     }
 
-    TextCtrl(wxSizerFlags const& flags, wxWindowID identity, std::string const& text = "")
+    TextCtrl(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
         : super(flags, identity)
-        , text(text)
+        , text(std::move(text))
     {
     }
 
-    TextCtrl(wxSizerFlags const& flags, std::string const& text = "")
-        : TextCtrl(flags, wxID_ANY, text)
+    explicit TextCtrl(wxSizerFlags const& flags, std::string text = "")
+        : TextCtrl(flags, wxID_ANY, std::move(text))
     {
     }
 
-    wxWindow* create(wxWindow* parent) override
+    auto create(wxWindow* parent) -> wxWindow* override
     {
         return new underlying_t(parent, this->identity, text, this->pos, this->size, this->usingStyle);
     }
+
+    virtual ~TextCtrl() = default;
+    TextCtrl(TextCtrl const&) = default;
+    TextCtrl(TextCtrl&&) = default;
+    auto operator=(TextCtrl const&) -> TextCtrl& = default;
+    auto operator=(TextCtrl&&) -> TextCtrl& = default;
 
     using super::createAndAdd;
 };

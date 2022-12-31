@@ -23,8 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Widget.h"
 #include <wx/choice.h>
-#include <wxUI/Widget.h>
 
 namespace wxUI {
 
@@ -32,41 +32,47 @@ struct Choice : public details::WidgetDetails<Choice> {
     using super = details::WidgetDetails<Choice>;
     using underlying_t = wxChoice;
 
-    std::vector<wxString> choices;
+    std::vector<wxString> choices {};
     int selection {};
 
-    Choice(wxWindowID identity, std::vector<wxString> const& choices = {})
+    explicit Choice(wxWindowID identity, std::vector<wxString> choices = {})
         : super(identity)
-        , choices(choices)
+        , choices(std::move(choices))
     {
     }
 
-    Choice(std::vector<wxString> const& choices = {})
-        : Choice(wxID_ANY, choices)
+    explicit Choice(std::vector<wxString> choices = {})
+        : Choice(wxID_ANY, std::move(choices))
     {
     }
 
-    Choice(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> const& choices = {})
+    explicit Choice(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> choices = {})
         : super(flags, identity)
-        , choices(choices)
+        , choices(std::move(choices))
     {
     }
 
-    Choice(wxSizerFlags const& flags, std::vector<wxString> const& choices = {})
-        : Choice(flags, wxID_ANY, choices)
+    explicit Choice(wxSizerFlags const& flags, std::vector<wxString> choices = {})
+        : Choice(flags, wxID_ANY, std::move(choices))
     {
     }
 
-    auto& withSelection(int which)
+    auto withSelection(int which) -> Choice&
     {
         selection = which;
         return *this;
     }
 
-    wxWindow* create(wxWindow* parent) override
+    auto create(wxWindow* parent) -> wxWindow* override
     {
-        return new underlying_t(parent, this->identity, this->pos, this->size, choices.size(), choices.data(), this->usingStyle);
+        return new underlying_t(parent, this->identity, this->pos, this->size, static_cast<int>(choices.size()), choices.data(), this->usingStyle);
     }
+
+    virtual ~Choice() = default;
+    Choice(Choice const&) = default;
+    Choice(Choice&&) = default;
+    auto operator=(Choice const&) -> Choice& = default;
+    auto operator=(Choice&&) -> Choice& = default;
 
     using super::createAndAdd;
 };

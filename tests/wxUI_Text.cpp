@@ -26,6 +26,7 @@ SOFTWARE.
 
 #include <wx/wx.h>
 
+// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 using TypeUnderTest = wxUI::Text;
 TEST_CASE("Text")
 {
@@ -33,22 +34,22 @@ TEST_CASE("Text")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         TypeUnderTest uut {};
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("" == window->GetLabel());
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetLabel().empty());
     }
     SECTION("noargs")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest {};
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("" == window->GetLabel());
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetLabel().empty());
     }
 
     SECTION("name")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { "Hello" };
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK("Hello" == window->GetLabel());
     }
 
@@ -56,16 +57,16 @@ TEST_CASE("Text")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000 };
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
-        CHECK("" == window->GetLabel());
+        CHECK(window->GetLabel().empty());
     }
 
     SECTION("id.name")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, "Hello" };
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK("Hello" == window->GetLabel());
     }
@@ -74,15 +75,15 @@ TEST_CASE("Text")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1) };
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("" == window->GetLabel());
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetLabel().empty());
     }
 
     SECTION("size.name")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), "Hello" };
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK("Hello" == window->GetLabel());
     }
 
@@ -90,17 +91,18 @@ TEST_CASE("Text")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000 };
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
-        CHECK("" == window->GetLabel());
+        CHECK(window->GetLabel().empty());
     }
 
     SECTION("size.id.name")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, "Hello" };
-        auto window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK("Hello" == window->GetLabel());
     }
 }
+// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

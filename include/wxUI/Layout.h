@@ -23,9 +23,9 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Widget.h"
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-#include <wxUI/Widget.h>
 
 namespace wxUI {
 
@@ -33,17 +33,17 @@ namespace details {
 
     template <details::Widget... W>
     struct Sizer {
-        Sizer(W const&... widgets)
+        explicit Sizer(W const&... widgets)
             : Sizer(std::make_tuple(widgets...))
         {
         }
 
-        Sizer(wxSizerFlags const& flags, W const&... widgets)
+        explicit Sizer(wxSizerFlags const& flags, W const&... widgets)
             : Sizer(flags, std::make_tuple(widgets...))
         {
         }
 
-        Sizer(std::tuple<W...> const& widgets)
+        explicit Sizer(std::tuple<W...> const& widgets)
             : widgets(widgets)
         {
         }
@@ -65,7 +65,7 @@ namespace details {
             return sizer;
         }
 
-        auto& attachTo(wxWindow* parent)
+        auto attachTo(wxWindow* parent) -> auto&
         {
             auto sizer = constructSizer(parent);
             auto currentFlags = flags ? *flags : wxSizerFlags {};
@@ -76,7 +76,7 @@ namespace details {
         }
 
     private:
-        virtual wxSizer* constructSizer(wxWindow* parent) const = 0;
+        virtual auto constructSizer(wxWindow* parent) const -> wxSizer* = 0;
 
         void createAndAddWidgets(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
         {
@@ -88,25 +88,25 @@ namespace details {
 
     public:
         std::optional<wxSizerFlags> flags {};
-        std::tuple<W...> widgets;
+        std::tuple<W...> widgets {};
     };
 
     template <wxOrientation orientation, details::Widget... W>
     struct Stack : Sizer<W...> {
         using super = Sizer<W...>;
 
-        Stack(W const&... widgets)
+        explicit Stack(W const&... widgets)
             : super(std::make_tuple(widgets...))
         {
         }
 
-        Stack(wxString const& caption, W const&... widgets)
+        explicit Stack(wxString const& caption, W const&... widgets)
             : super(std::make_tuple(widgets...))
             , caption(caption)
         {
         }
 
-        Stack(wxSizerFlags const& flags, W const&... widgets)
+        explicit Stack(wxSizerFlags const& flags, W const&... widgets)
             : super(flags, std::make_tuple(widgets...))
         {
         }
@@ -117,7 +117,7 @@ namespace details {
         {
         }
 
-        Stack(std::tuple<W...> const& widgets)
+        explicit Stack(std::tuple<W...> const& widgets)
             : super(widgets)
         {
         }
@@ -140,8 +140,8 @@ namespace details {
         }
 
     private:
-        wxSizer* constructSizer(wxWindow* parent) const override { return caption ? new wxStaticBoxSizer(new wxStaticBox(parent, wxID_ANY, *caption), orientation) : new wxBoxSizer(orientation); }
-        std::optional<wxString> caption;
+        auto constructSizer(wxWindow* parent) const -> wxSizer* override { return caption ? new wxStaticBoxSizer(new wxStaticBox(parent, wxID_ANY, *caption), orientation) : new wxBoxSizer(orientation); }
+        std::optional<wxString> caption {};
     };
 
 }
@@ -150,17 +150,17 @@ template <details::Widget... W>
 struct VStack : public details::Stack<wxVERTICAL, W...> {
     using super = details::Stack<wxVERTICAL, W...>;
 
-    VStack(W const&... widgets)
+    explicit VStack(W const&... widgets)
         : super(std::make_tuple(widgets...))
     {
     }
 
-    VStack(wxString const& caption, W const&... widgets)
+    explicit VStack(wxString const& caption, W const&... widgets)
         : super(caption, std::make_tuple(widgets...))
     {
     }
 
-    VStack(wxSizerFlags const& flags, W const&... widgets)
+    explicit VStack(wxSizerFlags const& flags, W const&... widgets)
         : super(flags, std::make_tuple(widgets...))
     {
     }
@@ -170,7 +170,7 @@ struct VStack : public details::Stack<wxVERTICAL, W...> {
     {
     }
 
-    VStack(std::tuple<W...> const& widgets)
+    explicit VStack(std::tuple<W...> const& widgets)
         : super(widgets)
     {
     }
@@ -195,17 +195,17 @@ template <details::Widget... W>
 struct HStack : public details::Stack<wxHORIZONTAL, W...> {
     using super = details::Stack<wxHORIZONTAL, W...>;
 
-    HStack(W const&... widgets)
+    explicit HStack(W const&... widgets)
         : super(std::make_tuple(widgets...))
     {
     }
 
-    HStack(wxString const& caption, W const&... widgets)
+    explicit HStack(wxString const& caption, W const&... widgets)
         : super(caption, std::make_tuple(widgets...))
     {
     }
 
-    HStack(wxSizerFlags const& flags, W const&... widgets)
+    explicit HStack(wxSizerFlags const& flags, W const&... widgets)
         : super(flags, std::make_tuple(widgets...))
     {
     }
@@ -215,7 +215,7 @@ struct HStack : public details::Stack<wxHORIZONTAL, W...> {
     {
     }
 
-    HStack(std::tuple<W...> const& widgets)
+    explicit HStack(std::tuple<W...> const& widgets)
         : super(widgets)
     {
     }
@@ -237,7 +237,7 @@ struct HStack : public details::Stack<wxHORIZONTAL, W...> {
 };
 
 struct Generic {
-    std::optional<wxSizerFlags> flags;
+    std::optional<wxSizerFlags> flags {};
     wxSizer* sizer;
 
     Generic(wxSizerFlags const& flags, wxSizer* sizer)
@@ -246,7 +246,7 @@ struct Generic {
     {
     }
 
-    Generic(wxSizer* sizer)
+    explicit Generic(wxSizer* sizer)
         : sizer(sizer)
     {
     }

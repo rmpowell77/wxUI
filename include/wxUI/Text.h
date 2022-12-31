@@ -23,8 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Widget.h"
 #include <wx/stattext.h>
-#include <wxUI/Widget.h>
 
 namespace wxUI {
 
@@ -32,36 +32,42 @@ struct Text : private details::WidgetDetails<Text> {
     using super = details::WidgetDetails<Text>;
     using underlying_t = wxStaticText;
 
-    std::string text = "";
+    std::string text;
 
-    Text(wxWindowID identity, std::string const& text = "")
+    explicit Text(wxWindowID identity, std::string text = "")
         : super(identity)
-        , text(text)
+        , text(std::move(text))
     {
     }
 
-    Text(wxSizerFlags const& flags, wxWindowID identity, std::string const& text = "")
+    Text(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
         : super(flags, identity)
-        , text(text)
+        , text(std::move(text))
     {
     }
 
-    Text(std::string const& text = "")
+    explicit Text(std::string text = "")
         : super(wxID_ANY)
-        , text(text)
+        , text(std::move(text))
     {
     }
 
-    Text(wxSizerFlags const& flags, std::string const& text = "")
+    explicit Text(wxSizerFlags const& flags, std::string text = "")
         : super(flags, wxID_ANY)
-        , text(text)
+        , text(std::move(text))
     {
     }
 
-    wxWindow* create(wxWindow* parent) override
+    auto create(wxWindow* parent) -> wxWindow* override
     {
         return new underlying_t(parent, identity, text, wxDefaultPosition, wxDefaultSize);
     }
+
+    virtual ~Text() = default;
+    Text(Text const&) = default;
+    Text(Text&&) = default;
+    auto operator=(Text const&) -> Text& = default;
+    auto operator=(Text&&) -> Text& = default;
 
     using super::createAndAdd;
 };
