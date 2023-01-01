@@ -28,9 +28,8 @@ SOFTWARE.
 
 namespace wxUI {
 
-struct RadioBox : details::WidgetDetails<RadioBox> {
-    using super = details::WidgetDetails<RadioBox>;
-    using underlying_t = wxRadioBox;
+struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
+    using super = details::WidgetDetails<RadioBox, wxRadioBox>;
 
     std::string text;
     std::vector<wxString> choices;

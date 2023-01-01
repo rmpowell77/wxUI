@@ -28,9 +28,8 @@ SOFTWARE.
 
 namespace wxUI {
 
-struct CheckBox : public details::WidgetDetails<CheckBox> {
-    using super = details::WidgetDetails<CheckBox>;
-    using underlying_t = wxCheckBox;
+struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
+    using super = details::WidgetDetails<CheckBox, wxCheckBox>;
 
     std::string text;
     std::vector<wxString> choices {};

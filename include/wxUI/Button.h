@@ -28,9 +28,8 @@ SOFTWARE.
 
 namespace wxUI {
 
-struct Button : public details::WidgetDetails<Button> {
-    using super = details::WidgetDetails<Button>;
-    using underlying_t = wxButton;
+struct Button : public details::WidgetDetails<Button, wxButton> {
+    using super = details::WidgetDetails<Button, wxButton>;
 
     std::string text;
 

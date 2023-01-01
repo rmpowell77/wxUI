@@ -131,6 +131,37 @@ Some "Controllers" support "Binding" a function call to their event handlers.  W
 
 For convenience the event parameter of the function can be omitted in cases where it is unused.
 
+#### `getHandle`
+
+Often a `wxWindow` object needs to be referenced.  For example, perhaps for reading a currently selected value.  "Controllers" support `getHandle`, a way to get the handle to the underlying `wxWindow` that is created for the "Controller".  You provide the address of the handle that you would like to be populated when the "Controller" is created
+
+```cpp
+auto getHandle(UnderlyingType** handlePtr);
+```
+
+```cpp
+class ExtendedExample : public wxDialog {
+public:
+    explicit ExtendedExample(wxWindow* parent);
+private:
+    wxTextCtrl* mText;
+};
+
+ExtendedExample::ExtendedExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "ExtendedExample")
+{
+    using namespace wxUI;
+    VStack {
+        TextCtrl { "Hello" }
+            .getHandle(&mText),
+        },
+    }
+        .attachTo(this);
+}
+```
+
+Note that this handle is non-owning, so it is vital to not have the ptr participate in any lifecycle management of the object.
+
 #### Misc notes.
 
 `wxRadioBox` requires a list of strings to operate correctly, so `RadioBox` requires a `std::vector` of strings.  Note, you *can* provide an empty `std::vector`, but a crash may occur if you do so.
