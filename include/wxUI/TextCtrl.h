@@ -60,6 +60,12 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
         return new underlying_t(parent, this->identity, text, this->pos, this->size, this->usingStyle);
     }
 
+    template <typename Function>
+    auto bind(Function func)
+    {
+        return details::BindWidgetToEvent { *this, wxEVT_TEXT, func };
+    }
+
     virtual ~TextCtrl() = default;
     TextCtrl(TextCtrl const&) = default;
     TextCtrl(TextCtrl&&) = default;

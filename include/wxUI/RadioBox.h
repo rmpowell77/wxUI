@@ -101,6 +101,12 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
         return widget;
     }
 
+    template <typename Function>
+    auto bind(Function func)
+    {
+        return details::BindWidgetToEvent { *this, wxEVT_RADIOBOX, func };
+    }
+
     virtual ~RadioBox() = default;
     RadioBox(RadioBox const&) = default;
     RadioBox(RadioBox&&) = default;

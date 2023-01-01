@@ -67,6 +67,12 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
         return new underlying_t(parent, this->identity, this->pos, this->size, static_cast<int>(choices.size()), choices.data(), this->usingStyle);
     }
 
+    template <typename Function>
+    auto bind(Function func)
+    {
+        return details::BindWidgetToEvent { *this, wxEVT_CHOICE, func };
+    }
+
     virtual ~Choice() = default;
     Choice(Choice const&) = default;
     Choice(Choice&&) = default;
