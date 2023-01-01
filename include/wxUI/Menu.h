@@ -36,15 +36,19 @@ namespace details {
     template <class>
     inline constexpr bool always_false_v = false;
 
+    // clang-format off
     template <typename T>
-    concept MenuBarItem = requires(T widget, wxFrame frame, wxMenuBar menu, int identity) {
-                              widget.createAndAdd(frame, menu, identity);
-                          };
+    concept MenuBarItem = requires(T widget, wxFrame frame, wxMenuBar menu, int identity)
+    {
+        widget.createAndAdd(frame, menu, identity);
+    };
 
     template <typename T>
-    concept MenuItem = requires(T widget, wxFrame frame, wxMenu menu, int identity) {
-                           widget.createAndAdd(frame, menu, identity);
-                       };
+    concept MenuItem = requires(T widget, wxFrame frame, wxMenu menu, int identity)
+    {
+        widget.createAndAdd(frame, menu, identity);
+    };
+    // clang-format on
 
 }
 
