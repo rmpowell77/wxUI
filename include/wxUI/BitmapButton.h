@@ -23,8 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Widget.h"
 #include <wx/bmpbuttn.h>
-#include <wxUI/Widget.h>
 
 namespace wxUI {
 
@@ -34,29 +34,29 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton> {
 
     wxBitmap bitmap;
 
-    BitmapButton(wxWindowID identity, wxBitmap bitmap)
+    BitmapButton(wxWindowID identity, wxBitmap const& bitmap)
         : super(identity)
         , bitmap(bitmap)
     {
     }
 
-    BitmapButton(wxBitmap bitmap)
+    explicit BitmapButton(wxBitmap const& bitmap)
         : BitmapButton(wxID_ANY, bitmap)
     {
     }
 
-    BitmapButton(wxSizerFlags const& flags, wxWindowID identity, wxBitmap bitmap)
+    BitmapButton(wxSizerFlags const& flags, wxWindowID identity, wxBitmap const& bitmap)
         : super(flags, identity)
         , bitmap(bitmap)
     {
     }
 
-    BitmapButton(wxSizerFlags const& flags, wxBitmap bitmap)
+    BitmapButton(wxSizerFlags const& flags, wxBitmap const& bitmap)
         : BitmapButton(flags, wxID_ANY, bitmap)
     {
     }
 
-    wxWindow* create(wxWindow* parent) override
+    auto create(wxWindow* parent) -> wxWindow* override
     {
         return new underlying_t(parent, identity, bitmap, wxDefaultPosition, wxDefaultSize);
     }
@@ -66,6 +66,12 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton> {
     {
         return details::BindWidgetToEvent { *this, wxEVT_BUTTON, func };
     }
+
+    virtual ~BitmapButton() = default;
+    BitmapButton(BitmapButton const&) = default;
+    BitmapButton(BitmapButton&&) = default;
+    auto operator=(BitmapButton const&) -> BitmapButton& = default;
+    auto operator=(BitmapButton&&) -> BitmapButton& = default;
 
     using super::createAndAdd;
 };

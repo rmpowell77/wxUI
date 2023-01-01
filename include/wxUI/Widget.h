@@ -32,9 +32,9 @@ namespace wxUI::details {
 
 // clang-format off
 template <typename T>
-concept Widget = requires(T widget, wxWindow* w, wxSizer* s)
+concept Widget = requires(T widget, wxWindow* window, wxSizer* sizer)
 {
-    widget.createAndAdd(w, s, wxSizerFlags {});
+    widget.createAndAdd(window, sizer, wxSizerFlags {});
 };
 // clang-format on
 
@@ -60,24 +60,24 @@ struct BindWidgetToEvent {
     Event event;
     Function function;
 
-    BindWidgetToEvent(W const& w, Event const& e, Function const& f)
-        : widget(w)
-        , event(e)
-        , function(f)
+    BindWidgetToEvent(W const& widget, Event const& event, Function const& function)
+        : widget(widget)
+        , event(event)
+        , function(function)
     {
     }
 
     auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
     {
-        wxWindow* w = widget.createAndAdd(parent, sizer, flags);
+        wxWindow* window = widget.createAndAdd(parent, sizer, flags);
         if constexpr (get_arity<Function> {} == 0) {
-            w->Bind(event, [function = function](auto) {
+            window->Bind(event, [function = function](auto) {
                 function();
             });
         } else {
-            w->Bind(event, function);
+            window->Bind(event, function);
         }
-        return w;
+        return window;
     }
 };
 
@@ -92,7 +92,7 @@ BindWidgetToEvent(W, Event, Function) -> BindWidgetToEvent<W, Event, Function>;
 // 3. implement the create function for constructing the concrete widget.
 template <typename ConcreteWidget>
 struct WidgetDetails {
-    WidgetDetails(wxWindowID identity = wxID_ANY)
+    explicit WidgetDetails(wxWindowID identity = wxID_ANY)
         : identity(identity)
     {
     }
@@ -103,19 +103,19 @@ struct WidgetDetails {
     {
     }
 
-    ConcreteWidget& withPosition(wxPoint pos_)
+    auto withPosition(wxPoint pos_) -> ConcreteWidget&
     {
         pos = pos_;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    ConcreteWidget& withSize(wxSize size_)
+    auto withSize(wxSize size_) -> ConcreteWidget&
     {
         size = size_;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    ConcreteWidget& style(long style)
+    auto style(int64_t style) -> ConcreteWidget&
     {
         usingStyle = style;
         return static_cast<ConcreteWidget&>(*this);
@@ -131,7 +131,7 @@ struct WidgetDetails {
 private:
     // these should be implemented in the derived classes.
     // aka the Template Pattern
-    virtual wxWindow* create(wxWindow* parent) = 0;
+    virtual auto create(wxWindow* parent) -> wxWindow* = 0;
 
 public:
     std::optional<wxSizerFlags> flags;
@@ -139,7 +139,7 @@ public:
     wxWindowID identity = wxID_ANY;
     wxPoint pos = wxDefaultPosition;
     wxSize size = wxDefaultSize;
-    long usingStyle {};
+    int64_t usingStyle {};
 };
 
 }

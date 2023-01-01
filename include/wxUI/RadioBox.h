@@ -23,8 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Widget.h"
 #include <wx/radiobox.h>
-#include <wxUI/Widget.h>
 
 namespace wxUI {
 
@@ -32,44 +32,44 @@ struct RadioBox : details::WidgetDetails<RadioBox> {
     using super = details::WidgetDetails<RadioBox>;
     using underlying_t = wxRadioBox;
 
-    std::string text = "";
+    std::string text;
     std::vector<wxString> choices;
     int majorDim_ {};
     int selection {};
 
-    RadioBox(wxWindowID identity, std::string const& text = "", std::vector<wxString> const& choices = {})
+    explicit RadioBox(wxWindowID identity, std::string text = "", std::vector<wxString> choices = {})
         : super(identity)
-        , text(text)
-        , choices(choices)
+        , text(std::move(text))
+        , choices(std::move(choices))
     {
         usingStyle = wxRA_SPECIFY_COLS;
     }
 
-    RadioBox(wxWindowID identity, std::vector<wxString> const& choices = {})
-        : RadioBox(identity, "", choices)
+    explicit RadioBox(wxWindowID identity, std::vector<wxString> choices = {})
+        : RadioBox(identity, "", std::move(choices))
     {
     }
 
-    RadioBox(std::string const& text, std::vector<wxString> const& choices = {})
-        : RadioBox(wxID_ANY, text, choices)
+    explicit RadioBox(std::string text, std::vector<wxString> choices = {})
+        : RadioBox(wxID_ANY, std::move(text), std::move(choices))
     {
     }
 
-    RadioBox(std::vector<wxString> const& choices = {})
-        : RadioBox(wxID_ANY, "", choices)
+    explicit RadioBox(std::vector<wxString> choices = {})
+        : RadioBox(wxID_ANY, "", std::move(choices))
     {
     }
 
-    RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::string const& text = "", std::vector<wxString> const& choices = {})
+    RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::string text = "", std::vector<wxString> choices = {})
         : super(flags, identity)
-        , text(text)
-        , choices(choices)
+        , text(std::move(text))
+        , choices(std::move(choices))
     {
         usingStyle = wxRA_SPECIFY_COLS;
     }
 
-    RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> const& choices = {})
-        : RadioBox(flags, identity, "", choices)
+    RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> choices = {})
+        : RadioBox(flags, identity, "", std::move(choices))
     {
     }
 
@@ -78,29 +78,35 @@ struct RadioBox : details::WidgetDetails<RadioBox> {
     {
     }
 
-    RadioBox(wxSizerFlags const& flags, std::vector<wxString> const& choices = {})
+    explicit RadioBox(wxSizerFlags const& flags, std::vector<wxString> const& choices = {})
         : RadioBox(flags, wxID_ANY, "", choices)
     {
     }
 
-    auto& withSelection(int which)
+    auto withSelection(int which) -> RadioBox&
     {
         selection = which;
         return *this;
     }
 
-    auto& majorDim(int majorDim)
+    auto majorDim(int majorDim) -> RadioBox&
     {
         majorDim_ = majorDim;
         return *this;
     }
 
-    wxWindow* create(wxWindow* parent) override
+    auto create(wxWindow* parent) -> wxWindow* override
     {
-        auto widget = new underlying_t(parent, this->identity, text, this->pos, this->size, choices.size(), choices.data(), majorDim_, this->usingStyle);
+        auto* widget = new underlying_t(parent, this->identity, text, this->pos, this->size, static_cast<int>(choices.size()), choices.data(), majorDim_, this->usingStyle);
         widget->SetSelection(selection);
         return widget;
     }
+
+    virtual ~RadioBox() = default;
+    RadioBox(RadioBox const&) = default;
+    RadioBox(RadioBox&&) = default;
+    auto operator=(RadioBox const&) -> RadioBox& = default;
+    auto operator=(RadioBox&&) -> RadioBox& = default;
 
     using super::createAndAdd;
 };

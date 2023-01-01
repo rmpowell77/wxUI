@@ -27,6 +27,7 @@ SOFTWARE.
 
 #include <wx/wx.h>
 
+// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 auto CheckSizerEmpty(wxSizer* sizer)
 {
     CHECK(nullptr != sizer);
@@ -297,3 +298,4 @@ TEST_CASE("Size")
         });
     }
 }
+// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

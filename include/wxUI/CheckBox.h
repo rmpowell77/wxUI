@@ -23,8 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Widget.h"
 #include <wx/checkbox.h>
-#include <wxUI/Widget.h>
 
 namespace wxUI {
 
@@ -32,37 +32,43 @@ struct CheckBox : public details::WidgetDetails<CheckBox> {
     using super = details::WidgetDetails<CheckBox>;
     using underlying_t = wxCheckBox;
 
-    std::string text = "";
-    std::vector<wxString> choices;
+    std::string text;
+    std::vector<wxString> choices {};
     int majorDim {};
     int selection {};
 
-    CheckBox(wxWindowID identity, std::string const& text = "")
+    explicit CheckBox(wxWindowID identity, std::string text = "")
         : super(identity)
-        , text(text)
+        , text(std::move(text))
     {
     }
 
-    CheckBox(std::string const& text = "")
-        : CheckBox(wxID_ANY, text)
+    explicit CheckBox(std::string text = "")
+        : CheckBox(wxID_ANY, std::move(text))
     {
     }
 
-    CheckBox(wxSizerFlags const& flags, wxWindowID identity, std::string const& text = "")
+    explicit CheckBox(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
         : super(flags, identity)
-        , text(text)
+        , text(std::move(text))
     {
     }
 
-    CheckBox(wxSizerFlags const& flags, std::string const& text = "")
-        : CheckBox(flags, wxID_ANY, text)
+    explicit CheckBox(wxSizerFlags const& flags, std::string text = "")
+        : CheckBox(flags, wxID_ANY, std::move(text))
     {
     }
 
-    wxWindow* create(wxWindow* parent) override
+    auto create(wxWindow* parent) -> wxWindow* override
     {
         return new underlying_t(parent, this->identity, text, this->pos, this->size, this->usingStyle);
     }
+
+    virtual ~CheckBox() = default;
+    CheckBox(CheckBox const&) = default;
+    CheckBox(CheckBox&&) = default;
+    auto operator=(CheckBox const&) -> CheckBox& = default;
+    auto operator=(CheckBox&&) -> CheckBox& = default;
 
     using super::createAndAdd;
 };

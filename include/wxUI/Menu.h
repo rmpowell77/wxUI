@@ -36,17 +36,19 @@ namespace details {
     template <class>
     inline constexpr bool always_false_v = false;
 
+    // clang-format off
     template <typename T>
-    concept MenuBarItem = requires(T widget, wxFrame f, wxMenuBar m, int i)
+    concept MenuBarItem = requires(T widget, wxFrame frame, wxMenuBar menu, int identity)
     {
-        widget.createAndAdd(f, m, i);
+        widget.createAndAdd(frame, menu, identity);
     };
 
     template <typename T>
-    concept MenuItem = requires(T widget, wxFrame f, wxMenu m, int i)
+    concept MenuItem = requires(T widget, wxFrame frame, wxMenu menu, int identity)
     {
-        widget.createAndAdd(f, m, i);
+        widget.createAndAdd(frame, menu, identity);
     };
+    // clang-format on
 
 }
 
@@ -58,20 +60,20 @@ namespace details {
     using functionWOCmd_t = std::function<void()>;
     using function_t = std::variant<functionWithCmd_t, functionWOCmd_t>;
 
-    inline void bindToFrame(wxFrame& frame, int identity, function_t const& f)
+    inline void bindToFrame(wxFrame& frame, int identity, function_t const& function)
     {
-        std::visit([&frame, identity](auto const& i) {
-            using T = std::decay_t<decltype(i)>;
+        std::visit([&frame, identity](auto const& funct) {
+            using T = std::decay_t<decltype(funct)>;
             if constexpr (std::is_same_v<T, functionWithCmd_t>) {
-                frame.Bind(wxEVT_MENU, i, identity);
+                frame.Bind(wxEVT_MENU, funct, identity);
             } else if constexpr (std::is_same_v<T, functionWOCmd_t>) {
                 frame.Bind(
-                    wxEVT_MENU, [i](wxCommandEvent&) { i(); }, identity);
+                    wxEVT_MENU, [funct](wxCommandEvent&) { funct(); }, identity);
             } else {
                 static_assert(always_false_v<T>, "non-exhaustive visitor!");
             }
         },
-            f);
+            function);
     }
 
 }
@@ -98,16 +100,16 @@ namespace details {
     template <typename AppendFunction>
     inline void createAndAdd(wxFrame& frame, MenuDetails const& item, int& identity, AppendFunction appendFunction)
     {
-        std::visit([&frame, &identity, appendFunction](auto const& i) {
-            using T = std::decay_t<decltype(i)>;
+        std::visit([&frame, &identity, appendFunction](auto const& item) {
+            using T = std::decay_t<decltype(item)>;
             if constexpr (std::is_same_v<T, IDMenuDetails_t>) {
-                appendFunction(std::get<0>(i), std::get<1>(i), std::get<2>(i));
+                appendFunction(std::get<0>(item), std::get<1>(item), std::get<2>(item));
             } else if constexpr (std::is_same_v<T, IDMenuDetailsWFunc_t>) {
-                appendFunction(std::get<0>(i), std::get<1>(i), std::get<2>(i));
-                bindToFrame(frame, std::get<0>(i), std::get<3>(i));
+                appendFunction(std::get<0>(item), std::get<1>(item), std::get<2>(item));
+                bindToFrame(frame, std::get<0>(item), std::get<3>(item));
             } else if constexpr (std::is_same_v<T, NamedMenuDetails_t>) {
-                appendFunction(identity, std::get<0>(i), std::get<1>(i));
-                bindToFrame(frame, identity, std::get<2>(i));
+                appendFunction(identity, std::get<0>(item), std::get<1>(item));
+                bindToFrame(frame, identity, std::get<2>(item));
                 identity += 1;
             } else {
                 static_assert(always_false_v<T>, "non-exhaustive visitor!");
@@ -118,142 +120,142 @@ namespace details {
 }
 
 struct Item {
-    Item(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
+    explicit Item(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
         : menuDetails(details::IDMenuDetails_t { identity, name, helpString })
     {
     }
 
     template <typename F>
-    Item(wxStandardID identity, F f)
-        : Item(identity, "", "", f)
+    Item(wxStandardID identity, F function)
+        : Item(identity, "", "", function)
     {
     }
 
     template <typename F>
-    Item(wxStandardID identity, std::string const& name, F f)
-        : Item(identity, name, "", f)
+    Item(wxStandardID identity, std::string const& name, F function)
+        : Item(identity, name, "", function)
     {
     }
 
     template <typename F>
-    Item(wxStandardID identity, std::string const& name, std::string const& helpString, F f)
-        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, f))
+    Item(wxStandardID identity, std::string const& name, std::string const& helpString, F function)
+        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, function))
     {
     }
 
     template <typename F>
-    Item(std::string const& name, F f)
-        : Item(name, "", f)
+    Item(std::string const& name, F function)
+        : Item(name, "", function)
     {
     }
 
     template <typename F>
-    Item(std::string const& name, std::string const& help, F f)
-        : menuDetails(details::NamedMenuDetails_t(name, help, f))
+    Item(std::string const& name, std::string const& help, F function)
+        : menuDetails(details::NamedMenuDetails_t(name, help, function))
     {
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity)
+    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity) const
     {
-        details::createAndAdd(frame, menuDetails, identity, [&menu](int id, wxString const& item, wxString const& helpString) {
-            menu.Append(id, item, helpString);
+        details::createAndAdd(frame, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
+            menu.Append(identity, item, helpString);
         });
     }
     details::MenuDetails menuDetails;
 };
 
 struct CheckItem {
-    CheckItem(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
+    explicit CheckItem(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
         : menuDetails(details::IDMenuDetails_t { identity, name, helpString })
     {
     }
 
     template <typename F>
-    CheckItem(wxStandardID identity, F f)
-        : CheckItem(identity, "", "", f)
+    CheckItem(wxStandardID identity, F function)
+        : CheckItem(identity, "", "", function)
     {
     }
 
     template <typename F>
-    CheckItem(wxStandardID identity, std::string const& name, F f)
-        : CheckItem(identity, name, "", f)
+    CheckItem(wxStandardID identity, std::string const& name, F function)
+        : CheckItem(identity, name, "", function)
     {
     }
 
     template <typename F>
-    CheckItem(wxStandardID identity, std::string const& name, std::string const& helpString, F f)
-        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, f))
+    CheckItem(wxStandardID identity, std::string const& name, std::string const& helpString, F function)
+        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, function))
     {
     }
 
     template <typename F>
-    CheckItem(std::string const& name, F f)
-        : CheckItem(name, "", f)
+    CheckItem(std::string const& name, F function)
+        : CheckItem(name, "", function)
     {
     }
 
     template <typename F>
-    CheckItem(std::string const& name, std::string const& help, F f)
-        : menuDetails(details::NamedMenuDetails_t(name, help, f))
+    CheckItem(std::string const& name, std::string const& help, F function)
+        : menuDetails(details::NamedMenuDetails_t(name, help, function))
     {
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity)
+    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity) const
     {
-        details::createAndAdd(frame, menuDetails, identity, [&menu](int id, wxString const& item, wxString const& helpString) {
-            menu.AppendCheckItem(id, item, helpString);
+        details::createAndAdd(frame, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
+            menu.AppendCheckItem(identity, item, helpString);
         });
     }
     details::MenuDetails menuDetails;
 };
 
 struct RadioItem {
-    RadioItem(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
+    explicit RadioItem(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
         : menuDetails(details::IDMenuDetails_t { identity, name, helpString })
     {
     }
 
     template <typename F>
-    RadioItem(wxStandardID identity, F f)
-        : RadioItem(identity, "", "", f)
+    RadioItem(wxStandardID identity, F function)
+        : RadioItem(identity, "", "", function)
     {
     }
 
     template <typename F>
-    RadioItem(wxStandardID identity, std::string const& name, F f)
-        : RadioItem(identity, name, "", f)
+    RadioItem(wxStandardID identity, std::string const& name, F function)
+        : RadioItem(identity, name, "", function)
     {
     }
 
     template <typename F>
-    RadioItem(wxStandardID identity, std::string const& name, std::string const& helpString, F f)
-        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, f))
+    RadioItem(wxStandardID identity, std::string const& name, std::string const& helpString, F function)
+        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, function))
     {
     }
 
     template <typename F>
-    RadioItem(std::string const& name, F f)
-        : RadioItem(name, "", f)
+    RadioItem(std::string const& name, F function)
+        : RadioItem(name, "", function)
     {
     }
 
     template <typename F>
-    RadioItem(std::string const& name, std::string const& help, F f)
-        : menuDetails(details::NamedMenuDetails_t(name, help, f))
+    RadioItem(std::string const& name, std::string const& help, F function)
+        : menuDetails(details::NamedMenuDetails_t(name, help, function))
     {
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity)
+    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity) const
     {
-        details::createAndAdd(frame, menuDetails, identity, [&menu](int id, wxString const& item, wxString const& helpString) {
-            menu.AppendRadioItem(id, item, helpString);
+        details::createAndAdd(frame, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
+            menu.AppendRadioItem(identity, item, helpString);
         });
     }
     details::MenuDetails menuDetails;
 };
 
 struct Separator {
-    void createAndAdd(wxFrame&, wxMenu& menu, [[maybe_unused]] int& identity)
+    static void createAndAdd([[maybe_unused]] wxFrame& frame, wxMenu& menu, [[maybe_unused]] int& identity)
     {
         menu.AppendSeparator();
     }
@@ -262,13 +264,13 @@ struct Separator {
 // a submenu constructs menu to give to a menubar
 template <details::MenuItem... M>
 struct SubMenu {
-    SubMenu(std::string const& name, M const&... items)
-        : SubMenu(name, std::make_tuple(items...))
+    explicit SubMenu(std::string name, M const&... items)
+        : SubMenu(std::move(name), std::make_tuple(items...))
     {
     }
 
-    SubMenu(std::string const& name, std::tuple<M...> const& items)
-        : name(name)
+    SubMenu(std::string name, std::tuple<M...> const& items)
+        : name(std::move(name))
         , items(items)
     {
     }
@@ -290,13 +292,13 @@ struct SubMenu {
 // a submenu constructs menu to give to a menubar
 template <details::MenuItem... M>
 struct Menu {
-    Menu(std::string const& name, M const&... items)
-        : Menu(name, std::make_tuple(items...))
+    explicit Menu(std::string name, M const&... items)
+        : Menu(std::move(name), std::make_tuple(items...))
     {
     }
 
-    Menu(std::string const& name, std::tuple<M...> const& items)
-        : name(name)
+    Menu(std::string name, std::tuple<M...> const& items)
+        : name(std::move(name))
         , items(items)
     {
     }
@@ -327,16 +329,16 @@ struct Menu {
 
 template <details::MenuBarItem... M>
 struct MenuBar {
-    MenuBar(M const&... menus)
+    explicit MenuBar(M const&... menus)
         : MenuBar(std::make_tuple(menus...))
     {
     }
-    MenuBar(std::tuple<M...> const& menus)
+    explicit MenuBar(std::tuple<M...> const& menus)
         : menus(menus)
     {
     }
 
-    auto& attachTo(wxFrame* frame)
+    auto attachTo(wxFrame* frame) -> auto&
     {
         auto numbering = int(wxID_AUTO_LOWEST);
         auto menuBar = std::make_unique<wxMenuBar>();
