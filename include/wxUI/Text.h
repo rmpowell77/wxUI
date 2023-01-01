@@ -28,7 +28,7 @@ SOFTWARE.
 
 namespace wxUI {
 
-struct Text : private details::WidgetDetails<Text> {
+struct Text : public details::WidgetDetails<Text> {
     using super = details::WidgetDetails<Text>;
     using underlying_t = wxStaticText;
 
@@ -68,8 +68,7 @@ struct Text : private details::WidgetDetails<Text> {
     Text(Text&&) = default;
     auto operator=(Text const&) -> Text& = default;
     auto operator=(Text&&) -> Text& = default;
-
-    using super::createAndAdd;
 };
 
+static_assert(details::Widget<Text>);
 }

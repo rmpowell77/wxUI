@@ -72,8 +72,7 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton> {
     BitmapButton(BitmapButton&&) = default;
     auto operator=(BitmapButton const&) -> BitmapButton& = default;
     auto operator=(BitmapButton&&) -> BitmapButton& = default;
-
-    using super::createAndAdd;
 };
 
+static_assert(details::Widget<BitmapButton>);
 }

@@ -73,8 +73,7 @@ struct Choice : public details::WidgetDetails<Choice> {
     Choice(Choice&&) = default;
     auto operator=(Choice const&) -> Choice& = default;
     auto operator=(Choice&&) -> Choice& = default;
-
-    using super::createAndAdd;
 };
 
+static_assert(details::Widget<Choice>);
 }

@@ -72,8 +72,7 @@ struct Button : public details::WidgetDetails<Button> {
     Button(Button&&) = default;
     auto operator=(Button const&) -> Button& = default;
     auto operator=(Button&&) -> Button& = default;
-
-    using super::createAndAdd;
 };
 
+static_assert(details::Widget<Button>);
 }

@@ -27,6 +27,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <wxUI/BitmapButton.h>
 #include <wxUI/Button.h>
 #include <wxUI/CheckBox.h>
 #include <wxUI/Choice.h>
