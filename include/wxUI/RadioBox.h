@@ -45,22 +45,22 @@ struct RadioBox : details::WidgetDetails<RadioBox> {
         usingStyle = wxRA_SPECIFY_COLS;
     }
 
-    explicit RadioBox(wxWindowID identity, std::vector<wxString> choices = {})
+    RadioBox(wxWindowID identity, std::vector<wxString> choices)
         : RadioBox(identity, "", std::move(choices))
     {
     }
 
-    explicit RadioBox(std::string text, std::vector<wxString> choices = {})
+    RadioBox(std::string text, std::vector<wxString> choices)
         : RadioBox(wxID_ANY, std::move(text), std::move(choices))
     {
     }
 
-    explicit RadioBox(std::vector<wxString> choices = {})
+    explicit RadioBox(std::vector<wxString> choices)
         : RadioBox(wxID_ANY, "", std::move(choices))
     {
     }
 
-    RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::string text = "", std::vector<wxString> choices = {})
+    RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::string text, std::vector<wxString> choices)
         : super(flags, identity)
         , text(std::move(text))
         , choices(std::move(choices))
@@ -68,18 +68,18 @@ struct RadioBox : details::WidgetDetails<RadioBox> {
         usingStyle = wxRA_SPECIFY_COLS;
     }
 
-    RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> choices = {})
+    RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> choices)
         : RadioBox(flags, identity, "", std::move(choices))
     {
     }
 
-    RadioBox(wxSizerFlags const& flags, std::string const& text, std::vector<wxString> const& choices = {})
-        : RadioBox(flags, wxID_ANY, text, choices)
+    RadioBox(wxSizerFlags const& flags, std::string text, std::vector<wxString> choices)
+        : RadioBox(flags, wxID_ANY, std::move(text), std::move(choices))
     {
     }
 
-    explicit RadioBox(wxSizerFlags const& flags, std::vector<wxString> const& choices = {})
-        : RadioBox(flags, wxID_ANY, "", choices)
+    RadioBox(wxSizerFlags const& flags, std::vector<wxString> choices)
+        : RadioBox(flags, wxID_ANY, "", std::move(choices))
     {
     }
 
@@ -107,7 +107,7 @@ struct RadioBox : details::WidgetDetails<RadioBox> {
     RadioBox(RadioBox&&) = default;
     auto operator=(RadioBox const&) -> RadioBox& = default;
     auto operator=(RadioBox&&) -> RadioBox& = default;
-
-    using super::createAndAdd;
 };
+
+static_assert(details::Widget<RadioBox>);
 }

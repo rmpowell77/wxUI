@@ -111,6 +111,7 @@ The list of Methods supported by all controllers:
 
 The "Controllers" currently supported by `wxUI`:
 
+ * `BitmapButton` for `wxBitmapButton`
  * `Button` for `wxButton`
  * `CheckBox` for `wxCheckBox`
  * `Choice` for `wxChoice`
@@ -130,3 +131,6 @@ Some "Controllers" support "Binding" a function call to their event handlers.  W
 
 For convenience the event parameter of the function can be omitted in cases where it is unused.
 
+#### Misc notes.
+
+`wxRadioBox` requires a list of strings to operate correctly, so `RadioBox` requires a `std::vector` of strings.  Note, you *can* provide an empty `std::vector`, but a crash may occur if you do so.

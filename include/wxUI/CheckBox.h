@@ -69,8 +69,7 @@ struct CheckBox : public details::WidgetDetails<CheckBox> {
     CheckBox(CheckBox&&) = default;
     auto operator=(CheckBox const&) -> CheckBox& = default;
     auto operator=(CheckBox&&) -> CheckBox& = default;
-
-    using super::createAndAdd;
 };
 
+static_assert(details::Widget<CheckBox>);
 }

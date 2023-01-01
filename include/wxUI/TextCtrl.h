@@ -66,8 +66,7 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl> {
     TextCtrl(TextCtrl&&) = default;
     auto operator=(TextCtrl const&) -> TextCtrl& = default;
     auto operator=(TextCtrl&&) -> TextCtrl& = default;
-
-    using super::createAndAdd;
 };
 
+static_assert(details::Widget<TextCtrl>);
 }

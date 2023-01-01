@@ -24,6 +24,7 @@ SOFTWARE.
 // wxUI "Hello World" example
 // This example is inspired from https://docs.wxwidgets.org/latest/overview_helloworld.html
 
+#include "ExtendedExample.h"
 // snippet Example headers to include
 #include <wx/wx.h>
 #include <wxUI/wxUI.h>
@@ -81,6 +82,10 @@ HelloWorldFrame::HelloWorldFrame()
             // endsnippet wxUIMenuExample1
             wxUI::Separator {}, wxUI::Item { "&Example...\tCtrl-D", [this] {
                                                 ExampleDialogWidgets dialog(this);
+                                                dialog.ShowModal();
+                                            } },
+            wxUI::Separator {}, wxUI::Item { "&ExtendedExample...\tCtrl-D", [this] {
+                                                ExtendedExample dialog(this);
                                                 dialog.ShowModal();
                                             } },
             // snippet wxUIMenu
