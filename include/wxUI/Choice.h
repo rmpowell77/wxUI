@@ -28,9 +28,8 @@ SOFTWARE.
 
 namespace wxUI {
 
-struct Choice : public details::WidgetDetails<Choice> {
-    using super = details::WidgetDetails<Choice>;
-    using underlying_t = wxChoice;
+struct Choice : public details::WidgetDetails<Choice, wxChoice> {
+    using super = details::WidgetDetails<Choice, wxChoice>;
 
     std::vector<wxString> choices {};
     int selection {};

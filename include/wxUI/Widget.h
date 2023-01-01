@@ -90,8 +90,9 @@ BindWidgetToEvent(W, Event, Function) -> BindWidgetToEvent<W, Event, Function>;
 // 1. give a name.
 // 2. inherit from WidgetDetails.
 // 3. implement the create function for constructing the concrete widget.
-template <typename ConcreteWidget>
+template <typename ConcreteWidget, typename Underlying>
 struct WidgetDetails {
+    using underlying_t = Underlying;
     explicit WidgetDetails(wxWindowID identity = wxID_ANY)
         : identity(identity)
     {
@@ -121,10 +122,19 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
+    auto getHandle([[maybe_unused]] Underlying** handle) -> ConcreteWidget&
+    {
+        windowHandle = handle;
+        return static_cast<ConcreteWidget&>(*this);
+    }
+
     auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& parentFlags)
     {
-        auto widget = create(parent);
+        auto widget = dynamic_cast<Underlying*>(create(parent));
         sizer->Add(widget, flags ? *flags : parentFlags);
+        if (windowHandle) {
+            *windowHandle = widget;
+        }
         return widget;
     }
 
@@ -140,6 +150,7 @@ public:
     wxPoint pos = wxDefaultPosition;
     wxSize size = wxDefaultSize;
     int64_t usingStyle {};
+    Underlying** windowHandle {};
 };
 
 }

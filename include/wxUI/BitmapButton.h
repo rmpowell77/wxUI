@@ -28,9 +28,8 @@ SOFTWARE.
 
 namespace wxUI {
 
-struct BitmapButton : public details::WidgetDetails<BitmapButton> {
-    using super = details::WidgetDetails<BitmapButton>;
-    using underlying_t = wxBitmapButton;
+struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton> {
+    using super = details::WidgetDetails<BitmapButton, wxBitmapButton>;
 
     wxBitmap bitmap;
 

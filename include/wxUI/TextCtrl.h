@@ -28,9 +28,8 @@ SOFTWARE.
 
 namespace wxUI {
 
-struct TextCtrl : public details::WidgetDetails<TextCtrl> {
-    using super = details::WidgetDetails<TextCtrl>;
-    using underlying_t = wxTextCtrl;
+struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
+    using super = details::WidgetDetails<TextCtrl, wxTextCtrl>;
 
     std::string text;
 

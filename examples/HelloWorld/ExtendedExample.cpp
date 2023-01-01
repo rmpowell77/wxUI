@@ -32,6 +32,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
+    wxStaticText* text = nullptr;
     VStack {
         HStack {
             BitmapButton { wxBitmap {} },
@@ -51,6 +52,13 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         HStack {
             TextCtrl {},
         },
+        HStack {
+            Text { "Hello" }
+                .getReference(&text),
+        },
     }
         .attachTo(this);
+    if (text->GetLabel() != "Hello") {
+        throw std::runtime_error("Error, could not create reference");
+    }
 }
