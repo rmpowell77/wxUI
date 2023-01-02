@@ -241,3 +241,5 @@ You would then create the controller to confomr
 #### Misc notes.
 
 `wxRadioBox` requires a list of strings to operate correctly, so `RadioBox` requires a `std::vector` of strings.  Note, you *can* provide an empty `std::vector`, but a crash may occur if you do so.
+
+`Button` and `BitmapButton` support the `setDefault` function which allows you to set them as the default button.

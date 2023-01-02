@@ -32,6 +32,7 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
     using super = details::WidgetDetails<BitmapButton, wxBitmapButton>;
 
     wxBitmap bitmap;
+    bool isDefault = false;
 
     BitmapButton(wxWindowID identity, wxBitmap const& bitmap)
         : super(identity)
@@ -57,7 +58,17 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        return new underlying_t(parent, identity, bitmap, wxDefaultPosition, wxDefaultSize);
+        auto* widget = new underlying_t(parent, identity, bitmap, wxDefaultPosition, wxDefaultSize);
+        if (isDefault) {
+            widget->SetDefault();
+        }
+        return widget;
+    }
+
+    auto setDefault() -> BitmapButton&
+    {
+        isDefault = true;
+        return *this;
     }
 
     template <typename Function>

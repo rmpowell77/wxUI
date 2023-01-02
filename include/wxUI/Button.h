@@ -32,6 +32,7 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
     using super = details::WidgetDetails<Button, wxButton>;
 
     std::string text;
+    bool isDefault = false;
 
     explicit Button(wxWindowID identity, std::string text = "")
         : super(identity)
@@ -57,7 +58,17 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        return new underlying_t(parent, identity, text, wxDefaultPosition, wxDefaultSize);
+        auto* widget = new underlying_t(parent, identity, text, wxDefaultPosition, wxDefaultSize);
+        if (isDefault) {
+            widget->SetDefault();
+        }
+        return widget;
+    }
+
+    auto setDefault() -> Button&
+    {
+        isDefault = true;
+        return *this;
     }
 
     template <typename Function>
