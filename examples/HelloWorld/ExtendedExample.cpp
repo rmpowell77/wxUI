@@ -54,7 +54,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         },
         HStack {
             Text { "Hello" }
-                .getReference(&text),
+                .getHandle(&text),
         },
     }
         .attachTo(this);
