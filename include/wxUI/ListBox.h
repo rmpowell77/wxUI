@@ -24,39 +24,39 @@ SOFTWARE.
 #pragma once
 
 #include "Widget.h"
-#include <wx/choice.h>
+#include <wx/listbox.h>
 
 namespace wxUI {
 
-struct Choice : public details::WidgetDetails<Choice, wxChoice> {
-    using super = details::WidgetDetails<Choice, wxChoice>;
+struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
+    using super = details::WidgetDetails<ListBox, wxListBox>;
 
     std::vector<wxString> choices {};
-    int selection {};
+    int selection = wxNOT_FOUND;
 
-    explicit Choice(wxWindowID identity, std::vector<wxString> choices = {})
+    explicit ListBox(wxWindowID identity, std::vector<wxString> choices = {})
         : super(identity)
         , choices(std::move(choices))
     {
     }
 
-    explicit Choice(std::vector<wxString> choices = {})
-        : Choice(wxID_ANY, std::move(choices))
+    explicit ListBox(std::vector<wxString> choices = {})
+        : ListBox(wxID_ANY, std::move(choices))
     {
     }
 
-    explicit Choice(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> choices = {})
+    explicit ListBox(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> choices = {})
         : super(flags, identity)
         , choices(std::move(choices))
     {
     }
 
-    explicit Choice(wxSizerFlags const& flags, std::vector<wxString> choices = {})
-        : Choice(flags, wxID_ANY, std::move(choices))
+    explicit ListBox(wxSizerFlags const& flags, std::vector<wxString> choices = {})
+        : ListBox(flags, wxID_ANY, std::move(choices))
     {
     }
 
-    auto withSelection(int which) -> Choice&
+    auto withSelection(int which) -> ListBox&
     {
         selection = which;
         return *this;
@@ -72,15 +72,15 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_CHOICE, func };
+        return details::BindWidgetToEvent { *this, wxEVT_LISTBOX, func };
     }
 
-    virtual ~Choice() = default;
-    Choice(Choice const&) = default;
-    Choice(Choice&&) = default;
-    auto operator=(Choice const&) -> Choice& = default;
-    auto operator=(Choice&&) -> Choice& = default;
+    virtual ~ListBox() = default;
+    ListBox(ListBox const&) = default;
+    ListBox(ListBox&&) = default;
+    auto operator=(ListBox const&) -> ListBox& = default;
+    auto operator=(ListBox&&) -> ListBox& = default;
 };
 
-static_assert(details::Widget<Choice>);
+static_assert(details::Widget<ListBox>);
 }

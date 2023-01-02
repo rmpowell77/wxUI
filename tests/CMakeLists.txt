@@ -6,6 +6,7 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_CheckBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ChoiceTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LayoutTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ListBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_MenuTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_RadioBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_Tests.cpp

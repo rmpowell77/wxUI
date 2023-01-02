@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include <catch2/catch_test_macros.hpp>
-#include <wxUI/Choice.h>
+#include <wxUI/ListBox.h>
 
 #include <wx/wx.h>
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
-using TypeUnderTest = wxUI::Choice;
+using TypeUnderTest = wxUI::ListBox;
 
-TEST_CASE("Choice")
+TEST_CASE("ListBox")
 {
     SECTION("noargs.1")
     {
@@ -46,13 +46,13 @@ TEST_CASE("Choice")
         CHECK(0 == window->GetCount());
     }
 
-    SECTION("choice")
+    SECTION("ListBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { { "Hello", "Goodbye" } };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
+        CHECK(wxNOT_FOUND == window->GetSelection());
         CHECK("Hello" == window->GetString(0));
         CHECK("Goodbye" == window->GetString(1));
     }
@@ -66,14 +66,14 @@ TEST_CASE("Choice")
         CHECK(0 == window->GetCount());
     }
 
-    SECTION("id.choice")
+    SECTION("id.ListBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
+        CHECK(wxNOT_FOUND == window->GetSelection());
         CHECK("Hello" == window->GetString(0));
         CHECK("Goodbye" == window->GetString(1));
     }
@@ -86,13 +86,13 @@ TEST_CASE("Choice")
         CHECK(0 == window->GetCount());
     }
 
-    SECTION("size.choice")
+    SECTION("size.ListBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), { "Hello", "Goodbye" } };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
+        CHECK(wxNOT_FOUND == window->GetSelection());
         CHECK("Hello" == window->GetString(0));
         CHECK("Goodbye" == window->GetString(1));
     }
@@ -106,14 +106,14 @@ TEST_CASE("Choice")
         CHECK(0 == window->GetCount());
     }
 
-    SECTION("size.id.choice")
+    SECTION("size.id.ListBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, { "Hello", "Goodbye" } };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
+        CHECK(wxNOT_FOUND == window->GetSelection());
         CHECK("Hello" == window->GetString(0));
         CHECK("Goodbye" == window->GetString(1));
     }
