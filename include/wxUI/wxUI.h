@@ -33,6 +33,7 @@
 #include <wxUI/Choice.h>
 #include <wxUI/Custom.h>
 #include <wxUI/Layout.h>
+#include <wxUI/ListBox.h>
 #include <wxUI/Menu.h>
 #include <wxUI/RadioBox.h>
 #include <wxUI/Text.h>
