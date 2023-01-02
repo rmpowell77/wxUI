@@ -63,6 +63,12 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
         return new underlying_t(parent, this->identity, text, this->pos, this->size, this->usingStyle);
     }
 
+    template <typename Function>
+    auto bind(Function func)
+    {
+        return details::BindWidgetToEvent { *this, wxEVT_CHECKBOX, func };
+    }
+
     virtual ~CheckBox() = default;
     CheckBox(CheckBox const&) = default;
     CheckBox(CheckBox&&) = default;
