@@ -129,7 +129,7 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto getHandle([[maybe_unused]] Underlying** handle) -> ConcreteWidget&
+    auto getHandle(Underlying** handle) -> ConcreteWidget&
     {
         windowHandle = handle;
         return static_cast<ConcreteWidget&>(*this);
