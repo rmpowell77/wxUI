@@ -9,13 +9,13 @@ cmake_minimum_required(VERSION 3.23)
 
 include(FetchContent)
 
-if (WITH_TESTS OR WITH_EXAMPLES)
+if (WXUI_WITH_TESTS OR WXUI_WITH_EXAMPLES)
   # Have wxWidgets build as static libraries
   find_package(wxWidgets REQUIRED COMPONENTS net core base)
   include(${wxWidgets_USE_FILE})
 endif()
 
-if (WITH_TESTS)
+if (WXUI_WITH_TESTS)
   FetchContent_Declare(
     Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2
