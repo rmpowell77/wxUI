@@ -34,6 +34,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
     using namespace wxUI;
     wxStaticText* text = nullptr;
     VStack {
+        wxSizerFlags().Expand().Border(),
         HStack {
             BitmapButton { wxBitmap {} },
         },
@@ -56,6 +57,14 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             Text { "Hello" }
                 .getHandle(&text),
         },
+        // snippet CustomExample
+        HStack {
+            Custom { [](wxWindow* window, wxSizer* sizer, wxSizerFlags flags) {
+                for (auto&& title : { "1", "2", "3" }) {
+                    Button { title }.createAndAdd(window, sizer, flags);
+                }
+            } } },
+        // endsnippet CustomExample
     }
         .attachTo(this);
     if (text->GetLabel() != "Hello") {
