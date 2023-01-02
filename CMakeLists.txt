@@ -14,8 +14,8 @@ include(${PROJECT_SOURCE_DIR}/cmake/compiler.cmake)
 #============================================================================
 # Settable options
 #============================================================================
-option(WITH_TESTS "Build tests." ON)
-option(WITH_EXAMPLE "Build example." OFF)
+option(WXUI_WITH_TESTS "Build tests." OFF)
+option(WXUI_WITH_EXAMPLE "Build example." OFF)
 
 include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
 
@@ -54,14 +54,14 @@ target_include_directories(
 #============================================================================
 # Examples
 #============================================================================
-if(WITH_EXAMPLE)
+if(WXUI_WITH_EXAMPLE)
   add_subdirectory(examples)
 endif()
 
 #============================================================================
 # Tests
 #============================================================================
-if(WITH_TESTS)
+if(WXUI_WITH_TESTS)
   add_subdirectory(tests)
   include(CTest)
   add_test(NAME UnitTest COMMAND wxUI_Tests)
