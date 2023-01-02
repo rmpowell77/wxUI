@@ -36,6 +36,13 @@ concept Widget = requires(T widget, wxWindow* window, wxSizer* sizer)
 {
     widget.createAndAdd(window, sizer, wxSizerFlags {});
 };
+
+template <typename T>
+concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer)
+{
+    function(window, sizer, wxSizerFlags {});
+};
+
 // clang-format on
 
 // https://stackoverflow.com/questions/27866909/get-function-arity-from-template-parameter
@@ -151,6 +158,29 @@ public:
     wxSize size = wxDefaultSize;
     int64_t usingStyle {};
     Underlying** windowHandle {};
+};
+
+// function must be of type ([[maybe_unused]] wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags);
+template <CreateAndAddFunction Function>
+struct Custom {
+    std::optional<wxSizerFlags> flags;
+    Function function;
+
+    Custom(wxSizerFlags const& flags, Function const& function)
+        : flags(flags)
+        , function(function)
+    {
+    }
+
+    explicit Custom(Function const& function)
+        : function(function)
+    {
+    }
+
+    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
+    {
+        function(parent, parentSizer, flags ? *flags : parentFlags);
+    }
 };
 
 }

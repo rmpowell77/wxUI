@@ -162,6 +162,20 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
 
 Note that this handle is non-owning, so it is vital to not have the ptr participate in any lifecycle management of the object.
 
+#### Custom
+
+From time to time you may need to do some complicated custom wxWidget "controller" construction.  Use `Custom` "controller" to hook into the construction of the widget tree.  A `Custom` object is created supplying a function that conforms to the `CreateAndAdd` function.
+
+```cpp
+{{{ include/wxUI/Custom.h requires "    // ..." }}}
+```
+
+You would then create the controller to confomr 
+
+```cpp
+{{{ examples/HelloWorld/ExtendedExample.cpp CustomExample "    // ..." }}}
+```
+
 #### Misc notes.
 
 `wxRadioBox` requires a list of strings to operate correctly, so `RadioBox` requires a `std::vector` of strings.  Note, you *can* provide an empty `std::vector`, but a crash may occur if you do so.
