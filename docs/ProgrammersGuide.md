@@ -161,6 +161,7 @@ The list of Methods supported by all controllers:
 The "Controllers" currently supported by `wxUI`:
 
  * `BitmapButton` for `wxBitmapButton`
+ * `BitmapToggleButton` for `wxBitmapToggleButton`
  * `Button` for `wxButton`
  * `CheckBox` for `wxCheckBox`
  * `Choice` for `wxChoice`
