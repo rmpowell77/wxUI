@@ -28,6 +28,7 @@
 // SOFTWARE.
 
 #include <wxUI/BitmapButton.h>
+#include <wxUI/BitmapToggleButton.h>
 #include <wxUI/Button.h>
 #include <wxUI/CheckBox.h>
 #include <wxUI/Choice.h>

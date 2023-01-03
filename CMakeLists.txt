@@ -33,6 +33,7 @@ add_library(
   wxUI
   INTERFACE
   include/wxUI/wxUI.h
+  include/wxUI/BitmapToggleButton.h
   include/wxUI/BitmapButton.h
   include/wxUI/Button.h
   include/wxUI/CheckBox.h

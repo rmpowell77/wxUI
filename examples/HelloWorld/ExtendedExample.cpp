@@ -39,6 +39,9 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             BitmapButton { wxBitmap {} },
         },
         HStack {
+            BitmapToggleButton { wxBitmap {} },
+        },
+        HStack {
             Button {},
         },
         HStack {
