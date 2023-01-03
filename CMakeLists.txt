@@ -42,6 +42,7 @@ add_library(
   include/wxUI/Layout.h
   include/wxUI/Menu.h
   include/wxUI/RadioBox.h
+  include/wxUI/SpinCtrl.h
   include/wxUI/Text.h
   include/wxUI/TextCtrl.h
   include/wxUI/Widget.h

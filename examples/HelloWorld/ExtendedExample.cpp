@@ -51,6 +51,9 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             RadioBox { std::vector<wxString> { "hello" } },
         },
         HStack {
+            SpinCtrl {},
+        },
+        HStack {
             Text {},
         },
         HStack {
