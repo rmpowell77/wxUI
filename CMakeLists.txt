@@ -40,6 +40,7 @@ add_library(
   include/wxUI/Choice.h
   include/wxUI/Custom.h
   include/wxUI/Layout.h
+  include/wxUI/Line.h
   include/wxUI/Menu.h
   include/wxUI/RadioBox.h
   include/wxUI/SpinCtrl.h

@@ -48,6 +48,9 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             CheckBox {},
         },
         HStack {
+            Line {},
+        },
+        HStack {
             RadioBox { std::vector<wxString> { "hello" } },
         },
         HStack {
