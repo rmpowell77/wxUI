@@ -11,6 +11,7 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_MenuTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_RadioBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_SpinCtrlTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_SliderTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_Tests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_Text.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_TextCtrl.cpp
