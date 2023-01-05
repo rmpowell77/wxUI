@@ -250,12 +250,6 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
                 .withSize(wxSize(200, 100))
             // snippet withwxUI
         },
-        // endsnippet wxUIController
-        Text { "hello" },
-        Custom { [](wxWindow* window, wxSizer* sizer, [[maybe_unused]] wxSizerFlags flags) {
-            auto line = new wxStaticLine(window, wxID_STATIC, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL);
-            sizer->Add(line, 0, wxGROW | wxALL, 5);
-        } },
         // endsnippet withwxUI
         RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
             .style(wxRA_SPECIFY_ROWS)
@@ -270,6 +264,8 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             TextCtrl { wxSizerFlags(1).Expand().Border(), "Fill in the blank" }
                 .style(wxALIGN_LEFT),
         },
+        // endsnippet wxUIController
+
         HStack {
             wxSizerFlags().Center().Border(),
             // snippet wxUIBind
