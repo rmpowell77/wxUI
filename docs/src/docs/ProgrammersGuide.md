@@ -119,6 +119,7 @@ The "Controllers" currently supported by `wxUI`:
  * `ListBox` for `wxListBox`
  * `Line` for `wxStaticLine`
  * `RadioBox` for `wxRadioBox`
+ * `Slider` for `wxSlider`
  * `SpinCtrl` for `wxSpinCtrl`
  * `Text` for `wxStaticText`
  * `TextCtrl` for `wxTextCtrl`
