@@ -207,6 +207,8 @@ ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
     sizerBtns->Add(btnRight, wxSizerFlags().Border(wxRIGHT));
     sizer->Add(sizerBtns, wxSizerFlags().Centre().Border());
 
+    sizer->Add(new wxStaticLine(this, wxID_STATIC), 0, wxGROW | wxALL, 50);
+
     sizer->Add(CreateStdDialogButtonSizer(wxOK), wxSizerFlags().Expand().Border());
 
     // snippet withwxWidgets
