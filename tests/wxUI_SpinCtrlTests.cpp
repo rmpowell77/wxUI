@@ -131,5 +131,29 @@ TEST_CASE("SpinCtrl")
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 3);
     }
+
+    SECTION("style")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest {}.style(wxTE_PROCESS_ENTER);
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetWindowStyle() == (wxTE_PROCESS_ENTER | wxTAB_TRAVERSAL | 0x200000));
+    }
+
+    SECTION("pos")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest {}.withPosition({ 1, 2 });
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+    }
+
+    SECTION("size")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest {}.withSize({ 1, 2 });
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetSize() == wxSize { 1, 2 });
+    }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
