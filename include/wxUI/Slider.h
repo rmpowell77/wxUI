@@ -24,37 +24,37 @@ SOFTWARE.
 #pragma once
 
 #include "Widget.h"
-#include <wx/spinctrl.h>
+#include <wx/slider.h>
 
 namespace wxUI {
 
-struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
-    using super = details::WidgetDetails<SpinCtrl, wxSpinCtrl>;
+struct Slider : public details::WidgetDetails<Slider, wxSlider> {
+    using super = details::WidgetDetails<Slider, wxSlider>;
 
     std::optional<std::pair<int, int>> range;
     std::optional<int> initial;
 
-    explicit SpinCtrl(wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+    explicit Slider(wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : super(identity)
         , range(range)
         , initial(initial)
     {
     }
 
-    explicit SpinCtrl(std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
-        : SpinCtrl(wxID_ANY, range, initial)
+    explicit Slider(std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+        : Slider(wxID_ANY, range, initial)
     {
     }
 
-    explicit SpinCtrl(wxSizerFlags const& flags, wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+    explicit Slider(wxSizerFlags const& flags, wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : super(flags, identity)
         , range(range)
         , initial(initial)
     {
     }
 
-    explicit SpinCtrl(wxSizerFlags const& flags, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
-        : SpinCtrl(flags, wxID_ANY, range, initial)
+    explicit Slider(wxSizerFlags const& flags, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+        : Slider(flags, wxID_ANY, range, initial)
     {
     }
 
@@ -63,22 +63,22 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
         auto min = range ? range->first : 0;
         auto max = range ? range->second : 100;
         auto initvalue = initial ? *initial : min;
-        auto* widget = new underlying_t(parent, identity, wxEmptyString, this->pos, this->size, this->usingStyle, min, max, initvalue);
+        auto* widget = new underlying_t(parent, identity, initvalue, min, max, this->pos, this->size, this->usingStyle);
         return widget;
     }
 
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_SPINCTRL, func };
+        return details::BindWidgetToEvent { *this, wxEVT_SLIDER, func };
     }
 
-    virtual ~SpinCtrl() = default;
-    SpinCtrl(SpinCtrl const&) = default;
-    SpinCtrl(SpinCtrl&&) = default;
-    auto operator=(SpinCtrl const&) -> SpinCtrl& = default;
-    auto operator=(SpinCtrl&&) -> SpinCtrl& = default;
+    virtual ~Slider() = default;
+    Slider(Slider const&) = default;
+    Slider(Slider&&) = default;
+    auto operator=(Slider const&) -> Slider& = default;
+    auto operator=(Slider&&) -> Slider& = default;
 };
 
-static_assert(details::Widget<SpinCtrl>);
+static_assert(details::Widget<Slider>);
 }
