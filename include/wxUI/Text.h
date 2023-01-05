@@ -59,7 +59,7 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        return new underlying_t(parent, identity, text, wxDefaultPosition, wxDefaultSize);
+        return new underlying_t(parent, identity, text, this->pos, this->size, this->usingStyle);
     }
 
     virtual ~Text() = default;

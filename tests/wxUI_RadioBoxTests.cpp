@@ -130,5 +130,29 @@ TEST_CASE("RadioBox")
         CHECK("Hello" == window->GetString(0));
         CHECK("Goodbye" == window->GetString(1));
     }
+
+    SECTION("style")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest { std::vector<wxString> { "Hello", "Goodbye" } }.style(wxRA_SPECIFY_COLS);
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetWindowStyle() == (wxRA_SPECIFY_COLS | wxTAB_TRAVERSAL));
+    }
+
+    SECTION("pos")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest { std::vector<wxString> { "Hello", "Goodbye" } }.withPosition({ 1, 2 });
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+    }
+
+    SECTION("size")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest { std::vector<wxString> { "Hello", "Goodbye" } }.withSize({ 1, 2 });
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetSize() == wxSize { 1, 2 });
+    }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

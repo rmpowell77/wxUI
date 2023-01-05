@@ -129,5 +129,21 @@ TEST_CASE("ListBox")
         CHECK("Hello" == window->GetString(0));
         CHECK("Goodbye" == window->GetString(1));
     }
+
+    SECTION("style")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest {}.style(wxLB_MULTIPLE);
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetWindowStyle() == (wxBORDER_SUNKEN | wxLB_MULTIPLE));
+    }
+
+    SECTION("pos")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest {}.withPosition({ 1, 2 });
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+    }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

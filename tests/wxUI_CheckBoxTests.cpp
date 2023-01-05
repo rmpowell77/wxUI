@@ -105,5 +105,29 @@ TEST_CASE("CheckBox")
         CHECK(10000 == window->GetId());
         CHECK("Hello" == window->GetLabel());
     }
+
+    SECTION("style")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest {}.style(wxCHK_3STATE);
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetWindowStyle() == wxCHK_3STATE);
+    }
+
+    SECTION("pos")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest {}.withPosition({ 1, 2 });
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+    }
+
+    SECTION("size")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest {}.withSize({ 1, 2 });
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetSize() == wxSize { 1, 2 });
+    }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

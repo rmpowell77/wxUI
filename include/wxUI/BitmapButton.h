@@ -58,7 +58,7 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, identity, bitmap, wxDefaultPosition, wxDefaultSize);
+        auto* widget = new underlying_t(parent, identity, bitmap, this->pos, this->size, this->usingStyle);
         if (isDefault) {
             widget->SetDefault();
         }

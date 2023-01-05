@@ -60,7 +60,7 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, identity, bitmap, wxDefaultPosition, wxDefaultSize);
+        auto* widget = new underlying_t(parent, identity, bitmap, this->pos, this->size, this->usingStyle);
         if (bitmapPressed) {
             widget->SetBitmapPressed(*bitmapPressed);
         }
