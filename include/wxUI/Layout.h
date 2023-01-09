@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include "Widget.h"
+#include <variant>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
@@ -238,24 +239,38 @@ struct HStack : public details::Stack<wxHORIZONTAL, W...> {
 
 struct Generic {
     std::optional<wxSizerFlags> flags {};
-    wxSizer* sizer;
+    std::variant<wxSizer*, wxWindow*> child;
 
     Generic(wxSizerFlags const& flags, wxSizer* sizer)
         : flags(flags)
-        , sizer(sizer)
+        , child(sizer)
     {
     }
 
     explicit Generic(wxSizer* sizer)
-        : sizer(sizer)
+        : child(sizer)
+    {
+    }
+
+    Generic(wxSizerFlags const& flags, wxWindow* window)
+        : flags(flags)
+        , child(window)
+    {
+    }
+
+    explicit Generic(wxWindow* window)
+        : child(window)
     {
     }
 
     void createAndAdd([[maybe_unused]] wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
     {
-        // the item has already been created, we're mearly holding on to it.
-        parentSizer->Add(sizer, flags ? *flags : parentFlags);
+        return std::visit(details::overloaded {
+                              [this, parentSizer, parentFlags](auto arg) {
+                                  parentSizer->Add(arg, flags ? *flags : parentFlags);
+                              },
+                          },
+            child);
     }
 };
-
 }

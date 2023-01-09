@@ -61,6 +61,13 @@ template <typename R, typename C, typename... Args>
 struct get_arity<R (C::*)(Args...) const> : std::integral_constant<unsigned, sizeof...(Args)> {
 };
 
+template <class... Ts>
+struct overloaded : Ts... {
+    using Ts::operator()...;
+};
+template <class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
+
 template <Widget W, typename Event, typename Function>
 struct BindWidgetToEvent {
     W widget;
