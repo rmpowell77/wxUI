@@ -5,7 +5,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
 
 This overview provides an overview of `wxUI`, but is not intented to be a tutorial on `wxWidgets`.  We assume the reader has working knowledge of `wxWidgets`.  Great documentation and guides are available at [https://www.wxwidgets.org](https://www.wxwidgets.org).
 
-In `wxUI`, you use "Menu" to declary the layout of your menu items and the "actions" they call.  Similarly, you use "Sizers" to declaree the layout of "Controllers" for your application.
+In `wxUI`, you use "Menu" to declary the layout of your menu items and the "actions" they call.  Similarly, you use "Sizers" to declare the layout of "Controllers" for your application.
 
 ### Menu
 
@@ -125,7 +125,7 @@ wxUI::VStack { "Current Frame" }.attachTo(this);
 
 #### Generic
 
-One special type of "Layout" is `Generic`.  There are cases where you may have an existing layout as a `wxSizer` (such as a common dialog) that you wish to use with `wxUI`.  This is a case to use `Generic`:
+One special type of "Layout" is `Generic`.  There are cases where you may have an existing layout as a `wxSizer` (such as a common dialog) or `wxWindow` (such as a custom window) that you wish to use with `wxUI`.  This is a case to use `Generic`:
 
 ```cpp
     VStack {
