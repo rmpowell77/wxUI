@@ -64,7 +64,7 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, this->identity, this->pos, this->size, static_cast<int>(choices.size()), choices.data(), this->usingStyle);
+        auto* widget = new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle());
         widget->SetSelection(selection);
         return widget;
     }

@@ -43,7 +43,7 @@ struct Line : public details::WidgetDetails<Line, wxStaticLine> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        return new underlying_t(parent, this->identity, this->pos, this->size, this->usingStyle);
+        return new underlying_t(parent, getIdentity(), getPos(), getSize(), getStyle());
     }
 
     virtual ~Line() = default;
