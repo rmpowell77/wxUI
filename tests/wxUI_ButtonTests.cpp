@@ -122,7 +122,7 @@ TEST_CASE("Button")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.style(wxBU_LEFT);
+        auto uut = TypeUnderTest {}.withStyle(wxBU_LEFT);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == wxBU_LEFT);
     }

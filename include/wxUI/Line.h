@@ -55,12 +55,12 @@ struct Line : public details::WidgetDetails<Line, wxStaticLine> {
 
 inline auto HLine() -> Line
 {
-    return Line(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).style(wxLI_HORIZONTAL);
+    return Line(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_HORIZONTAL);
 }
 
 inline auto VLine() -> Line
 {
-    return Line(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).style(wxLI_VERTICAL);
+    return Line(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_VERTICAL);
 }
 
 static_assert(details::Widget<Line>);

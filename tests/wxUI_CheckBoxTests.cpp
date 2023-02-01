@@ -109,7 +109,7 @@ TEST_CASE("CheckBox")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.style(wxCHK_3STATE);
+        auto uut = TypeUnderTest {}.withStyle(wxCHK_3STATE);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == wxCHK_3STATE);
     }

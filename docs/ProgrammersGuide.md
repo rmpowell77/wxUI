@@ -146,7 +146,7 @@ One special type of "Layout" is `Generic`.  There are cases where you may have a
             CheckBox { "Show" },
             Choice { { "Less", "More" } },
             TextCtrl { wxSizerFlags(1).Expand().Border(), "Fill in the blank" }
-                .style(wxALIGN_LEFT),
+                .withStyle(wxALIGN_LEFT),
         },
 ```
 

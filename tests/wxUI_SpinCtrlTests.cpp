@@ -135,7 +135,7 @@ TEST_CASE("SpinCtrl")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.style(wxTE_PROCESS_ENTER);
+        auto uut = TypeUnderTest {}.withStyle(wxTE_PROCESS_ENTER);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == (wxTE_PROCESS_ENTER | wxTAB_TRAVERSAL | 0x200000));
     }

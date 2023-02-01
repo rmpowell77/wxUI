@@ -134,7 +134,7 @@ TEST_CASE("RadioBox")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { std::vector<wxString> { "Hello", "Goodbye" } }.style(wxRA_SPECIFY_COLS);
+        auto uut = TypeUnderTest { std::vector<wxString> { "Hello", "Goodbye" } }.withStyle(wxRA_SPECIFY_COLS);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == (wxRA_SPECIFY_COLS | wxTAB_TRAVERSAL));
     }
