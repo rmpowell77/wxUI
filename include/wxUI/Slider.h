@@ -63,7 +63,7 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
         auto min = range ? range->first : 0;
         auto max = range ? range->second : 100;
         auto initvalue = initial ? *initial : min;
-        auto* widget = new underlying_t(parent, identity, initvalue, min, max, this->pos, this->size, this->usingStyle);
+        auto* widget = new underlying_t(parent, getIdentity(), initvalue, min, max, getPos(), getSize(), getStyle());
         return widget;
     }
 

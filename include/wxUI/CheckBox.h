@@ -60,7 +60,7 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        return new underlying_t(parent, this->identity, text, this->pos, this->size, this->usingStyle);
+        return new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle());
     }
 
     template <typename Function>

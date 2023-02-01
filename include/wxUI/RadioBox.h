@@ -37,11 +37,10 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     int selection {};
 
     explicit RadioBox(wxWindowID identity, std::string text = "", std::vector<wxString> choices = {})
-        : super(identity)
+        : super(identity, details::withStyle {}, wxRA_SPECIFY_COLS)
         , text(std::move(text))
         , choices(std::move(choices))
     {
-        usingStyle = wxRA_SPECIFY_COLS;
     }
 
     RadioBox(wxWindowID identity, std::vector<wxString> choices)
@@ -60,11 +59,10 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     }
 
     RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::string text, std::vector<wxString> choices)
-        : super(flags, identity)
+        : super(flags, identity, details::withStyle {}, wxRA_SPECIFY_COLS)
         , text(std::move(text))
         , choices(std::move(choices))
     {
-        usingStyle = wxRA_SPECIFY_COLS;
     }
 
     RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> choices)
@@ -96,7 +94,7 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, this->identity, text, this->pos, this->size, static_cast<int>(choices.size()), choices.data(), majorDim_, this->usingStyle);
+        auto* widget = new underlying_t(parent, getIdentity(), text, getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), majorDim_, getStyle());
         widget->SetSelection(selection);
         return widget;
     }

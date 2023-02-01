@@ -98,6 +98,10 @@ struct BindWidgetToEvent {
 template <Widget W, typename Event, typename Function>
 BindWidgetToEvent(W, Event, Function) -> BindWidgetToEvent<W, Event, Function>;
 
+// This is to allow disambiguation of construction with a style
+struct withStyle {
+};
+
 // The WidgetDetails are the base class of the Controllers.  The common details
 // across many controllers are stored in the base class.
 // The "recipe" for constructing a controller is pretty straight forward:
@@ -118,6 +122,19 @@ struct WidgetDetails {
     {
     }
 
+    explicit WidgetDetails(wxWindowID identity, withStyle, int64_t style)
+        : identity(identity)
+        , style(style)
+    {
+    }
+
+    WidgetDetails(wxSizerFlags const& flags, wxWindowID identity, withStyle, int64_t style)
+        : flags(flags)
+        , identity(identity)
+        , style(style)
+    {
+    }
+
     auto withPosition(wxPoint pos_) -> ConcreteWidget&
     {
         pos = pos_;
@@ -130,9 +147,9 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withStyle(int64_t style) -> ConcreteWidget&
+    auto withStyle(int64_t style_) -> ConcreteWidget&
     {
-        usingStyle = style;
+        style = style_;
         return static_cast<ConcreteWidget&>(*this);
     }
 
@@ -152,18 +169,22 @@ struct WidgetDetails {
         return widget;
     }
 
+    auto getIdentity() const { return identity; }
+    auto getPos() const { return pos; }
+    auto getSize() const { return size; }
+    auto getStyle() const { return style; }
+
 private:
     // these should be implemented in the derived classes.
     // aka the Template Pattern
     virtual auto create(wxWindow* parent) -> wxWindow* = 0;
 
-public:
     std::optional<wxSizerFlags> flags;
     // these are common across the controls
     wxWindowID identity = wxID_ANY;
     wxPoint pos = wxDefaultPosition;
     wxSize size = wxDefaultSize;
-    int64_t usingStyle {};
+    int64_t style {};
     Underlying** windowHandle {};
 };
 

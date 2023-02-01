@@ -63,7 +63,7 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
         auto min = range ? range->first : 0;
         auto max = range ? range->second : 100;
         auto initvalue = initial ? *initial : min;
-        auto* widget = new underlying_t(parent, identity, wxEmptyString, this->pos, this->size, this->usingStyle, min, max, initvalue);
+        auto* widget = new underlying_t(parent, getIdentity(), wxEmptyString, getPos(), getSize(), getStyle(), min, max, initvalue);
         return widget;
     }
 
