@@ -167,27 +167,4 @@ public:
     Underlying** windowHandle {};
 };
 
-// function must be of type ([[maybe_unused]] wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags);
-template <CreateAndAddFunction Function>
-struct Custom {
-    std::optional<wxSizerFlags> flags;
-    Function function;
-
-    Custom(wxSizerFlags const& flags, Function const& function)
-        : flags(flags)
-        , function(function)
-    {
-    }
-
-    explicit Custom(Function const& function)
-        : function(function)
-    {
-    }
-
-    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
-    {
-        function(parent, parentSizer, flags ? *flags : parentFlags);
-    }
-};
-
 }
