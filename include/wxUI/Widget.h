@@ -130,7 +130,7 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto style(int64_t style) -> ConcreteWidget&
+    auto withStyle(int64_t style) -> ConcreteWidget&
     {
         usingStyle = style;
         return static_cast<ConcreteWidget&>(*this);

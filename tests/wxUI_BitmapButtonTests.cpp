@@ -81,7 +81,7 @@ TEST_CASE("BitmapButton")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxBitmap {} }.style(wxBU_LEFT);
+        auto uut = TypeUnderTest { wxBitmap {} }.withStyle(wxBU_LEFT);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == (wxBU_LEFT | wxBU_EXACTFIT | wxBU_NOTEXT));
     }

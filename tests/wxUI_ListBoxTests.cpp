@@ -133,7 +133,7 @@ TEST_CASE("ListBox")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.style(wxLB_MULTIPLE);
+        auto uut = TypeUnderTest {}.withStyle(wxLB_MULTIPLE);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == (wxBORDER_SUNKEN | wxLB_MULTIPLE));
     }

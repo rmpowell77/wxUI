@@ -133,7 +133,7 @@ TEST_CASE("Choice")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.style(wxCB_SORT);
+        auto uut = TypeUnderTest {}.withStyle(wxCB_SORT);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == wxCB_SORT);
     }

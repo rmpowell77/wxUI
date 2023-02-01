@@ -24,16 +24,16 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             "Text examples",
             Text { "Example of Text in wxUI" },
             TextCtrl { "Single line of text" }
-                .style(wxALIGN_LEFT),
+                .withStyle(wxALIGN_LEFT),
             TextCtrl {
                 "Several lines of text.\n"
                 "With wxUI the code reflects\n"
                 "what the UI looks like." }
-                .style(wxTE_MULTILINE)
+                .withStyle(wxTE_MULTILINE)
                 .withSize(wxSize(200, 100))
         },
         RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
-            .style(wxRA_SPECIFY_ROWS)
+            .withStyle(wxRA_SPECIFY_ROWS)
             .majorDim(1)
             .withSelection(1),
 
@@ -42,7 +42,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             CheckBox { "Show" },
             Choice { { "Less", "More" } },
             TextCtrl { wxSizerFlags(1).Expand().Border(), "Fill in the blank" }
-                .style(wxALIGN_LEFT),
+                .withStyle(wxALIGN_LEFT),
         },
 
         HStack {
@@ -109,7 +109,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             "Text examples",
             Text { "Example of Text in wxUI" },
             TextCtrl { "Single line of text" }
-                .style(wxALIGN_LEFT),
+                .withStyle(wxALIGN_LEFT),
     // ...
         },
     // ...

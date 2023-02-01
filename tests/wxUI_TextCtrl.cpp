@@ -108,7 +108,7 @@ TEST_CASE("TextCtrl")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.style(wxTE_PROCESS_ENTER);
+        auto uut = TypeUnderTest {}.withStyle(wxTE_PROCESS_ENTER);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == (wxBORDER_SUNKEN | wxTE_PROCESS_ENTER));
     }

@@ -108,7 +108,7 @@ TEST_CASE("Text")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.style(wxST_ELLIPSIZE_MIDDLE);
+        auto uut = TypeUnderTest {}.withStyle(wxST_ELLIPSIZE_MIDDLE);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == wxST_ELLIPSIZE_MIDDLE);
     }
