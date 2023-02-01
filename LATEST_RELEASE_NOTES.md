@@ -11,5 +11,6 @@ Other changes:
 * [#59](../../issues/59) need BitmapToggleButton
 * [#65](../../issues/65) Custom controller should take a coroutine that generates wxWindows to be added to the sizer
 * [#70](../../issues/70) Widget::style() is odd, it should be withStyle()
+* [#71](../../issues/71) remove wxUI::details::Custom
 * [#72](../../issues/72) consider making WidgetDetails member values private
 
