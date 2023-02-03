@@ -2,10 +2,12 @@ cmake_minimum_required(VERSION 3.23)
 
 add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_BitmapButtonTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_BitmapComboBox.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_BitmapToggleButtonTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ButtonTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_CheckBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ChoiceTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ComboBox.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LayoutTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LineTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ListBoxTests.cpp
