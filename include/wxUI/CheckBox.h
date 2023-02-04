@@ -31,11 +31,6 @@ namespace wxUI {
 struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
     using super = details::WidgetDetails<CheckBox, wxCheckBox>;
 
-    std::string text;
-    std::vector<wxString> choices {};
-    int majorDim {};
-    int selection {};
-
     explicit CheckBox(wxWindowID identity, std::string text = "")
         : super(identity)
         , text(std::move(text))
@@ -60,7 +55,15 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        return new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle());
+        auto* widget = new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle());
+        widget->SetValue(value);
+        return widget;
+    }
+
+    auto withValue(bool value_) -> CheckBox&
+    {
+        value = value_;
+        return *this;
     }
 
     template <typename Function>
@@ -74,6 +77,10 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
     CheckBox(CheckBox&&) = default;
     auto operator=(CheckBox const&) -> CheckBox& = default;
     auto operator=(CheckBox&&) -> CheckBox& = default;
+
+private:
+    std::string text;
+    bool value = false;
 };
 
 static_assert(details::Widget<CheckBox>);

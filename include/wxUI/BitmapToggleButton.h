@@ -31,9 +31,6 @@ namespace wxUI {
 struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton> {
     using super = details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton>;
 
-    wxBitmap bitmap;
-    std::optional<wxBitmap> bitmapPressed;
-
     BitmapToggleButton(wxWindowID identity, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = {})
         : super(identity)
         , bitmap(bitmap)
@@ -78,6 +75,10 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
     BitmapToggleButton(BitmapToggleButton&&) = default;
     auto operator=(BitmapToggleButton const&) -> BitmapToggleButton& = default;
     auto operator=(BitmapToggleButton&&) -> BitmapToggleButton& = default;
+
+private:
+    wxBitmap bitmap;
+    std::optional<wxBitmap> bitmapPressed;
 };
 
 static_assert(details::Widget<BitmapToggleButton>);

@@ -14,4 +14,6 @@ Other changes:
 * [#71](../../issues/71) remove wxUI::details::Custom
 * [#72](../../issues/72) consider making WidgetDetails member values private
 * [#76](../../issues/76) add wxBitmapComboBox
+* [#79](../../issues/79) CheckBox has some unneeded member variables (that should be private)
+* [#82](../../issues/82) wxCheckBox needs a setValue
 

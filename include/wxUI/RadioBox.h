@@ -31,11 +31,6 @@ namespace wxUI {
 struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     using super = details::WidgetDetails<RadioBox, wxRadioBox>;
 
-    std::string text;
-    std::vector<wxString> choices;
-    int majorDim_ {};
-    int selection {};
-
     explicit RadioBox(wxWindowID identity, std::string text = "", std::vector<wxString> choices = {})
         : super(identity, details::withStyle {}, wxRA_SPECIFY_COLS)
         , text(std::move(text))
@@ -86,15 +81,15 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
         return *this;
     }
 
-    auto majorDim(int majorDim) -> RadioBox&
+    auto withMajorDim(int majorDim_) -> RadioBox&
     {
-        majorDim_ = majorDim;
+        majorDim = majorDim_;
         return *this;
     }
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, getIdentity(), text, getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), majorDim_, getStyle());
+        auto* widget = new underlying_t(parent, getIdentity(), text, getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), majorDim, getStyle());
         widget->SetSelection(selection);
         return widget;
     }
@@ -110,6 +105,12 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     RadioBox(RadioBox&&) = default;
     auto operator=(RadioBox const&) -> RadioBox& = default;
     auto operator=(RadioBox&&) -> RadioBox& = default;
+
+private:
+    std::string text;
+    std::vector<wxString> choices;
+    int majorDim {};
+    int selection {};
 };
 
 static_assert(details::Widget<RadioBox>);

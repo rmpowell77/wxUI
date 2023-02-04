@@ -31,9 +31,6 @@ namespace wxUI {
 struct Button : public details::WidgetDetails<Button, wxButton> {
     using super = details::WidgetDetails<Button, wxButton>;
 
-    std::string text;
-    bool isDefault = false;
-
     explicit Button(wxWindowID identity, std::string text = "")
         : super(identity)
         , text(std::move(text))
@@ -82,6 +79,10 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
     Button(Button&&) = default;
     auto operator=(Button const&) -> Button& = default;
     auto operator=(Button&&) -> Button& = default;
+
+private:
+    std::string text;
+    bool isDefault = false;
 };
 
 static_assert(details::Widget<Button>);

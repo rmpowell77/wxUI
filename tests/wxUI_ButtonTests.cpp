@@ -105,19 +105,6 @@ TEST_CASE("Button")
         CHECK(10000 == window->GetId());
         CHECK("Hello" == window->GetLabel());
     }
-    SECTION("setDefault.false")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, "Hello" };
-        CHECK(!uut.isDefault);
-    }
-
-    SECTION("setDefault.true")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, "Hello" }.setDefault();
-        CHECK(uut.isDefault);
-    }
 
     SECTION("style")
     {

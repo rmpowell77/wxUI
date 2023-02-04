@@ -31,9 +31,6 @@ namespace wxUI {
 struct Slider : public details::WidgetDetails<Slider, wxSlider> {
     using super = details::WidgetDetails<Slider, wxSlider>;
 
-    std::optional<std::pair<int, int>> range;
-    std::optional<int> initial;
-
     explicit Slider(wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : super(identity)
         , range(range)
@@ -78,6 +75,10 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
     Slider(Slider&&) = default;
     auto operator=(Slider const&) -> Slider& = default;
     auto operator=(Slider&&) -> Slider& = default;
+
+private:
+    std::optional<std::pair<int, int>> range;
+    std::optional<int> initial;
 };
 
 static_assert(details::Widget<Slider>);
