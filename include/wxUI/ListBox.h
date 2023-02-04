@@ -31,9 +31,6 @@ namespace wxUI {
 struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
     using super = details::WidgetDetails<ListBox, wxListBox>;
 
-    std::vector<wxString> choices {};
-    int selection = wxNOT_FOUND;
-
     explicit ListBox(wxWindowID identity, std::vector<wxString> choices = {})
         : super(identity)
         , choices(std::move(choices))
@@ -80,6 +77,10 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
     ListBox(ListBox&&) = default;
     auto operator=(ListBox const&) -> ListBox& = default;
     auto operator=(ListBox&&) -> ListBox& = default;
+
+private:
+    std::vector<wxString> choices {};
+    int selection = wxNOT_FOUND;
 };
 
 static_assert(details::Widget<ListBox>);

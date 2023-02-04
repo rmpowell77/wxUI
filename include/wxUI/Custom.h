@@ -41,9 +41,6 @@ concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* s
 
 template <CreateAndAddFunction Function>
 struct Custom {
-    std::optional<wxSizerFlags> flags;
-    Function function;
-
     Custom(wxSizerFlags const& flags, Function const& function)
         : flags(flags)
         , function(function)
@@ -59,6 +56,10 @@ struct Custom {
     {
         function(parent, parentSizer, flags ? *flags : parentFlags);
     }
+
+private:
+    std::optional<wxSizerFlags> flags;
+    Function function;
 };
 
 }

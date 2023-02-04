@@ -31,9 +31,6 @@ namespace wxUI {
 struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     using super = details::WidgetDetails<SpinCtrl, wxSpinCtrl>;
 
-    std::optional<std::pair<int, int>> range;
-    std::optional<int> initial;
-
     explicit SpinCtrl(wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : super(identity)
         , range(range)
@@ -78,6 +75,10 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     SpinCtrl(SpinCtrl&&) = default;
     auto operator=(SpinCtrl const&) -> SpinCtrl& = default;
     auto operator=(SpinCtrl&&) -> SpinCtrl& = default;
+
+private:
+    std::optional<std::pair<int, int>> range;
+    std::optional<int> initial;
 };
 
 static_assert(details::Widget<SpinCtrl>);

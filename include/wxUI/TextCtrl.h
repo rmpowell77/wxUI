@@ -31,8 +31,6 @@ namespace wxUI {
 struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
     using super = details::WidgetDetails<TextCtrl, wxTextCtrl>;
 
-    std::string text;
-
     explicit TextCtrl(wxWindowID identity, std::string text = "")
         : super(identity)
         , text(std::move(text))
@@ -71,6 +69,9 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
     TextCtrl(TextCtrl&&) = default;
     auto operator=(TextCtrl const&) -> TextCtrl& = default;
     auto operator=(TextCtrl&&) -> TextCtrl& = default;
+
+private:
+    std::string text;
 };
 
 static_assert(details::Widget<TextCtrl>);

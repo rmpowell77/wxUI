@@ -34,7 +34,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         },
         RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
             .withStyle(wxRA_SPECIFY_ROWS)
-            .majorDim(1)
+            .withMajorDim(1)
             .withSelection(1),
 
         HStack {

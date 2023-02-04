@@ -31,9 +31,6 @@ namespace wxUI {
 struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton> {
     using super = details::WidgetDetails<BitmapButton, wxBitmapButton>;
 
-    wxBitmap bitmap;
-    bool isDefault = false;
-
     BitmapButton(wxWindowID identity, wxBitmap const& bitmap)
         : super(identity)
         , bitmap(bitmap)
@@ -82,6 +79,10 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
     BitmapButton(BitmapButton&&) = default;
     auto operator=(BitmapButton const&) -> BitmapButton& = default;
     auto operator=(BitmapButton&&) -> BitmapButton& = default;
+
+private:
+    wxBitmap bitmap;
+    bool isDefault = false;
 };
 
 static_assert(details::Widget<BitmapButton>);

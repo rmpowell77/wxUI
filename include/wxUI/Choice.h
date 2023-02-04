@@ -31,9 +31,6 @@ namespace wxUI {
 struct Choice : public details::WidgetDetails<Choice, wxChoice> {
     using super = details::WidgetDetails<Choice, wxChoice>;
 
-    std::vector<wxString> choices {};
-    int selection {};
-
     explicit Choice(wxWindowID identity, std::vector<wxString> choices = {})
         : super(identity)
         , choices(std::move(choices))
@@ -80,6 +77,10 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
     Choice(Choice&&) = default;
     auto operator=(Choice const&) -> Choice& = default;
     auto operator=(Choice&&) -> Choice& = default;
+
+private:
+    std::vector<wxString> choices {};
+    int selection {};
 };
 
 static_assert(details::Widget<Choice>);

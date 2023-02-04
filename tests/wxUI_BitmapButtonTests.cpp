@@ -64,20 +64,6 @@ TEST_CASE("BitmapButton")
         CHECK(window->GetLabel().empty());
     }
 
-    SECTION("setDefault.false")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, wxBitmap {} };
-        CHECK(!uut.isDefault);
-    }
-
-    SECTION("setDefault.true")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, wxBitmap {} }.setDefault();
-        CHECK(uut.isDefault);
-    }
-
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };

@@ -31,8 +31,6 @@ namespace wxUI {
 struct Text : public details::WidgetDetails<Text, wxStaticText> {
     using super = details::WidgetDetails<Text, wxStaticText>;
 
-    std::string text;
-
     explicit Text(wxWindowID identity, std::string text = "")
         : super(identity)
         , text(std::move(text))
@@ -67,6 +65,9 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
     Text(Text&&) = default;
     auto operator=(Text const&) -> Text& = default;
     auto operator=(Text&&) -> Text& = default;
+
+private:
+    std::string text;
 };
 
 static_assert(details::Widget<Text>);
