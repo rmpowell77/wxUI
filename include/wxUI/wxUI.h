@@ -28,10 +28,12 @@
 // SOFTWARE.
 
 #include <wxUI/BitmapButton.h>
+#include <wxUI/BitmapComboBox.h>
 #include <wxUI/BitmapToggleButton.h>
 #include <wxUI/Button.h>
 #include <wxUI/CheckBox.h>
 #include <wxUI/Choice.h>
+#include <wxUI/ComboBox.h>
 #include <wxUI/Custom.h>
 #include <wxUI/Layout.h>
 #include <wxUI/Line.h>
