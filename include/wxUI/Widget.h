@@ -47,19 +47,23 @@ concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* s
 
 // https://stackoverflow.com/questions/27866909/get-function-arity-from-template-parameter
 template <typename T>
-struct get_arity : get_arity<decltype(&T::operator())> {
-};
-template <typename R, typename... Args>
-struct get_arity<R (*)(Args...)> : std::integral_constant<unsigned, sizeof...(Args)> {
-};
-// Possibly add specialization for variadic functions
-// Member functions:
-template <typename R, typename C, typename... Args>
-struct get_arity<R (C::*)(Args...)> : std::integral_constant<unsigned, sizeof...(Args)> {
-};
-template <typename R, typename C, typename... Args>
-struct get_arity<R (C::*)(Args...) const> : std::integral_constant<unsigned, sizeof...(Args)> {
-};
+constexpr bool noarg_callable_impl(
+    typename std::enable_if<bool(sizeof((std::declval<T>()(), 0)))>::type*)
+{
+    return true;
+}
+
+template <typename T>
+constexpr bool noarg_callable_impl(...)
+{
+    return false;
+}
+
+template <typename T>
+constexpr bool is_noarg_callable()
+{
+    return noarg_callable_impl<T>(nullptr);
+}
 
 template <class... Ts>
 struct overloaded : Ts... {
@@ -84,7 +88,7 @@ struct BindWidgetToEvent {
     auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
     {
         wxWindow* window = widget.createAndAdd(parent, sizer, flags);
-        if constexpr (get_arity<Function> {} == 0) {
+        if constexpr (is_noarg_callable<Function>()) {
             window->Bind(event, [function = function](auto) {
                 function();
             });
