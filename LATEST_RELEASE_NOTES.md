@@ -2,6 +2,8 @@
 
 Bugs addressed in this release:
 
+* [#86](../../issues/86) Cannot use bind when it associates to something that requires an argument
+
 Other changes:
 
 * [#55](../../issues/55) Layout::Generic should take wxWindow also

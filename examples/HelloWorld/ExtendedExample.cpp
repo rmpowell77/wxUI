@@ -39,6 +39,9 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             BitmapButton { wxBitmap {} },
         },
         HStack {
+            BitmapComboBox { { std::tuple { "", wxBitmap {} } } },
+        },
+        HStack {
             BitmapToggleButton { wxBitmap {} },
         },
         HStack {
@@ -48,10 +51,19 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             CheckBox {},
         },
         HStack {
+            ComboBox { { "hello" } },
+        },
+        HStack {
             Line {},
         },
         HStack {
+            ListBox { {} },
+        },
+        HStack {
             RadioBox { std::vector<wxString> { "hello" } },
+        },
+        HStack {
+            Slider {},
         },
         HStack {
             SpinCtrl {},
@@ -62,17 +74,30 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         HStack {
             TextCtrl {},
         },
+        // getHandle example
         HStack {
             Text { "Hello" }
                 .getHandle(&text),
         },
+        // bind examples
+        HStack {
+            TextCtrl { "Hello" }
+                .bind([] {}),
+        },
+        VStack {
+            wxUI::Choice { std::vector<wxString> { wxT("Numbers"), wxT("Letters") } }
+                .bind([](auto& e) { (void)e; }),
+        },
         // snippet CustomExample
         HStack {
-            Custom { [](wxWindow* window, wxSizer* sizer, wxSizerFlags flags) {
-                for (auto&& title : { "1", "2", "3" }) {
-                    Button { title }.createAndAdd(window, sizer, flags);
-                }
-            } } },
+            Custom {
+                [](wxWindow* window, wxSizer* sizer, wxSizerFlags flags) {
+                    for (auto&& title : { "1", "2", "3" }) {
+                        Button { title }.createAndAdd(window, sizer, flags);
+                    }
+                },
+            },
+        },
         // endsnippet CustomExample
     }
         .attachTo(this);
