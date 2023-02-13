@@ -232,10 +232,10 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
     using namespace wxUI;
     // snippet wxUILayoutBasic
     // snippet wxUIGeneric
-    VStack {
+    VSizer {
         wxSizerFlags().Expand().Border(),
         // endsnippet wxUIGeneric
-        VStack {
+        VSizer {
             "Text examples",
             // endsnippet wxUILayoutBasic
             Text { "Example of Text in wxUI" },
@@ -257,7 +257,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             .withSelection(1),
 
         // snippet wxUIController
-        HStack {
+        HSizer {
             "Details",
             CheckBox { "Show" },
             Choice { { "Less", "More" } },
@@ -266,7 +266,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         },
         // endsnippet wxUIController
 
-        HStack {
+        HSizer {
             wxSizerFlags().Center().Border(),
             // snippet wxUIBind
             Button { wxSizerFlags().Border(wxRIGHT), "Left" }

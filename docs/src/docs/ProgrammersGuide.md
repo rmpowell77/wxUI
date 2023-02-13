@@ -53,35 +53,35 @@ The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold
 
 ### Layout
 
-The basics of `wxUI` layout is the "Layout".  You use a specific type of "Layout", with the `VStack` and `HStack` being the most common. When a "Layout" is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
+The basics of `wxUI` layout is the "Layout".  You use a specific type of "Layout", with the `VSizer` (Vertical Sizer or "row") and `HSizer` (Horizontal Sizer or "column") being the most common. When a "Layout" is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
 
 ```cpp
 {{{ examples/HelloWorld/HelloWorld.cpp wxUILayoutBasic "    // ..." }}}
 ```
 
-In the above example we have constructed a vertical layout stack that will use a `wxSizer` with the `wxSizerFlags` set to expand with a default border.  Then the first item in the stack is a second layer stack with another vertical layout.  The `wxSizerFlags` are propogated to each layer so the vertical layout in this example would also be set to expand with a default border.  The second stack would be created as a "named" box vertical stack.
+In the above example we have constructed a vertical layout sizer that will use a `wxSizer` with the `wxSizerFlags` set to expand with a default border.  Then the first item in the sizer is a second layer sizer with horizontal layout.  The `wxSizerFlags` are propogated to each layer so the horizontal layout in this example would also be set to expand with a default border.  The second sizer would be created as a "named" box horizonal sizer.
 
-A "Layout" takes a collection of Items, which can be either additional "Layout" (to create a tree of "Layouts") or "Controllers".  Here is the general form of constructions for Stacks:
-
-```
-Stack { Items... }
-Stack { SizerFlags, Items... }
-Stack { "Name", Items... }
-Stack { "Name", SizerFlags, Items... }
-```
-
-`wxUI` supports 3 flavors of Stacks: `VStack` (Vertical Stacks), `HStack` (Horizontal Stacks), and `FlexGridStack` (Flexible Grid Stacks).  Both `VStack` and `HStack` can be created with a string to create a "named" box.
-
-Note: Because Stacks are intented to be "recursive" data structures, it is possible for a `VStack` to contain a `VStack`.  However, be aware that if an empty `VStack` is created with *just* a `VStack` as the argument, we collapse that to be a single `VStack`.  ie, this:
+A "Layout" takes a collection of Items, which can be either additional "Layout" (to create a tree of "Layouts") or "Controllers".  Here is the general form of constructions for Sizers:
 
 ```
-wxUI::VStack { wxUI::VStack { "Current Frame" } }.attachTo(this);
+Sizer { Items... }
+Sizer { SizerFlags, Items... }
+Sizer { "Name", Items... }
+Sizer { "Name", SizerFlags, Items... }
+```
+
+`wxUI` supports 3 flavors of Sizers: `VSizer` (Vertical Sizers), `HSizer` (Horizontal Sizers), and `FlexGridSizer` (Flexible Grid Sizers).  Both `VSizer` and `HSizer` can be created with a string to create a "named" box.
+
+Note: Because Sizers are intented to be "recursive" data structures, it is possible for a `VSizer` to contain a `VSizer`.  However, be aware that if an empty `VSizer` is created with *just* a `VSizer` as the argument, we collapse that to be a single `VSizer`.  ie, this:
+
+```
+wxUI::VSizer { wxUI::VSizer { "Current Frame" } }.attachTo(this);
 ```
 
 is equivalant to:
 
 ```
-wxUI::VStack { "Current Frame" }.attachTo(this);
+wxUI::VSizer { "Current Frame" }.attachTo(this);
 ```
 
 
@@ -158,7 +158,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExtendedExample")
 {
     using namespace wxUI;
-    VStack {
+    VSizer {
         TextCtrl { "Hello" }
             .getHandle(&mText),
         },

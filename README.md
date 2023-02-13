@@ -18,9 +18,9 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
-    VStack {
+    VSizer {
         wxSizerFlags().Expand().Border(),
-        VStack {
+        VSizer {
             "Text examples",
             Text { "Example of Text in wxUI" },
             TextCtrl { "Single line of text" }
@@ -37,7 +37,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             .withMajorDim(1)
             .withSelection(1),
 
-        HStack {
+        HSizer {
             "Details",
             CheckBox { "Show" },
             Choice { { "Less", "More" } },
@@ -45,7 +45,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
                 .withStyle(wxALIGN_LEFT),
         },
 
-        HStack {
+        HSizer {
             wxSizerFlags().Center().Border(),
             Button { wxSizerFlags().Border(wxRIGHT), "Left" }
                 .bind([] { wxLogMessage("Pressed Left"); }),
@@ -103,9 +103,9 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
-    VStack {
+    VSizer {
         wxSizerFlags().Expand().Border(),
-        VStack {
+        VSizer {
             "Text examples",
             Text { "Example of Text in wxUI" },
             TextCtrl { "Single line of text" }
