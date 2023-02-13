@@ -68,11 +68,14 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         },
         // snippet CustomExample
         HStack {
-            Custom { [](wxWindow* window, wxSizer* sizer, wxSizerFlags flags) {
-                for (auto&& title : { "1", "2", "3" }) {
-                    Button { title }.createAndAdd(window, sizer, flags);
-                }
-            } } },
+            Custom {
+                [](wxWindow* window, wxSizer* sizer, wxSizerFlags flags) {
+                    for (auto&& title : { "1", "2", "3" }) {
+                        Button { title }.createAndAdd(window, sizer, flags);
+                    }
+                },
+            },
+        },
         // endsnippet CustomExample
     }
         .attachTo(this);
