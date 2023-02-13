@@ -237,11 +237,14 @@ You would then create the controller to confomr
 
 ```cpp
         HStack {
-            Custom { [](wxWindow* window, wxSizer* sizer, wxSizerFlags flags) {
-                for (auto&& title : { "1", "2", "3" }) {
-                    Button { title }.createAndAdd(window, sizer, flags);
-                }
-            } } },
+            Custom {
+                [](wxWindow* window, wxSizer* sizer, wxSizerFlags flags) {
+                    for (auto&& title : { "1", "2", "3" }) {
+                        Button { title }.createAndAdd(window, sizer, flags);
+                    }
+                },
+            },
+        },
 ```
 
 #### Misc notes.
