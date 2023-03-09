@@ -33,63 +33,63 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
 {
     using namespace wxUI;
     wxStaticText* text = nullptr;
-    VStack {
+    VSizer {
         wxSizerFlags().Expand().Border(),
-        HStack {
+        HSizer {
             BitmapButton { wxBitmap {} },
         },
-        HStack {
+        HSizer {
             BitmapComboBox { { std::tuple { "", wxBitmap {} } } },
         },
-        HStack {
+        HSizer {
             BitmapToggleButton { wxBitmap {} },
         },
-        HStack {
+        HSizer {
             Button {},
         },
-        HStack {
+        HSizer {
             CheckBox {},
         },
-        HStack {
+        HSizer {
             ComboBox { { "hello" } },
         },
-        HStack {
+        HSizer {
             Line {},
         },
-        HStack {
+        HSizer {
             ListBox { {} },
         },
-        HStack {
+        HSizer {
             RadioBox { std::vector<wxString> { "hello" } },
         },
-        HStack {
+        HSizer {
             Slider {},
         },
-        HStack {
+        HSizer {
             SpinCtrl {},
         },
-        HStack {
+        HSizer {
             Text {},
         },
-        HStack {
+        HSizer {
             TextCtrl {},
         },
         // getHandle example
-        HStack {
+        HSizer {
             Text { "Hello" }
                 .getHandle(&text),
         },
         // bind examples
-        HStack {
+        HSizer {
             TextCtrl { "Hello" }
                 .bind([] {}),
         },
-        VStack {
+        VSizer {
             wxUI::Choice { std::vector<wxString> { wxT("Numbers"), wxT("Letters") } }
                 .bind([](auto& e) { (void)e; }),
         },
         // snippet CustomExample
-        HStack {
+        HSizer {
             Custom {
                 [](wxWindow* window, wxSizer* sizer, wxSizerFlags flags) {
                     for (auto&& title : { "1", "2", "3" }) {
