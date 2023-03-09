@@ -111,6 +111,7 @@ The list of Methods supported by all controllers:
 
 The "Controllers" currently supported by `wxUI`:
 
+ * `Bitmap` for `wxStaticBitmap`
  * `BitmapButton` for `wxBitmapButton`
  * `BitmapComboBox` for `wxBitmapComboBox`
  * `BitmapToggleButton` for `wxBitmapToggleButton`

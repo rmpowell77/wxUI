@@ -18,4 +18,6 @@ Other changes:
 * [#76](../../issues/76) add wxBitmapComboBox
 * [#79](../../issues/79) CheckBox has some unneeded member variables (that should be private)
 * [#82](../../issues/82) wxCheckBox needs a setValue
+* [#89](../../issues/89) Change stack to sizer
+* [#92](../../issues/92) Need a Bitmap
 
