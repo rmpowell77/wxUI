@@ -70,11 +70,7 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
         return details::BindWidgetToEvent { *this, wxEVT_SPINCTRL, func };
     }
 
-    virtual ~SpinCtrl() = default;
-    SpinCtrl(SpinCtrl const&) = default;
-    SpinCtrl(SpinCtrl&&) = default;
-    auto operator=(SpinCtrl const&) -> SpinCtrl& = default;
-    auto operator=(SpinCtrl&&) -> SpinCtrl& = default;
+    RULE_OF_SIX_BOILERPLATE(SpinCtrl);
 
 private:
     std::optional<std::pair<int, int>> range;

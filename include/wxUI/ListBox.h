@@ -72,11 +72,7 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
         return details::BindWidgetToEvent { *this, wxEVT_LISTBOX, func };
     }
 
-    virtual ~ListBox() = default;
-    ListBox(ListBox const&) = default;
-    ListBox(ListBox&&) = default;
-    auto operator=(ListBox const&) -> ListBox& = default;
-    auto operator=(ListBox&&) -> ListBox& = default;
+    RULE_OF_SIX_BOILERPLATE(ListBox);
 
 private:
     std::vector<wxString> choices {};

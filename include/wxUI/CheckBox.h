@@ -72,11 +72,7 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
         return details::BindWidgetToEvent { *this, wxEVT_CHECKBOX, func };
     }
 
-    virtual ~CheckBox() = default;
-    CheckBox(CheckBox const&) = default;
-    CheckBox(CheckBox&&) = default;
-    auto operator=(CheckBox const&) -> CheckBox& = default;
-    auto operator=(CheckBox&&) -> CheckBox& = default;
+    RULE_OF_SIX_BOILERPLATE(CheckBox);
 
 private:
     std::string text;

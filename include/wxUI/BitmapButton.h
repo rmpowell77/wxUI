@@ -74,11 +74,7 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
         return details::BindWidgetToEvent { *this, wxEVT_BUTTON, func };
     }
 
-    virtual ~BitmapButton() = default;
-    BitmapButton(BitmapButton const&) = default;
-    BitmapButton(BitmapButton&&) = default;
-    auto operator=(BitmapButton const&) -> BitmapButton& = default;
-    auto operator=(BitmapButton&&) -> BitmapButton& = default;
+    RULE_OF_SIX_BOILERPLATE(BitmapButton);
 
 private:
     wxBitmap bitmap;

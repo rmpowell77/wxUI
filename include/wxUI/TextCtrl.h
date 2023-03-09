@@ -64,11 +64,7 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
         return details::BindWidgetToEvent { *this, wxEVT_TEXT, func };
     }
 
-    virtual ~TextCtrl() = default;
-    TextCtrl(TextCtrl const&) = default;
-    TextCtrl(TextCtrl&&) = default;
-    auto operator=(TextCtrl const&) -> TextCtrl& = default;
-    auto operator=(TextCtrl&&) -> TextCtrl& = default;
+    RULE_OF_SIX_BOILERPLATE(TextCtrl);
 
 private:
     std::string text;

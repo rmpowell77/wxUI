@@ -70,11 +70,7 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
         return details::BindWidgetToEvent { *this, wxEVT_SLIDER, func };
     }
 
-    virtual ~Slider() = default;
-    Slider(Slider const&) = default;
-    Slider(Slider&&) = default;
-    auto operator=(Slider const&) -> Slider& = default;
-    auto operator=(Slider&&) -> Slider& = default;
+    RULE_OF_SIX_BOILERPLATE(Slider);
 
 private:
     std::optional<std::pair<int, int>> range;

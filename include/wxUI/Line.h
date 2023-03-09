@@ -46,11 +46,7 @@ struct Line : public details::WidgetDetails<Line, wxStaticLine> {
         return new underlying_t(parent, getIdentity(), getPos(), getSize(), getStyle());
     }
 
-    virtual ~Line() = default;
-    Line(Line const&) = default;
-    Line(Line&&) = default;
-    auto operator=(Line const&) -> Line& = default;
-    auto operator=(Line&&) -> Line& = default;
+    RULE_OF_SIX_BOILERPLATE(Line);
 };
 
 inline auto HLine() -> Line

@@ -106,11 +106,7 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
         return details::BindWidgetToEvent { *this, wxEVT_COMBOBOX, func };
     }
 
-    virtual ~BitmapComboBox() = default;
-    BitmapComboBox(BitmapComboBox const&) = default;
-    BitmapComboBox(BitmapComboBox&&) = default;
-    auto operator=(BitmapComboBox const&) -> BitmapComboBox& = default;
-    auto operator=(BitmapComboBox&&) -> BitmapComboBox& = default;
+    RULE_OF_SIX_BOILERPLATE(BitmapComboBox);
 
 private:
     std::vector<wxString> choices;

@@ -70,11 +70,7 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
         return details::BindWidgetToEvent { *this, wxEVT_TOGGLEBUTTON, func };
     }
 
-    virtual ~BitmapToggleButton() = default;
-    BitmapToggleButton(BitmapToggleButton const&) = default;
-    BitmapToggleButton(BitmapToggleButton&&) = default;
-    auto operator=(BitmapToggleButton const&) -> BitmapToggleButton& = default;
-    auto operator=(BitmapToggleButton&&) -> BitmapToggleButton& = default;
+    RULE_OF_SIX_BOILERPLATE(BitmapToggleButton);
 
 private:
     wxBitmap bitmap;
