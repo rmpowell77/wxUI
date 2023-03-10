@@ -36,6 +36,7 @@
 #include <wxUI/Choice.h>
 #include <wxUI/ComboBox.h>
 #include <wxUI/Custom.h>
+#include <wxUI/Hyperlink.h>
 #include <wxUI/Layout.h>
 #include <wxUI/Line.h>
 #include <wxUI/ListBox.h>

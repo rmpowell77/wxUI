@@ -32,7 +32,7 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     using super = details::WidgetDetails<Hyperlink, wxHyperlinkCtrl>;
 
     Hyperlink(wxWindowID identity, std::string text, std::string url)
-        : super(identity)
+        : super(identity, details::withStyle {}, wxHL_DEFAULT_STYLE)
         , text(std::move(text))
         , url(std::move(url))
     {
@@ -44,7 +44,7 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     }
 
     Hyperlink(wxSizerFlags const& flags, wxWindowID identity, std::string text, std::string url)
-        : super(flags, identity)
+        : super(flags, identity, details::withStyle {}, wxHL_DEFAULT_STYLE)
         , text(std::move(text))
         , url(std::move(url))
     {
