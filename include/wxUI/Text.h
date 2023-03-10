@@ -60,11 +60,7 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
         return new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle());
     }
 
-    virtual ~Text() = default;
-    Text(Text const&) = default;
-    Text(Text&&) = default;
-    auto operator=(Text const&) -> Text& = default;
-    auto operator=(Text&&) -> Text& = default;
+    RULE_OF_SIX_BOILERPLATE(Text);
 
 private:
     std::string text;

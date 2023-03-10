@@ -58,11 +58,7 @@ struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
         return new underlying_t(parent, getIdentity(), bitmap, getPos(), getSize(), getStyle());
     }
 
-    virtual ~Bitmap() = default;
-    Bitmap(Bitmap const&) = default;
-    Bitmap(Bitmap&&) = default;
-    auto operator=(Bitmap const&) -> Bitmap& = default;
-    auto operator=(Bitmap&&) -> Bitmap& = default;
+    RULE_OF_SIX_BOILERPLATE(Bitmap);
 
 private:
     wxBitmap bitmap;

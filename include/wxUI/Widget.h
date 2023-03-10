@@ -192,4 +192,11 @@ private:
     Underlying** windowHandle {};
 };
 
+#define RULE_OF_SIX_BOILERPLATE(WIDGET)               \
+    virtual ~WIDGET() = default;                      \
+    WIDGET(WIDGET const&) = default;                  \
+    WIDGET(WIDGET&&) = default;                       \
+    auto operator=(WIDGET const&)->WIDGET& = default; \
+    auto operator=(WIDGET&&)->WIDGET& = default;
+
 }

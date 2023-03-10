@@ -100,11 +100,7 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
         return details::BindWidgetToEvent { *this, wxEVT_RADIOBOX, func };
     }
 
-    virtual ~RadioBox() = default;
-    RadioBox(RadioBox const&) = default;
-    RadioBox(RadioBox&&) = default;
-    auto operator=(RadioBox const&) -> RadioBox& = default;
-    auto operator=(RadioBox&&) -> RadioBox& = default;
+    RULE_OF_SIX_BOILERPLATE(RadioBox);
 
 private:
     std::string text;

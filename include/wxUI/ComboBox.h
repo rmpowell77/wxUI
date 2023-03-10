@@ -73,11 +73,7 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
         return details::BindWidgetToEvent { *this, wxEVT_COMBOBOX, func };
     }
 
-    virtual ~ComboBox() = default;
-    ComboBox(ComboBox const&) = default;
-    ComboBox(ComboBox&&) = default;
-    auto operator=(ComboBox const&) -> ComboBox& = default;
-    auto operator=(ComboBox&&) -> ComboBox& = default;
+    RULE_OF_SIX_BOILERPLATE(ComboBox);
 
 private:
     std::vector<wxString> choices;

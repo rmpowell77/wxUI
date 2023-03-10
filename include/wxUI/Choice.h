@@ -72,11 +72,7 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
         return details::BindWidgetToEvent { *this, wxEVT_CHOICE, func };
     }
 
-    virtual ~Choice() = default;
-    Choice(Choice const&) = default;
-    Choice(Choice&&) = default;
-    auto operator=(Choice const&) -> Choice& = default;
-    auto operator=(Choice&&) -> Choice& = default;
+    RULE_OF_SIX_BOILERPLATE(Choice);
 
 private:
     std::vector<wxString> choices {};

@@ -74,11 +74,7 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
         return details::BindWidgetToEvent { *this, wxEVT_BUTTON, func };
     }
 
-    virtual ~Button() = default;
-    Button(Button const&) = default;
-    Button(Button&&) = default;
-    auto operator=(Button const&) -> Button& = default;
-    auto operator=(Button&&) -> Button& = default;
+    RULE_OF_SIX_BOILERPLATE(Button);
 
 private:
     std::string text;
