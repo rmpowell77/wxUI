@@ -167,7 +167,8 @@ The "Controllers" currently supported by `wxUI`:
  * `Button` for `wxButton`
  * `CheckBox` for `wxCheckBox`
  * `Choice` for `wxChoice`
- * `ComboBox` for `ComboBox`
+ * `ComboBox` for `wxComboBox`
+ * `Hypertext` for `wxHypertextCtrl`
  * `ListBox` for `wxListBox`
  * `Line` for `wxStaticLine`
  * `RadioBox` for `wxRadioBox`
