@@ -157,6 +157,12 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
+    auto withFont(wxFontInfo const& fontInfo_) -> ConcreteWidget&
+    {
+        fontInfo = fontInfo_;
+        return static_cast<ConcreteWidget&>(*this);
+    }
+
     auto getHandle(Underlying** handle) -> ConcreteWidget&
     {
         windowHandle = handle;
@@ -166,6 +172,9 @@ struct WidgetDetails {
     auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& parentFlags)
     {
         auto widget = dynamic_cast<Underlying*>(create(parent));
+        if (fontInfo) {
+            widget->SetFont(wxFont(*fontInfo));
+        }
         sizer->Add(widget, flags ? *flags : parentFlags);
         if (windowHandle) {
             *windowHandle = widget;
@@ -189,6 +198,7 @@ private:
     wxPoint pos = wxDefaultPosition;
     wxSize size = wxDefaultSize;
     int64_t style {};
+    std::optional<wxFontInfo> fontInfo {};
     Underlying** windowHandle {};
 };
 
