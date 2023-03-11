@@ -72,7 +72,15 @@ namespace details {
             auto currentFlags = flags ? *flags : wxSizerFlags {};
             createAndAddWidgets(parent, sizer, currentFlags);
 
-            parent->SetSizerAndFit(sizer);
+            parent->SetSizer(sizer);
+            return *this;
+        }
+
+        auto attachToAndFit(wxWindow* parent) -> auto&
+        {
+            attachTo(parent);
+            auto* sizer = parent->GetSizer();
+            sizer->SetSizeHints(parent);
             return *this;
         }
 
