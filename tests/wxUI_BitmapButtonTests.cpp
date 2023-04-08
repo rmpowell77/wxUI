@@ -24,16 +24,31 @@ SOFTWARE.
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/BitmapButton.h>
 
+#include "wxUI_TestControlCommon.h"
+
 #include <wx/wx.h>
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::BitmapButton;
+
+struct BitmapButtonTestPolicy {
+    using TypeUnderTest = TypeUnderTest;
+    static auto createUUT() { return TypeUnderTest { wxBitmap {} }; }
+    static auto testStyle() { return (wxBU_LEFT | wxBU_EXACTFIT | wxBU_NOTEXT); }
+    static auto testPosition() { return wxPoint { 1, 2 }; }
+    static auto testSize() { return wxSize { 10, 12 }; }
+    static auto expectedStyle() { return testStyle(); }
+    static auto expectedPosition() { return testPosition(); }
+    static auto expectedSize() { return testSize(); }
+};
+static auto createUUT() { return BitmapButtonTestPolicy::createUUT(); }
+
 TEST_CASE("BitmapButton")
 {
     SECTION("bitmap")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxBitmap {} };
+        auto uut = createUUT();
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetLabel().empty());
     }
@@ -67,7 +82,7 @@ TEST_CASE("BitmapButton")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxBitmap {} }.withStyle(wxBU_LEFT);
+        auto uut = createUUT().withStyle(wxBU_LEFT);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == (wxBU_LEFT | wxBU_EXACTFIT | wxBU_NOTEXT));
     }
@@ -75,7 +90,7 @@ TEST_CASE("BitmapButton")
     SECTION("pos")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxBitmap {} }.withPosition({ 1, 2 });
+        auto uut = createUUT().withPosition({ 1, 2 });
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetPosition() == wxPoint { 1, 2 });
     }
@@ -83,9 +98,11 @@ TEST_CASE("BitmapButton")
     SECTION("size")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxBitmap {} }.withSize({ 1, 2 });
+        auto uut = createUUT().withSize({ 1, 2 });
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
+
+    CHAINING_TEST(BitmapButtonTestPolicy)
 }
-// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

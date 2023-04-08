@@ -23,11 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
+#include "GetterSetter.h"
 #include "Widget.h"
 #include <wx/radiobox.h>
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_radio_box.html
 struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     using super = details::WidgetDetails<RadioBox, wxRadioBox>;
 
@@ -100,6 +102,20 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
         return details::BindWidgetToEvent { *this, wxEVT_RADIOBOX, func };
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+        [[nodiscard]] auto selection() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return controller->GetSelection(); },
+                [controller](int selection) { controller->SetSelection(selection); }
+            };
+        }
+
+        auto operator->() const { return selection(); }
+        auto operator*() const { return selection(); }
+    };
     RULE_OF_SIX_BOILERPLATE(RadioBox);
 
 private:

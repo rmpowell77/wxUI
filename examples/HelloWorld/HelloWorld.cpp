@@ -26,6 +26,7 @@ SOFTWARE.
 
 #include "ExtendedExample.h"
 // snippet Example headers to include
+#include <numeric>
 #include <wx/wx.h>
 #include <wxUI/wxUI.h>
 // endsnippet Example
@@ -40,6 +41,12 @@ public:
     HelloWorldFrame();
 };
 
+enum {
+    ExampleDialogWidgetsASpinner = 1100,
+    ExampleDialogWidgetsBSpinner,
+    ExampleDialogWidgetsGCDResult,
+};
+
 class ExampleDialogWidgets : public wxDialog {
 public:
     explicit ExampleDialogWidgets(wxWindow* parent);
@@ -49,6 +56,8 @@ public:
 class ExampleDialog : public wxDialog {
 public:
     explicit ExampleDialog(wxWindow* parent);
+    wxUI::SpinCtrl::Proxy a, b;
+    wxUI::Text::Proxy result;
 };
 // endsnippet Example
 
@@ -72,20 +81,8 @@ HelloWorldFrame::HelloWorldFrame()
             wxUI::Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [] {
                             wxLogMessage("Hello world from wxWidgets!");
                         } },
-            // snippet wxUIMenuExample1
-            wxUI::Item { "&Example1...\tCtrl-D", [] {
-                            wxLogMessage("Hello World!");
-                        } },
-            wxUI::CheckItem { "&Example2...\tCtrl-D", [](wxCommandEvent& event) {
-                                 wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
-                             } },
-            // endsnippet wxUIMenuExample1
             wxUI::Separator {}, wxUI::Item { "&Example...\tCtrl-D", [this] {
                                                 ExampleDialogWidgets dialog(this);
-                                                dialog.ShowModal();
-                                            } },
-            wxUI::Separator {}, wxUI::Item { "&ExtendedExample...\tCtrl-D", [this] {
-                                                ExtendedExample dialog(this);
                                                 dialog.ShowModal();
                                             } },
             // snippet wxUIMenu
@@ -123,6 +120,18 @@ HelloWorldFrame::HelloWorldFrame()
                                  } },
             },
             // snippet wxUIMenuSubMenu
+            // snippet wxUIMenuExample1
+            wxUI::Separator {}, wxUI::Item { "&ExtendedExample...", [this] {
+                                                ExtendedExample dialog(this);
+                                                dialog.ShowModal();
+                                            } },
+            wxUI::Item { "&Example Item...", [] {
+                            wxLogMessage("Hello World!");
+                        } },
+            wxUI::CheckItem { "&Example Checked Item...", [](wxCommandEvent& event) {
+                                 wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
+                             } },
+            // endsnippet wxUIMenuExample1
         },
         // endsnippet wxUIMenuSubMenu
         wxUI::Menu {
@@ -156,8 +165,15 @@ ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
         "what the UI looks like.",
         wxDefaultPosition, wxDefaultSize,
         wxTE_MULTILINE);
-    auto btnLeft = new wxButton(this, wxID_ANY, "Left");
-    auto btnRight = new wxButton(this, wxID_ANY, "Right");
+    auto* btnLeft = new wxButton(this, wxID_ANY, "Left");
+    auto* btnRight = new wxButton(this, wxID_ANY, "Right");
+
+    auto* spinALabel = new wxStaticText(this, wxID_ANY, "A = ");
+    auto* spinA = new wxSpinCtrl(this, ExampleDialogWidgetsASpinner, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 1000, 1);
+    auto* spinBLabel = new wxStaticText(this, wxID_ANY, "B = ");
+    auto* spinB = new wxSpinCtrl(this, ExampleDialogWidgetsBSpinner, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 1000, 1);
+    auto* gcdLabel = new wxStaticText(this, wxID_ANY, "GCD = ");
+    auto* gcdResult = new wxStaticText(this, ExampleDialogWidgetsGCDResult, "1");
 
     const wxString levels[] = {
         "&Information",
@@ -194,6 +210,15 @@ ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
     sizerText->Add(textBody, wxSizerFlags(1).Expand().Border());
     sizer->Add(sizerText, wxSizerFlags(1).Expand().Border());
 
+    auto* spinners = new wxBoxSizer(wxHORIZONTAL);
+    spinners->Add(spinALabel, wxSizerFlags().Expand().Border());
+    spinners->Add(spinA, wxSizerFlags().Expand().Border());
+    spinners->Add(spinBLabel, wxSizerFlags().Expand().Border());
+    spinners->Add(spinB, wxSizerFlags().Expand().Border());
+    spinners->Add(gcdLabel, wxSizerFlags().Expand().Border());
+    spinners->Add(gcdResult, wxSizerFlags().Expand().Border());
+    sizer->Add(spinners, wxSizerFlags().Expand().Border());
+
     sizer->Add(logLevels, wxSizerFlags().Expand().Border());
 
     auto* sizerDetails = new wxStaticBoxSizer(wxHORIZONTAL, this, "Details");
@@ -207,7 +232,7 @@ ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
     sizerBtns->Add(btnRight, wxSizerFlags().Border(wxRIGHT));
     sizer->Add(sizerBtns, wxSizerFlags().Centre().Border());
 
-    sizer->Add(new wxStaticLine(this, wxID_STATIC), 0, wxGROW | wxALL, 50);
+    sizer->Add(new wxStaticLine(this, wxID_STATIC), 0, wxGROW | wxALL);
 
     sizer->Add(CreateStdDialogButtonSizer(wxOK), wxSizerFlags().Expand().Border());
 
@@ -218,6 +243,15 @@ ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
     // And connect the event handlers.
     btnLeft->Bind(wxEVT_BUTTON, [](wxEvent&) { wxLogMessage("Pressed Left"); });
     btnRight->Bind(wxEVT_BUTTON, [](wxEvent&) { wxLogMessage("Pressed Right"); });
+
+    auto action = [this](wxEvent&) {
+        auto valueA = dynamic_cast<wxSpinCtrl*>(FindWindow(ExampleDialogWidgetsASpinner))->GetValue();
+        auto valueB = dynamic_cast<wxSpinCtrl*>(FindWindow(ExampleDialogWidgetsBSpinner))->GetValue();
+        dynamic_cast<wxStaticText*>(FindWindow(ExampleDialogWidgetsGCDResult))->SetLabel(std::to_string(std::gcd(valueA, valueB)));
+    };
+    spinA->Bind(wxEVT_SPINCTRL, action);
+    spinB->Bind(wxEVT_SPINCTRL, action);
+
     // snippet withwxWidgets
 }
 // endsnippet withwxWidgets
@@ -230,6 +264,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
+
     // snippet wxUILayoutBasic
     // snippet wxUIGeneric
     VSizer {
@@ -249,6 +284,20 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
                 .withStyle(wxTE_MULTILINE)
                 .withSize(wxSize(200, 100))
             // snippet withwxUI
+        },
+        HSizer {
+            Text { "A =" },
+            a = SpinCtrl { std::pair { 1, 10000 } }
+                    .bind([this]() {
+                        *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b)));
+                    }),
+
+            Text { "B =" },
+            b = SpinCtrl { std::pair { 1, 10000 } }
+                    .bind([this]() { *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b))); }),
+
+            Text { "GCD = " },
+            result = Text { "1" },
         },
         // endsnippet withwxUI
         RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
@@ -281,7 +330,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         // snippet withwxUI
         // snippet wxUILayoutBasic
     }
-        .attachTo(this);
+        .attachToAndFit(this);
     // endsnippet wxUIGeneric
     // endsnippet wxUILayoutBasic
 }

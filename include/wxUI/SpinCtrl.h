@@ -23,17 +23,19 @@ SOFTWARE.
 */
 #pragma once
 
+#include "GetterSetter.h"
 #include "Widget.h"
 #include <wx/spinctrl.h>
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_spin_ctrl.html
 struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     using super = details::WidgetDetails<SpinCtrl, wxSpinCtrl>;
 
     explicit SpinCtrl(wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : super(identity)
-        , range(range)
+        , range(std::move(range))
         , initial(initial)
     {
     }
@@ -45,7 +47,7 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
 
     explicit SpinCtrl(wxSizerFlags const& flags, wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : super(flags, identity)
-        , range(range)
+        , range(std::move(range))
         , initial(initial)
     {
     }
@@ -55,13 +57,12 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     {
     }
 
-    auto create(wxWindow* parent) -> wxWindow* override
+    auto create(wxWindow* parent) -> wxWindow*
     {
         auto min = range ? range->first : 0;
         auto max = range ? range->second : 100;
         auto initvalue = initial ? *initial : min;
-        auto* widget = new underlying_t(parent, getIdentity(), wxEmptyString, getPos(), getSize(), getStyle(), min, max, initvalue);
-        return widget;
+        return setProxy(new underlying_t(parent, getIdentity(), wxEmptyString, getPos(), getSize(), getStyle(), min, max, initvalue));
     }
 
     template <typename Function>
@@ -69,6 +70,22 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     {
         return details::BindWidgetToEvent { *this, wxEVT_SPINCTRL, func };
     }
+
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+
+        [[nodiscard]] auto value() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return controller->GetValue(); },
+                [controller](int value) { controller->SetValue(value); }
+            };
+        }
+
+        auto operator->() const { return value(); }
+        auto operator*() const { return value(); }
+    };
 
     RULE_OF_SIX_BOILERPLATE(SpinCtrl);
 

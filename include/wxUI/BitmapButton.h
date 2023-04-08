@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_bitmap_button.html
 struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton> {
     using super = details::WidgetDetails<BitmapButton, wxBitmapButton>;
 
@@ -74,6 +75,9 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
         return details::BindWidgetToEvent { *this, wxEVT_BUTTON, func };
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+    };
     RULE_OF_SIX_BOILERPLATE(BitmapButton);
 
 private:

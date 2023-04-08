@@ -23,11 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
+#include "GetterSetter.h"
 #include "Widget.h"
 #include <wx/slider.h>
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_slider.html
 struct Slider : public details::WidgetDetails<Slider, wxSlider> {
     using super = details::WidgetDetails<Slider, wxSlider>;
 
@@ -70,6 +72,20 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
         return details::BindWidgetToEvent { *this, wxEVT_SLIDER, func };
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+        [[nodiscard]] auto value() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return controller->GetValue(); },
+                [controller](int value) { controller->SetValue(value); }
+            };
+        }
+
+        auto operator->() const { return value(); }
+        auto operator*() const { return value(); }
+    };
     RULE_OF_SIX_BOILERPLATE(Slider);
 
 private:

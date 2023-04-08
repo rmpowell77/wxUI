@@ -5,7 +5,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
 
 This overview provides an overview of `wxUI`, but is not intented to be a tutorial on `wxWidgets`.  We assume the reader has working knowledge of `wxWidgets`.  Great documentation and guides are available at [https://www.wxwidgets.org](https://www.wxwidgets.org).
 
-In `wxUI`, you use "Menu" to declary the layout of your menu items and the "actions" they call.  Similarly, you use "Sizers" to declare the layout of "Controllers" for your application.
+In `wxUI`, you use `wxUI::Menu` to declare the layout of your menu items and the "actions" they call.  Similarly, you use `wxUI::Sizer` to declare the layout of *Controllers* for your application.
 
 ### Menu
 
@@ -35,17 +35,21 @@ HelloWorldFrame::HelloWorldFrame()
 
 In `wxWidgets` the general paradigm is to create an enumeration of identity ints that you associate with a member, then you would bind, either statically or dynamically, to a function.  With `wxUI::Menu` the construction of the identify and assocation with a function is handled automatically.  By default `wxUI::Menu` starts the enumeration with `wxID_AUTO_LOWEST` and increments for each item.  Take caution if you use these enumerations as it may collide with other ids assocated with the frame.
 
-The top level `MenuBar` holds a collection of `Menu` objects.  The `Menu` object consists of a name of the menu, and a collection of "Items", which can be one of `Item` (normal), `Separator`, `CheckItem`, and `RadioItem`.
+The top level `wxUI::MenuBar` holds a collection of `wxUI::Menu` objects.  The `wxUI::Menu` object consists of a name of the menu, and a collection of "Items", which can be one of `wxUI::Item` (normal), `wxUI::Separator`, `wxUI::CheckItem`, and `wxUI::RadioItem`.
 
 Menu Items are generally a name with a handler lambda, or name and id with a lambda.  Menu Items can also be assocated with `wxStandardID`.  Many of these like `wxID_EXIT` and `wxID_HELP` have predefined name, help, and handlers, so declaration with just an ID is allowed.
 
 Handlers are callable items that handle events.  The handler can be declared with both no arguments or the `wxCommandEvent` argument for deeper inspection of the event.
 
 ```cpp
-            wxUI::Item { "&Example1...\tCtrl-D", [] {
+            wxUI::Separator {}, wxUI::Item { "&ExtendedExample...", [this] {
+                                                ExtendedExample dialog(this);
+                                                dialog.ShowModal();
+                                            } },
+            wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },
-            wxUI::CheckItem { "&Example2...\tCtrl-D", [](wxCommandEvent& event) {
+            wxUI::CheckItem { "&Example Checked Item...", [](wxCommandEvent& event) {
                                  wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
                              } },
 ```
@@ -63,7 +67,7 @@ Items { "Name", Handler }
 Items { "Name", "Help", Handler }
 ```
 
-wxUI::Menu also allows nesting of menus.  This allows complicated menus to be composed easily.
+`wxUI::Menu` also allows nesting of menus.  This allows complicated menus to be composed easily.
 
 ```cpp
         wxUI::Menu {
@@ -77,6 +81,16 @@ wxUI::Menu also allows nesting of menus.  This allows complicated menus to be co
                                            } },
                       },
     // ...
+            wxUI::Separator {}, wxUI::Item { "&ExtendedExample...", [this] {
+                                                ExtendedExample dialog(this);
+                                                dialog.ShowModal();
+                                            } },
+            wxUI::Item { "&Example Item...", [] {
+                            wxLogMessage("Hello World!");
+                        } },
+            wxUI::CheckItem { "&Example Checked Item...", [](wxCommandEvent& event) {
+                                 wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
+                             } },
         },
 ```
 
@@ -85,7 +99,7 @@ The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold
 
 ### Layout
 
-The basics of `wxUI` layout is the "Layout".  You use a specific type of "Layout", with the `VSizer` (Vertical Sizer or "row") and `HSizer` (Horizontal Sizer or "column") being the most common. When a "Layout" is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
+The basics of `wxUI` layout is the *Layout*.  You use a specific type of *Layout*, with the `wxUI::VSizer` (Vertical Sizer or "row") and `wxUI::HSizer` (Horizontal Sizer or "column") being the most common. When a *Layout* is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
 
 ```cpp
     VSizer {
@@ -94,12 +108,12 @@ The basics of `wxUI` layout is the "Layout".  You use a specific type of "Layout
             "Text examples",
     // ...
     }
-        .attachTo(this);
+        .attachToAndFit(this);
 ```
 
 In the above example we have constructed a vertical layout sizer that will use a `wxSizer` with the `wxSizerFlags` set to expand with a default border.  Then the first item in the sizer is a second layer sizer with horizontal layout.  The `wxSizerFlags` are propogated to each layer so the horizontal layout in this example would also be set to expand with a default border.  The second sizer would be created as a "named" box horizonal sizer.
 
-A "Layout" takes a collection of Items, which can be either additional "Layout" (to create a tree of "Layouts") or "Controllers".  Here is the general form of constructions for Sizers:
+A *Layout* takes a collection of objects, which can be either additional *Layout* (to create a tree of *Layouts*) or *Controllers*.  Here is the general form of constructions for *Sizers*:
 
 ```
 Sizer { Items... }
@@ -108,9 +122,9 @@ Sizer { "Name", Items... }
 Sizer { "Name", SizerFlags, Items... }
 ```
 
-`wxUI` supports 3 flavors of Sizers: `VSizer` (Vertical Sizers), `HSizer` (Horizontal Sizers), and `FlexGridSizer` (Flexible Grid Sizers).  Both `VSizer` and `HSizer` can be created with a string to create a "named" box.
+`wxUI` supports 3 flavors of Sizers: `wxUI::VSizer` (Vertical Sizers), `wxUI::HSizer` (Horizontal Sizers), and `wxUI::FlexGridSizer` (Flexible Grid Sizers).  Both `wxUI::VSizer` and `wxUI::HSizer` can be created with a string to create a "named" box.
 
-Note: Because Sizers are intented to be "recursive" data structures, it is possible for a `VSizer` to contain a `VSizer`.  However, be aware that if an empty `VSizer` is created with *just* a `VSizer` as the argument, we collapse that to be a single `VSizer`.  ie, this:
+Note: Because Sizers are intented to be "recursive" data structures, it is possible for a `wxUI::VSizer` to contain a `wxUI::VSizer`.  However, be aware that if an empty `wxUI::VSizer` is created with *just* a `wxUI::VSizer` as the argument, we collapse that to be a single `wxUI::VSizer`.  ie, this:
 
 ```
 wxUI::VSizer { wxUI::VSizer { "Current Frame" } }.attachTo(this);
@@ -125,7 +139,7 @@ wxUI::VSizer { "Current Frame" }.attachTo(this);
 
 #### Generic
 
-One special type of "Layout" is `Generic`.  There are cases where you may have an existing layout as a `wxSizer` (such as a common dialog) or `wxWindow` (such as a custom window) that you wish to use with `wxUI`.  This is a case to use `Generic`:
+One special type of *Layout* is `Generic`.  There are cases where you may have an existing layout as a `wxSizer` (such as a common dialog) or `wxWindow` (such as a custom window) that you wish to use with `wxUI`.  This is a case to use `Generic`:
 
 ```cpp
     VSizer {
@@ -133,12 +147,12 @@ One special type of "Layout" is `Generic`.  There are cases where you may have a
     // ...
         Generic { CreateStdDialogButtonSizer(wxOK) },
     }
-        .attachTo(this);
+        .attachToAndFit(this);
 ```
 
 ### Controllers
 
-"Controllers" are the general term to refer to items that behave like a [`wxContol`](https://docs.wxwidgets.org/3.0/classwx_control.html).  In `wxUI` we attempt to conform a consistent style that favors the common things you do with a specific `wxControl`.
+*Controllers* are the general term to refer to items that behave like a [`wxContol`](https://docs.wxwidgets.org/3.0/classwx_control.html).  In `wxUI` we attempt to conform a consistent style that favors the common things you do with a specific `wxControl`.
 
 ```cpp
         HSizer {
@@ -150,7 +164,7 @@ One special type of "Layout" is `Generic`.  There are cases where you may have a
         },
 ```
 
-By default "Controllers" are constructed using the default arguments for position, style, size, etc.  "Controllers" are designed to use Method Chaining to specialize the way the controller is constructed.  In the example above we see that `TextCtrl` is being augmented with the style `wxALIGN_LEFT`.
+By default *Controllers* are constructed using the default arguments for position, style, size, etc.  *Controllers* are designed to use [Method Chaining](https://en.wikipedia.org/wiki/Method_chaining) to specialize the way the controller is constructed.  In the example above we see that `wxUI::TextCtrl` is being augmented with the style `wxALIGN_LEFT`.
 
 The list of Methods supported by all controllers:
 
@@ -158,30 +172,9 @@ The list of Methods supported by all controllers:
  * `withSize(wxSize size)` : Specifies the `size` of the `wxControl`.
  * `withStyle(long style)` : Specifies the `style` of the `wxControl`.
 
-The "Controllers" currently supported by `wxUI`:
-
- * `Bitmap` for `wxStaticBitmap`
- * `BitmapButton` for `wxBitmapButton`
- * `BitmapComboBox` for `wxBitmapComboBox`
- * `BitmapToggleButton` for `wxBitmapToggleButton`
- * `Button` for `wxButton`
- * `CheckBox` for `wxCheckBox`
- * `Choice` for `wxChoice`
- * `ComboBox` for `wxComboBox`
- * `Hypertext` for `wxHypertextCtrl`
- * `ListBox` for `wxListBox`
- * `Line` for `wxStaticLine`
- * `RadioBox` for `wxRadioBox`
- * `Slider` for `wxSlider`
- * `SpinCtrl` for `wxSpinCtrl`
- * `Text` for `wxStaticText`
- * `TextCtrl` for `wxTextCtrl`
-
-Additional "Contollers" should be easy to add in future updates.
-
 #### Bind
 
-Some "Controllers" support "Binding" a function call to their event handlers.  When the event for that controller is emitted, the function-like object supplied will be called.
+Some *Controllers* support "binding" a function call to their event handlers.  When the event for that controller is emitted, the function-like object supplied will be called.
 
 ```cpp
             Button { wxSizerFlags().Border(wxRIGHT), "Left" }
@@ -192,9 +185,16 @@ Some "Controllers" support "Binding" a function call to their event handlers.  W
 
 For convenience the event parameter of the function can be omitted in cases where it is unused.
 
-#### `getHandle`
+#### Proxy
 
-Often a `wxWindow` object needs to be referenced.  For example, perhaps for reading a currently selected value.  "Controllers" support `getHandle`, a way to get the handle to the underlying `wxWindow` that is created for the "Controller".  You provide the address of the handle that you would like to be populated when the "Controller" is created
+Often the value of a *Controller* in a layout needs to be referenced, or sometimes the backing `wxWindow` itself needs to be used directly.  This could be for reading a currently typed in value in a `TextCtrl`, or to change the selection of a `Choice`.  *Controllers* support `Proxy` objects, a way to get the handle to the underlying `wxWindow` that is created for the *Controller*.
+
+Some *Controllers* do not support values that are intended to change, such as a `Line`, and others can have several values of interest, such as a `ComboBox`.  `Proxy` objects can have several accessors that allow access to these, most commonly called `value()` and `selection()` (see Supported Controllers for details of each supported *Controller*).  These accessors are proxy objects support `get()` and `set()` functions, as well as a set of appropriate overloads for the underlying type, allowing more ergonomic interaction with the code.  `Proxy` also supplies `operator*` and `operator->` which reference the most common accessor.
+
+`Proxy` supply `control()`, which is intended to allow access to the underlying controller.
+
+As `Proxy` objects need to be a named variable that exist outside of a *Controller*, and require being "attached".  This is done with the `operator=`, allowing for an ergonomic way to attach `Proxy` objects to controls.  Accessing a proxy object that has not been attached to a controller will cause an exception to be raised.
+
 
 ```cpp
 auto getHandle(UnderlyingType** handlePtr);
@@ -213,15 +213,36 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
 {
     using namespace wxUI;
     VSizer {
-        TextCtrl { "Hello" }
-            .getHandle(&mText),
-        },
+        proxy = TextCtrl { "Hello" }
     }
         .attachTo(this);
 }
 ```
 
-Note that this handle is non-owning, so it is vital to not have the ptr participate in any lifecycle management of the object.
+#### Supported Controllers
+
+The "Controllers" currently supported by `wxUI`:
+
+| wxUI                 | wxWidget               | Proxy                     | Proxy accessors value |
+| :------------------- | :--------------------- | :------------------------ | :-------------- |
+| `Bitmap`             | `wxStaticBitmap`       | `BitmapProxy`             | n/a             |
+| `BitmapButton`       | `wxBitmapButton`       | `BitmapButtonProxy`       | n/a             |
+| `BitmapComboBox`     | `wxBitmapComboBox`     | `BitmapComboBoxProxy`     | `selection` -> `int`<BR>`value` -> `std::string`<BR>*default*: `value` |
+| `BitmapToggleButton` | `wxBitmapToggleButton` | `BitmapToggleButtonProxy` | `value` -> `bool`<BR>*default*: `value` |
+| `Button`             | `wxButton`             | `ButtonProxy`             | n/a             |
+| `CheckBox`           | `wxCheckBox`           | `CheckBoxProxy`           | `value` -> `bool`<BR>*default*: `value` |
+| `Choice`             | `wxChoice`             | `ChoiceProxy`             | `selection` -> `int`<BR>*default*: `selection` |
+| `ComboBox`           | `wxComboBox`           | `ComboBoxProxy`           | `selection` -> `int`<BR>`value` -> `std::string`<BR>*default*: `value` |
+| `Hypertext`          | `wxHypertextCtrl`      | `HypertextProxy`          | n/a             |
+| `Line`               | `wxStaticLine`         | `LineProxy`               | n/a             |
+| `ListBox`            | `wxListBox`            | `ListBoxProxy`            | `selection` -> `int`<BR>*default*: `selection` |
+| `RadioBox`           | `wxRadioBox`           | `RadioBoxProxy`           | `selection` -> `int`<BR>*default*: `selection` |
+| `Slider`             | `wxSlider`             | `SliderProxy`             | `value` -> `int`<BR>*default*: `value` |
+| `SpinCtrl`           | `wxSpinCtrl`           | `SpinCtrlProxy`           | `value` -> `int`<BR>*default*: `value` |
+| `Text`               | `wxStaticText`         | `TextProxy`               | `label` -> `std::string`<BR>*default*: `label` |
+| `TextCtrl`           | `wxTextCtrl`           | `TextCtrlProxy`           | `label` -> `std::string`<BR>*default*: `label` |
+
+Additional "Contollers" should be easy to add in future updates.
 
 #### Custom
 
@@ -247,6 +268,7 @@ You would then create the controller to confomr
                 },
             },
         },
+        Generic { CreateStdDialogButtonSizer(wxOK) },
 ```
 
 #### Misc notes.

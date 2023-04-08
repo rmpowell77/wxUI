@@ -23,11 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
+#include "GetterSetter.h"
 #include "Widget.h"
 #include <wx/checkbox.h>
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_check_box.html
 struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
     using super = details::WidgetDetails<CheckBox, wxCheckBox>;
 
@@ -72,6 +74,20 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
         return details::BindWidgetToEvent { *this, wxEVT_CHECKBOX, func };
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+        [[nodiscard]] auto value() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return controller->GetValue(); },
+                [controller](bool value) { controller->SetValue(value); }
+            };
+        }
+
+        auto operator->() const { return value(); }
+        auto operator*() const { return value(); }
+    };
     RULE_OF_SIX_BOILERPLATE(CheckBox);
 
 private:

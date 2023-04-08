@@ -23,11 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
+#include "GetterSetter.h"
 #include "Widget.h"
 #include <wx/bmpcbox.h>
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_bitmap_combo_box.html
 struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapComboBox> {
     using super = details::WidgetDetails<BitmapComboBox, wxBitmapComboBox>;
 
@@ -106,6 +108,28 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
         return details::BindWidgetToEvent { *this, wxEVT_COMBOBOX, func };
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+        [[nodiscard]] auto value() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return static_cast<std::string>(controller->GetValue()); },
+                [controller](std::string value) { controller->SetValue(value); }
+            };
+        }
+        [[nodiscard]] auto selection() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return controller->GetSelection(); },
+                [controller](int selection) { controller->SetSelection(selection); }
+            };
+        }
+
+        auto operator->() const { return value(); }
+        auto operator*() const { return value(); }
+    };
     RULE_OF_SIX_BOILERPLATE(BitmapComboBox);
 
 private:

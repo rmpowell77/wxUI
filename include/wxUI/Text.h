@@ -23,11 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
+#include "GetterSetter.h"
 #include "Widget.h"
 #include <wx/stattext.h>
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_text.html
 struct Text : public details::WidgetDetails<Text, wxStaticText> {
     using super = details::WidgetDetails<Text, wxStaticText>;
 
@@ -57,8 +59,24 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        return new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle());
+        return setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
     }
+
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+
+        [[nodiscard]] auto label() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return static_cast<std::string>(controller->GetLabel()); },
+                [controller](std::string label) { controller->SetLabel(label); }
+            };
+        }
+
+        auto operator->() const { return label(); }
+        auto operator*() const { return label(); }
+    };
 
     RULE_OF_SIX_BOILERPLATE(Text);
 

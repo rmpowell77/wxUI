@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_hyperlink_ctrl.html
 struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     using super = details::WidgetDetails<Hyperlink, wxHyperlinkCtrl>;
 
@@ -60,6 +61,9 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
         return new underlying_t(parent, getIdentity(), text, url, getPos(), getSize(), getStyle());
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+    };
     RULE_OF_SIX_BOILERPLATE(Hyperlink);
 
 private:

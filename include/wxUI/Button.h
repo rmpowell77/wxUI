@@ -28,8 +28,10 @@ SOFTWARE.
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_button.html
 struct Button : public details::WidgetDetails<Button, wxButton> {
     using super = details::WidgetDetails<Button, wxButton>;
+    using details::WidgetDetails<Button, wxButton>::underlying_t;
 
     explicit Button(wxWindowID identity, std::string text = "")
         : super(identity)
@@ -74,6 +76,9 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
         return details::BindWidgetToEvent { *this, wxEVT_BUTTON, func };
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+    };
     RULE_OF_SIX_BOILERPLATE(Button);
 
 private:

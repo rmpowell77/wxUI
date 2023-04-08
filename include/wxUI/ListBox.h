@@ -23,11 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
+#include "GetterSetter.h"
 #include "Widget.h"
 #include <wx/listbox.h>
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_list_box.html
 struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
     using super = details::WidgetDetails<ListBox, wxListBox>;
 
@@ -72,6 +74,20 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
         return details::BindWidgetToEvent { *this, wxEVT_LISTBOX, func };
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+        [[nodiscard]] auto selection() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return controller->GetSelection(); },
+                [controller](int selection) { controller->SetSelection(selection); }
+            };
+        }
+
+        auto operator->() const { return selection(); }
+        auto operator*() const { return selection(); }
+    };
     RULE_OF_SIX_BOILERPLATE(ListBox);
 
 private:

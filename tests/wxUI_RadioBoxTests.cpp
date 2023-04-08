@@ -21,20 +21,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "wxUI_TestControlCommon.h"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/RadioBox.h>
 
 #include <wx/wx.h>
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::RadioBox;
+
+struct RadioBoxTestPolicy {
+    using TypeUnderTest = TypeUnderTest;
+    static auto createUUT() { return TypeUnderTest { std::vector<wxString> { "Hello", "Goodbye" } }; }
+    static auto testStyle() { return wxRA_SPECIFY_COLS; }
+    static auto testPosition() { return wxPoint { 1, 2 }; }
+    static auto testSize() { return wxSize { 10, 12 }; }
+    static auto expectedStyle() { return testStyle(); }
+    static auto expectedPosition() { return testPosition(); }
+    static auto expectedSize() { return testSize(); }
+};
+static auto createUUT() { return RadioBoxTestPolicy::createUUT(); }
 
 TEST_CASE("RadioBox")
 {
     SECTION("choices")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { std::vector<wxString> { "Hello", "Goodbye" } };
+        auto uut = createUUT();
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetLabel().empty());
         CHECK(2 == window->GetCount());
@@ -134,7 +147,7 @@ TEST_CASE("RadioBox")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { std::vector<wxString> { "Hello", "Goodbye" } }.withStyle(wxRA_SPECIFY_COLS);
+        auto uut = createUUT().withStyle(wxRA_SPECIFY_COLS);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == (wxRA_SPECIFY_COLS | wxTAB_TRAVERSAL));
     }
@@ -142,7 +155,7 @@ TEST_CASE("RadioBox")
     SECTION("pos")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { std::vector<wxString> { "Hello", "Goodbye" } }.withPosition({ 1, 2 });
+        auto uut = createUUT().withPosition({ 1, 2 });
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetPosition() == wxPoint { 1, 2 });
     }
@@ -150,9 +163,11 @@ TEST_CASE("RadioBox")
     SECTION("size")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { std::vector<wxString> { "Hello", "Goodbye" } }.withSize({ 1, 2 });
+        auto uut = createUUT().withSize({ 1, 2 });
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
+
+    CHAINING_TEST(RadioBoxTestPolicy)
 }
-// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

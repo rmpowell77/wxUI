@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "wxUI_TestControlCommon.h"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/ListBox.h>
 
@@ -29,19 +30,31 @@ SOFTWARE.
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 using TypeUnderTest = wxUI::ListBox;
 
+struct ListBoxTestPolicy {
+    using TypeUnderTest = TypeUnderTest;
+    static auto createUUT() { return TypeUnderTest {}; }
+    static auto testStyle() { return wxLB_ALWAYS_SB | wxLB_MULTIPLE; }
+    static auto testPosition() { return wxPoint { 1, 2 }; }
+    static auto testSize() { return wxSize { 10, 12 }; }
+    static auto expectedStyle() { return testStyle(); }
+    static auto expectedPosition() { return testPosition(); }
+    static auto expectedSize() { return testSize(); }
+};
+static auto createUUT() { return ListBoxTestPolicy::createUUT(); }
+
 TEST_CASE("ListBox")
 {
     SECTION("noargs.1")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        TypeUnderTest uut {};
+        auto uut = createUUT();
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(0 == window->GetCount());
     }
     SECTION("noargs")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {};
+        auto uut = createUUT();
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(0 == window->GetCount());
     }
@@ -133,7 +146,7 @@ TEST_CASE("ListBox")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.withStyle(wxLB_MULTIPLE);
+        auto uut = createUUT().withStyle(wxLB_MULTIPLE);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == (wxBORDER_SUNKEN | wxLB_MULTIPLE));
     }
@@ -141,9 +154,11 @@ TEST_CASE("ListBox")
     SECTION("pos")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.withPosition({ 1, 2 });
+        auto uut = createUUT().withPosition({ 1, 2 });
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetPosition() == wxPoint { 1, 2 });
     }
+
+    CHAINING_TEST(ListBoxTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

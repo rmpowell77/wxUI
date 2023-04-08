@@ -23,11 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
+#include "GetterSetter.h"
 #include "Widget.h"
 #include <wx/textctrl.h>
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_text_ctrl.html
 struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
     using super = details::WidgetDetails<TextCtrl, wxTextCtrl>;
 
@@ -63,6 +65,22 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
     {
         return details::BindWidgetToEvent { *this, wxEVT_TEXT, func };
     }
+
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+
+        [[nodiscard]] auto label() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return static_cast<std::string>(controller->GetLabel()); },
+                [controller](std::string label) { controller->SetLabel(label); }
+            };
+        }
+
+        auto operator->() const { return label(); }
+        auto operator*() const { return label(); }
+    };
 
     RULE_OF_SIX_BOILERPLATE(TextCtrl);
 
