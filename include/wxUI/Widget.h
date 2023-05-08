@@ -73,13 +73,11 @@ template <class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
 template <Widget W, typename Event, typename Function>
-struct BindWidgetToEvent {
-    W widget;
-    Event event;
-    Function function;
+struct BindWidgetToEvent : W {
+    using super = W;
 
     BindWidgetToEvent(W const& widget, Event const& event, Function const& function)
-        : widget(widget)
+        : W(widget)
         , event(event)
         , function(function)
     {
@@ -87,7 +85,7 @@ struct BindWidgetToEvent {
 
     auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
     {
-        wxWindow* window = widget.createAndAdd(parent, sizer, flags);
+        auto* window = super::createAndAdd(parent, sizer, flags);
         if constexpr (is_noarg_callable<Function>()) {
             window->Bind(event, [function = function](auto) {
                 function();
@@ -97,14 +95,18 @@ struct BindWidgetToEvent {
         }
         return window;
     }
-};
 
-template <Widget W, typename Event, typename Function>
-BindWidgetToEvent(W, Event, Function) -> BindWidgetToEvent<W, Event, Function>;
+private:
+    Event event;
+    Function function;
+};
 
 // This is to allow disambiguation of construction with a style
 struct withStyle {
 };
+
+template <typename Controller, typename Underlying>
+struct WidgetProxy;
 
 // The WidgetDetails are the base class of the Controllers.  The common details
 // across many controllers are stored in the base class.
@@ -114,7 +116,27 @@ struct withStyle {
 // 3. implement the create function for constructing the concrete widget.
 template <typename ConcreteWidget, typename Underlying>
 struct WidgetDetails {
+    using Controller = ConcreteWidget;
     using underlying_t = Underlying;
+
+    struct WidgetProxy {
+        [[nodiscard]] auto control() const -> Underlying*
+        {
+            if (!controller) {
+                throw std::runtime_error("Proxy class has not been attached");
+            }
+            return controller;
+        }
+
+        void setUnderlying(Underlying* control)
+        {
+            controller = control;
+        }
+
+    private:
+        Underlying* controller {};
+    };
+
     explicit WidgetDetails(wxWindowID identity = wxID_ANY)
         : identity(identity)
     {
@@ -145,10 +167,16 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withSize(wxSize size_) -> ConcreteWidget&
+    auto withSize(wxSize size_) & -> ConcreteWidget&
     {
         size = size_;
         return static_cast<ConcreteWidget&>(*this);
+    }
+
+    auto withSize(wxSize size_) && -> ConcreteWidget&&
+    {
+        size = size_;
+        return static_cast<ConcreteWidget&&>(*this);
     }
 
     auto withStyle(int64_t style_) -> ConcreteWidget&
@@ -163,22 +191,13 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto getHandle(Underlying** handle) -> ConcreteWidget&
-    {
-        windowHandle = handle;
-        return static_cast<ConcreteWidget&>(*this);
-    }
-
-    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& parentFlags)
+    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& parentFlags) -> Underlying*
     {
         auto widget = dynamic_cast<Underlying*>(create(parent));
         if (fontInfo) {
             widget->SetFont(wxFont(*fontInfo));
         }
         sizer->Add(widget, flags ? *flags : parentFlags);
-        if (windowHandle) {
-            *windowHandle = widget;
-        }
         return widget;
     }
 
@@ -186,6 +205,20 @@ struct WidgetDetails {
     auto getPos() const { return pos; }
     auto getSize() const { return size; }
     auto getStyle() const { return style; }
+
+    void setProxyHandle(WidgetProxy* proxy)
+    {
+        proxyHandle = proxy;
+    }
+
+protected:
+    auto setProxy(Underlying* widget) -> Underlying*
+    {
+        if (proxyHandle) {
+            (*proxyHandle)->setUnderlying(widget);
+        }
+        return widget;
+    }
 
 private:
     // these should be implemented in the derived classes.
@@ -199,7 +232,7 @@ private:
     wxSize size = wxDefaultSize;
     int64_t style {};
     std::optional<wxFontInfo> fontInfo {};
-    Underlying** windowHandle {};
+    std::optional<WidgetProxy*> proxyHandle {};
 };
 
 #define RULE_OF_SIX_BOILERPLATE(WIDGET)               \
@@ -208,5 +241,15 @@ private:
     WIDGET(WIDGET&&) = default;                       \
     auto operator=(WIDGET const&)->WIDGET& = default; \
     auto operator=(WIDGET&&)->WIDGET& = default;
+
+#define PROXY_BOILERPLATE()                                                           \
+    template <typename W>                                                             \
+    auto operator=(W&& controller)->W&& { return bind(std::forward<W>(controller)); } \
+    template <typename W>                                                             \
+    auto bind(W&& widget)->W&&                                                        \
+    {                                                                                 \
+        widget.setProxyHandle(this);                                                  \
+        return std::forward<W>(widget);                                               \
+    }
 
 }

@@ -23,11 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
+#include "GetterSetter.h"
 #include "Widget.h"
 #include <wx/tglbtn.h>
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_bitmap_toggle_button.html
 struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton> {
     using super = details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton>;
 
@@ -70,6 +72,20 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
         return details::BindWidgetToEvent { *this, wxEVT_TOGGLEBUTTON, func };
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+        [[nodiscard]] auto value() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return controller->GetValue(); },
+                [controller](bool value) { controller->SetValue(value); }
+            };
+        }
+
+        auto operator->() const { return value(); }
+        auto operator*() const { return value(); }
+    };
     RULE_OF_SIX_BOILERPLATE(BitmapToggleButton);
 
 private:

@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_static_line.html
 struct Line : public details::WidgetDetails<Line, wxStaticLine> {
     using super = details::WidgetDetails<Line, wxStaticLine>;
 
@@ -46,6 +47,9 @@ struct Line : public details::WidgetDetails<Line, wxStaticLine> {
         return new underlying_t(parent, getIdentity(), getPos(), getSize(), getStyle());
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+    };
     RULE_OF_SIX_BOILERPLATE(Line);
 };
 

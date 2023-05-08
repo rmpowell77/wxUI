@@ -21,27 +21,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "wxUI_TestControlCommon.h"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/Choice.h>
 
 #include <wx/wx.h>
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Choice;
+
+struct ChoiceTestPolicy {
+    using TypeUnderTest = TypeUnderTest;
+    static auto createUUT() { return TypeUnderTest {}; }
+    static auto testStyle() { return (wxCB_SORT); }
+    static auto testPosition() { return wxPoint { 1, 2 }; }
+    static auto testSize() { return wxSize { 10, 12 }; }
+    static auto expectedStyle() { return testStyle(); }
+    static auto expectedPosition() { return testPosition(); }
+    static auto expectedSize() { return testSize(); }
+};
+static auto createUUT() { return ChoiceTestPolicy::createUUT(); }
 
 TEST_CASE("Choice")
 {
     SECTION("noargs.1")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        TypeUnderTest uut {};
+        auto uut = createUUT();
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(0 == window->GetCount());
     }
     SECTION("noargs")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {};
+        auto uut = createUUT();
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(0 == window->GetCount());
     }
@@ -133,7 +146,7 @@ TEST_CASE("Choice")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.withStyle(wxCB_SORT);
+        auto uut = createUUT().withStyle(wxCB_SORT);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == wxCB_SORT);
     }
@@ -141,7 +154,7 @@ TEST_CASE("Choice")
     SECTION("pos")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.withPosition({ 1, 2 });
+        auto uut = createUUT().withPosition({ 1, 2 });
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetPosition() == wxPoint { 1, 2 });
     }
@@ -149,9 +162,11 @@ TEST_CASE("Choice")
     SECTION("size")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {}.withSize({ 1, 2 });
+        auto uut = createUUT().withSize({ 1, 2 });
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
+
+    CHAINING_TEST(ChoiceTestPolicy)
 }
-// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

@@ -28,6 +28,7 @@ SOFTWARE.
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_static_bitmap.html
 struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
     using super = details::WidgetDetails<Bitmap, wxStaticBitmap>;
 
@@ -58,6 +59,9 @@ struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
         return new underlying_t(parent, getIdentity(), bitmap, getPos(), getSize(), getStyle());
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+    };
     RULE_OF_SIX_BOILERPLATE(Bitmap);
 
 private:

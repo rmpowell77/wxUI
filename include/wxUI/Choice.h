@@ -23,11 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
+#include "GetterSetter.h"
 #include "Widget.h"
 #include <wx/choice.h>
 
 namespace wxUI {
 
+// https://docs.wxwidgets.org/latest/classwx_choice.html
 struct Choice : public details::WidgetDetails<Choice, wxChoice> {
     using super = details::WidgetDetails<Choice, wxChoice>;
 
@@ -72,6 +74,20 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
         return details::BindWidgetToEvent { *this, wxEVT_CHOICE, func };
     }
 
+    struct Proxy : super::WidgetProxy {
+        PROXY_BOILERPLATE();
+        [[nodiscard]] auto selection() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return controller->GetSelection(); },
+                [controller](int selection) { controller->SetSelection(selection); }
+            };
+        }
+
+        auto operator->() const { return selection(); }
+        auto operator*() const { return selection(); }
+    };
     RULE_OF_SIX_BOILERPLATE(Choice);
 
 private:

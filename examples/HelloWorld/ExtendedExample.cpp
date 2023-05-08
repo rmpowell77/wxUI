@@ -26,15 +26,26 @@ SOFTWARE.
 #include "ExtendedExample.h"
 #include <wxUI/wxUI.h>
 
+wxUI::Text::Proxy textProxy;
+wxUI::SpinCtrl::Proxy spinProxy;
 ExtendedExample::ExtendedExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExtendedExample",
         wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
-    wxStaticText* text = nullptr;
     VSizer {
         wxSizerFlags().Expand().Border(),
+        // incr example
+        HSizer {
+            spinProxy.bind(SpinCtrl { std::pair { 1, 3 } }),
+        },
+        HSizer {
+            Button { "Incr" }
+                .bind([]() {
+                    *spinProxy = 1 + *spinProxy;
+                }),
+        },
         HSizer {
             BitmapButton { wxBitmap {} },
         },
@@ -43,6 +54,20 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         },
         HSizer {
             BitmapToggleButton { wxBitmap {} },
+        },
+        // getHandle example
+        HSizer {
+            textProxy = Text { "Hello" },
+        },
+        HSizer {
+            Button { "ReduceText" }
+                .bind([]() {
+                    auto str = textProxy->get();
+                    if (str.size()) {
+                        str.pop_back();
+                    }
+                    textProxy->set(str);
+                }),
         },
         HSizer {
             Button {},
@@ -74,11 +99,6 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         HSizer {
             TextCtrl {},
         },
-        // getHandle example
-        HSizer {
-            Text { "Hello" }
-                .getHandle(&text),
-        },
         // bind examples
         HSizer {
             TextCtrl { "Hello" }
@@ -98,10 +118,8 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
                 },
             },
         },
+        Generic { CreateStdDialogButtonSizer(wxOK) },
         // endsnippet CustomExample
     }
-        .attachTo(this);
-    if (text->GetLabel() != "Hello") {
-        throw std::runtime_error("Error, could not create reference");
-    }
+        .attachToAndFit(this);
 }

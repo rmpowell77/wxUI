@@ -21,19 +21,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "wxUI_TestControlCommon.h"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/Slider.h>
 
 #include <wx/wx.h>
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Slider;
+
+struct SliderTestPolicy {
+    using TypeUnderTest = TypeUnderTest;
+    static auto createUUT() { return TypeUnderTest {}; }
+    static auto testStyle() { return wxSL_LABELS; }
+    static auto testPosition() { return wxPoint { 14, 2 }; }
+    static auto testSize() { return wxSize { 100, 40 }; }
+    static auto expectedStyle() { return testStyle(); }
+    static auto expectedPosition() { return wxPoint { 18, 2 }; }
+    static auto expectedSize() { return wxSize { 85, 40 }; }
+};
+static auto createUUT() { return SliderTestPolicy::createUUT(); }
+
 TEST_CASE("Slider")
 {
     SECTION("noargs")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest {};
+        auto uut = createUUT();
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetValue() == 0);
     }
@@ -131,5 +145,7 @@ TEST_CASE("Slider")
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 3);
     }
+
+    CHAINING_TEST(SliderTestPolicy)
 }
-// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

@@ -21,20 +21,35 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "wxUI_TestControlCommon.h"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/Bitmap.h>
 
 #include <wx/wx.h>
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Bitmap;
+
+struct BitmapTestPolicy {
+    using TypeUnderTest = TypeUnderTest;
+    static auto createUUT() { return TypeUnderTest { wxBitmap {} }; }
+    static auto testStyle() { return (0); }
+    static auto testPosition() { return wxPoint { 1, 2 }; }
+    static auto testSize() { return wxSize { 10, 12 }; }
+    static auto expectedStyle() { return testStyle(); }
+    static auto expectedPosition() { return testPosition(); }
+    static auto expectedSize() { return testSize(); }
+};
+static auto createUUT() { return BitmapTestPolicy::createUUT(); }
 
 TEST_CASE("Bitmap")
 {
     SECTION("bitmap")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxBitmap {} };
+        auto uut = createUUT();
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window != nullptr);
     }
 
     SECTION("id.bitmap")
@@ -60,5 +75,7 @@ TEST_CASE("Bitmap")
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
     }
+
+    CHAINING_TEST(BitmapTestPolicy)
 }
-// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

@@ -21,19 +21,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "wxUI_TestControlCommon.h"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/ComboBox.h>
 
 #include <wx/wx.h>
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::ComboBox;
+
+struct ComboBoxTestPolicy {
+    using TypeUnderTest = TypeUnderTest;
+    static auto createUUT() { return TypeUnderTest { { wxString {} } }; }
+    static auto testStyle() { return (wxCB_DROPDOWN | wxCB_READONLY); }
+    static auto testPosition() { return wxPoint { 1, 2 }; }
+    static auto testSize() { return wxSize { 10, 12 }; }
+    static auto expectedStyle() { return testStyle(); }
+    static auto expectedPosition() { return testPosition(); }
+    static auto expectedSize() { return testSize(); }
+};
+static auto createUUT() { return ComboBoxTestPolicy::createUUT(); }
+
 TEST_CASE("ComboBox")
 {
     SECTION("choice")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { { wxString {} } };
+        auto uut = createUUT();
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetLabel().empty());
     }
@@ -67,7 +81,7 @@ TEST_CASE("ComboBox")
     SECTION("pos")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { { wxString {} } }.withPosition({ 1, 2 });
+        auto uut = createUUT().withPosition({ 1, 2 });
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetPosition() == wxPoint { 1, 2 });
     }
@@ -75,7 +89,7 @@ TEST_CASE("ComboBox")
     SECTION("size")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { { wxString {} } }.withSize({ 1, 2 });
+        auto uut = createUUT().withSize({ 1, 2 });
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
@@ -91,5 +105,7 @@ TEST_CASE("ComboBox")
         CHECK("Hello" == window->GetString(0));
         CHECK("Goodbye" == window->GetString(1));
     }
+
+    CHAINING_TEST(ComboBoxTestPolicy)
 }
-// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+// NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

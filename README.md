@@ -4,12 +4,15 @@ C++ header-only library to make declarative UIs for wxWidgets.
 ## Quick Start
 
 ```cpp
+#include <numeric>
 #include <wx/wx.h>
 #include <wxUI/wxUI.h>
 
 class ExampleDialog : public wxDialog {
 public:
     explicit ExampleDialog(wxWindow* parent);
+    wxUI::SpinCtrl::Proxy a, b;
+    wxUI::Text::Proxy result;
 };
 
 ExampleDialog::ExampleDialog(wxWindow* parent)
@@ -18,6 +21,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
+
     VSizer {
         wxSizerFlags().Expand().Border(),
         VSizer {
@@ -31,6 +35,20 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
                 "what the UI looks like." }
                 .withStyle(wxTE_MULTILINE)
                 .withSize(wxSize(200, 100))
+        },
+        HSizer {
+            Text { "A =" },
+            a = SpinCtrl { std::pair { 1, 10000 } }
+                    .bind([this]() {
+                        *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b)));
+                    }),
+
+            Text { "B =" },
+            b = SpinCtrl { std::pair { 1, 10000 } }
+                    .bind([this]() { *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b))); }),
+
+            Text { "GCD = " },
+            result = Text { "1" },
         },
         RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
             .withStyle(wxRA_SPECIFY_ROWS)
@@ -55,7 +73,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
 
         Generic { CreateStdDialogButtonSizer(wxOK) },
     }
-        .attachTo(this);
+        .attachToAndFit(this);
 }
 ```
 <img src="docs/images/ExampleDialog.png"/>
@@ -103,6 +121,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
+
     VSizer {
         wxSizerFlags().Expand().Border(),
         VSizer {
@@ -112,9 +131,23 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
                 .withStyle(wxALIGN_LEFT),
     // ...
         },
+        HSizer {
+            Text { "A =" },
+            a = SpinCtrl { std::pair { 1, 10000 } }
+                    .bind([this]() {
+                        *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b)));
+                    }),
+
+            Text { "B =" },
+            b = SpinCtrl { std::pair { 1, 10000 } }
+                    .bind([this]() { *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b))); }),
+
+            Text { "GCD = " },
+            result = Text { "1" },
+        },
     // ...
     }
-        .attachTo(this);
+        .attachToAndFit(this);
 }
 ```
 
