@@ -91,7 +91,7 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, getIdentity(), text, getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), majorDim, getStyle());
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), majorDim, getStyle()));
         widget->SetSelection(selection);
         return widget;
     }

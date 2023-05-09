@@ -159,6 +159,6 @@ TEST_CASE("ListBox")
         CHECK(window->GetPosition() == wxPoint { 1, 2 });
     }
 
-    CHAINING_TEST(ListBoxTestPolicy)
+    COMMON_TESTS(ListBoxTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

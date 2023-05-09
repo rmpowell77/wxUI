@@ -57,7 +57,7 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle());
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
         if (isDefault) {
             widget->SetDefault();
         }

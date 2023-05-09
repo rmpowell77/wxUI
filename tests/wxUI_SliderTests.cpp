@@ -146,6 +146,6 @@ TEST_CASE("Slider")
         CHECK(window->GetValue() == 3);
     }
 
-    CHAINING_TEST(SliderTestPolicy)
+    COMMON_TESTS(SliderTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

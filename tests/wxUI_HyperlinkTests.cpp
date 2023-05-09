@@ -106,6 +106,6 @@ TEST_CASE("Hyperlink")
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
 
-    CHAINING_TEST(HyperlinkTestPolicy)
+    COMMON_TESTS(HyperlinkTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

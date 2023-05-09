@@ -57,7 +57,7 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        return new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle());
+        return setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
     }
 
     template <typename Function>

@@ -168,6 +168,6 @@ TEST_CASE("RadioBox")
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
 
-    CHAINING_TEST(RadioBoxTestPolicy)
+    COMMON_TESTS(RadioBoxTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

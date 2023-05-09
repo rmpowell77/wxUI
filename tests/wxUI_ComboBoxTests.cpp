@@ -106,6 +106,6 @@ TEST_CASE("ComboBox")
         CHECK("Goodbye" == window->GetString(1));
     }
 
-    CHAINING_TEST(ComboBoxTestPolicy)
+    COMMON_TESTS(ComboBoxTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
