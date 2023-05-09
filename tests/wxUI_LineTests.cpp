@@ -76,6 +76,6 @@ TEST_CASE("Line")
         CHECK(10000 == window->GetId());
     }
 
-    CHAINING_TEST(LineTestPolicy)
+    COMMON_TESTS(LineTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

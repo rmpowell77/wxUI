@@ -58,6 +58,7 @@ constexpr auto checkAll = [](auto* window, auto style, auto pos, auto size) {
 };
 
 // How do we test chaining?
+// We make sure that we get the same outcome no matter the way we add things
 template <typename WHICH>
 auto DoChainingIterations()
 {
@@ -94,10 +95,25 @@ auto DoChainingIterations()
     }
 }
 
-#define CHAINING_TEST(WHICH)           \
-    SECTION("check all iterations")    \
+template <typename WHICH>
+auto DoProxyTests()
+{
+    wxFrame frame { nullptr, wxID_ANY, "" };
+    auto proxy = typename WHICH::TypeUnderTest::Proxy {};
+    auto uut = proxy = WHICH::createUUT();
+    uut.create(&frame);
+
+    CHECK(proxy.control() != nullptr);
+}
+
+#define COMMON_TESTS(WHICH)            \
+    SECTION("Chaining Iterations")     \
     {                                  \
         DoChainingIterations<WHICH>(); \
+    }                                  \
+    SECTION("Check Proxy")             \
+    {                                  \
+        DoProxyTests<WHICH>();         \
     }
 
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

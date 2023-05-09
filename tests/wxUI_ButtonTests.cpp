@@ -144,6 +144,6 @@ TEST_CASE("Button")
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
 
-    CHAINING_TEST(ButtonTestPolicy)
+    COMMON_TESTS(ButtonTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

@@ -186,6 +186,6 @@ TEST_CASE("SpinCtrl")
         CHECK(result2 == 2);
     }
 
-    CHAINING_TEST(SpinCtrlTestPolicy)
+    COMMON_TESTS(SpinCtrlTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

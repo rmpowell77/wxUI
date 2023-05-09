@@ -167,6 +167,6 @@ TEST_CASE("Choice")
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
 
-    CHAINING_TEST(ChoiceTestPolicy)
+    COMMON_TESTS(ChoiceTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

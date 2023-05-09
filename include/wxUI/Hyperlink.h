@@ -58,7 +58,7 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        return new underlying_t(parent, getIdentity(), text, url, getPos(), getSize(), getStyle());
+        return setProxy(new underlying_t(parent, getIdentity(), text, url, getPos(), getSize(), getStyle()));
     }
 
     struct Proxy : super::WidgetProxy {

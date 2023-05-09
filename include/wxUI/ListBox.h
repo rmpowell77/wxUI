@@ -63,7 +63,7 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle());
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle()));
         widget->SetSelection(selection);
         return widget;
     }

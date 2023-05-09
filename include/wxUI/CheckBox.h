@@ -57,7 +57,7 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
 
     auto create(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle());
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
         widget->SetValue(value);
         return widget;
     }
