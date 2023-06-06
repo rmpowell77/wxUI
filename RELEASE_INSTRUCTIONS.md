@@ -21,7 +21,7 @@ docs/src/make_md.py docs/src/docs/ProgrammersGuide.md > docs/ProgrammersGuide.md
 
 wxUI uses CMake and Github actions to automate the release process.  When you push a tag for the repository, github will build and package the release.
 
-The current version is 0.1.1.  In all commands below, substitute that number for `$VER` (meaning when you read `$VER`, type 0.1.1)
+The current version is 0.1.2.  In all commands below, substitute that number for `$VER` (meaning when you read `$VER`, type 0.1.2)
 
  1. Prebuild the project to make sure its working
 
@@ -30,8 +30,8 @@ The current version is 0.1.1.  In all commands below, substitute that number for
  3. Tag the depot
 
 ```
-$ git tag -a v0.1.1 -m "wxUI-0.1.1"
-$ git push origin v0.1.1
+$ git tag -a v0.1.2 -m "wxUI-0.1.2"
+$ git push origin v0.1.2
 ```
 
 This should trigger the github action, which should publish release notes in Draft form.
