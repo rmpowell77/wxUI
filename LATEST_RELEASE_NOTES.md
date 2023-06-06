@@ -18,6 +18,7 @@ Other changes:
 * [#76](../../issues/76) add wxBitmapComboBox
 * [#79](../../issues/79) CheckBox has some unneeded member variables (that should be private)
 * [#82](../../issues/82) wxCheckBox needs a setValue
+* [#85](../../issues/85) Need a EnsureVisible for ListBox
 * [#89](../../issues/89) Change stack to sizer
 * [#92](../../issues/92) Need a Bitmap
 * [#95](../../issues/95) Text needs to customize font
