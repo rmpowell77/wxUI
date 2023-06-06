@@ -61,10 +61,19 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
         return *this;
     }
 
+    auto withEnsureVisible(int which) -> ListBox&
+    {
+        ensureVisible = which;
+        return *this;
+    }
+
     auto create(wxWindow* parent) -> wxWindow* override
     {
         auto* widget = setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle()));
         widget->SetSelection(selection);
+        if (ensureVisible) {
+            widget->EnsureVisible(*ensureVisible);
+        }
         return widget;
     }
 
@@ -93,6 +102,7 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
 private:
     std::vector<wxString> choices {};
     int selection = wxNOT_FOUND;
+    std::optional<int> ensureVisible {};
 };
 
 static_assert(details::Widget<ListBox>);
