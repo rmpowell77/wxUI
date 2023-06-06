@@ -121,5 +121,5 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         Generic { CreateStdDialogButtonSizer(wxOK) },
         // endsnippet CustomExample
     }
-        .attachToAndFit(this);
+        .attachTo(this);
 }

@@ -21,4 +21,6 @@ Other changes:
 * [#89](../../issues/89) Change stack to sizer
 * [#92](../../issues/92) Need a Bitmap
 * [#95](../../issues/95) Text needs to customize font
+* [#104](../../issues/104) Proxy objects
+* [#108](../../issues/108) make attachToAndFit the default
 
