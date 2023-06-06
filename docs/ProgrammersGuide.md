@@ -37,7 +37,7 @@ In `wxWidgets` the general paradigm is to create an enumeration of identity ints
 
 The top level `wxUI::MenuBar` holds a collection of `wxUI::Menu` objects.  The `wxUI::Menu` object consists of a name of the menu, and a collection of "Items", which can be one of `wxUI::Item` (normal), `wxUI::Separator`, `wxUI::CheckItem`, and `wxUI::RadioItem`.
 
-Menu Items are generally a name with a handler lambda, or name and id with a lambda.  Menu Items can also be assocated with `wxStandardID`.  Many of these like `wxID_EXIT` and `wxID_HELP` have predefined name, help, and handlers, so declaration with just an ID is allowed.
+Menu Items are generally a name with a handler closure, such as a lambda, or name and id with a closure.  Menu Items can also be assocated with `wxStandardID`.  Many of these like `wxID_EXIT` and `wxID_HELP` have predefined name, help, and handlers, so declaration with just an ID is allowed.
 
 Handlers are callable items that handle events.  The handler can be declared with both no arguments or the `wxCommandEvent` argument for deeper inspection of the event.
 
@@ -256,7 +256,7 @@ concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* s
 };
 ```
 
-You would then create the controller to confomr 
+An example of how to use could be as follows:
 
 ```cpp
         HSizer {
