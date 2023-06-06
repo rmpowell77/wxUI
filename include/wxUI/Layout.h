@@ -66,7 +66,7 @@ namespace details {
             return sizer;
         }
 
-        auto attachTo(wxWindow* parent) -> auto&
+        auto attachToWithoutSizeHints(wxWindow* parent) -> auto&
         {
             auto sizer = constructSizer(parent);
             auto currentFlags = flags ? *flags : wxSizerFlags {};
@@ -76,9 +76,9 @@ namespace details {
             return *this;
         }
 
-        auto attachToAndFit(wxWindow* parent) -> auto&
+        auto attachTo(wxWindow* parent) -> auto&
         {
-            attachTo(parent);
+            attachToWithoutSizeHints(parent);
             auto* sizer = parent->GetSizer();
             sizer->SetSizeHints(parent);
             return *this;

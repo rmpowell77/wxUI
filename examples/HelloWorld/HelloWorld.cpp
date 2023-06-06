@@ -330,7 +330,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         // snippet withwxUI
         // snippet wxUILayoutBasic
     }
-        .attachToAndFit(this);
+        .attachTo(this);
     // endsnippet wxUIGeneric
     // endsnippet wxUILayoutBasic
 }

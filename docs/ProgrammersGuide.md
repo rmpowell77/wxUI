@@ -108,7 +108,7 @@ The basics of `wxUI` layout is the *Layout*.  You use a specific type of *Layout
             "Text examples",
     // ...
     }
-        .attachToAndFit(this);
+        .attachTo(this);
 ```
 
 In the above example we have constructed a vertical layout sizer that will use a `wxSizer` with the `wxSizerFlags` set to expand with a default border.  Then the first item in the sizer is a second layer sizer with horizontal layout.  The `wxSizerFlags` are propogated to each layer so the horizontal layout in this example would also be set to expand with a default border.  The second sizer would be created as a "named" box horizonal sizer.
@@ -147,7 +147,7 @@ One special type of *Layout* is `Generic`.  There are cases where you may have a
     // ...
         Generic { CreateStdDialogButtonSizer(wxOK) },
     }
-        .attachToAndFit(this);
+        .attachTo(this);
 ```
 
 ### Controllers

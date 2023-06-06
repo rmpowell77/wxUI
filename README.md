@@ -73,7 +73,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
 
         Generic { CreateStdDialogButtonSizer(wxOK) },
     }
-        .attachToAndFit(this);
+        .attachTo(this);
 }
 ```
 <img src="docs/images/ExampleDialog.png"/>
@@ -147,7 +147,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         },
     // ...
     }
-        .attachToAndFit(this);
+        .attachTo(this);
 }
 ```
 
