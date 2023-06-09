@@ -1,4 +1,4 @@
-# wxUI release notes for v0.1.2
+# wxUI release notes for v0.1.3
 
 Bugs addressed in this release:
 
