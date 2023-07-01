@@ -46,6 +46,10 @@ Handlers are callable items that handle events.  The handler can be declared wit
                                                 ExtendedExample dialog(this);
                                                 dialog.ShowModal();
                                             } },
+            wxUI::Item { "&MultibindExample...", [this] {
+                            MultibindExample dialog(this);
+                            dialog.ShowModal();
+                        } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },
@@ -85,6 +89,10 @@ Items { "Name", "Help", Handler }
                                                 ExtendedExample dialog(this);
                                                 dialog.ShowModal();
                                             } },
+            wxUI::Item { "&MultibindExample...", [this] {
+                            MultibindExample dialog(this);
+                            dialog.ShowModal();
+                        } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },
@@ -174,7 +182,7 @@ The list of Methods supported by all controllers:
 
 #### Bind
 
-Some *Controllers* support "binding" a function call to their event handlers.  When the event for that controller is emitted, the function-like object supplied will be called.
+*Controllers* support "binding" a function call to their event handlers.  When the event for that *controller* is emitted, the function-like object supplied will be called.  You can bind multiple events on a single *controller*.  For convenience, some *controllers* have default events that will be used if none is supplied.
 
 ```cpp
             Button { wxSizerFlags().Border(wxRIGHT), "Left" }
@@ -223,24 +231,24 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
 
 The "Controllers" currently supported by `wxUI`:
 
-| wxUI                 | wxWidget               | Proxy                     | Proxy accessors value |
-| :------------------- | :--------------------- | :------------------------ | :-------------- |
-| `Bitmap`             | `wxStaticBitmap`       | `BitmapProxy`             | n/a             |
-| `BitmapButton`       | `wxBitmapButton`       | `BitmapButtonProxy`       | n/a             |
-| `BitmapComboBox`     | `wxBitmapComboBox`     | `BitmapComboBoxProxy`     | `selection` -> `int`<BR>`value` -> `std::string`<BR>*default*: `value` |
-| `BitmapToggleButton` | `wxBitmapToggleButton` | `BitmapToggleButtonProxy` | `value` -> `bool`<BR>*default*: `value` |
-| `Button`             | `wxButton`             | `ButtonProxy`             | n/a             |
-| `CheckBox`           | `wxCheckBox`           | `CheckBoxProxy`           | `value` -> `bool`<BR>*default*: `value` |
-| `Choice`             | `wxChoice`             | `ChoiceProxy`             | `selection` -> `int`<BR>*default*: `selection` |
-| `ComboBox`           | `wxComboBox`           | `ComboBoxProxy`           | `selection` -> `int`<BR>`value` -> `std::string`<BR>*default*: `value` |
-| `Hypertext`          | `wxHypertextCtrl`      | `HypertextProxy`          | n/a             |
-| `Line`               | `wxStaticLine`         | `LineProxy`               | n/a             |
-| `ListBox`            | `wxListBox`            | `ListBoxProxy`            | `selection` -> `int`<BR>*default*: `selection` |
-| `RadioBox`           | `wxRadioBox`           | `RadioBoxProxy`           | `selection` -> `int`<BR>*default*: `selection` |
-| `Slider`             | `wxSlider`             | `SliderProxy`             | `value` -> `int`<BR>*default*: `value` |
-| `SpinCtrl`           | `wxSpinCtrl`           | `SpinCtrlProxy`           | `value` -> `int`<BR>*default*: `value` |
-| `Text`               | `wxStaticText`         | `TextProxy`               | `label` -> `std::string`<BR>*default*: `label` |
-| `TextCtrl`           | `wxTextCtrl`           | `TextCtrlProxy`           | `label` -> `std::string`<BR>*default*: `label` |
+| wxUI                 | wxWidget               | Default Event      | Proxy                     | Proxy accessors value |
+| :------------------- | :--------------------- | :----------------- | :------------------------ | :-------------- |
+| `Bitmap`             | `wxStaticBitmap`       | n/a                | `BitmapProxy`             | n/a             |
+| `BitmapButton`       | `wxBitmapButton`       | `EVT_BUTTON`       | `BitmapButtonProxy`       | n/a             |
+| `BitmapComboBox`     | `wxBitmapComboBox`     | `EVT_COMBOBOX`     | `BitmapComboBoxProxy`     | `selection` -> `int`<BR>`value` -> `std::string`<BR>*default*: `value` |
+| `BitmapToggleButton` | `wxBitmapToggleButton` | `EVT_TOGGLEBUTTON` | `BitmapToggleButtonProxy` | `value` -> `bool`<BR>*default*: `value` |
+| `Button`             | `wxButton`             | `EVT_BUTTON`       | `ButtonProxy`             | n/a             |
+| `CheckBox`           | `wxCheckBox`           | `EVT_CHECKBOX`     | `CheckBoxProxy`           | `value` -> `bool`<BR>*default*: `value` |
+| `Choice`             | `wxChoice`             | `EVT_CHOICE`       | `ChoiceProxy`             | `selection` -> `int`<BR>*default*: `selection` |
+| `ComboBox`           | `wxComboBox`           | `EVT_COMBOBOX`     | `ComboBoxProxy`           | `selection` -> `int`<BR>`value` -> `std::string`<BR>*default*: `value` |
+| `Hypertext`          | `wxHypertextCtrl`      | n/a                | `HypertextProxy`          | n/a             |
+| `Line`               | `wxStaticLine`         | n/a                | `LineProxy`               | n/a             |
+| `ListBox`            | `wxListBox`            | `EVT_LISTBOX`      | `ListBoxProxy`            | `selection` -> `int`<BR>*default*: `selection` |
+| `RadioBox`           | `wxRadioBox`           | `EVT_RADIOBOX`     | `RadioBoxProxy`           | `selection` -> `int`<BR>*default*: `selection` |
+| `Slider`             | `wxSlider`             | `EVT_SLIDER`       | `SliderProxy`             | `value` -> `int`<BR>*default*: `value` |
+| `SpinCtrl`           | `wxSpinCtrl`           | `EVT_SPINCTRL`     | `SpinCtrlProxy`           | `value` -> `int`<BR>*default*: `value` |
+| `Text`               | `wxStaticText`         | n/a                | `TextProxy`               | `label` -> `std::string`<BR>*default*: `label` |
+| `TextCtrl`           | `wxTextCtrl`           | `EVT_TEXT`         | `TextCtrlProxy`           | `label` -> `std::string`<BR>*default*: `label` |
 
 Additional "Contollers" should be easy to add in future updates.
 

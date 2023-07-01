@@ -50,7 +50,6 @@ TEST_CASE("Button")
         auto uut = createUUT();
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetLabel().empty());
-        uut.withPosition(wxPoint {});
     }
     SECTION("noargs")
     {

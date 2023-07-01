@@ -70,10 +70,11 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
         return *this;
     }
 
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_BUTTON, func };
+        return super::bind(wxEVT_BUTTON, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -86,5 +87,5 @@ private:
     bool isDefault = false;
 };
 
-static_assert(details::Widget<Button>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(Button);
 }

@@ -68,10 +68,11 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
         return *this;
     }
 
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_CHECKBOX, func };
+        return super::bind(wxEVT_CHECKBOX, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -95,5 +96,5 @@ private:
     bool value = false;
 };
 
-static_assert(details::Widget<CheckBox>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(CheckBox);
 }

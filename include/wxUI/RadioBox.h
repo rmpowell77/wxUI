@@ -34,7 +34,7 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     using super = details::WidgetDetails<RadioBox, wxRadioBox>;
 
     explicit RadioBox(wxWindowID identity, std::string text = "", std::vector<wxString> choices = {})
-        : super(identity, details::withStyle {}, wxRA_SPECIFY_COLS)
+        : super(identity, super::WithStyle { wxRA_SPECIFY_COLS })
         , text(std::move(text))
         , choices(std::move(choices))
     {
@@ -56,7 +56,7 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     }
 
     RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::string text, std::vector<wxString> choices)
-        : super(flags, identity, details::withStyle {}, wxRA_SPECIFY_COLS)
+        : super(flags, identity, super::WithStyle { wxRA_SPECIFY_COLS })
         , text(std::move(text))
         , choices(std::move(choices))
     {
@@ -96,10 +96,11 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
         return widget;
     }
 
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_RADIOBOX, func };
+        return super::bind(wxEVT_RADIOBOX, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -125,5 +126,5 @@ private:
     int selection {};
 };
 
-static_assert(details::Widget<RadioBox>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(RadioBox);
 }

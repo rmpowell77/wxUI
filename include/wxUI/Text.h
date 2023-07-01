@@ -84,5 +84,5 @@ private:
     std::string text;
 };
 
-static_assert(details::Widget<Text>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(Text);
 }

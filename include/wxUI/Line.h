@@ -63,5 +63,5 @@ inline auto VLine() -> Line
     return Line(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_VERTICAL);
 }
 
-static_assert(details::Widget<Line>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(Line);
 }

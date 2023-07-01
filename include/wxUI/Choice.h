@@ -68,10 +68,11 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
         return widget;
     }
 
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_CHOICE, func };
+        return super::bind(wxEVT_CHOICE, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -95,5 +96,5 @@ private:
     int selection {};
 };
 
-static_assert(details::Widget<Choice>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(Choice);
 }

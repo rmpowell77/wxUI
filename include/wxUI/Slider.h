@@ -66,10 +66,11 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
         return widget;
     }
 
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_SLIDER, func };
+        return super::bind(wxEVT_SLIDER, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -93,5 +94,5 @@ private:
     std::optional<int> initial;
 };
 
-static_assert(details::Widget<Slider>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(Slider);
 }

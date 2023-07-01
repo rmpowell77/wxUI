@@ -65,10 +65,11 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
         return setProxy(new underlying_t(parent, getIdentity(), wxEmptyString, getPos(), getSize(), getStyle(), min, max, initvalue));
     }
 
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_SPINCTRL, func };
+        return super::bind(wxEVT_SPINCTRL, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -94,5 +95,5 @@ private:
     std::optional<int> initial;
 };
 
-static_assert(details::Widget<SpinCtrl>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(SpinCtrl);
 }

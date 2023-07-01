@@ -69,10 +69,11 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
         return *this;
     }
 
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_COMBOBOX, func };
+        return super::bind(wxEVT_COMBOBOX, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -104,5 +105,5 @@ private:
     int selection = 0;
 };
 
-static_assert(details::Widget<ComboBox>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(ComboBox);
 }
