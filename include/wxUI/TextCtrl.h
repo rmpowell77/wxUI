@@ -60,10 +60,12 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
         return setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
     }
 
+    // Bind
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_TEXT, func };
+        return super::bind(wxEVT_TEXT, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -88,5 +90,5 @@ private:
     std::string text;
 };
 
-static_assert(details::Widget<TextCtrl>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(TextCtrl);
 }

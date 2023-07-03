@@ -102,10 +102,11 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
         return *this;
     }
 
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_COMBOBOX, func };
+        return super::bind(wxEVT_COMBOBOX, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -138,5 +139,5 @@ private:
     int selection = 0;
 };
 
-static_assert(details::Widget<BitmapComboBox>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapComboBox);
 }

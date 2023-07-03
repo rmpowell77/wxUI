@@ -72,41 +72,81 @@ struct overloaded : Ts... {
 template <class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
-template <Widget W, typename Event, typename Function>
-struct BindWidgetToEvent : W {
-    using super = W;
+template <typename Controller, typename Underlying>
+struct WidgetProxy;
 
-    BindWidgetToEvent(W const& widget, Event const& event, Function const& function)
-        : W(widget)
-        , event(event)
-        , function(function)
+// BindInfo uses type erase to allow any binding for any Event type.
+struct BindInfo {
+
+    void bindTo([[maybe_unused]] wxWindow* widget) const
+    {
+        mInfo->bindTo(widget);
+    }
+
+    template <typename Event, typename Function>
+    BindInfo([[maybe_unused]] Event event, [[maybe_unused]] Function function)
+        : mInfo(std::make_unique<BindInfoDetails<Event, Function>>(event, function))
     {
     }
 
-    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+    ~BindInfo() = default;
+
+    BindInfo(BindInfo const& bindInfo)
+        : mInfo(bindInfo.mInfo->clone())
     {
-        auto* window = super::createAndAdd(parent, sizer, flags);
-        if constexpr (is_noarg_callable<Function>()) {
-            window->Bind(event, [function = function](auto) {
-                function();
-            });
-        } else {
-            window->Bind(event, function);
+    }
+
+    auto operator=(BindInfo const& bindInfo) -> BindInfo&
+    {
+        if (this == &bindInfo) {
+            return *this;
         }
-        return window;
+        mInfo = bindInfo.mInfo->clone();
+        return *this;
+    }
+
+    BindInfo(BindInfo&& bindInfo) noexcept
+        : mInfo(std::move(bindInfo.mInfo))
+    {
+    }
+
+    auto operator=(BindInfo&& bindInfo) noexcept -> BindInfo&
+    {
+        mInfo = std::move(bindInfo.mInfo);
+        return *this;
     }
 
 private:
-    Event event;
-    Function function;
+    struct BindInfoDetailsBase {
+        virtual ~BindInfoDetailsBase() = default;
+        virtual void bindTo(wxWindow* widget) const = 0;
+        [[nodiscard]] virtual auto clone() const -> std::unique_ptr<BindInfoDetailsBase> = 0;
+    };
+
+    template <typename Event, typename Function>
+    struct BindInfoDetails : BindInfoDetailsBase {
+        BindInfoDetails(Event event, Function function)
+            : event(event)
+            , function(function)
+        {
+        }
+        Event event;
+        Function function;
+        void bindTo(wxWindow* widget) const override
+        {
+            widget->Bind(event, function);
+        }
+        [[nodiscard]] auto clone() const -> std::unique_ptr<BindInfoDetailsBase> override
+        {
+            return std::make_unique<BindInfoDetails>(event, function);
+        }
+    };
+
+    std::unique_ptr<BindInfoDetailsBase> mInfo;
 };
 
-// This is to allow disambiguation of construction with a style
-struct withStyle {
-};
-
-template <typename Controller, typename Underlying>
-struct WidgetProxy;
+static_assert(std::is_nothrow_move_constructible_v<BindInfo>);
+static_assert(std::is_nothrow_move_assignable_v<BindInfo>);
 
 // The WidgetDetails are the base class of the Controllers.  The common details
 // across many controllers are stored in the base class.
@@ -137,6 +177,10 @@ struct WidgetDetails {
         Underlying* controller {};
     };
 
+    struct WithStyle {
+        int64_t mStyle;
+    };
+
     explicit WidgetDetails(wxWindowID identity = wxID_ANY)
         : identity(identity)
     {
@@ -148,16 +192,16 @@ struct WidgetDetails {
     {
     }
 
-    explicit WidgetDetails(wxWindowID identity, withStyle, int64_t style)
+    explicit WidgetDetails(wxWindowID identity, WithStyle style)
         : identity(identity)
-        , style(style)
+        , style(style.mStyle)
     {
     }
 
-    WidgetDetails(wxSizerFlags const& flags, wxWindowID identity, withStyle, int64_t style)
+    WidgetDetails(wxSizerFlags const& flags, wxWindowID identity, WithStyle style)
         : flags(flags)
         , identity(identity)
-        , style(style)
+        , style(style.mStyle)
     {
     }
 
@@ -167,16 +211,10 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withSize(wxSize size_) & -> ConcreteWidget&
+    auto withSize(wxSize size_) -> ConcreteWidget&
     {
         size = size_;
         return static_cast<ConcreteWidget&>(*this);
-    }
-
-    auto withSize(wxSize size_) && -> ConcreteWidget&&
-    {
-        size = size_;
-        return static_cast<ConcreteWidget&&>(*this);
     }
 
     auto withStyle(int64_t style_) -> ConcreteWidget&
@@ -191,12 +229,36 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
+    template <typename Function, typename Event = wxCommandEvent>
+    auto bind(wxEventTypeTag<Event> event, Function function)
+    {
+        if constexpr (is_noarg_callable<Function>()) {
+            boundedFunctions.emplace_back(event, [function = function](Event&) {
+                function();
+            });
+        } else {
+            boundedFunctions.emplace_back(event, function);
+        }
+        return static_cast<ConcreteWidget&>(*this);
+    }
+
+    auto bindEvents(Underlying* widget) -> Underlying*
+    {
+        for (auto& bounded : boundedFunctions) {
+            bounded.bindTo(widget);
+        }
+        return widget;
+    }
+
     auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& parentFlags) -> Underlying*
     {
         auto widget = dynamic_cast<Underlying*>(create(parent));
         if (fontInfo) {
             widget->SetFont(wxFont(*fontInfo));
         }
+        widget = bindEvents(widget);
+        // bind any events
+        // add to parent
         sizer->Add(widget, flags ? *flags : parentFlags);
         return widget;
     }
@@ -233,14 +295,19 @@ private:
     int64_t style {};
     std::optional<wxFontInfo> fontInfo {};
     std::optional<WidgetProxy*> proxyHandle {};
+    std::vector<BindInfo> boundedFunctions;
 };
+
+// clang-format off
 
 #define RULE_OF_SIX_BOILERPLATE(WIDGET)               \
     virtual ~WIDGET() = default;                      \
     WIDGET(WIDGET const&) = default;                  \
-    WIDGET(WIDGET&&) = default;                       \
+    WIDGET(WIDGET&&) noexcept = default;              \
     auto operator=(WIDGET const&)->WIDGET& = default; \
-    auto operator=(WIDGET&&)->WIDGET& = default;
+    auto operator=(WIDGET&&) noexcept -> WIDGET& = default;
+
+// clang-format on
 
 #define PROXY_BOILERPLATE()                                                           \
     template <typename W>                                                             \
@@ -251,5 +318,10 @@ private:
         widget.setProxyHandle(this);                                                  \
         return std::forward<W>(widget);                                               \
     }
+
+#define WIDGET_STATIC_ASSERT_BOILERPLATE(WIDGET)                 \
+    static_assert(details::Widget<WIDGET>);                      \
+    static_assert(std::is_nothrow_move_constructible_v<WIDGET>); \
+    static_assert(std::is_nothrow_move_assignable_v<WIDGET>)
 
 }

@@ -68,5 +68,6 @@ private:
     wxBitmap bitmap;
 };
 
-static_assert(details::Widget<Bitmap>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(Bitmap);
+
 }

@@ -25,8 +25,22 @@ SOFTWARE.
 // wxUI Extended Dialog Example
 
 #include <wx/wx.h>
+#include <wxUI/wxUI.h>
 
 class ExtendedExample : public wxDialog {
 public:
     explicit ExtendedExample(wxWindow* parent);
+
+private:
+    wxUI::Text::Proxy textProxy;
+    wxUI::SpinCtrl::Proxy spinProxy;
+};
+
+class MultibindExample : public wxDialog {
+public:
+    explicit MultibindExample(wxWindow* parent);
+
+private:
+    wxUI::Text::Proxy timesTyped;
+    wxUI::Text::Proxy timesEntered;
 };

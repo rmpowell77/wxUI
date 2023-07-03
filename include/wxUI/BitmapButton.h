@@ -69,10 +69,11 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
         return *this;
     }
 
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_BUTTON, func };
+        return super::bind(wxEVT_BUTTON, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -85,5 +86,5 @@ private:
     bool isDefault = false;
 };
 
-static_assert(details::Widget<BitmapButton>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapButton);
 }

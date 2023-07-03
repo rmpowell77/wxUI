@@ -33,7 +33,7 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     using super = details::WidgetDetails<Hyperlink, wxHyperlinkCtrl>;
 
     Hyperlink(wxWindowID identity, std::string text, std::string url)
-        : super(identity, details::withStyle {}, wxHL_DEFAULT_STYLE)
+        : super(identity, super::WithStyle { wxHL_DEFAULT_STYLE })
         , text(std::move(text))
         , url(std::move(url))
     {
@@ -45,7 +45,7 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     }
 
     Hyperlink(wxSizerFlags const& flags, wxWindowID identity, std::string text, std::string url)
-        : super(flags, identity, details::withStyle {}, wxHL_DEFAULT_STYLE)
+        : super(flags, identity, super::WithStyle { wxHL_DEFAULT_STYLE })
         , text(std::move(text))
         , url(std::move(url))
     {
@@ -71,5 +71,5 @@ private:
     std::string url;
 };
 
-static_assert(details::Widget<Hyperlink>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(Hyperlink);
 }

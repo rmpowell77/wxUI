@@ -26,8 +26,6 @@ SOFTWARE.
 #include "ExtendedExample.h"
 #include <wxUI/wxUI.h>
 
-wxUI::Text::Proxy textProxy;
-wxUI::SpinCtrl::Proxy spinProxy;
 ExtendedExample::ExtendedExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExtendedExample",
         wxDefaultPosition, wxDefaultSize,
@@ -42,7 +40,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         },
         HSizer {
             Button { "Incr" }
-                .bind([]() {
+                .bind([this]() {
                     *spinProxy = 1 + *spinProxy;
                 }),
         },
@@ -61,7 +59,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         },
         HSizer {
             Button { "ReduceText" }
-                .bind([]() {
+                .bind([this]() {
                     auto str = textProxy->get();
                     if (str.size()) {
                         str.pop_back();
@@ -120,6 +118,32 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         },
         Generic { CreateStdDialogButtonSizer(wxOK) },
         // endsnippet CustomExample
+    }
+        .attachTo(this);
+}
+
+MultibindExample::MultibindExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "MultibindExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        HSizer {
+            TextCtrl {}
+                .withSize({ 200, -1 })
+                .withStyle(wxTE_PROCESS_ENTER)
+                .bind([this]() {
+                    *timesTyped = std::to_string(stoi(*timesTyped) + 1);
+                })
+                .bind(wxEVT_TEXT_ENTER, [this]() {
+                    *timesEntered = std::to_string(stoi(*timesEntered) + 1);
+                }),
+        },
+        HSizer {
+            timesTyped = Text { "0" },
+            timesEntered = Text { "0" },
+        },
+        Generic { CreateStdDialogButtonSizer(wxOK) },
     }
         .attachTo(this);
 }

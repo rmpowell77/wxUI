@@ -66,10 +66,11 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
         return widget;
     }
 
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_TOGGLEBUTTON, func };
+        return super::bind(wxEVT_TOGGLEBUTTON, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -93,5 +94,5 @@ private:
     std::optional<wxBitmap> bitmapPressed;
 };
 
-static_assert(details::Widget<BitmapToggleButton>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapToggleButton);
 }

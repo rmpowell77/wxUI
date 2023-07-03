@@ -77,10 +77,11 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
         return widget;
     }
 
+    using super::bind;
     template <typename Function>
     auto bind(Function func)
     {
-        return details::BindWidgetToEvent { *this, wxEVT_LISTBOX, func };
+        return super::bind(wxEVT_LISTBOX, func);
     }
 
     struct Proxy : super::WidgetProxy {
@@ -105,5 +106,5 @@ private:
     std::optional<int> ensureVisible {};
 };
 
-static_assert(details::Widget<ListBox>);
+WIDGET_STATIC_ASSERT_BOILERPLATE(ListBox);
 }

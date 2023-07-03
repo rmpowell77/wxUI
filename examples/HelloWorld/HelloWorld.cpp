@@ -125,6 +125,10 @@ HelloWorldFrame::HelloWorldFrame()
                                                 ExtendedExample dialog(this);
                                                 dialog.ShowModal();
                                             } },
+            wxUI::Item { "&MultibindExample...", [this] {
+                            MultibindExample dialog(this);
+                            dialog.ShowModal();
+                        } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },
