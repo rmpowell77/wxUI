@@ -85,9 +85,17 @@ TEST_CASE("Hyperlink")
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = createUUT().withStyle(wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU);
+        auto uut = createUUT();
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetWindowStyle() == (wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU));
+        CHECK((window->GetWindowStyle() & wxHL_DEFAULT_STYLE) == wxHL_DEFAULT_STYLE);
+    }
+
+    SECTION("withStyle")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = createUUT().withoutStyle(wxHL_ALIGN_CENTRE).withStyle(wxHL_ALIGN_LEFT);
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(window->GetWindowStyle() == (wxHL_CONTEXTMENU | wxNO_BORDER | wxHL_ALIGN_LEFT));
     }
 
     SECTION("pos")

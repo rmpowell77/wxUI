@@ -219,7 +219,13 @@ struct WidgetDetails {
 
     auto withStyle(int64_t style_) -> ConcreteWidget&
     {
-        style = style_;
+        style |= style_;
+        return static_cast<ConcreteWidget&>(*this);
+    }
+
+    auto withoutStyle(int64_t style_) -> ConcreteWidget&
+    {
+        style &= ~style_;
         return static_cast<ConcreteWidget&>(*this);
     }
 
