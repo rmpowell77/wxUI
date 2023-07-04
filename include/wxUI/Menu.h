@@ -290,6 +290,33 @@ struct SubMenu {
     std::tuple<M...> items;
 };
 
+struct MenuProxy {
+    [[nodiscard]] auto menu() const -> wxMenu*
+    {
+        if (mMenu == nullptr) {
+            throw std::runtime_error("Proxy class has not been attached");
+        }
+        return mMenu;
+    }
+
+    void setUnderlying(wxMenu* control)
+    {
+        mMenu = control;
+    }
+
+    template <typename MenuType>
+    auto operator=(MenuType&& menu) -> MenuType&& { return bind(std::forward<MenuType>(menu)); }
+    template <typename MenuType>
+    auto bind(MenuType&& widget) -> MenuType&&
+    {
+        widget.addProxyHandle(this);
+        return std::forward<MenuType>(widget);
+    }
+
+private:
+    wxMenu* mMenu {};
+};
+
 // a submenu constructs menu to give to a menubar
 template <details::MenuItem... M>
 struct Menu {
@@ -311,6 +338,9 @@ struct Menu {
             (tupleArg.createAndAdd(frame, *menu, identity), ...);
         },
             items);
+        for (auto* proxy : proxyHandles) {
+            proxy->setUnderlying(menu.get());
+        }
         menuBar.Append(menu.release(), name);
     }
 
@@ -321,11 +351,22 @@ struct Menu {
             (tupleArg.createAndAdd(frame, *menu, identity), ...);
         },
             items);
+        for (auto* proxy : proxyHandles) {
+            proxy->setUnderlying(menu.get());
+        }
         menuBar.AppendSubMenu(menu.release(), name);
     }
 
+    void addProxyHandle(MenuProxy* proxy)
+    {
+        proxyHandles.push_back(proxy);
+    }
+
+private:
     std::string name;
     std::tuple<M...> items;
+    // here's where we add proxies...?
+    std::vector<MenuProxy*> proxyHandles;
 };
 
 template <details::MenuBarItem... M>

@@ -74,8 +74,9 @@ bool HelloWorldApp::OnInit()
 HelloWorldFrame::HelloWorldFrame()
     : wxFrame(NULL, wxID_ANY, "Hello World")
 {
+    wxUI::MenuProxy proxy;
     wxUI::MenuBar {
-        wxUI::Menu {
+        proxy = wxUI::Menu {
             "&File",
             // endsnippet wxUIMenu
             wxUI::Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [] {
