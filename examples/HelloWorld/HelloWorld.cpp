@@ -39,6 +39,10 @@ public:
 class HelloWorldFrame : public wxFrame {
 public:
     HelloWorldFrame();
+
+private:
+    wxUI::MenuProxy mExtraMenuProxy;
+    int mExtraMenuNumber = 1000;
 };
 
 enum {
@@ -74,9 +78,8 @@ bool HelloWorldApp::OnInit()
 HelloWorldFrame::HelloWorldFrame()
     : wxFrame(NULL, wxID_ANY, "Hello World")
 {
-    wxUI::MenuProxy proxy;
     wxUI::MenuBar {
-        proxy = wxUI::Menu {
+        wxUI::Menu {
             "&File",
             // endsnippet wxUIMenu
             wxUI::Item { "&Hello...\tCtrl-H", "Help string shown in status bar for this menu item", [] {
@@ -96,17 +99,19 @@ HelloWorldFrame::HelloWorldFrame()
                                             } },
             // endsnippet wxUIMenu
         },
-        // snippet wxUIMenuSubMenu
+        mExtraMenuProxy =
+            // snippet wxUIMenuSubMenu
         wxUI::Menu {
-            "&Extra", wxUI::Menu {
-                          "Pets",
-                          wxUI::CheckItem { "Cats", [](wxCommandEvent& event) {
-                                               wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
-                                           } },
-                          wxUI::CheckItem { "Dogs", [](wxCommandEvent& event) {
-                                               wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
-                                           } },
-                      },
+            "&Extra",
+            wxUI::Menu {
+                "Pets",
+                wxUI::CheckItem { "Cats", [](wxCommandEvent& event) {
+                                     wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
+                                 } },
+                wxUI::CheckItem { "Dogs", [](wxCommandEvent& event) {
+                                     wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
+                                 } },
+            },
             // endsnippet wxUIMenuSubMenu
             wxUI::Menu {
                 "Colors",
@@ -122,10 +127,11 @@ HelloWorldFrame::HelloWorldFrame()
             },
             // snippet wxUIMenuSubMenu
             // snippet wxUIMenuExample1
-            wxUI::Separator {}, wxUI::Item { "&ExtendedExample...", [this] {
-                                                ExtendedExample dialog(this);
-                                                dialog.ShowModal();
-                                            } },
+            wxUI::Separator {},
+            wxUI::Item { "&ExtendedExample...", [this] {
+                            ExtendedExample dialog(this);
+                            dialog.ShowModal();
+                        } },
             wxUI::Item { "&MultibindExample...", [this] {
                             MultibindExample dialog(this);
                             dialog.ShowModal();
@@ -137,6 +143,11 @@ HelloWorldFrame::HelloWorldFrame()
                                  wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
                              } },
             // endsnippet wxUIMenuExample1
+            wxUI::Separator {},
+            wxUI::Item { "Add Menu Item", [this]() {
+                            mExtraMenuProxy.menu()->Append(mExtraMenuNumber, std::to_string(mExtraMenuNumber));
+                            mExtraMenuNumber += 1;
+                        } },
         },
         // endsnippet wxUIMenuSubMenu
         wxUI::Menu {

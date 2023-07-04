@@ -19,7 +19,7 @@ The general concept is you declare a set of structures and then `attachTo` a fra
 
 In `wxWidgets` the general paradigm is to create an enumeration of identity ints that you associate with a member, then you would bind, either statically or dynamically, to a function.  With `wxUI::Menu` the construction of the identify and assocation with a function is handled automatically.  By default `wxUI::Menu` starts the enumeration with `wxID_AUTO_LOWEST` and increments for each item.  Take caution if you use these enumerations as it may collide with other ids assocated with the frame.
 
-The top level `wxUI::MenuBar` holds a collection of `wxUI::Menu` objects.  The `wxUI::Menu` object consists of a name of the menu, and a collection of "Items", which can be one of `wxUI::Item` (normal), `wxUI::Separator`, `wxUI::CheckItem`, and `wxUI::RadioItem`.
+The top level `wxUI::MenuBar` holds a collection of `wxUI::Menu` objects.  The `wxUI::Menu` object consists of a name of the menu, and a collection of "Items", which can be one of `wxUI::Item`, `wxUI::Separator`, `wxUI::CheckItem`, `wxUI::RadioItem`, and even `wxUI::Menu` itself.
 
 Menu Items are generally a name with a handler closure, such as a lambda, or name and id with a closure.  Menu Items can also be assocated with `wxStandardID`.  Many of these like `wxID_EXIT` and `wxID_HELP` have predefined name, help, and handlers, so declaration with just an ID is allowed.
 
@@ -50,6 +50,9 @@ Items { "Name", "Help", Handler }
 
 The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primatives on construction.  When `attachTo` a frame is invoked does the underlying logic construct the menu structure.
 
+#### Proxy
+
+There are cases where being able to reference underlying `wxMenu` item is useful.  This can be for when you wish to append to an existing menu.  But it could be done in other ways... Hmm...
 
 ### Layout
 

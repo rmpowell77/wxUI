@@ -39,15 +39,15 @@ namespace details {
 
     // clang-format off
     template <typename T>
-    concept MenuBarItem = requires(T widget, wxFrame frame, wxMenuBar menu, int identity)
+    concept MenuBarItem = requires(T widget, wxWindow window, wxMenuBar menu, int identity)
     {
-        widget.createAndAdd(frame, menu, identity);
+        widget.createAndAdd(window, menu, identity);
     };
 
     template <typename T>
-    concept MenuItem = requires(T widget, wxFrame frame, wxMenu menu, int identity)
+    concept MenuItem = requires(T widget, wxWindow window, wxMenu menu, int identity)
     {
-        widget.createAndAdd(frame, menu, identity);
+        widget.createAndAdd(window, menu, identity);
     };
     // clang-format on
 
@@ -56,19 +56,19 @@ namespace details {
 namespace details {
 
     // We provide a way to bind either a function that takes in a commandEvent
-    // not to a frame at a specific id
+    // not to a window at a specific id
     using functionWithCmd_t = std::function<void(wxCommandEvent&)>;
     using functionWOCmd_t = std::function<void()>;
     using function_t = std::variant<functionWithCmd_t, functionWOCmd_t>;
 
-    inline void bindToFrame(wxFrame& frame, int identity, function_t const& function)
+    inline void bindToWindow(wxWindow& window, int identity, function_t const& function)
     {
-        std::visit([&frame, identity](auto const& funct) {
+        std::visit([&window, identity](auto const& funct) {
             using T = std::decay_t<decltype(funct)>;
             if constexpr (std::is_same_v<T, functionWithCmd_t>) {
-                frame.Bind(wxEVT_MENU, funct, identity);
+                window.Bind(wxEVT_MENU, funct, identity);
             } else if constexpr (std::is_same_v<T, functionWOCmd_t>) {
-                frame.Bind(
+                window.Bind(
                     wxEVT_MENU, [funct](wxCommandEvent&) { funct(); }, identity);
             } else {
                 static_assert(always_false_v<T>, "non-exhaustive visitor!");
@@ -99,18 +99,18 @@ namespace details {
     // If the details are named, we use and increment the identity supplied.
     // The way to add is passed by the caller.  And
     template <typename AppendFunction>
-    inline void createAndAdd(wxFrame& frame, MenuDetails const& item, int& identity, AppendFunction appendFunction)
+    inline void createAndAdd(wxWindow& window, MenuDetails const& item, int& identity, AppendFunction appendFunction)
     {
-        std::visit([&frame, &identity, appendFunction](auto const& item) {
+        std::visit([&window, &identity, appendFunction](auto const& item) {
             using T = std::decay_t<decltype(item)>;
             if constexpr (std::is_same_v<T, IDMenuDetails_t>) {
                 appendFunction(std::get<0>(item), std::get<1>(item), std::get<2>(item));
             } else if constexpr (std::is_same_v<T, IDMenuDetailsWFunc_t>) {
                 appendFunction(std::get<0>(item), std::get<1>(item), std::get<2>(item));
-                bindToFrame(frame, std::get<0>(item), std::get<3>(item));
+                bindToWindow(window, std::get<0>(item), std::get<3>(item));
             } else if constexpr (std::is_same_v<T, NamedMenuDetails_t>) {
                 appendFunction(identity, std::get<0>(item), std::get<1>(item));
-                bindToFrame(frame, identity, std::get<2>(item));
+                bindToWindow(window, identity, std::get<2>(item));
                 identity += 1;
             } else {
                 static_assert(always_false_v<T>, "non-exhaustive visitor!");
@@ -156,9 +156,9 @@ struct Item {
     {
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity) const
+    void createAndAdd(wxWindow& window, wxMenu& menu, int& identity) const
     {
-        details::createAndAdd(frame, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
+        details::createAndAdd(window, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
             menu.Append(identity, item, helpString);
         });
     }
@@ -201,9 +201,9 @@ struct CheckItem {
     {
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity) const
+    void createAndAdd(wxWindow& window, wxMenu& menu, int& identity) const
     {
-        details::createAndAdd(frame, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
+        details::createAndAdd(window, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
             menu.AppendCheckItem(identity, item, helpString);
         });
     }
@@ -246,9 +246,9 @@ struct RadioItem {
     {
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity) const
+    void createAndAdd(wxWindow& window, wxMenu& menu, int& identity) const
     {
-        details::createAndAdd(frame, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
+        details::createAndAdd(window, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
             menu.AppendRadioItem(identity, item, helpString);
         });
     }
@@ -256,13 +256,13 @@ struct RadioItem {
 };
 
 struct Separator {
-    static void createAndAdd([[maybe_unused]] wxFrame& frame, wxMenu& menu, [[maybe_unused]] int& identity)
+    static void createAndAdd([[maybe_unused]] wxWindow& window, wxMenu& menu, [[maybe_unused]] int& identity)
     {
         menu.AppendSeparator();
     }
 };
 
-// a submenu constructs menu to give to a menubar
+// a submenu is a MenuItem that contains MenuItems
 template <details::MenuItem... M>
 struct SubMenu {
     explicit SubMenu(std::string name, M const&... items)
@@ -276,11 +276,11 @@ struct SubMenu {
     {
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menuBar, int& identity)
+    void createAndAdd(wxWindow& window, wxMenu& menuBar, int& identity)
     {
         auto menu = std::make_unique<wxMenu>();
-        std::apply([&frame, menu = menu.get(), &identity](auto&&... tupleArg) {
-            (tupleArg.createAndAdd(frame, *menu, identity), ...);
+        std::apply([&window, menu = menu.get(), &identity](auto&&... tupleArg) {
+            (tupleArg.createAndAdd(window, *menu, identity), ...);
         },
             items);
         menuBar.AppendSubMenu(menu.release(), name);
@@ -290,6 +290,7 @@ struct SubMenu {
     std::tuple<M...> items;
 };
 
+// A MenuProx constructs menu to give to a menubar
 struct MenuProxy {
     [[nodiscard]] auto menu() const -> wxMenu*
     {
@@ -317,7 +318,7 @@ private:
     wxMenu* mMenu {};
 };
 
-// a submenu constructs menu to give to a menubar
+// A Menu is a tuple of MenuItems.  It is used to add to MenuBar, or can be used to construct a wxMenu object.
 template <details::MenuItem... M>
 struct Menu {
     explicit Menu(std::string name, M const&... items)
@@ -331,30 +332,16 @@ struct Menu {
     {
     }
 
-    void createAndAdd(wxFrame& frame, wxMenuBar& menuBar, int& identity)
+    void createAndAdd(wxWindow& window, wxMenuBar& menuBar, int& identity)
     {
-        auto menu = std::make_unique<wxMenu>();
-        std::apply([&frame, menu = menu.get(), &identity](auto&&... tupleArg) {
-            (tupleArg.createAndAdd(frame, *menu, identity), ...);
-        },
-            items);
-        for (auto* proxy : proxyHandles) {
-            proxy->setUnderlying(menu.get());
-        }
+        auto menu = createAndAdd(window, identity);
         menuBar.Append(menu.release(), name);
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menuBar, int& identity)
+    void createAndAdd(wxWindow& window, wxMenu& parentMenu, int& identity)
     {
-        auto menu = std::make_unique<wxMenu>();
-        std::apply([&frame, menu = menu.get(), &identity](auto&&... tupleArg) {
-            (tupleArg.createAndAdd(frame, *menu, identity), ...);
-        },
-            items);
-        for (auto* proxy : proxyHandles) {
-            proxy->setUnderlying(menu.get());
-        }
-        menuBar.AppendSubMenu(menu.release(), name);
+        auto menu = createAndAdd(window, identity);
+        parentMenu.AppendSubMenu(menu.release(), name);
     }
 
     void addProxyHandle(MenuProxy* proxy)
@@ -363,9 +350,21 @@ struct Menu {
     }
 
 private:
+    auto createAndAdd(wxWindow& window, int& identity) -> std::unique_ptr<wxMenu>
+    {
+        auto menu = std::make_unique<wxMenu>();
+        std::apply([&window, menu = menu.get(), &identity](auto&&... tupleArg) {
+            (tupleArg.createAndAdd(window, *menu, identity), ...);
+        },
+            items);
+        for (auto* proxy : proxyHandles) {
+            proxy->setUnderlying(menu.get());
+        }
+        return menu;
+    }
+
     std::string name;
     std::tuple<M...> items;
-    // here's where we add proxies...?
     std::vector<MenuProxy*> proxyHandles;
 };
 
