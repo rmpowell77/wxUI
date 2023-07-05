@@ -217,6 +217,18 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
+    auto withWidthSize(int size_) -> ConcreteWidget&
+    {
+        size.SetWidth(size_);
+        return static_cast<ConcreteWidget&>(*this);
+    }
+
+    auto withHeightSize(int size_) -> ConcreteWidget&
+    {
+        size.SetHeight(size_);
+        return static_cast<ConcreteWidget&>(*this);
+    }
+
     auto withStyle(int64_t style_) -> ConcreteWidget&
     {
         style |= style_;
