@@ -8,4 +8,5 @@ Other changes:
 
 * [#123](../../issues/123) Allow binding to multiple events
 * [#127](../../issues/127) There should be withStyle and withoutStyle which sets and clears the bitmaps
+* [#128](../../issues/128) we should have a withHSize, withVSize
 
