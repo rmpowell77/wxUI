@@ -2,6 +2,8 @@
 
 Bugs addressed in this release:
 
+* [#132](../../issues/132) Menu not able to build simple item that is { ID, string, string }
+
 Other changes:
 
 * [#123](../../issues/123) Allow binding to multiple events

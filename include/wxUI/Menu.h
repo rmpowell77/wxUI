@@ -126,33 +126,28 @@ struct Item {
     {
     }
 
-    template <typename F>
-    Item(wxStandardID identity, F function)
-        : Item(identity, "", "", function)
+    Item(wxStandardID identity, details::function_t function)
+        : Item(identity, "", "", std::move(function))
     {
     }
 
-    template <typename F>
-    Item(wxStandardID identity, std::string const& name, F function)
-        : Item(identity, name, "", function)
+    Item(wxStandardID identity, std::string const& name, details::function_t function)
+        : Item(identity, name, "", std::move(function))
     {
     }
 
-    template <typename F>
-    Item(wxStandardID identity, std::string const& name, std::string const& helpString, F function)
-        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, function))
+    Item(wxStandardID identity, std::string const& name, std::string const& helpString, details::function_t function)
+        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
     {
     }
 
-    template <typename F>
-    Item(std::string const& name, F function)
-        : Item(name, "", function)
+    Item(std::string const& name, details::function_t function)
+        : Item(name, "", std::move(function))
     {
     }
 
-    template <typename F>
-    Item(std::string const& name, std::string const& help, F function)
-        : menuDetails(details::NamedMenuDetails_t(name, help, function))
+    Item(std::string const& name, std::string const& help, details::function_t function)
+        : menuDetails(details::NamedMenuDetails_t(name, help, std::move(function)))
     {
     }
 
@@ -171,33 +166,28 @@ struct CheckItem {
     {
     }
 
-    template <typename F>
-    CheckItem(wxStandardID identity, F function)
-        : CheckItem(identity, "", "", function)
+    CheckItem(wxStandardID identity, details::function_t function)
+        : CheckItem(identity, "", "", std::move(function))
     {
     }
 
-    template <typename F>
-    CheckItem(wxStandardID identity, std::string const& name, F function)
-        : CheckItem(identity, name, "", function)
+    CheckItem(wxStandardID identity, std::string const& name, details::function_t function)
+        : CheckItem(identity, name, "", std::move(function))
     {
     }
 
-    template <typename F>
-    CheckItem(wxStandardID identity, std::string const& name, std::string const& helpString, F function)
-        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, function))
+    CheckItem(wxStandardID identity, std::string const& name, std::string const& helpString, details::function_t function)
+        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
     {
     }
 
-    template <typename F>
-    CheckItem(std::string const& name, F function)
-        : CheckItem(name, "", function)
+    CheckItem(std::string const& name, details::function_t function)
+        : CheckItem(name, "", std::move(function))
     {
     }
 
-    template <typename F>
-    CheckItem(std::string const& name, std::string const& help, F function)
-        : menuDetails(details::NamedMenuDetails_t(name, help, function))
+    CheckItem(std::string const& name, std::string const& help, details::function_t function)
+        : menuDetails(details::NamedMenuDetails_t(name, help, std::move(function)))
     {
     }
 
@@ -216,33 +206,28 @@ struct RadioItem {
     {
     }
 
-    template <typename F>
-    RadioItem(wxStandardID identity, F function)
-        : RadioItem(identity, "", "", function)
+    RadioItem(wxStandardID identity, details::function_t function)
+        : RadioItem(identity, "", "", std::move(function))
     {
     }
 
-    template <typename F>
-    RadioItem(wxStandardID identity, std::string const& name, F function)
-        : RadioItem(identity, name, "", function)
+    RadioItem(wxStandardID identity, std::string const& name, details::function_t function)
+        : RadioItem(identity, name, "", std::move(function))
     {
     }
 
-    template <typename F>
-    RadioItem(wxStandardID identity, std::string const& name, std::string const& helpString, F function)
-        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, function))
+    RadioItem(wxStandardID identity, std::string const& name, std::string const& helpString, details::function_t function)
+        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
     {
     }
 
-    template <typename F>
-    RadioItem(std::string const& name, F function)
-        : RadioItem(name, "", function)
+    RadioItem(std::string const& name, details::function_t function)
+        : RadioItem(name, "", std::move(function))
     {
     }
 
-    template <typename F>
-    RadioItem(std::string const& name, std::string const& help, F function)
-        : menuDetails(details::NamedMenuDetails_t(name, help, function))
+    RadioItem(std::string const& name, std::string const& help, details::function_t function)
+        : menuDetails(details::NamedMenuDetails_t(name, help, std::move(function)))
     {
     }
 
