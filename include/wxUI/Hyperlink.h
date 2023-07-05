@@ -26,6 +26,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/hyperlink.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_hyperlink_ctrl.html
@@ -73,3 +75,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(Hyperlink);
 }
+
+#include "ZapMacros.h"

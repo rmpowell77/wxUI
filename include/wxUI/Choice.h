@@ -27,6 +27,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/choice.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_choice.html
@@ -98,3 +100,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(Choice);
 }
+
+#include "ZapMacros.h"

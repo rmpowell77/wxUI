@@ -27,6 +27,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/combobox.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_combo_box.html
@@ -107,3 +109,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(ComboBox);
 }
+
+#include "ZapMacros.h"

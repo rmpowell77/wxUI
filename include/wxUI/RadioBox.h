@@ -27,6 +27,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/radiobox.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_radio_box.html
@@ -128,3 +130,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(RadioBox);
 }
+
+#include "ZapMacros.h"

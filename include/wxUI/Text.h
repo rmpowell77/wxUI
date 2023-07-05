@@ -27,6 +27,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/stattext.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_text.html
@@ -86,3 +88,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(Text);
 }
+
+#include "ZapMacros.h"

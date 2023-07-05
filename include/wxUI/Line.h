@@ -26,6 +26,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/statline.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_static_line.html
@@ -65,3 +67,5 @@ inline auto VLine() -> Line
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(Line);
 }
+
+#include "ZapMacros.h"

@@ -445,3 +445,5 @@ private:
 };
 
 }
+
+#include "ZapMacros.h"

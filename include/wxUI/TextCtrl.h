@@ -27,6 +27,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/textctrl.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_text_ctrl.html
@@ -92,3 +94,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(TextCtrl);
 }
+
+#include "ZapMacros.h"

@@ -21,47 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
+// Generated with bash command
+// for i in *.cpp; do echo \#include \<wxUI\/Custom.h\> > Custom.cpp; for j in RULE_OF_SIX_BOILERPLATE PROXY_BOILERPLATE WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WIDGET_STATIC_ASSERT_BOILERPLATE\) >> Custom.cpp; echo \#error Missed zapping WIDGET_STATIC_ASSERT_BOILERPLATE >> Custom.cpp; echo \#endif >> Custom.cpp; done; done
+#include <wxUI/Custom.h>
 
-#include "Widget.h"
+#if defined(RULE_OF_SIX_BOILERPLATE)
+#error Missed zapping RULE_OF_SIX_BOILERPLATE
+#endif
 
-namespace wxUI {
+#if defined(PROXY_BOILERPLATE)
+#error Missed zapping PROXY_BOILERPLATE
+#endif
 
-// A Custom Controller can only be created with something that supports the CreateAndAdd function.
-
-// clang-format off
-// snippet requires
-template <typename T>
-concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer)
-{
-    function(window, sizer, wxSizerFlags {});
-};
-// endsnippet requires
-// clang-format on
-
-template <CreateAndAddFunction Function>
-struct Custom {
-    Custom(wxSizerFlags const& flags, Function const& function)
-        : flags(flags)
-        , function(function)
-    {
-    }
-
-    explicit Custom(Function const& function)
-        : function(function)
-    {
-    }
-
-    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
-    {
-        function(parent, parentSizer, flags ? *flags : parentFlags);
-    }
-
-private:
-    std::optional<wxSizerFlags> flags;
-    Function function;
-};
-
-}
-
-#include "ZapMacros.h"
+#if defined(WIDGET_STATIC_ASSERT_BOILERPLATE)
+#error Missed zapping WIDGET_STATIC_ASSERT_BOILERPLATE
+#endif
