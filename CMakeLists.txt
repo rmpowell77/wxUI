@@ -43,6 +43,7 @@ add_library(
   include/wxUI/ComboBox.h
   include/wxUI/Custom.h
   include/wxUI/GetterSetter.h
+  include/wxUI/HelperMacros.h
   include/wxUI/Hyperlink.h
   include/wxUI/Layout.h
   include/wxUI/Line.h
@@ -53,6 +54,7 @@ add_library(
   include/wxUI/Text.h
   include/wxUI/TextCtrl.h
   include/wxUI/Widget.h
+  include/wxUI/ZapMacros.h
 )
 
 target_include_directories(

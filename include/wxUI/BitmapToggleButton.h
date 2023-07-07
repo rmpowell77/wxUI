@@ -27,6 +27,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/tglbtn.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_bitmap_toggle_button.html
@@ -96,3 +98,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapToggleButton);
 }
+
+#include "ZapMacros.h"

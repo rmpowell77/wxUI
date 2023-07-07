@@ -339,3 +339,5 @@ struct MenuBar {
     std::tuple<M...> menus;
 };
 }
+
+#include "ZapMacros.h"

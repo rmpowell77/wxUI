@@ -21,47 +21,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
+// #pragma once
 
-#include "Widget.h"
+// This header is library details only header, and should not be relevant to users of the library.
+// Libary Implementer Notes:
+// Put all the Macros in HelperMacros.h
+// Put all the undefs in ZapMacros.h
+// ZapMacros.h should be the last line included in all Header files.
+// Due to the way we are using these header files, they should *not* use #pragma once
 
-namespace wxUI {
+#if defined(RULE_OF_SIX_BOILERPLATE)
+#undef RULE_OF_SIX_BOILERPLATE
+#endif
 
-// A Custom Controller can only be created with something that supports the CreateAndAdd function.
+#if defined(PROXY_BOILERPLATE)
+#undef PROXY_BOILERPLATE
+#endif
 
-// clang-format off
-// snippet requires
-template <typename T>
-concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer)
-{
-    function(window, sizer, wxSizerFlags {});
-};
-// endsnippet requires
-// clang-format on
-
-template <CreateAndAddFunction Function>
-struct Custom {
-    Custom(wxSizerFlags const& flags, Function const& function)
-        : flags(flags)
-        , function(function)
-    {
-    }
-
-    explicit Custom(Function const& function)
-        : function(function)
-    {
-    }
-
-    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
-    {
-        function(parent, parentSizer, flags ? *flags : parentFlags);
-    }
-
-private:
-    std::optional<wxSizerFlags> flags;
-    Function function;
-};
-
-}
-
-#include "ZapMacros.h"
+#if defined(WIDGET_STATIC_ASSERT_BOILERPLATE)
+#undef WIDGET_STATIC_ASSERT_BOILERPLATE
+#endif

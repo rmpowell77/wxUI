@@ -21,6 +21,30 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_Tests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_TextCtrlTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_TextTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Bitmap.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/BitmapButton.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/BitmapComboBox.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/BitmapToggleButton.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Button.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/CheckBox.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Choice.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/ComboBox.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Custom.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/GetterSetter.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/HelperMacros.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Hyperlink.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Layout.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Line.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/ListBox.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Menu.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/RadioBox.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Slider.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/SpinCtrl.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Text.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/TextCtrl.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Widget.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/ZapMacros.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/wxUI.cpp
 )
 
 wxUI_SetupCompilerForTarget(wxUI_Tests)

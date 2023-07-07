@@ -26,6 +26,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/button.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_button.html
@@ -89,3 +91,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(Button);
 }
+
+#include "ZapMacros.h"

@@ -26,6 +26,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/bmpbuttn.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_bitmap_button.html
@@ -88,3 +90,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapButton);
 }
+
+#include "ZapMacros.h"

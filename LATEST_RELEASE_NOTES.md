@@ -2,6 +2,7 @@
 
 Bugs addressed in this release:
 
+* [#103](../../issues/103) Don't let macros escape the headers
 * [#132](../../issues/132) Menu not able to build simple item that is { ID, string, string }
 
 Other changes:

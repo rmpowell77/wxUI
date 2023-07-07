@@ -282,3 +282,5 @@ struct Generic {
     }
 };
 }
+
+#include "ZapMacros.h"

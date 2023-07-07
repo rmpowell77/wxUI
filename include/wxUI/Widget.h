@@ -316,30 +316,4 @@ private:
     std::vector<BindInfo> boundedFunctions;
 };
 
-// clang-format off
-
-#define RULE_OF_SIX_BOILERPLATE(WIDGET)               \
-    virtual ~WIDGET() = default;                      \
-    WIDGET(WIDGET const&) = default;                  \
-    WIDGET(WIDGET&&) noexcept = default;              \
-    auto operator=(WIDGET const&)->WIDGET& = default; \
-    auto operator=(WIDGET&&) noexcept -> WIDGET& = default;
-
-// clang-format on
-
-#define PROXY_BOILERPLATE()                                                           \
-    template <typename W>                                                             \
-    auto operator=(W&& controller)->W&& { return bind(std::forward<W>(controller)); } \
-    template <typename W>                                                             \
-    auto bind(W&& widget)->W&&                                                        \
-    {                                                                                 \
-        widget.setProxyHandle(this);                                                  \
-        return std::forward<W>(widget);                                               \
-    }
-
-#define WIDGET_STATIC_ASSERT_BOILERPLATE(WIDGET)                 \
-    static_assert(details::Widget<WIDGET>);                      \
-    static_assert(std::is_nothrow_move_constructible_v<WIDGET>); \
-    static_assert(std::is_nothrow_move_assignable_v<WIDGET>)
-
 }

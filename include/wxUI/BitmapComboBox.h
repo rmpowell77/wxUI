@@ -27,6 +27,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/bmpcbox.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_bitmap_combo_box.html
@@ -141,3 +143,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapComboBox);
 }
+
+#include "ZapMacros.h"

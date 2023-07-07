@@ -26,6 +26,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/statbmp.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_static_bitmap.html
@@ -71,3 +73,5 @@ private:
 WIDGET_STATIC_ASSERT_BOILERPLATE(Bitmap);
 
 }
+
+#include "ZapMacros.h"

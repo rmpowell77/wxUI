@@ -27,6 +27,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/spinctrl.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_spin_ctrl.html
@@ -97,3 +99,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(SpinCtrl);
 }
+
+#include "ZapMacros.h"

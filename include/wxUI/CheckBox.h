@@ -27,6 +27,8 @@ SOFTWARE.
 #include "Widget.h"
 #include <wx/checkbox.h>
 
+#include "HelperMacros.h"
+
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_check_box.html
@@ -98,3 +100,5 @@ private:
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(CheckBox);
 }
+
+#include "ZapMacros.h"
