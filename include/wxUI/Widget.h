@@ -211,10 +211,16 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withSize(wxSize size_) -> ConcreteWidget&
+    auto withSize(wxSize size_) & -> ConcreteWidget&
     {
         size = size_;
         return static_cast<ConcreteWidget&>(*this);
+    }
+
+    auto withSize(wxSize size_) && -> ConcreteWidget&&
+    {
+        size = size_;
+        return static_cast<ConcreteWidget&&>(std::move(*this));
     }
 
     auto withWidthSize(int size_) -> ConcreteWidget&
@@ -268,14 +274,20 @@ struct WidgetDetails {
         return widget;
     }
 
-    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& parentFlags) -> Underlying*
+    auto create(wxWindow* parent) -> Underlying*
     {
-        auto widget = dynamic_cast<Underlying*>(create(parent));
+        auto widget = dynamic_cast<Underlying*>(createImpl(parent));
         if (fontInfo) {
             widget->SetFont(wxFont(*fontInfo));
         }
-        widget = bindEvents(widget);
         // bind any events
+        widget = bindEvents(widget);
+        return widget;
+    }
+
+    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& parentFlags) -> Underlying*
+    {
+        auto widget = create(parent);
         // add to parent
         sizer->Add(widget, flags ? *flags : parentFlags);
         return widget;
@@ -303,7 +315,7 @@ protected:
 private:
     // these should be implemented in the derived classes.
     // aka the Template Pattern
-    virtual auto create(wxWindow* parent) -> wxWindow* = 0;
+    virtual auto createImpl(wxWindow* parent) -> wxWindow* = 0;
 
     std::optional<wxSizerFlags> flags;
     // these are common across the controls

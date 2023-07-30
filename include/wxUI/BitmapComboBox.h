@@ -87,7 +87,7 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
     {
     }
 
-    auto create(wxWindow* parent) -> wxWindow* override
+    auto createImpl(wxWindow* parent) -> wxWindow* override
     {
         auto&& first = (choices.size() > 0) ? wxString(choices.at(0)) : wxString(wxEmptyString);
         auto* widget = setProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle()));

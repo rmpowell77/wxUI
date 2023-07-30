@@ -10,6 +10,7 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ChoiceTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ComboBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_GetterSetterTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_HSplitterTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_HyperlinkTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LayoutTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LineTests.cpp
@@ -21,6 +22,7 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_Tests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_TextCtrlTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_TextTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_VSplitterTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Bitmap.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/BitmapButton.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/BitmapComboBox.cpp
@@ -40,6 +42,7 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/RadioBox.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Slider.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/SpinCtrl.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Splitter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Text.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/TextCtrl.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BuildTests/Widget.cpp

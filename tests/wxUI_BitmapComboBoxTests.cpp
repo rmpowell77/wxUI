@@ -48,7 +48,7 @@ TEST_CASE("BitmapComboBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetLabel().empty());
     }
 
@@ -56,7 +56,7 @@ TEST_CASE("BitmapComboBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, { { wxString {}, wxBitmap {} } } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetLabel().empty());
     }
@@ -65,7 +65,7 @@ TEST_CASE("BitmapComboBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), { { wxString {}, wxBitmap {} } } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetLabel().empty());
     }
 
@@ -73,7 +73,7 @@ TEST_CASE("BitmapComboBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, { { wxString {}, wxBitmap {} } } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetLabel().empty());
     }
@@ -82,7 +82,7 @@ TEST_CASE("BitmapComboBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetPosition() == wxPoint { 1, 2 });
     }
 
@@ -90,7 +90,7 @@ TEST_CASE("BitmapComboBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
 
@@ -98,7 +98,7 @@ TEST_CASE("BitmapComboBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, { { "Hello", wxBitmap {} }, { "Goodbye", wxBitmap {} } } }.withSize({ 1, 2 }).withSelection(1);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(2 == window->GetCount());
         CHECK(1 == window->GetSelection());

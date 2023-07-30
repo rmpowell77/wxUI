@@ -147,3 +147,31 @@ MultibindExample::MultibindExample(wxWindow* parent)
     }
         .attachTo(this);
 }
+
+SplitterExample::SplitterExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "SplitterExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    // snippet SplitterExample
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        VSplitter {
+            TextCtrl { "This is Left Side.\n" }
+                .withStyle(wxTE_MULTILINE)
+                .withSize(wxSize(200, 100)),
+            HSplitter {
+                TextCtrl { "This is Right Top.\n" }
+                    .withStyle(wxTE_MULTILINE)
+                    .withSize(wxSize(200, 100)),
+                TextCtrl { "This is Right Bottom.\n" }
+                    .withStyle(wxTE_MULTILINE)
+                    .withSize(wxSize(200, 100)),
+            },
+        }
+            .withSize(wxSize(500, 400)),
+
+        Generic { CreateStdDialogButtonSizer(wxOK) },
+    }
+        .attachTo(this);
+    // endsnippet SplitterExample
+}

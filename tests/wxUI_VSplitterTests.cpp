@@ -23,59 +23,57 @@ SOFTWARE.
 */
 #include "wxUI_TestControlCommon.h"
 #include <catch2/catch_test_macros.hpp>
-#include <wxUI/Bitmap.h>
+#include <wxUI/Splitter.h>
+#include <wxUI/TextCtrl.h>
 
 #include <wx/wx.h>
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
-using TypeUnderTest = wxUI::Bitmap;
+using TypeUnderTest = wxUI::VSplitter<wxUI::TextCtrl, wxUI::TextCtrl>;
 
-struct BitmapTestPolicy {
+struct VSplitterTestPolicy {
     using TypeUnderTest = TypeUnderTest;
-    static auto createUUT() { return TypeUnderTest { wxBitmap {} }; }
-    static auto testStyle() { return (0); }
-    static auto testPosition() { return wxPoint { 1, 2 }; }
-    static auto testSize() { return wxSize { 10, 12 }; }
+    static auto createUUT() { return TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} }; }
+    static auto testStyle() { return wxSP_LIVE_UPDATE; }
+    static auto testPosition() { return wxPoint { 14, 2 }; }
+    static auto testSize() { return wxSize { 100, 40 }; }
     static auto expectedStyle() { return testStyle(); }
-    static auto expectedPosition() { return testPosition(); }
-    static auto expectedSize() { return testSize(); }
+    static auto expectedPosition() { return wxPoint { 14, 2 }; }
+    static auto expectedSize() { return wxSize { 100, 40 }; }
 };
-static auto createUUT() { return BitmapTestPolicy::createUUT(); }
 
-TEST_CASE("Bitmap")
+TEST_CASE("VSplitter")
 {
-    SECTION("bitmap")
+    SECTION("noargs")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
-        CHECK(window != nullptr);
+        auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} };
+        [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
     }
 
-    SECTION("id.bitmap")
+    SECTION("id")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { 10000, wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
-        CHECK(10000 == window->GetId());
-    }
-
-    SECTION("size.bitmap")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
-        CHECK(window != nullptr);
-    }
-
-    SECTION("size.id.bitmap")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, wxBitmap {} };
+        auto uut = TypeUnderTest { 10000, wxUI::TextCtrl {}, wxUI::TextCtrl {} };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
     }
 
-    COMMON_TESTS(BitmapTestPolicy)
+    SECTION("size")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest { wxSizerFlags(1), wxUI::TextCtrl {}, wxUI::TextCtrl {} };
+        [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+    }
+
+    SECTION("size.id")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, wxUI::TextCtrl {}, wxUI::TextCtrl {} };
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        CHECK(10000 == window->GetId());
+    }
+
+    COMMON_TESTS(VSplitterTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

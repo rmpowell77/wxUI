@@ -93,6 +93,14 @@ One special type of *Layout* is `Generic`.  There are cases where you may have a
 {{{ examples/HelloWorld/HelloWorld.cpp wxUIGeneric "    // ..." }}}
 ```
 
+#### Splitter
+
+`HSplitter` and `VSplitter` are special types of *Layout* objects that take in two *Controllers*.
+
+```cpp
+{{{ examples/HelloWorld/ExtendedExample.cpp SplitterExample "    // ..." }}}
+```
+
 ### Controllers
 
 *Controllers* are the general term to refer to items that behave like a [`wxContol`](https://docs.wxwidgets.org/3.0/classwx_control.html).  In `wxUI` we attempt to conform a consistent style that favors the common things you do with a specific `wxControl`.

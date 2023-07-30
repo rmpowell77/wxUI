@@ -44,7 +44,7 @@ struct Line : public details::WidgetDetails<Line, wxStaticLine> {
     {
     }
 
-    auto create(wxWindow* parent) -> wxWindow* override
+    auto createImpl(wxWindow* parent) -> wxWindow* override
     {
         return setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), getStyle()));
     }

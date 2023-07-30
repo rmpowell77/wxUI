@@ -49,7 +49,7 @@ TEST_CASE("BitmapButton")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetLabel().empty());
     }
 
@@ -57,7 +57,7 @@ TEST_CASE("BitmapButton")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetLabel().empty());
     }
@@ -66,7 +66,7 @@ TEST_CASE("BitmapButton")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetLabel().empty());
     }
 
@@ -74,7 +74,7 @@ TEST_CASE("BitmapButton")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetLabel().empty());
     }
@@ -83,7 +83,7 @@ TEST_CASE("BitmapButton")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withStyle(wxBU_LEFT);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetWindowStyle() == (wxBU_LEFT | wxBU_EXACTFIT | wxBU_NOTEXT));
     }
 
@@ -91,7 +91,7 @@ TEST_CASE("BitmapButton")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetPosition() == wxPoint { 1, 2 });
     }
 
@@ -99,7 +99,7 @@ TEST_CASE("BitmapButton")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
 

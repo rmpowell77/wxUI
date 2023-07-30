@@ -59,7 +59,7 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     {
     }
 
-    auto create(wxWindow* parent) -> wxWindow*
+    auto createImpl(wxWindow* parent) -> wxWindow*
     {
         auto min = range ? range->first : 0;
         auto max = range ? range->second : 100;

@@ -130,6 +130,10 @@ HelloWorldFrame::HelloWorldFrame()
                             MultibindExample dialog(this);
                             dialog.ShowModal();
                         } },
+            wxUI::Item { "&SplitterExample...", [this] {
+                            SplitterExample dialog(this);
+                            dialog.ShowModal();
+                        } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },
