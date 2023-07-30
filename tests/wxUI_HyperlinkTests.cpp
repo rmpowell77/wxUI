@@ -48,7 +48,7 @@ TEST_CASE("Hyperlink")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK("Hello" == window->GetLabel());
         CHECK("www.github.com" == window->GetURL());
     }
@@ -57,7 +57,7 @@ TEST_CASE("Hyperlink")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, "Hello", "www.github.com" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK("Hello" == window->GetLabel());
         CHECK("www.github.com" == window->GetURL());
@@ -67,7 +67,7 @@ TEST_CASE("Hyperlink")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), "Hello", "www.github.com" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK("Hello" == window->GetLabel());
         CHECK("www.github.com" == window->GetURL());
     }
@@ -76,7 +76,7 @@ TEST_CASE("Hyperlink")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, "Hello", "www.github.com" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK("Hello" == window->GetLabel());
         CHECK("www.github.com" == window->GetURL());
@@ -86,7 +86,7 @@ TEST_CASE("Hyperlink")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK((window->GetWindowStyle() & wxHL_DEFAULT_STYLE) == wxHL_DEFAULT_STYLE);
     }
 
@@ -94,7 +94,7 @@ TEST_CASE("Hyperlink")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withoutStyle(wxHL_ALIGN_CENTRE).withStyle(wxHL_ALIGN_LEFT);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetWindowStyle() == (wxHL_CONTEXTMENU | wxNO_BORDER | wxHL_ALIGN_LEFT));
     }
 
@@ -102,7 +102,7 @@ TEST_CASE("Hyperlink")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetPosition() == wxPoint { 1, 2 });
     }
 
@@ -110,7 +110,7 @@ TEST_CASE("Hyperlink")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
 

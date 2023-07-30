@@ -48,7 +48,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetValue() == 0);
     }
 
@@ -56,7 +56,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetValue() == 1);
     }
 
@@ -64,7 +64,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetValue() == 3);
     }
 
@@ -72,7 +72,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 0);
     }
@@ -81,7 +81,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 1);
     }
@@ -90,7 +90,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 3);
     }
@@ -99,7 +99,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1) };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetLabel().empty());
     }
 
@@ -107,7 +107,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetValue() == 1);
     }
 
@@ -115,7 +115,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetValue() == 3);
     }
 
@@ -123,7 +123,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 0);
     }
@@ -132,7 +132,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 1);
     }
@@ -141,7 +141,7 @@ TEST_CASE("Slider")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 3);
     }

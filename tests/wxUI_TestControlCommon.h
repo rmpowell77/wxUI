@@ -71,27 +71,27 @@ auto DoChainingIterations()
     wxFrame frame { nullptr, wxID_ANY, "" };
     {
         auto uut = addWithStyle(style, addWithPosition(pos, addWithSize(size, WHICH::createUUT())));
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.createImpl(&frame)), expectedStyle, expectedPos, expectedSize);
     }
     {
         auto uut = addWithPosition(pos, addWithStyle(style, addWithSize(size, WHICH::createUUT())));
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.createImpl(&frame)), expectedStyle, expectedPos, expectedSize);
     }
     {
         auto uut = addWithSize(size, addWithStyle(style, addWithPosition(pos, WHICH::createUUT())));
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.createImpl(&frame)), expectedStyle, expectedPos, expectedSize);
     }
     {
         auto uut = addWithStyle(style, addWithSize(size, addWithPosition(pos, WHICH::createUUT())));
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.createImpl(&frame)), expectedStyle, expectedPos, expectedSize);
     }
     {
         auto uut = addWithPosition(pos, addWithSize(size, addWithStyle(style, WHICH::createUUT())));
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.createImpl(&frame)), expectedStyle, expectedPos, expectedSize);
     }
     {
         auto uut = addWithSize(size, addWithPosition(pos, addWithStyle(style, WHICH::createUUT())));
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.createImpl(&frame)), expectedStyle, expectedPos, expectedSize);
     }
 }
 
@@ -101,7 +101,7 @@ auto DoProxyTests()
     wxFrame frame { nullptr, wxID_ANY, "" };
     auto proxy = typename WHICH::TypeUnderTest::Proxy {};
     auto uut = proxy = WHICH::createUUT();
-    uut.create(&frame);
+    uut.createImpl(&frame);
 
     CHECK(proxy.control() != nullptr);
 }

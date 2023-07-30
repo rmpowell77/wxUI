@@ -50,6 +50,7 @@ add_library(
   include/wxUI/Menu.h
   include/wxUI/RadioBox.h
   include/wxUI/SpinCtrl.h
+  include/wxUI/Splitter.h
   include/wxUI/Slider.h
   include/wxUI/Text.h
   include/wxUI/TextCtrl.h

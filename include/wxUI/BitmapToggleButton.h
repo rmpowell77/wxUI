@@ -59,7 +59,7 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
     {
     }
 
-    auto create(wxWindow* parent) -> wxWindow* override
+    auto createImpl(wxWindow* parent) -> wxWindow* override
     {
         auto* widget = setProxy(new underlying_t(parent, getIdentity(), bitmap, getPos(), getSize(), getStyle()));
         if (bitmapPressed) {

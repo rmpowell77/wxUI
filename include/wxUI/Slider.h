@@ -59,7 +59,7 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
     {
     }
 
-    auto create(wxWindow* parent) -> wxWindow* override
+    auto createImpl(wxWindow* parent) -> wxWindow* override
     {
         auto min = range ? range->first : 0;
         auto max = range ? range->second : 100;

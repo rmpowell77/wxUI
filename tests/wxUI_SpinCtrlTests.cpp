@@ -48,7 +48,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetValue() == 0);
     }
 
@@ -56,7 +56,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetValue() == 1);
     }
 
@@ -64,7 +64,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetValue() == 3);
     }
 
@@ -72,7 +72,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 0);
     }
@@ -81,7 +81,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 1);
     }
@@ -90,7 +90,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 3);
     }
@@ -99,7 +99,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1) };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetLabel().empty());
     }
 
@@ -107,7 +107,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetValue() == 1);
     }
 
@@ -115,7 +115,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetValue() == 3);
     }
 
@@ -123,7 +123,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 0);
     }
@@ -132,7 +132,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 1);
     }
@@ -141,7 +141,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetValue() == 3);
     }
@@ -150,7 +150,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withStyle(wxTE_PROCESS_ENTER);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetWindowStyle() == (wxTE_PROCESS_ENTER | wxTAB_TRAVERSAL | 0x200000));
     }
 
@@ -158,7 +158,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetPosition() == wxPoint { 1, 2 });
     }
 
@@ -166,7 +166,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
 
@@ -175,7 +175,7 @@ TEST_CASE("SpinCtrl")
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto proxy = TypeUnderTest::Proxy {};
         auto uut = proxy = createUUT().withSize({ 1, 2 });
-        uut.create(&frame);
+        uut.createImpl(&frame);
 
         CHECK(proxy->get() == 0);
         proxy->set(1);

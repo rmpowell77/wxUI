@@ -50,6 +50,10 @@ Handlers are callable items that handle events.  The handler can be declared wit
                             MultibindExample dialog(this);
                             dialog.ShowModal();
                         } },
+            wxUI::Item { "&SplitterExample...", [this] {
+                            SplitterExample dialog(this);
+                            dialog.ShowModal();
+                        } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },
@@ -91,6 +95,10 @@ Items { "Name", "Help", Handler }
                                             } },
             wxUI::Item { "&MultibindExample...", [this] {
                             MultibindExample dialog(this);
+                            dialog.ShowModal();
+                        } },
+            wxUI::Item { "&SplitterExample...", [this] {
+                            SplitterExample dialog(this);
                             dialog.ShowModal();
                         } },
             wxUI::Item { "&Example Item...", [] {
@@ -153,6 +161,33 @@ One special type of *Layout* is `Generic`.  There are cases where you may have a
     VSizer {
         wxSizerFlags().Expand().Border(),
     // ...
+        Generic { CreateStdDialogButtonSizer(wxOK) },
+    }
+        .attachTo(this);
+```
+
+#### Splitter
+
+`HSplitter` and `VSplitter` are special types of *Layout* objects that take in two *Controllers*.
+
+```cpp
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        VSplitter {
+            TextCtrl { "This is Left Side.\n" }
+                .withStyle(wxTE_MULTILINE)
+                .withSize(wxSize(200, 100)),
+            HSplitter {
+                TextCtrl { "This is Right Top.\n" }
+                    .withStyle(wxTE_MULTILINE)
+                    .withSize(wxSize(200, 100)),
+                TextCtrl { "This is Right Bottom.\n" }
+                    .withStyle(wxTE_MULTILINE)
+                    .withSize(wxSize(200, 100)),
+            },
+        }
+            .withSize(wxSize(500, 400)),
+
         Generic { CreateStdDialogButtonSizer(wxOK) },
     }
         .attachTo(this);

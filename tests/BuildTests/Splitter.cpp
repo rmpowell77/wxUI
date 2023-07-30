@@ -21,33 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
-// wxUI Extended Dialog Example
+// Generated with bash command
+// for i in *.cpp; do echo \#include \<wxUI\/Splitter.h\> > Splitter.cpp; for j in RULE_OF_SIX_BOILERPLATE PROXY_BOILERPLATE WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WIDGET_STATIC_ASSERT_BOILERPLATE\) >> Slider.cpp; echo \#error Missed zapping WIDGET_STATIC_ASSERT_BOILERPLATE >> Slider.cpp; echo \#endif >> Slider.cpp; done; done
+#include <wxUI/Splitter.h>
 
-#include <wx/wx.h>
-#include <wxUI/wxUI.h>
+#if defined(RULE_OF_SIX_BOILERPLATE)
+#error Missed zapping RULE_OF_SIX_BOILERPLATE
+#endif
 
-class ExtendedExample : public wxDialog {
-public:
-    explicit ExtendedExample(wxWindow* parent);
+#if defined(PROXY_BOILERPLATE)
+#error Missed zapping PROXY_BOILERPLATE
+#endif
 
-private:
-    wxUI::Text::Proxy textProxy;
-    wxUI::SpinCtrl::Proxy spinProxy;
-};
-
-class MultibindExample : public wxDialog {
-public:
-    explicit MultibindExample(wxWindow* parent);
-
-private:
-    wxUI::Text::Proxy timesTyped;
-    wxUI::Text::Proxy timesEntered;
-};
-
-class SplitterExample : public wxDialog {
-public:
-    explicit SplitterExample(wxWindow* parent);
-
-private:
-};
+#if defined(WIDGET_STATIC_ASSERT_BOILERPLATE)
+#error Missed zapping WIDGET_STATIC_ASSERT_BOILERPLATE
+#endif
