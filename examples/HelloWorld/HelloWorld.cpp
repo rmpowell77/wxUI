@@ -134,6 +134,10 @@ HelloWorldFrame::HelloWorldFrame()
                             SplitterExample dialog(this);
                             dialog.ShowModal();
                         } },
+            wxUI::Item { "&GenericExample...", [this] {
+                            GenericExample dialog(this);
+                            dialog.ShowModal();
+                        } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },
@@ -275,10 +279,8 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
     using namespace wxUI;
 
     // snippet wxUILayoutBasic
-    // snippet wxUIGeneric
     VSizer {
         wxSizerFlags().Expand().Border(),
-        // endsnippet wxUIGeneric
         VSizer {
             "Text examples",
             // endsnippet wxUILayoutBasic
@@ -334,13 +336,11 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             // endsnippet wxUIBind
         },
 
-        // snippet wxUIGeneric
         Generic { CreateStdDialogButtonSizer(wxOK) },
         // snippet withwxUI
         // snippet wxUILayoutBasic
     }
         .attachTo(this);
-    // endsnippet wxUIGeneric
     // endsnippet wxUILayoutBasic
 }
 // endsnippet withwxUI

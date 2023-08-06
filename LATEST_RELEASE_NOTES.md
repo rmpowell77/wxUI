@@ -4,3 +4,5 @@ Bugs addressed in this release:
 
 Other changes:
 
+* [#140](../../issues/140) Generic should take functions that convert to wxWindow
+
