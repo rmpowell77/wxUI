@@ -23,47 +23,36 @@ SOFTWARE.
 */
 #pragma once
 
+#include "BindInfo.h"
 #include <optional>
 #include <wx/sizer.h>
 
 namespace wxUI::details {
 
-// A widget is anything that supports the createAndAdd function.
-
 // clang-format off
-template <typename T>
-concept Widget = requires(T widget, wxWindow* window, wxSizer* sizer)
-{
-    widget.createAndAdd(window, sizer, wxSizerFlags {});
-};
 
+// A CreateAndAdd function takes a Window, Sizer, and Size flags
+// It is expected that the function does something meaningful, such as
+// create a wxWindow object and insert it into the sizer
 template <typename T>
 concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer)
 {
     function(window, sizer, wxSizerFlags {});
 };
 
+template <typename T>
+concept CreateAndAddable = requires(T widget, wxWindow* window, wxSizer* sizer)
+{
+    widget.createAndAdd(window, sizer, wxSizerFlags {});
+};
+
+template <typename T>
+concept Createable = requires(T widget, wxWindow* window)
+{
+    widget.create(window);
+};
+
 // clang-format on
-
-// https://stackoverflow.com/questions/27866909/get-function-arity-from-template-parameter
-template <typename T>
-constexpr bool noarg_callable_impl(
-    typename std::enable_if<bool(sizeof((std::declval<T>()(), 0)))>::type*)
-{
-    return true;
-}
-
-template <typename T>
-constexpr bool noarg_callable_impl(...)
-{
-    return false;
-}
-
-template <typename T>
-constexpr bool is_noarg_callable()
-{
-    return noarg_callable_impl<T>(nullptr);
-}
 
 template <class... Ts>
 struct overloaded : Ts... {
@@ -74,79 +63,6 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
 template <typename Controller, typename Underlying>
 struct WidgetProxy;
-
-// BindInfo uses type erase to allow any binding for any Event type.
-struct BindInfo {
-
-    void bindTo([[maybe_unused]] wxWindow* widget) const
-    {
-        mInfo->bindTo(widget);
-    }
-
-    template <typename Event, typename Function>
-    BindInfo([[maybe_unused]] Event event, [[maybe_unused]] Function function)
-        : mInfo(std::make_unique<BindInfoDetails<Event, Function>>(event, function))
-    {
-    }
-
-    ~BindInfo() = default;
-
-    BindInfo(BindInfo const& bindInfo)
-        : mInfo(bindInfo.mInfo->clone())
-    {
-    }
-
-    auto operator=(BindInfo const& bindInfo) -> BindInfo&
-    {
-        if (this == &bindInfo) {
-            return *this;
-        }
-        mInfo = bindInfo.mInfo->clone();
-        return *this;
-    }
-
-    BindInfo(BindInfo&& bindInfo) noexcept
-        : mInfo(std::move(bindInfo.mInfo))
-    {
-    }
-
-    auto operator=(BindInfo&& bindInfo) noexcept -> BindInfo&
-    {
-        mInfo = std::move(bindInfo.mInfo);
-        return *this;
-    }
-
-private:
-    struct BindInfoDetailsBase {
-        virtual ~BindInfoDetailsBase() = default;
-        virtual void bindTo(wxWindow* widget) const = 0;
-        [[nodiscard]] virtual auto clone() const -> std::unique_ptr<BindInfoDetailsBase> = 0;
-    };
-
-    template <typename Event, typename Function>
-    struct BindInfoDetails : BindInfoDetailsBase {
-        BindInfoDetails(Event event, Function function)
-            : event(event)
-            , function(function)
-        {
-        }
-        Event event;
-        Function function;
-        void bindTo(wxWindow* widget) const override
-        {
-            widget->Bind(event, function);
-        }
-        [[nodiscard]] auto clone() const -> std::unique_ptr<BindInfoDetailsBase> override
-        {
-            return std::make_unique<BindInfoDetails>(event, function);
-        }
-    };
-
-    std::unique_ptr<BindInfoDetailsBase> mInfo;
-};
-
-static_assert(std::is_nothrow_move_constructible_v<BindInfo>);
-static_assert(std::is_nothrow_move_assignable_v<BindInfo>);
 
 // The WidgetDetails are the base class of the Controllers.  The common details
 // across many controllers are stored in the base class.
@@ -160,6 +76,7 @@ struct WidgetDetails {
     using underlying_t = Underlying;
 
     struct WidgetProxy {
+        using Controller = ConcreteWidget;
         [[nodiscard]] auto control() const -> Underlying*
         {
             if (!controller) {

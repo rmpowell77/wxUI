@@ -52,6 +52,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         },
         RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
             .withStyle(wxRA_SPECIFY_ROWS)
+            .withoutStyle(wxRA_SPECIFY_COLS)
             .withMajorDim(1)
             .withSelection(1),
 
@@ -71,7 +72,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
                 .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
         },
 
-        Generic { CreateStdDialogButtonSizer(wxOK) },
+        CreateStdDialogButtonSizer(wxOK),
     }
         .attachTo(this);
 }

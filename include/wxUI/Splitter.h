@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Generic.h"
 #include "Widget.h"
 #include <wx/button.h>
 #include <wx/splitter.h>
@@ -35,7 +36,7 @@ namespace wxUI {
 
 // unfortunately due to template types here, it is not easily possible to create a hierarchy of
 // a generic Splitter.  This may be able to be fixed with Deducing this...
-template <details::Widget W1, details::Widget W2>
+template <details::Createable W1, details::Createable W2>
 struct HSplitter : public details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWindow> {
     using super = details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWindow>;
     using underlying_t = typename details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWindow>::underlying_t;
@@ -83,13 +84,6 @@ struct HSplitter : public details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWi
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto* widget = super::setProxy(new underlying_t(parent, super::getIdentity(), super::getPos(), super::getSize(), super::getStyle()));
-        widget->SplitHorizontally(std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
-        return widget;
-    }
-
     struct Proxy : super::WidgetProxy {
         PROXY_BOILERPLATE();
     };
@@ -97,9 +91,20 @@ struct HSplitter : public details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWi
 
 private:
     std::pair<W1, W2> widgets;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        auto* widget = super::setProxy(new underlying_t(parent, super::getIdentity(), super::getPos(), super::getSize(), super::getStyle()));
+        auto* widget0 = std::get<0>(widgets).create(widget);
+        auto* widget1 = std::get<1>(widgets).create(widget);
+
+        widget->SplitHorizontally(widget0, widget1);
+
+        return widget;
+    }
 };
 
-template <details::Widget W1, details::Widget W2>
+template <details::Createable W1, details::Createable W2>
 struct VSplitter : public details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWindow> {
     using super = details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWindow>;
     using underlying_t = typename details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWindow>::underlying_t;
@@ -147,13 +152,6 @@ struct VSplitter : public details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWi
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto* widget = super::setProxy(new underlying_t(parent, super::getIdentity(), super::getPos(), super::getSize(), super::getStyle()));
-        widget->SplitVertically(std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
-        return widget;
-    }
-
     struct Proxy : super::WidgetProxy {
         PROXY_BOILERPLATE();
     };
@@ -161,6 +159,13 @@ struct VSplitter : public details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWi
 
 private:
     std::pair<W1, W2> widgets;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        auto* widget = super::setProxy(new underlying_t(parent, super::getIdentity(), super::getPos(), super::getSize(), super::getStyle()));
+        widget->SplitVertically(std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
+        return widget;
+    }
 };
 
 }

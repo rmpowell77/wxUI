@@ -57,11 +57,6 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        return setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
-    }
-
     // Bind
     using super::bind;
     template <typename Function>
@@ -77,8 +72,8 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
         {
             auto* controller = control();
             return details::GetterSetter {
-                [controller] { return static_cast<std::string>(controller->GetLabel()); },
-                [controller](std::string label) { controller->SetLabel(label); }
+                [controller] { return static_cast<std::string>(controller->GetValue()); },
+                [controller](std::string label) { controller->SetValue(label); }
             };
         }
 
@@ -90,6 +85,11 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
 
 private:
     std::string text;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        return setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(TextCtrl);

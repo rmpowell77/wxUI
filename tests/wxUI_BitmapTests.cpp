@@ -48,7 +48,7 @@ TEST_CASE("Bitmap")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window != nullptr);
     }
 
@@ -56,7 +56,7 @@ TEST_CASE("Bitmap")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
     }
 
@@ -64,7 +64,7 @@ TEST_CASE("Bitmap")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window != nullptr);
     }
 
@@ -72,7 +72,7 @@ TEST_CASE("Bitmap")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
     }
 

@@ -61,7 +61,7 @@ The basics of `wxUI` layout is the *Layout*.  You use a specific type of *Layout
 
 In the above example we have constructed a vertical layout sizer that will use a `wxSizer` with the `wxSizerFlags` set to expand with a default border.  Then the first item in the sizer is a second layer sizer with horizontal layout.  The `wxSizerFlags` are propogated to each layer so the horizontal layout in this example would also be set to expand with a default border.  The second sizer would be created as a "named" box horizonal sizer.
 
-A *Layout* takes a collection of objects, which can be either additional *Layout* (to create a tree of *Layouts*) or *Controllers*.  Here is the general form of constructions for *Sizers*:
+A *Layout* takes a collection of "Items", which can be either additional *Layout* (to create a tree of *Layouts*), *Controllers*, anything that is convertable `wxSizer*`.  Here is the general form of constructions for *Sizers*:
 
 ```
 Sizer { Items... }
@@ -87,7 +87,7 @@ wxUI::VSizer { "Current Frame" }.attachTo(this);
 
 #### Generic
 
-One special type of *Layout* is `Generic`.  There are cases where you may have an existing layout as a `wxSizer*` (such as a common dialog) or `wxWindow*` (such as a custom window) that you wish to use with `wxUI`.  Or you may have a existing window that requires a parent `wxWindow*` for construction. This is a case to use `Generic`:
+One special type of *Layout* is `Generic`.  There are cases where you have to construct a `wxWindow*` with a parent.  This is a case to use `Generic`:
 
 ```cpp
 {{{ examples/HelloWorld/ExtendedExample.cpp GenericExample "    // ..." }}}

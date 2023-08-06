@@ -56,15 +56,6 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), bitmap, getPos(), getSize(), getStyle()));
-        if (isDefault) {
-            widget->SetDefault();
-        }
-        return widget;
-    }
-
     auto setDefault() -> BitmapButton&
     {
         isDefault = true;
@@ -86,6 +77,15 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
 private:
     wxBitmap bitmap;
     bool isDefault = false;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), bitmap, getPos(), getSize(), getStyle()));
+        if (isDefault) {
+            widget->SetDefault();
+        }
+        return widget;
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapButton);

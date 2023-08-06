@@ -58,11 +58,6 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        return setProxy(new underlying_t(parent, getIdentity(), text, url, getPos(), getSize(), getStyle()));
-    }
-
     struct Proxy : super::WidgetProxy {
         PROXY_BOILERPLATE();
     };
@@ -71,6 +66,11 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
 private:
     std::string text;
     std::string url;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        return setProxy(new underlying_t(parent, getIdentity(), text, url, getPos(), getSize(), getStyle()));
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(Hyperlink);

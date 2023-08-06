@@ -57,15 +57,6 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
-        if (isDefault) {
-            widget->SetDefault();
-        }
-        return widget;
-    }
-
     auto setDefault() -> Button&
     {
         isDefault = true;
@@ -87,6 +78,15 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
 private:
     std::string text;
     bool isDefault = false;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
+        if (isDefault) {
+            widget->SetDefault();
+        }
+        return widget;
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(Button);

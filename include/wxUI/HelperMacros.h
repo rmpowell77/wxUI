@@ -56,7 +56,8 @@ SOFTWARE.
 
 #if !defined(WIDGET_STATIC_ASSERT_BOILERPLATE)
 #define WIDGET_STATIC_ASSERT_BOILERPLATE(WIDGET)                 \
-    static_assert(details::Widget<WIDGET>);                      \
+    static_assert(details::CreateAndAddable<WIDGET>);            \
+    static_assert(details::Createable<WIDGET>);                  \
     static_assert(std::is_nothrow_move_constructible_v<WIDGET>); \
     static_assert(std::is_nothrow_move_assignable_v<WIDGET>)
 #endif

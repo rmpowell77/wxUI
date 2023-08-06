@@ -35,7 +35,7 @@ struct LineTestPolicy {
     static auto createUUT() { return TypeUnderTest {}; }
     static auto testStyle() { return wxLI_VERTICAL; }
     static auto testPosition() { return wxPoint { 1, 2 }; }
-    static auto testSize() { return wxSize { 10, 12 }; }
+    static auto testSize() { return wxSize { 100, 120 }; }
     static auto expectedStyle() { return testStyle(); }
     static auto expectedPosition() { return testPosition(); }
     static auto expectedSize() { return testSize(); }
@@ -48,7 +48,7 @@ TEST_CASE("Line")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window != nullptr);
     }
 
@@ -56,7 +56,7 @@ TEST_CASE("Line")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
     }
 
@@ -64,7 +64,7 @@ TEST_CASE("Line")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1) };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window != nullptr);
     }
 
@@ -72,7 +72,7 @@ TEST_CASE("Line")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
     }
 

@@ -59,15 +59,6 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto min = range ? range->first : 0;
-        auto max = range ? range->second : 100;
-        auto initvalue = initial ? *initial : min;
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), initvalue, min, max, getPos(), getSize(), getStyle()));
-        return widget;
-    }
-
     using super::bind;
     template <typename Function>
     auto bind(Function func)
@@ -94,6 +85,15 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
 private:
     std::optional<std::pair<int, int>> range;
     std::optional<int> initial;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        auto min = range ? range->first : 0;
+        auto max = range ? range->second : 100;
+        auto initvalue = initial ? *initial : min;
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), initvalue, min, max, getPos(), getSize(), getStyle()));
+        return widget;
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(Slider);

@@ -69,16 +69,6 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
         return *this;
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle()));
-        widget->SetSelection(selection);
-        if (ensureVisible) {
-            widget->EnsureVisible(*ensureVisible);
-        }
-        return widget;
-    }
-
     using super::bind;
     template <typename Function>
     auto bind(Function func)
@@ -106,6 +96,16 @@ private:
     std::vector<wxString> choices {};
     int selection = wxNOT_FOUND;
     std::optional<int> ensureVisible {};
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle()));
+        widget->SetSelection(selection);
+        if (ensureVisible) {
+            widget->EnsureVisible(*ensureVisible);
+        }
+        return widget;
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(ListBox);
