@@ -87,11 +87,13 @@ wxUI::VSizer { "Current Frame" }.attachTo(this);
 
 #### Generic
 
-One special type of *Layout* is `Generic`.  There are cases where you may have an existing layout as a `wxSizer` (such as a common dialog) or `wxWindow` (such as a custom window) that you wish to use with `wxUI`.  This is a case to use `Generic`:
+One special type of *Layout* is `Generic`.  There are cases where you may have an existing layout as a `wxSizer*` (such as a common dialog) or `wxWindow*` (such as a custom window) that you wish to use with `wxUI`.  Or you may have a existing window that requires a parent `wxWindow*` for construction. This is a case to use `Generic`:
 
 ```cpp
-{{{ examples/HelloWorld/HelloWorld.cpp wxUIGeneric "    // ..." }}}
+{{{ examples/HelloWorld/ExtendedExample.cpp GenericExample "    // ..." }}}
 ```
+
+Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, or a closure or function that returns a `wxWindow*` when supplied with a `wxWindow*`, and it will be inserted into the *Layout*.
 
 #### Splitter
 

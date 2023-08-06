@@ -51,3 +51,10 @@ public:
 
 private:
 };
+
+class GenericExample : public wxDialog {
+public:
+    explicit GenericExample(wxWindow* parent);
+
+private:
+};

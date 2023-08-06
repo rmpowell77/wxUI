@@ -175,3 +175,20 @@ SplitterExample::SplitterExample(wxWindow* parent)
         .attachTo(this);
     // endsnippet SplitterExample
 }
+
+GenericExample::GenericExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "SplitterExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    // snippet GenericExample
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        Generic {
+            [](wxWindow* window) {
+                return new wxButton(window, wxID_ANY, "Generic");
+            } },
+        Generic { CreateStdDialogButtonSizer(wxOK) },
+    }
+        .attachTo(this);
+    // endsnippet GenericExample
+}

@@ -246,8 +246,9 @@ struct HSizer : public details::SizerBase<wxHORIZONTAL, W...> {
 };
 
 struct Generic {
+    using CreateWindowFunction = std::function<wxWindow*(wxWindow*)>;
     std::optional<wxSizerFlags> flags {};
-    std::variant<wxSizer*, wxWindow*> child;
+    std::variant<wxSizer*, wxWindow*, CreateWindowFunction> child;
 
     Generic(wxSizerFlags const& flags, wxSizer* sizer)
         : flags(flags)
@@ -271,9 +272,23 @@ struct Generic {
     {
     }
 
-    void createAndAdd([[maybe_unused]] wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
+    Generic(wxSizerFlags const& flags, CreateWindowFunction windowFunction)
+        : flags(flags)
+        , child(windowFunction)
+    {
+    }
+
+    explicit Generic(CreateWindowFunction windowFunction)
+        : child(windowFunction)
+    {
+    }
+
+    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
     {
         return std::visit(details::overloaded {
+                              [this, parent, parentSizer, parentFlags](CreateWindowFunction const& arg) {
+                                  parentSizer->Add(arg(parent), flags ? *flags : parentFlags);
+                              },
                               [this, parentSizer, parentFlags](auto arg) {
                                   parentSizer->Add(arg, flags ? *flags : parentFlags);
                               },
