@@ -1,9 +1,8 @@
-# wxUI release notes for v0.1.6
+# wxUI release notes for v0.1.7
 
 Bugs addressed in this release:
 
 Other changes:
 
-* [#140](../../issues/140) Generic should take functions that convert to wxWindow
-* [#142](../../issues/142) Generic needs a proxy
+* [#148](../../issues/148) Make sure operator-> returns controller on proxies
 

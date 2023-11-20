@@ -149,14 +149,14 @@ TEST_CASE("Text")
         auto proxy = TypeUnderTest::Proxy {};
         auto uut = proxy.bind(TypeUnderTest { "label1" }.withSize({ 1, 2 }));
         uut.create(&frame);
-        CHECK(proxy->get() == "label1");
+        CHECK(static_cast<std::string>(*proxy) == std::string("label1"));
         //        CHECK(static_cast<std::string>(proxy) == "label1");
         //        CHECK("label1" == static_cast<std::string>(proxy));
         //        CHECK(static_cast<std::string>(proxy) == "label1");
-        proxy->set("label2");
-        CHECK(proxy->get() == "label2");
+        *proxy = "label2";
+        CHECK(static_cast<std::string>(*proxy) == "label2");
         *proxy = "label3";
-        CHECK(proxy->get() == "label3");
+        CHECK(static_cast<std::string>(*proxy) == "label3");
         std::string result2 = *proxy;
         CHECK(result2 == "label3");
     }

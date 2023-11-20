@@ -97,7 +97,6 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
             };
         }
 
-        auto operator->() const { return value(); }
         auto operator*() const { return value(); }
     };
     RULE_OF_SIX_BOILERPLATE(ComboBox);

@@ -71,7 +71,6 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
             };
         }
 
-        auto operator->() const { return label(); }
         auto operator*() const { return label(); }
     };
 

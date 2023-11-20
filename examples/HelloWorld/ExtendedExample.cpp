@@ -32,6 +32,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
+    ComboBox::Proxy proxy2;
     VSizer {
         wxSizerFlags().Expand().Border(),
         // incr example
@@ -60,11 +61,11 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         HSizer {
             Button { "ReduceText" }
                 .bind([this]() {
-                    auto str = textProxy->get();
+                    auto str = static_cast<std::string>(*textProxy);
                     if (str.size()) {
                         str.pop_back();
                     }
-                    textProxy->set(str);
+                    *textProxy = str;
                 }),
         },
         HSizer {
@@ -74,7 +75,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             CheckBox {},
         },
         HSizer {
-            ComboBox { { "hello" } },
+            proxy2 = ComboBox { { "hello" } },
         },
         HSizer {
             Line {},
@@ -120,6 +121,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         // endsnippet CustomExample
     }
         .attachTo(this);
+    proxy2->SetFocus();
 }
 
 MultibindExample::MultibindExample(wxWindow* parent)

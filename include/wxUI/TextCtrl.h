@@ -77,7 +77,6 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
             };
         }
 
-        auto operator->() const { return label(); }
         auto operator*() const { return label(); }
     };
 

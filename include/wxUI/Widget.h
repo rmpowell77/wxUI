@@ -90,6 +90,8 @@ struct WidgetDetails {
             controller = control;
         }
 
+        auto operator->() const { return control(); }
+
     private:
         Underlying* controller {};
     };
