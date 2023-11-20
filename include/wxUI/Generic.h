@@ -30,16 +30,13 @@ SOFTWARE.
 
 namespace wxUI {
 
-// Need to forward declare
-template <typename Window = wxWindow>
-struct GenericProxy;
-
 // Generic is for use in contexts where we are Creating and possibly Adding the
 // object into a sizing hierachy.
 template <typename Window = wxWindow>
 struct Generic {
     using CreateWindowFunction = std::function<Window*(wxWindow*)>;
 
+    struct Proxy;
     Generic(wxSizerFlags const& flags, wxWindow* window)
         : flags(flags)
         , child(window)
@@ -63,7 +60,7 @@ struct Generic {
     {
     }
 
-    void setProxy(GenericProxy<Window>* proxy_)
+    void setProxy(Proxy* proxy_)
     {
         proxy = proxy_;
     }
@@ -71,45 +68,44 @@ struct Generic {
     auto create(wxWindow* parent) const -> Window*;
     void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const;
 
+    struct Proxy {
+        Proxy() = default;
+
+        auto operator=(Generic&& controller) -> Generic&&
+        {
+            return bind(std::forward<Generic>(controller));
+        }
+        template <typename Generic>
+        auto bind(Generic&& widget) -> Generic&&
+        {
+            widget.setProxy(this);
+            return std::forward<Generic>(widget);
+        }
+
+        [[nodiscard]] auto window() const -> Window*
+        {
+            if (windower == nullptr) {
+                throw std::runtime_error("Proxy class has not been attached");
+            }
+            return windower;
+        }
+
+        auto operator->() const { return window(); }
+        auto operator*() const { return window(); }
+
+        void setUnderlying(Window* window)
+        {
+            windower = window;
+        }
+
+    private:
+        Window* windower {};
+    };
+
 private:
     std::optional<wxSizerFlags> flags {};
     std::variant<Window*, CreateWindowFunction> child;
-    GenericProxy<Window>* proxy {};
-};
-
-template <typename Window>
-struct GenericProxy {
-    GenericProxy() = default;
-
-    auto operator=(Generic<Window>&& controller) -> Generic<Window>&&
-    {
-        return bind(std::forward<Generic<Window>>(controller));
-    }
-    template <typename Generic>
-    auto bind(Generic&& widget) -> Generic&&
-    {
-        widget.setProxy(this);
-        return std::forward<Generic>(widget);
-    }
-
-    [[nodiscard]] auto window() const -> Window*
-    {
-        if (windower == nullptr) {
-            throw std::runtime_error("Proxy class has not been attached");
-        }
-        return windower;
-    }
-
-    auto operator->() const { return window(); }
-    auto operator*() const { return window(); }
-
-    void setUnderlying(Window* window)
-    {
-        windower = window;
-    }
-
-private:
-    Window* windower {};
+    Proxy* proxy {};
 };
 
 template <typename Window>

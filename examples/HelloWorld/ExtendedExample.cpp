@@ -154,7 +154,7 @@ SplitterExample::SplitterExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "SplitterExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
-    GenericProxy<wxButton> proxy {};
+    Generic<wxButton>::Proxy proxy {};
     // snippet SplitterExample
     VSizer {
         wxSizerFlags().Expand().Border(),
@@ -198,8 +198,8 @@ GenericExample::GenericExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "SplitterExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
-    GenericProxy<wxButton> proxy1 {};
-    GenericProxy<wxButton> proxy2 {};
+    Generic<wxButton>::Proxy proxy1 {};
+    Generic<wxButton>::Proxy proxy2 {};
     // snippet GenericExample
     VSizer {
         wxSizerFlags().Expand().Border(),
