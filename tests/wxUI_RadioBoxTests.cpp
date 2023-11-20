@@ -48,7 +48,7 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetLabel().empty());
         CHECK(2 == window->GetCount());
         CHECK(0 == window->GetSelection());
@@ -60,7 +60,7 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { "Greetings", { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK("Greetings" == window->GetLabel());
         CHECK(2 == window->GetCount());
         CHECK(0 == window->GetSelection());
@@ -72,7 +72,7 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, std::vector<wxString> { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetLabel().empty());
         CHECK(2 == window->GetCount());
@@ -85,7 +85,7 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, "Greetings", { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK("Greetings" == window->GetLabel());
         CHECK(2 == window->GetCount());
@@ -98,7 +98,7 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), std::vector<wxString> { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetLabel().empty());
         CHECK(2 == window->GetCount());
         CHECK(0 == window->GetSelection());
@@ -110,7 +110,7 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), "Greetings", { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK("Greetings" == window->GetLabel());
         CHECK(2 == window->GetCount());
         CHECK(0 == window->GetSelection());
@@ -122,7 +122,7 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, std::vector<wxString> { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetLabel().empty());
         CHECK(2 == window->GetCount());
@@ -135,7 +135,7 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, "Greetings", { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK("Greetings" == window->GetLabel());
         CHECK(2 == window->GetCount());
@@ -148,7 +148,7 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withStyle(wxRA_SPECIFY_COLS);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetWindowStyle() == (wxRA_SPECIFY_COLS | wxTAB_TRAVERSAL));
     }
 
@@ -156,7 +156,7 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetPosition() == wxPoint { 1, 2 });
     }
 
@@ -164,7 +164,7 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetSize() == wxSize { 1, 2 });
     }
 

@@ -48,14 +48,14 @@ TEST_CASE("HSplitter")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} };
-        [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
     }
 
     SECTION("id")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, wxUI::TextCtrl {}, wxUI::TextCtrl {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
     }
 
@@ -63,14 +63,14 @@ TEST_CASE("HSplitter")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), wxUI::TextCtrl {}, wxUI::TextCtrl {} };
-        [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
     }
 
     SECTION("size.id")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, wxUI::TextCtrl {}, wxUI::TextCtrl {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.createImpl(&frame));
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
     }
 

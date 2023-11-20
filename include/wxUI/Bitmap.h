@@ -56,11 +56,6 @@ struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        return setProxy(new underlying_t(parent, getIdentity(), bitmap, getPos(), getSize(), getStyle()));
-    }
-
     struct Proxy : super::WidgetProxy {
         PROXY_BOILERPLATE();
     };
@@ -68,6 +63,11 @@ struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
 
 private:
     wxBitmap bitmap;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        return setProxy(new underlying_t(parent, getIdentity(), bitmap, getPos(), getSize(), getStyle()));
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(Bitmap);

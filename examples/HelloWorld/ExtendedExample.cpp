@@ -116,7 +116,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
                 },
             },
         },
-        Generic { CreateStdDialogButtonSizer(wxOK) },
+        CreateStdDialogButtonSizer(wxOK),
         // endsnippet CustomExample
     }
         .attachTo(this);
@@ -143,7 +143,7 @@ MultibindExample::MultibindExample(wxWindow* parent)
             timesTyped = Text { "0" },
             timesEntered = Text { "0" },
         },
-        Generic { CreateStdDialogButtonSizer(wxOK) },
+        CreateStdDialogButtonSizer(wxOK),
     }
         .attachTo(this);
 }
@@ -152,6 +152,7 @@ SplitterExample::SplitterExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "SplitterExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
+    GenericProxy<wxButton> proxy {};
     // snippet SplitterExample
     VSizer {
         wxSizerFlags().Expand().Border(),
@@ -160,26 +161,43 @@ SplitterExample::SplitterExample(wxWindow* parent)
                 .withStyle(wxTE_MULTILINE)
                 .withSize(wxSize(200, 100)),
             HSplitter {
-                TextCtrl { "This is Right Top.\n" }
-                    .withStyle(wxTE_MULTILINE)
-                    .withSize(wxSize(200, 100)),
-                TextCtrl { "This is Right Bottom.\n" }
-                    .withStyle(wxTE_MULTILINE)
-                    .withSize(wxSize(200, 100)),
+                rightUpper = TextCtrl { "This is Right Top.\n" }
+                                 .withStyle(wxTE_MULTILINE)
+                                 .withSize(wxSize(200, 100)),
+                Button { "Incr" }
+                    .bind([this]() {
+                        auto original = std::string { *rightUpper } + "\nThis is Right Top.\n";
+                        *rightUpper = original;
+                    }),
+            } },
+        // endsnippet SplitterExample
+        VSplitter {
+            TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
+            Generic {
+                [](wxWindow* parent) {
+                    return new wxButton(parent, wxID_ANY, "Raw button");
+                } },
+        },
+        VSplitter {
+            proxy = [](wxWindow* parent) {
+                return new wxButton(parent, wxID_ANY, "Raw button");
             },
-        }
-            .withSize(wxSize(500, 400)),
-
-        Generic { CreateStdDialogButtonSizer(wxOK) },
+            TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
+        },
+        // snippet SplitterExample
+        CreateStdDialogButtonSizer(wxOK),
     }
         .attachTo(this);
     // endsnippet SplitterExample
+    *rightUpper = std::string { proxy->GetLabel() };
 }
 
 GenericExample::GenericExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "SplitterExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
+    GenericProxy<wxButton> proxy1 {};
+    GenericProxy<wxButton> proxy2 {};
     // snippet GenericExample
     VSizer {
         wxSizerFlags().Expand().Border(),
@@ -187,8 +205,19 @@ GenericExample::GenericExample(wxWindow* parent)
             [](wxWindow* window) {
                 return new wxButton(window, wxID_ANY, "Generic");
             } },
-        Generic { CreateStdDialogButtonSizer(wxOK) },
+        // endsnippet GenericExample
+        proxy1 = Generic<wxButton> {
+            [](wxWindow* window) {
+                return new wxButton(window, wxID_ANY, "Raw 1");
+            } },
+        proxy2 = [](wxWindow* window) {
+            return new wxButton(window, wxID_ANY, "Raw 2");
+        },
+        // snippet GenericExample
+        CreateStdDialogButtonSizer(wxOK),
     }
         .attachTo(this);
     // endsnippet GenericExample
+    assert(proxy1->GetLabel() == "Raw 1");
+    assert(proxy2->GetLabel() == "Raw 2");
 }

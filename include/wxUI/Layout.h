@@ -32,26 +32,32 @@ namespace wxUI {
 
 namespace details {
 
-    template <details::Widget... W>
+    // clang-format off
+    template <typename T>
+    concept SizerItem = details::CreateAndAddable<T>
+        || (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>);
+    // clang-format on
+
+    template <details::SizerItem... Items>
     struct Sizer {
-        explicit Sizer(W const&... widgets)
-            : Sizer(std::make_tuple(widgets...))
+        explicit Sizer(Items const&... items)
+            : Sizer(std::make_tuple(items...))
         {
         }
 
-        explicit Sizer(wxSizerFlags const& flags, W const&... widgets)
-            : Sizer(flags, std::make_tuple(widgets...))
+        explicit Sizer(wxSizerFlags const& flags, Items const&... items)
+            : Sizer(flags, std::make_tuple(items...))
         {
         }
 
-        explicit Sizer(std::tuple<W...> const& widgets)
-            : widgets(widgets)
+        explicit Sizer(std::tuple<Items...> const& items)
+            : items(items)
         {
         }
 
-        Sizer(wxSizerFlags const& flags, std::tuple<W...> const& widgets)
+        Sizer(wxSizerFlags const& flags, std::tuple<Items...> const& items)
             : flags(flags)
-            , widgets(widgets)
+            , items(items)
         {
         }
 
@@ -87,63 +93,72 @@ namespace details {
     private:
         virtual auto constructSizer(wxWindow* parent) const -> wxSizer* = 0;
 
+        template <typename T>
+        static inline auto createAndAddVisiter(T& arg, wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+        {
+            if constexpr (details::CreateAndAddable<T>) {
+                arg.createAndAdd(parent, sizer, flags);
+            } else {
+                sizer->Add(arg, flags);
+            }
+        }
+
         void createAndAddWidgets(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
         {
             std::apply([parent, sizer, flags](auto&&... tupleArg) {
-                (tupleArg.createAndAdd(parent, sizer, flags), ...);
+                (createAndAddVisiter(tupleArg, parent, sizer, flags), ...);
             },
-                widgets);
+                items);
         }
 
-    public:
         std::optional<wxSizerFlags> flags {};
-        std::tuple<W...> widgets {};
+        std::tuple<Items...> items {};
     };
 
-    template <wxOrientation orientation, details::Widget... W>
-    struct SizerBase : Sizer<W...> {
-        using super = Sizer<W...>;
+    template <wxOrientation orientation, details::SizerItem... Items>
+    struct SizerBase : Sizer<Items...> {
+        using super = Sizer<Items...>;
 
-        explicit SizerBase(W const&... widgets)
-            : super(std::make_tuple(widgets...))
+        explicit SizerBase(Items const&... items)
+            : super(std::make_tuple(items...))
         {
         }
 
-        explicit SizerBase(wxString const& caption, W const&... widgets)
-            : super(std::make_tuple(widgets...))
+        explicit SizerBase(wxString const& caption, Items const&... items)
+            : super(std::make_tuple(items...))
             , caption(caption)
         {
         }
 
-        explicit SizerBase(wxSizerFlags const& flags, W const&... widgets)
-            : super(flags, std::make_tuple(widgets...))
+        explicit SizerBase(wxSizerFlags const& flags, Items const&... items)
+            : super(flags, std::make_tuple(items...))
         {
         }
 
-        SizerBase(wxString const& caption, wxSizerFlags const& flags, W const&... widgets)
-            : super(flags, std::make_tuple(widgets...))
+        SizerBase(wxString const& caption, wxSizerFlags const& flags, Items const&... items)
+            : super(flags, std::make_tuple(items...))
             , caption(caption)
         {
         }
 
-        explicit SizerBase(std::tuple<W...> const& widgets)
-            : super(widgets)
+        explicit SizerBase(std::tuple<Items...> const& items)
+            : super(items)
         {
         }
 
-        SizerBase(wxString const& caption, std::tuple<W...> const& widgets)
-            : super(widgets)
+        SizerBase(wxString const& caption, std::tuple<Items...> const& items)
+            : super(items)
             , caption(caption)
         {
         }
 
-        SizerBase(wxSizerFlags const& flags, std::tuple<W...> const& widgets)
-            : super(flags, widgets)
+        SizerBase(wxSizerFlags const& flags, std::tuple<Items...> const& items)
+            : super(flags, items)
         {
         }
 
-        SizerBase(wxString const& caption, wxSizerFlags const& flags, std::tuple<W...> const& widgets)
-            : super(flags, widgets)
+        SizerBase(wxString const& caption, wxSizerFlags const& flags, std::tuple<Items...> const& items)
+            : super(flags, items)
             , caption(caption)
         {
         }
@@ -155,147 +170,96 @@ namespace details {
 
 }
 
-template <details::Widget... W>
-struct VSizer : public details::SizerBase<wxVERTICAL, W...> {
-    using super = details::SizerBase<wxVERTICAL, W...>;
+template <details::SizerItem... Items>
+struct VSizer : public details::SizerBase<wxVERTICAL, Items...> {
+    using super = details::SizerBase<wxVERTICAL, Items...>;
 
-    explicit VSizer(W const&... widgets)
-        : super(std::make_tuple(widgets...))
+    explicit VSizer(Items const&... items)
+        : super(std::make_tuple(items...))
     {
     }
 
-    explicit VSizer(wxString const& caption, W const&... widgets)
-        : super(caption, std::make_tuple(widgets...))
+    explicit VSizer(wxString const& caption, Items const&... items)
+        : super(caption, std::make_tuple(items...))
     {
     }
 
-    explicit VSizer(wxSizerFlags const& flags, W const&... widgets)
-        : super(flags, std::make_tuple(widgets...))
+    explicit VSizer(wxSizerFlags const& flags, Items const&... items)
+        : super(flags, std::make_tuple(items...))
     {
     }
 
-    VSizer(wxString const& caption, wxSizerFlags const& flags, W const&... widgets)
-        : super(caption, flags, std::make_tuple(widgets...))
+    VSizer(wxString const& caption, wxSizerFlags const& flags, Items const&... items)
+        : super(caption, flags, std::make_tuple(items...))
     {
     }
 
-    explicit VSizer(std::tuple<W...> const& widgets)
-        : super(widgets)
+    explicit VSizer(std::tuple<Items...> const& items)
+        : super(items)
     {
     }
 
-    VSizer(wxString const& caption, std::tuple<W...> const& widgets)
-        : super(caption, widgets)
+    VSizer(wxString const& caption, std::tuple<Items...> const& items)
+        : super(caption, items)
     {
     }
 
-    VSizer(wxSizerFlags const& flags, std::tuple<W...> const& widgets)
-        : super(flags, widgets)
+    VSizer(wxSizerFlags const& flags, std::tuple<Items...> const& items)
+        : super(flags, items)
     {
     }
 
-    VSizer(wxString const& caption, wxSizerFlags const& flags, std::tuple<W...> const& widgets)
-        : super(caption, flags, widgets)
-    {
-    }
-};
-
-template <details::Widget... W>
-struct HSizer : public details::SizerBase<wxHORIZONTAL, W...> {
-    using super = details::SizerBase<wxHORIZONTAL, W...>;
-
-    explicit HSizer(W const&... widgets)
-        : super(std::make_tuple(widgets...))
-    {
-    }
-
-    explicit HSizer(wxString const& caption, W const&... widgets)
-        : super(caption, std::make_tuple(widgets...))
-    {
-    }
-
-    explicit HSizer(wxSizerFlags const& flags, W const&... widgets)
-        : super(flags, std::make_tuple(widgets...))
-    {
-    }
-
-    HSizer(wxString const& caption, wxSizerFlags const& flags, W const&... widgets)
-        : super(caption, flags, std::make_tuple(widgets...))
-    {
-    }
-
-    explicit HSizer(std::tuple<W...> const& widgets)
-        : super(widgets)
-    {
-    }
-
-    HSizer(wxString const& caption, std::tuple<W...> const& widgets)
-        : super(caption, widgets)
-    {
-    }
-
-    HSizer(wxSizerFlags const& flags, std::tuple<W...> const& widgets)
-        : super(flags, widgets)
-    {
-    }
-
-    HSizer(wxString const& caption, wxSizerFlags const& flags, std::tuple<W...> const& widgets)
-        : super(caption, flags, widgets)
+    VSizer(wxString const& caption, wxSizerFlags const& flags, std::tuple<Items...> const& items)
+        : super(caption, flags, items)
     {
     }
 };
 
-struct Generic {
-    using CreateWindowFunction = std::function<wxWindow*(wxWindow*)>;
-    std::optional<wxSizerFlags> flags {};
-    std::variant<wxSizer*, wxWindow*, CreateWindowFunction> child;
+template <details::SizerItem... Items>
+struct HSizer : public details::SizerBase<wxHORIZONTAL, Items...> {
+    using super = details::SizerBase<wxHORIZONTAL, Items...>;
 
-    Generic(wxSizerFlags const& flags, wxSizer* sizer)
-        : flags(flags)
-        , child(sizer)
+    explicit HSizer(Items const&... items)
+        : super(std::make_tuple(items...))
     {
     }
 
-    explicit Generic(wxSizer* sizer)
-        : child(sizer)
+    explicit HSizer(wxString const& caption, Items const&... items)
+        : super(caption, std::make_tuple(items...))
     {
     }
 
-    Generic(wxSizerFlags const& flags, wxWindow* window)
-        : flags(flags)
-        , child(window)
+    explicit HSizer(wxSizerFlags const& flags, Items const&... items)
+        : super(flags, std::make_tuple(items...))
     {
     }
 
-    explicit Generic(wxWindow* window)
-        : child(window)
+    HSizer(wxString const& caption, wxSizerFlags const& flags, Items const&... items)
+        : super(caption, flags, std::make_tuple(items...))
     {
     }
 
-    Generic(wxSizerFlags const& flags, CreateWindowFunction windowFunction)
-        : flags(flags)
-        , child(windowFunction)
+    explicit HSizer(std::tuple<Items...> const& items)
+        : super(items)
     {
     }
 
-    explicit Generic(CreateWindowFunction windowFunction)
-        : child(windowFunction)
+    HSizer(wxString const& caption, std::tuple<Items...> const& items)
+        : super(caption, items)
     {
     }
 
-    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
+    HSizer(wxSizerFlags const& flags, std::tuple<Items...> const& items)
+        : super(flags, items)
     {
-        return std::visit(details::overloaded {
-                              [this, parent, parentSizer, parentFlags](CreateWindowFunction const& arg) {
-                                  parentSizer->Add(arg(parent), flags ? *flags : parentFlags);
-                              },
-                              [this, parentSizer, parentFlags](auto arg) {
-                                  parentSizer->Add(arg, flags ? *flags : parentFlags);
-                              },
-                          },
-            child);
+    }
+
+    HSizer(wxString const& caption, wxSizerFlags const& flags, std::tuple<Items...> const& items)
+        : super(caption, flags, items)
+    {
     }
 };
+
 }
 
 #include "ZapMacros.h"

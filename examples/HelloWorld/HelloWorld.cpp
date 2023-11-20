@@ -313,6 +313,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         // endsnippet withwxUI
         RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
             .withStyle(wxRA_SPECIFY_ROWS)
+            .withoutStyle(wxRA_SPECIFY_COLS)
             .withMajorDim(1)
             .withSelection(1),
 
@@ -336,7 +337,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             // endsnippet wxUIBind
         },
 
-        Generic { CreateStdDialogButtonSizer(wxOK) },
+        CreateStdDialogButtonSizer(wxOK),
         // snippet withwxUI
         // snippet wxUILayoutBasic
     }

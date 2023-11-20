@@ -87,17 +87,6 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto&& first = (choices.size() > 0) ? wxString(choices.at(0)) : wxString(wxEmptyString);
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle()));
-        for (auto i = 0lu; i < bitmaps.size(); ++i) {
-            widget->SetItemBitmap(i, bitmaps[i]);
-        }
-        widget->SetSelection(selection);
-        return widget;
-    }
-
     auto withSelection(int which) -> BitmapComboBox&
     {
         selection = which;
@@ -139,6 +128,17 @@ private:
     std::vector<wxString> choices;
     std::vector<wxBitmap> bitmaps;
     int selection = 0;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        auto&& first = (choices.size() > 0) ? wxString(choices.at(0)) : wxString(wxEmptyString);
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle()));
+        for (auto i = 0lu; i < bitmaps.size(); ++i) {
+            widget->SetItemBitmap(i, bitmaps[i]);
+        }
+        widget->SetSelection(selection);
+        return widget;
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapComboBox);

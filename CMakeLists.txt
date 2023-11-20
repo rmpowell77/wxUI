@@ -33,6 +33,7 @@ add_library(
   wxUI
   INTERFACE
   include/wxUI/wxUI.h
+  include/wxUI/BindInfo.h
   include/wxUI/Bitmap.h
   include/wxUI/BitmapToggleButton.h
   include/wxUI/BitmapComboBox.h
@@ -42,6 +43,7 @@ add_library(
   include/wxUI/Choice.h
   include/wxUI/ComboBox.h
   include/wxUI/Custom.h
+  include/wxUI/Generic.h
   include/wxUI/GetterSetter.h
   include/wxUI/HelperMacros.h
   include/wxUI/Hyperlink.h
