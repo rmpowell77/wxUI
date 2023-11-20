@@ -77,7 +77,6 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
             };
         }
 
-        auto operator->() const { return value(); }
         auto operator*() const { return value(); }
     };
     RULE_OF_SIX_BOILERPLATE(BitmapToggleButton);

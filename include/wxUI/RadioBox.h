@@ -116,7 +116,6 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
             };
         }
 
-        auto operator->() const { return selection(); }
         auto operator*() const { return selection(); }
     };
     RULE_OF_SIX_BOILERPLATE(RadioBox);

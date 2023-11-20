@@ -249,23 +249,20 @@ For convenience the event parameter of the function can be omitted in cases wher
 
 Often the value of a *Controller* in a layout needs to be referenced, or sometimes the backing `wxWindow` itself needs to be used directly.  This could be for reading a currently typed in value in a `TextCtrl`, or to change the selection of a `Choice`.  *Controllers* support `Proxy` objects, a way to get the handle to the underlying `wxWindow` that is created for the *Controller*.
 
-Some *Controllers* do not support values that are intended to change, such as a `Line`, and others can have several values of interest, such as a `ComboBox`.  `Proxy` objects can have several accessors that allow access to these, most commonly called `value()` and `selection()` (see Supported Controllers for details of each supported *Controller*).  These accessors are proxy objects support `get()` and `set()` functions, as well as a set of appropriate overloads for the underlying type, allowing more ergonomic interaction with the code.  `Proxy` also supplies `operator*` and `operator->` which reference the most common accessor.
+Some *Controllers* do not support values that are intended to change, such as a `Line`, and others can have several values of interest, such as a `ComboBox`.  `Proxy` objects can have several accessors that allow access to these, most commonly called `value()` and `selection()` (see Supported Controllers for details of each supported *Controller*).  These accessors are proxy objects support `get()` and `set()` functions, as well as a set of appropriate overloads for the underlying type, allowing more ergonomic interaction with the code.  `Proxy` also supplies `operator*` which reference the most common accessor.
 
-`Proxy` supply `control()`, which is intended to allow access to the underlying controller.
+`Proxy` supply `control()`, which is intended to allow access to the underlying controller.  `Proxy` overloads `operator->` to allow a "natural" syntax for calling functions on the underlying *Controller*.
 
 As `Proxy` objects need to be a named variable that exist outside of a *Controller*, and require being "attached".  This is done with the `operator=`, allowing for an ergonomic way to attach `Proxy` objects to controls.  Accessing a proxy object that has not been attached to a controller will cause an exception to be raised.
 
 
 ```cpp
-auto getHandle(UnderlyingType** handlePtr);
-```
-
-```cpp
 class ExtendedExample : public wxDialog {
 public:
     explicit ExtendedExample(wxWindow* parent);
+    void Reset();
 private:
-    wxTextCtrl* mText;
+    wxUI::TextCtrl::Proxy mText;
 };
 
 ExtendedExample::ExtendedExample(wxWindow* parent)
@@ -273,9 +270,13 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
 {
     using namespace wxUI;
     VSizer {
-        proxy = TextCtrl { "Hello" }
+        mText = TextCtrl { "Hello" }
     }
         .attachTo(this);
+}
+
+ExtendedExample::Reset() {
+    mText->DiscardEdits();
 }
 ```
 

@@ -87,7 +87,6 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
             };
         }
 
-        auto operator->() const { return selection(); }
         auto operator*() const { return selection(); }
     };
     RULE_OF_SIX_BOILERPLATE(ListBox);

@@ -86,7 +86,6 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
             };
         }
 
-        auto operator->() const { return value(); }
         auto operator*() const { return value(); }
     };
 

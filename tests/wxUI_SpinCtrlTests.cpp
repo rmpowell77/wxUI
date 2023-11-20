@@ -177,11 +177,11 @@ TEST_CASE("SpinCtrl")
         auto uut = proxy = createUUT().withSize({ 1, 2 });
         uut.create(&frame);
 
-        CHECK(proxy->get() == 0);
-        proxy->set(1);
-        CHECK(proxy->get() == 1);
+        CHECK(*proxy == 0);
+        *proxy = 1;
+        CHECK(*proxy == 1);
         *proxy = 2;
-        CHECK(proxy->get() == 2);
+        CHECK(*proxy == 2);
         int result2 = *proxy;
         CHECK(result2 == 2);
     }

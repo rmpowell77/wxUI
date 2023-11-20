@@ -88,7 +88,6 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
             };
         }
 
-        auto operator->() const { return value(); }
         auto operator*() const { return value(); }
     };
     RULE_OF_SIX_BOILERPLATE(CheckBox);

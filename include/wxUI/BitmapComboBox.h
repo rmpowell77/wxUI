@@ -119,7 +119,6 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
             };
         }
 
-        auto operator->() const { return value(); }
         auto operator*() const { return value(); }
     };
     RULE_OF_SIX_BOILERPLATE(BitmapComboBox);

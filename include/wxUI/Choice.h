@@ -81,7 +81,6 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
             };
         }
 
-        auto operator->() const { return selection(); }
         auto operator*() const { return selection(); }
     };
     RULE_OF_SIX_BOILERPLATE(Choice);
