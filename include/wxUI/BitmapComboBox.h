@@ -135,7 +135,9 @@ private:
         for (auto i = 0lu; i < bitmaps.size(); ++i) {
             widget->SetItemBitmap(i, bitmaps[i]);
         }
-        widget->SetSelection(selection);
+        if (!choices.empty()) {
+            widget->SetSelection(selection);
+        }
         return widget;
     }
 };
