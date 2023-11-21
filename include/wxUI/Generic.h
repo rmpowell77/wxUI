@@ -37,7 +37,8 @@ struct Generic {
     using CreateWindowFunction = std::function<Window*(wxWindow*)>;
 
     struct Proxy;
-    Generic(wxSizerFlags const& flags, wxWindow* window)
+
+    Generic(wxSizerFlags const& flags, Window* window)
         : flags(flags)
         , child(window)
     {
@@ -48,7 +49,8 @@ struct Generic {
     {
     }
 
-    Generic(wxSizerFlags const& flags, CreateWindowFunction windowFunction)
+    template <typename Function>
+    Generic(wxSizerFlags const& flags, Function windowFunction)
         : flags(flags)
         , child(windowFunction)
     {

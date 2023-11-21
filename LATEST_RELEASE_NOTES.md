@@ -1,11 +1,8 @@
-# wxUI release notes for v0.1.7
+# wxUI release notes for v0.1.8
 
 Bugs addressed in this release:
 
-* [#150](../../issues/150) ComboBox asserts if given an empty list
+* [#154](../../issues/154) Generic constructor overload takes wxWindow, should have been Window
 
 Other changes:
-
-* [#147](../../issues/147) Change GenericProxy to Generic::Proxy
-* [#148](../../issues/148) Make sure operator-> returns controller on proxies
 
