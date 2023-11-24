@@ -154,6 +154,12 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
+    auto setStyle(int64_t style_) -> ConcreteWidget&
+    {
+        style = style_;
+        return static_cast<ConcreteWidget&>(*this);
+    }
+
     auto withStyle(int64_t style_) -> ConcreteWidget&
     {
         style |= style_;
