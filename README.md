@@ -51,8 +51,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             result = Text { "1" },
         },
         RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
-            .withStyle(wxRA_SPECIFY_ROWS)
-            .withoutStyle(wxRA_SPECIFY_COLS)
+            .setStyle(wxRA_SPECIFY_ROWS)
             .withMajorDim(1)
             .withSelection(1),
 
