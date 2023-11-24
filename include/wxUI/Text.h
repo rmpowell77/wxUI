@@ -59,7 +59,7 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
     {
     }
 
-    auto setWrap(int wrapLength) -> Text&
+    auto withWrap(int wrapLength) -> Text&
     {
         wrap = wrapLength;
         return *this;
