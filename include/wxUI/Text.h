@@ -59,6 +59,12 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
     {
     }
 
+    auto setWrap(int wrapLength) -> Text&
+    {
+        wrap = wrapLength;
+        return *this;
+    }
+
     struct Proxy : super::WidgetProxy {
         PROXY_BOILERPLATE();
 
@@ -78,10 +84,15 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
 
 private:
     std::string text;
+    std::optional<int> wrap;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        return setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
+        auto* widget = new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle());
+        if (wrap) {
+            widget->Wrap(*wrap);
+        }
+        return setProxy(widget);
     }
 };
 
