@@ -231,6 +231,9 @@ The list of Methods supported by all controllers:
  * `withHeightSize(int size)` : Specifies the height of `size` of the `wxControl`.
  * `withStyle(long style)` : Adds the style flags for the `style` of the `wxControl`.
  * `withoutStyle(long style)` : Removes the style flags  for the `style` of the `wxControl`.
+ * `setStyle(long style)` : Sets the style flag for the `style` of the `wxControl`.
+ * `setFont(wxFontInfo)` : Sets the font of the `wxControl`.
+ * `setEnabled(bool)` : Enables or disables the `wxControl`.
 
 #### Bind
 

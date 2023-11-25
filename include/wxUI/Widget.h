@@ -178,6 +178,12 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&>(*this);
     }
 
+    auto setEnabled(bool enabled_) -> ConcreteWidget&
+    {
+        enabled = enabled_;
+        return static_cast<ConcreteWidget&>(*this);
+    }
+
     template <typename Function, typename Event = wxCommandEvent>
     auto bind(wxEventTypeTag<Event> event, Function function)
     {
@@ -205,6 +211,7 @@ struct WidgetDetails {
         if (fontInfo) {
             widget->SetFont(wxFont(*fontInfo));
         }
+        widget->Enable(enabled);
         // bind any events
         widget = bindEvents(widget);
         return widget;
@@ -248,6 +255,7 @@ private:
     wxPoint pos = wxDefaultPosition;
     wxSize size = wxDefaultSize;
     int64_t style {};
+    bool enabled = true;
     std::optional<wxFontInfo> fontInfo {};
     std::optional<WidgetProxy*> proxyHandle {};
     std::vector<BindInfo> boundedFunctions;
