@@ -24,6 +24,7 @@ SOFTWARE.
 // wxUI "Hello World" example
 
 #include "ExtendedExample.h"
+#include <wx/artprov.h>
 #include <wxUI/wxUI.h>
 
 ExtendedExample::ExtendedExample(wxWindow* parent)
@@ -222,4 +223,121 @@ GenericExample::GenericExample(wxWindow* parent)
     // endsnippet GenericExample
     assert(proxy1->GetLabel() == "Raw 1");
     assert(proxy2->GetLabel() == "Raw 2");
+}
+
+ForEachExample::ForEachExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "ForEach Example", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    using namespace std::literals;
+    VSizer {
+        wxSizerFlags {}.Border(wxALL, 2),
+        HSizer {
+            ForEach {
+                std::vector<std::string> { "A", "B", "C" },
+                [](auto name) {
+                    return wxUI::Button { name };
+                } },
+        },
+        HForEach(
+            std::vector<std::string> { "A", "B", "C" },
+            [](auto name) {
+                return wxUI::Button { name };
+            }),
+        HForEach(
+            std::vector { "A", "B", "C" },
+            [](auto name) {
+                return wxUI::Button { name };
+            }),
+        HForEach(
+            { "A"s, "B"s, "C"s },
+            [](auto name) {
+                return wxUI::Button { name };
+            }),
+        HForEach(
+            { "A", "B", "C" },
+            [](auto name) {
+                return wxUI::Button { name };
+            }),
+        HForEach(
+            std::vector { "A", "B", "C" },
+            [](auto name) {
+                return wxUI::Button { name };
+            }),
+        HForEach(
+            std::vector<wxArtID> { wxART_PLUS, wxART_MINUS, wxART_FIND },
+            [](auto identity) {
+                return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
+            }),
+        HForEach(
+            std::vector<wxArtID> { wxART_PLUS, wxART_MINUS, wxART_FIND },
+            [](auto identity) {
+                return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
+            }),
+        HForEach(
+            std::vector { wxART_PLUS, wxART_MINUS, wxART_FIND },
+            [](auto identity) {
+                return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
+            }),
+        // snippet ForEachExample
+        HSizer {
+            ForEach {
+                { wxART_PLUS, wxART_MINUS, wxART_FIND },
+                [](auto identity) {
+                    return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
+                } },
+        },
+        // endsnippet ForEachExample
+        // snippet HForEach
+        HForEach(
+            std::vector { wxART_PLUS, wxART_MINUS, wxART_FIND },
+            [](auto identity) {
+                return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
+            }),
+        // endsnippet HForEach
+        HForEach(
+            std::vector { "Long string", "Ball", "S", "Tools" } | std::views::filter([](auto s) { return std::string(s).size() < 5; }),
+            [](auto name) {
+                return wxUI::Button { name };
+            }),
+        HForEach(
+            std::vector { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" } },
+            [](auto identityAndName) {
+                return wxUI::Button { std::get<0>(identityAndName), std::get<1>(identityAndName) };
+            }),
+        HForEach(
+            std::vector { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" } },
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            }),
+        HForEach(
+            { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" } },
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            }),
+        HForEach(
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" } },
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            }),
+        // snippet ComplicatedForEachExample
+        HForEach(
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" } } | std::views::filter([](auto s) { return std::get<1>(s) == "B"; }),
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            }),
+        // endsnippet ComplicatedForEachExample
+        HForEach(
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" } } | std::views::filter([](auto s) { return std::get<1>(s) == "B"; }),
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            }),
+        HForEach(
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" } } | std::views::filter([](auto s) { return std::get<1>(s) == "B"; }),
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            }),
+        CreateStdDialogButtonSizer(wxOK),
+    }
+        .attachTo(this);
 }

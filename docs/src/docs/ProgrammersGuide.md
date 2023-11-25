@@ -103,6 +103,27 @@ Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, or 
 {{{ examples/HelloWorld/ExtendedExample.cpp SplitterExample "    // ..." }}}
 ```
 
+#### ForEach
+
+Often times you will need to layout several widgets which only are different in their wxWindowID and Name.  Or perhaps there are cases where the items to be laid out are dynamic.  `ForEach` allows you to specify a range of values or `std::tuples` that are arguements to a closure that will returns a *Controller*.  These will then be added one at a time.
+
+```
+{{{ examples/HelloWorld/ExtendedExample.cpp ForEachExample "    // ..." }}}
+```
+
+*Ranges* are valid arguments for `ForEach`, which allows you to build up complicated layouts at run time.
+
+```
+{{{ examples/HelloWorld/ExtendedExample.cpp ComplicatedForEachExample "    // ..." }}}
+```
+
+Often times you would be laying out a set of buttons in a horizontal sizer.  The `HForEach` and `VForEach` functions are provided as convenience functions:
+
+```
+{{{ examples/HelloWorld/ExtendedExample.cpp HForEach "    // ..." }}}
+```
+
+
 ### Controllers
 
 *Controllers* are the general term to refer to items that behave like a [`wxContol`](https://docs.wxwidgets.org/3.0/classwx_control.html).  In `wxUI` we attempt to conform a consistent style that favors the common things you do with a specific `wxControl`.

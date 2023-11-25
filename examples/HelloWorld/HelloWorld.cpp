@@ -138,6 +138,10 @@ HelloWorldFrame::HelloWorldFrame()
                             GenericExample dialog(this);
                             dialog.ShowModal();
                         } },
+            wxUI::Item { "&ForEachExample...", [this] {
+                            ForEachExample dialog(this);
+                            dialog.ShowModal();
+                        } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },

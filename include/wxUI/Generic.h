@@ -28,6 +28,17 @@ SOFTWARE.
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
+namespace wxUI::details {
+template <typename T>
+// clang-format off
+// Concept for a function takes a wxWindow* and returns something convertible to wxWindow*
+concept CreateableWindowFunction = requires(T function, wxWindow* window) {
+    { function(window) } -> std::convertible_to<wxWindow*>;
+};
+// clang-format on
+
+}
+
 namespace wxUI {
 
 // Generic is for use in contexts where we are Creating and possibly Adding the
@@ -49,16 +60,16 @@ struct Generic {
     {
     }
 
-    template <typename Function>
-    Generic(Function windowFunction)
-        : child(windowFunction)
+    template <details::CreateableWindowFunction Function>
+    Generic(Function&& windowFunction)
+        : child(std::forward<Function>(windowFunction))
     {
     }
 
-    template <typename Function>
-    Generic(wxSizerFlags const& flags, Function windowFunction)
+    template <details::CreateableWindowFunction Function>
+    Generic(wxSizerFlags const& flags, Function&& windowFunction)
         : flags(flags)
-        , child(windowFunction)
+        , child(std::forward<Function>(windowFunction))
     {
     }
 

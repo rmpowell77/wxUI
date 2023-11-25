@@ -8,4 +8,5 @@ Other changes:
 * [#156](../../issues/156) We should be able to take ranges of std::string for choices, list boxes, etc
 * [#157](../../issues/157) Text needs withWrap
 * [#161](../../issues/161) Need to have a setEnabled for Widgets
+* [#164](../../issues/164) Add ForEach, which would allow a list of Controllers to be added
 
