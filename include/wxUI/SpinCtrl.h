@@ -35,6 +35,11 @@ namespace wxUI {
 struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     using super = details::WidgetDetails<SpinCtrl, wxSpinCtrl>;
 
+    explicit SpinCtrl(std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+        : SpinCtrl(wxID_ANY, range, initial)
+    {
+    }
+
     explicit SpinCtrl(wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : super(identity)
         , range(std::move(range))
@@ -42,8 +47,8 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     {
     }
 
-    explicit SpinCtrl(std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
-        : SpinCtrl(wxID_ANY, range, initial)
+    explicit SpinCtrl(wxSizerFlags const& flags, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+        : SpinCtrl(flags, wxID_ANY, range, initial)
     {
     }
 
@@ -51,11 +56,6 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
         : super(flags, identity)
         , range(std::move(range))
         , initial(initial)
-    {
-    }
-
-    explicit SpinCtrl(wxSizerFlags const& flags, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
-        : SpinCtrl(flags, wxID_ANY, range, initial)
     {
     }
 

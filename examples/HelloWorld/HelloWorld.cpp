@@ -311,7 +311,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             result = Text { "1" },
         },
         // endsnippet withwxUI
-        RadioBox { "&Log Levels:", { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
+        RadioBox { "&Log Levels:", RadioBox::withChoices {}, { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
             .setStyle(wxRA_SPECIFY_ROWS)
             .withMajorDim(1)
             .withSelection(1),
@@ -320,7 +320,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         HSizer {
             "Details",
             CheckBox { "Show" },
-            Choice { { "Less", "More" } },
+            Choice { "Less", "More" },
             TextCtrl { wxSizerFlags(1).Expand().Border(), "Fill in the blank" }
                 .withStyle(wxALIGN_LEFT),
         },

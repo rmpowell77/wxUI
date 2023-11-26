@@ -25,57 +25,125 @@ SOFTWARE.
 
 #include "GetterSetter.h"
 #include "Widget.h"
+#include <iostream>
 #include <wx/radiobox.h>
 
 #include "HelperMacros.h"
 
 namespace wxUI {
 
+struct Foo {
+    Foo()
+    {
+        std::cout << "Foo none\n";
+    }
+    Foo(std::initializer_list<std::string> initList)
+    {
+        std::cout << "Foo std::initializer_list<std::string>\n";
+        for (const auto& str : initList) {
+            std::cout << str << std::endl;
+        }
+    }
+    explicit Foo(char const* str)
+    {
+        std::cout << "Foo const char*\n";
+        std::cout << str << std::endl;
+    }
+};
+
 // https://docs.wxwidgets.org/latest/classwx_radio_box.html
 struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     using super = details::WidgetDetails<RadioBox, wxRadioBox>;
 
-    explicit RadioBox(wxWindowID identity, std::string text = "", std::vector<wxString> choices = {})
+    // clang-format off
+    struct withChoices { };
+    // clang-format on
+
+    RadioBox([[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
+        : RadioBox(wxID_ANY, "", unused, choices)
+    {
+    }
+
+    RadioBox(wxWindowID identity, [[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
+        : RadioBox(identity, "", unused, choices)
+    {
+    }
+
+    explicit RadioBox(std::string text, [[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
+        : RadioBox(wxID_ANY, std::move(text), unused, choices)
+    {
+    }
+
+    RadioBox(wxWindowID identity, std::string text, [[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
         : super(identity, super::WithStyle { wxRA_SPECIFY_COLS })
         , text(std::move(text))
-        , choices(std::move(choices))
+        , choices(details::Ranges::convertTo(choices))
     {
     }
 
-    RadioBox(wxWindowID identity, std::vector<wxString> choices)
-        : RadioBox(identity, "", std::move(choices))
+    explicit RadioBox(wxSizerFlags const& flags, [[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
+        : RadioBox(flags, wxID_ANY, "", unused, choices)
     {
     }
 
-    RadioBox(std::string text, std::vector<wxString> choices)
-        : RadioBox(wxID_ANY, std::move(text), std::move(choices))
+    explicit RadioBox(wxSizerFlags const& flags, wxWindowID identity, [[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
+        : RadioBox(flags, identity, "", unused, choices)
     {
     }
 
-    explicit RadioBox(std::vector<wxString> choices)
-        : RadioBox(wxID_ANY, "", std::move(choices))
+    RadioBox(wxSizerFlags const& flags, std::string text, [[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
+        : RadioBox(flags, wxID_ANY, std::move(text), unused, choices)
     {
     }
 
-    RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::string text, std::vector<wxString> choices)
+    explicit RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::string text, [[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
         : super(flags, identity, super::WithStyle { wxRA_SPECIFY_COLS })
         , text(std::move(text))
-        , choices(std::move(choices))
+        , choices(details::Ranges::convertTo(choices))
     {
     }
 
-    RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> choices)
-        : RadioBox(flags, identity, "", std::move(choices))
+    explicit RadioBox([[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
+        : RadioBox(wxID_ANY, "", unused, std::forward<decltype(choices)>(choices))
     {
     }
 
-    RadioBox(wxSizerFlags const& flags, std::string text, std::vector<wxString> choices)
-        : RadioBox(flags, wxID_ANY, std::move(text), std::move(choices))
+    RadioBox(wxWindowID identity, [[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
+        : RadioBox(identity, "", unused, std::forward<decltype(choices)>(choices))
     {
     }
 
-    RadioBox(wxSizerFlags const& flags, std::vector<wxString> choices)
-        : RadioBox(flags, wxID_ANY, "", std::move(choices))
+    RadioBox(std::string text, [[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
+        : RadioBox(wxID_ANY, std::move(text), unused, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    RadioBox(wxWindowID identity, std::string text, [[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
+        : super(identity, super::WithStyle { wxRA_SPECIFY_COLS })
+        , text(std::move(text))
+        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+    {
+    }
+
+    RadioBox(wxSizerFlags const& flags, [[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
+        : RadioBox(flags, wxID_ANY, "", unused, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    RadioBox(wxSizerFlags const& flags, wxWindowID identity, [[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
+        : RadioBox(flags, identity, "", unused, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    RadioBox(wxSizerFlags const& flags, std::string text, [[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
+        : RadioBox(flags, wxID_ANY, std::move(text), unused, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::string text, [[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
+        : super(flags, identity, super::WithStyle { wxRA_SPECIFY_COLS })
+        , text(std::move(text))
+        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
 

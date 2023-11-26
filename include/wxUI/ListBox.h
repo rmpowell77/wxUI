@@ -35,25 +35,47 @@ namespace wxUI {
 struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
     using super = details::WidgetDetails<ListBox, wxListBox>;
 
-    explicit ListBox(wxWindowID identity, std::vector<wxString> choices = {})
+    ListBox(std::initializer_list<std::string> choices = {})
+        : ListBox(wxID_ANY, choices)
+    {
+    }
+
+    explicit ListBox(wxWindowID identity, std::initializer_list<std::string> choices = {})
         : super(identity)
-        , choices(std::move(choices))
+        , choices(details::Ranges::convertTo(choices))
     {
     }
 
-    explicit ListBox(std::vector<wxString> choices = {})
-        : ListBox(wxID_ANY, std::move(choices))
+    explicit ListBox(wxSizerFlags const& flags, std::initializer_list<std::string> choices = {})
+        : ListBox(flags, wxID_ANY, choices)
     {
     }
 
-    explicit ListBox(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> choices = {})
+    ListBox(wxSizerFlags const& flags, wxWindowID identity, std::initializer_list<std::string> choices = {})
         : super(flags, identity)
-        , choices(std::move(choices))
+        , choices(details::Ranges::convertTo(choices))
     {
     }
 
-    explicit ListBox(wxSizerFlags const& flags, std::vector<wxString> choices = {})
-        : ListBox(flags, wxID_ANY, std::move(choices))
+    explicit ListBox(details::Ranges::input_range_of<wxString> auto&& choices)
+        : ListBox(wxID_ANY, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    ListBox(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
+        : super(identity)
+        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+    {
+    }
+
+    explicit ListBox(wxSizerFlags const& flags, details::Ranges::input_range_of<wxString> auto&& choices)
+        : ListBox(flags, wxID_ANY, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    explicit ListBox(wxSizerFlags const& flags, wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
+        : super(flags, identity)
+        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
 

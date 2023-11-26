@@ -44,13 +44,6 @@ static auto createUUT() { return CheckBoxTestPolicy::createUUT(); }
 
 TEST_CASE("CheckBox")
 {
-    SECTION("noargs.1")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-    }
     SECTION("noargs")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };

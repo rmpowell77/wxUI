@@ -35,26 +35,24 @@ namespace wxUI {
 struct Text : public details::WidgetDetails<Text, wxStaticText> {
     using super = details::WidgetDetails<Text, wxStaticText>;
 
+    explicit Text(std::string text = "")
+        : Text(wxID_ANY, std::move(text))
+    {
+    }
+
     explicit Text(wxWindowID identity, std::string text = "")
         : super(identity)
         , text(std::move(text))
     {
     }
 
+    explicit Text(wxSizerFlags const& flags, std::string text = "")
+        : Text(flags, wxID_ANY, std::move(text))
+    {
+    }
+
     Text(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
         : super(flags, identity)
-        , text(std::move(text))
-    {
-    }
-
-    explicit Text(std::string text = "")
-        : super(wxID_ANY)
-        , text(std::move(text))
-    {
-    }
-
-    explicit Text(wxSizerFlags const& flags, std::string text = "")
-        : super(flags, wxID_ANY)
         , text(std::move(text))
     {
     }

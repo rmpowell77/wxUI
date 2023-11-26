@@ -49,7 +49,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             BitmapButton { wxBitmap {} },
         },
         HSizer {
-            BitmapComboBox { { std::tuple { "", wxBitmap {} } } },
+            BitmapComboBox { std::tuple { "", wxBitmap {} } },
         },
         HSizer {
             BitmapToggleButton { wxBitmap {} },
@@ -81,10 +81,10 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             Line {},
         },
         HSizer {
-            ListBox { {} },
+            ListBox {},
         },
         HSizer {
-            RadioBox { std::vector<wxString> { "hello" } },
+            RadioBox { RadioBox::withChoices {}, "hello" },
         },
         HSizer {
             Slider {},

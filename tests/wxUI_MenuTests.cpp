@@ -241,7 +241,7 @@ TEST_CASE("Menu")
     SECTION("emptyMenuBar2")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::MenuBar menu { {} };
+        wxUI::MenuBar menu {};
         menu.attachTo(&frame);
         CheckMenuBar0(frame, 0, "", 0);
     }

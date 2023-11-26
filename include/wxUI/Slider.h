@@ -35,27 +35,27 @@ namespace wxUI {
 struct Slider : public details::WidgetDetails<Slider, wxSlider> {
     using super = details::WidgetDetails<Slider, wxSlider>;
 
-    explicit Slider(wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
-        : super(identity)
-        , range(range)
-        , initial(initial)
-    {
-    }
-
     explicit Slider(std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : Slider(wxID_ANY, range, initial)
     {
     }
 
-    explicit Slider(wxSizerFlags const& flags, wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
-        : super(flags, identity)
-        , range(range)
+    explicit Slider(wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+        : super(identity)
+        , range(std::move(range))
         , initial(initial)
     {
     }
 
     explicit Slider(wxSizerFlags const& flags, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : Slider(flags, wxID_ANY, range, initial)
+    {
+    }
+
+    Slider(wxSizerFlags const& flags, wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+        : super(flags, identity)
+        , range(std::move(range))
+        , initial(initial)
     {
     }
 
