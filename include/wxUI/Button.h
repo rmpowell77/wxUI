@@ -35,25 +35,25 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
     using super = details::WidgetDetails<Button, wxButton>;
     using details::WidgetDetails<Button, wxButton>::underlying_t;
 
+    explicit Button(std::string text = "")
+        : Button(wxID_ANY, std::move(text))
+    {
+    }
+
     explicit Button(wxWindowID identity, std::string text = "")
         : super(identity)
         , text(std::move(text))
     {
     }
 
-    explicit Button(std::string text = "")
-        : Button(wxID_ANY, std::move(text))
-    {
-    }
-
-    explicit Button(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
-        : super(flags, identity)
-        , text(std::move(text))
-    {
-    }
-
     explicit Button(wxSizerFlags const& flags, std::string const& text = "")
         : Button(flags, wxID_ANY, text)
+    {
+    }
+
+    Button(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
+        : super(flags, identity)
+        , text(std::move(text))
     {
     }
 

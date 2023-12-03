@@ -35,25 +35,47 @@ namespace wxUI {
 struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
     using super = details::WidgetDetails<ComboBox, wxComboBox>;
 
-    ComboBox(wxWindowID identity, std::vector<wxString> const& choices)
-        : super(identity)
-        , choices(choices)
-    {
-    }
-
-    explicit ComboBox(std::vector<wxString> const& choices)
+    ComboBox(std::initializer_list<std::string> choices = {})
         : ComboBox(wxID_ANY, choices)
     {
     }
 
-    ComboBox(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> const& choices)
-        : super(flags, identity)
-        , choices(choices)
+    explicit ComboBox(wxWindowID identity, std::initializer_list<std::string> choices = {})
+        : super(identity)
+        , choices(details::Ranges::convertTo(choices))
     {
     }
 
-    ComboBox(wxSizerFlags const& flags, std::vector<wxString> const& choices)
+    explicit ComboBox(wxSizerFlags const& flags, std::initializer_list<std::string> choices = {})
         : ComboBox(flags, wxID_ANY, choices)
+    {
+    }
+
+    ComboBox(wxSizerFlags const& flags, wxWindowID identity, std::initializer_list<std::string> choices = {})
+        : super(flags, identity)
+        , choices(details::Ranges::convertTo(choices))
+    {
+    }
+
+    explicit ComboBox(details::Ranges::input_range_of<wxString> auto&& choices)
+        : ComboBox(wxID_ANY, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    ComboBox(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
+        : super(identity)
+        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+    {
+    }
+
+    explicit ComboBox(wxSizerFlags const& flags, details::Ranges::input_range_of<wxString> auto&& choices)
+        : ComboBox(flags, wxID_ANY, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    explicit ComboBox(wxSizerFlags const& flags, wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
+        : super(flags, identity)
+        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
 

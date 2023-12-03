@@ -25,6 +25,7 @@ SOFTWARE.
 
 #include "GetterSetter.h"
 #include "Widget.h"
+#include <ranges>
 #include <wx/bmpcbox.h>
 
 #include "HelperMacros.h"
@@ -35,7 +36,12 @@ namespace wxUI {
 struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapComboBox> {
     using super = details::WidgetDetails<BitmapComboBox, wxBitmapComboBox>;
 
-    BitmapComboBox(wxWindowID identity, std::vector<std::tuple<wxString, wxBitmap>> const& bitmapChoices)
+    explicit BitmapComboBox(std::initializer_list<std::tuple<std::string, wxBitmap>> bitmapChoices)
+        : BitmapComboBox(wxID_ANY, bitmapChoices)
+    {
+    }
+
+    BitmapComboBox(wxWindowID identity, std::initializer_list<std::tuple<std::string, wxBitmap>> bitmapChoices)
         : super(identity)
         , choices([&bitmapChoices] {
             std::vector<wxString> result;
@@ -56,12 +62,12 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
     {
     }
 
-    explicit BitmapComboBox(std::vector<std::tuple<wxString, wxBitmap>> const& bitmapChoices)
-        : BitmapComboBox(wxID_ANY, bitmapChoices)
+    BitmapComboBox(wxSizerFlags const& flags, std::initializer_list<std::tuple<std::string, wxBitmap>> bitmapChoices)
+        : BitmapComboBox(flags, wxID_ANY, bitmapChoices)
     {
     }
 
-    BitmapComboBox(wxSizerFlags const& flags, wxWindowID identity, std::vector<std::tuple<wxString, wxBitmap>> const& bitmapChoices)
+    BitmapComboBox(wxSizerFlags const& flags, wxWindowID identity, std::initializer_list<std::tuple<std::string, wxBitmap>> bitmapChoices)
         : super(flags, identity)
         , choices([&bitmapChoices] {
             std::vector<wxString> result;
@@ -82,8 +88,27 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
     {
     }
 
-    BitmapComboBox(wxSizerFlags const& flags, std::vector<std::tuple<wxString, wxBitmap>> const& bitmapChoices)
-        : BitmapComboBox(flags, wxID_ANY, bitmapChoices)
+    explicit BitmapComboBox(details::Ranges::input_range_of<std::tuple<wxString, wxBitmap>> auto&& choices)
+        : BitmapComboBox(wxID_ANY, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    BitmapComboBox(wxWindowID identity, details::Ranges::input_range_of<std::tuple<wxString, wxBitmap>> auto&& choices)
+        : super(identity)
+        , choices(details::Ranges::ToVector<wxString>(choices | std::views::transform([](auto&& item) { return std::get<0>(item); })))
+        , bitmaps(details::Ranges::ToVector<wxBitmap>(choices | std::views::transform([](auto&& item) { return std::get<1>(item); })))
+    {
+    }
+
+    BitmapComboBox(wxSizerFlags const& flags, details::Ranges::input_range_of<std::tuple<wxString, wxBitmap>> auto&& choices)
+        : BitmapComboBox(flags, wxID_ANY, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    BitmapComboBox(wxSizerFlags const& flags, wxWindowID identity, details::Ranges::input_range_of<std::tuple<wxString, wxBitmap>> auto&& choices)
+        : super(flags, identity)
+        , choices(details::Ranges::ToVector<wxString>(choices | std::views::transform([](auto&& item) { return std::get<0>(item); })))
+        , bitmaps(details::Ranges::ToVector<wxBitmap>(choices | std::views::transform([](auto&& item) { return std::get<1>(item); })))
     {
     }
 

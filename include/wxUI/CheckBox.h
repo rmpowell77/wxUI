@@ -35,25 +35,25 @@ namespace wxUI {
 struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
     using super = details::WidgetDetails<CheckBox, wxCheckBox>;
 
+    explicit CheckBox(std::string text = "")
+        : CheckBox(wxID_ANY, std::move(text))
+    {
+    }
+
     explicit CheckBox(wxWindowID identity, std::string text = "")
         : super(identity)
         , text(std::move(text))
     {
     }
 
-    explicit CheckBox(std::string text = "")
-        : CheckBox(wxID_ANY, std::move(text))
-    {
-    }
-
-    explicit CheckBox(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
-        : super(flags, identity)
-        , text(std::move(text))
-    {
-    }
-
     explicit CheckBox(wxSizerFlags const& flags, std::string text = "")
         : CheckBox(flags, wxID_ANY, std::move(text))
+    {
+    }
+
+    CheckBox(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
+        : super(flags, identity)
+        , text(std::move(text))
     {
     }
 

@@ -34,25 +34,25 @@ namespace wxUI {
 struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
     using super = details::WidgetDetails<Bitmap, wxStaticBitmap>;
 
+    explicit Bitmap(wxBitmap const& bitmap)
+        : Bitmap(wxID_ANY, bitmap)
+    {
+    }
+
     Bitmap(wxWindowID identity, wxBitmap const& bitmap)
         : super(identity)
         , bitmap(bitmap)
     {
     }
 
-    explicit Bitmap(wxBitmap const& bitmap)
-        : Bitmap(wxID_ANY, bitmap)
+    explicit Bitmap(wxSizerFlags const& flags, wxBitmap const& bitmap)
+        : Bitmap(flags, wxID_ANY, bitmap)
     {
     }
 
     explicit Bitmap(wxSizerFlags const& flags, wxWindowID identity, wxBitmap const& bitmap)
         : super(flags, identity)
         , bitmap(bitmap)
-    {
-    }
-
-    explicit Bitmap(wxSizerFlags const& flags, wxBitmap const& bitmap)
-        : Bitmap(flags, wxID_ANY, bitmap)
     {
     }
 

@@ -35,25 +35,47 @@ namespace wxUI {
 struct Choice : public details::WidgetDetails<Choice, wxChoice> {
     using super = details::WidgetDetails<Choice, wxChoice>;
 
-    explicit Choice(wxWindowID identity, std::vector<wxString> choices = {})
+    Choice(std::initializer_list<std::string> choices = {})
+        : Choice(wxID_ANY, choices)
+    {
+    }
+
+    explicit Choice(wxWindowID identity, std::initializer_list<std::string> choices = {})
         : super(identity)
-        , choices(std::move(choices))
+        , choices(details::Ranges::convertTo(choices))
     {
     }
 
-    explicit Choice(std::vector<wxString> choices = {})
-        : Choice(wxID_ANY, std::move(choices))
+    explicit Choice(wxSizerFlags const& flags, std::initializer_list<std::string> choices = {})
+        : Choice(flags, wxID_ANY, choices)
     {
     }
 
-    explicit Choice(wxSizerFlags const& flags, wxWindowID identity, std::vector<wxString> choices = {})
+    Choice(wxSizerFlags const& flags, wxWindowID identity, std::initializer_list<std::string> choices = {})
         : super(flags, identity)
-        , choices(std::move(choices))
+        , choices(details::Ranges::convertTo(choices))
     {
     }
 
-    explicit Choice(wxSizerFlags const& flags, std::vector<wxString> choices = {})
-        : Choice(flags, wxID_ANY, std::move(choices))
+    explicit Choice(details::Ranges::input_range_of<wxString> auto&& choices)
+        : Choice(wxID_ANY, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    Choice(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
+        : super(identity)
+        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+    {
+    }
+
+    explicit Choice(wxSizerFlags const& flags, details::Ranges::input_range_of<wxString> auto&& choices)
+        : Choice(flags, wxID_ANY, std::forward<decltype(choices)>(choices))
+    {
+    }
+
+    explicit Choice(wxSizerFlags const& flags, wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
+        : super(flags, identity)
+        , choices(details::Ranges::ToVector<wxString>(choices))
     {
     }
 

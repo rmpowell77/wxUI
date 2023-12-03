@@ -34,6 +34,11 @@ namespace wxUI {
 struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     using super = details::WidgetDetails<Hyperlink, wxHyperlinkCtrl>;
 
+    Hyperlink(std::string text, std::string url)
+        : Hyperlink(wxID_ANY, std::move(text), std::move(url))
+    {
+    }
+
     Hyperlink(wxWindowID identity, std::string text, std::string url)
         : super(identity, super::WithStyle { wxHL_DEFAULT_STYLE })
         , text(std::move(text))
@@ -41,8 +46,8 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     {
     }
 
-    Hyperlink(std::string text, std::string url)
-        : Hyperlink(wxID_ANY, std::move(text), std::move(url))
+    Hyperlink(wxSizerFlags const& flags, std::string text, std::string url)
+        : Hyperlink(flags, wxID_ANY, std::move(text), std::move(url))
     {
     }
 
@@ -50,11 +55,6 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
         : super(flags, identity, super::WithStyle { wxHL_DEFAULT_STYLE })
         , text(std::move(text))
         , url(std::move(url))
-    {
-    }
-
-    Hyperlink(wxSizerFlags const& flags, std::string text, std::string url)
-        : Hyperlink(flags, wxID_ANY, std::move(text), std::move(url))
     {
     }
 

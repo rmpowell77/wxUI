@@ -35,25 +35,25 @@ namespace wxUI {
 struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
     using super = details::WidgetDetails<TextCtrl, wxTextCtrl>;
 
+    explicit TextCtrl(std::string text = "")
+        : TextCtrl(wxID_ANY, std::move(text))
+    {
+    }
+
     explicit TextCtrl(wxWindowID identity, std::string text = "")
         : super(identity)
         , text(std::move(text))
     {
     }
 
-    explicit TextCtrl(std::string text = "")
-        : TextCtrl(wxID_ANY, std::move(text))
+    explicit TextCtrl(wxSizerFlags const& flags, std::string text = "")
+        : TextCtrl(flags, wxID_ANY, std::move(text))
     {
     }
 
     TextCtrl(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
         : super(flags, identity)
         , text(std::move(text))
-    {
-    }
-
-    explicit TextCtrl(wxSizerFlags const& flags, std::string text = "")
-        : TextCtrl(flags, wxID_ANY, std::move(text))
     {
     }
 

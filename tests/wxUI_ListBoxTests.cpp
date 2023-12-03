@@ -44,13 +44,6 @@ static auto createUUT() { return ListBoxTestPolicy::createUUT(); }
 
 TEST_CASE("ListBox")
 {
-    SECTION("noargs.1")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(0 == window->GetCount());
-    }
     SECTION("noargs")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
@@ -62,7 +55,7 @@ TEST_CASE("ListBox")
     SECTION("ListBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { { "Hello", "Goodbye" } };
+        auto uut = TypeUnderTest { "Hello", "Goodbye" };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(2 == window->GetCount());
         CHECK(wxNOT_FOUND == window->GetSelection());
@@ -123,6 +116,41 @@ TEST_CASE("ListBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { wxSizerFlags(1), 10000, { "Hello", "Goodbye" } };
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(10000 == window->GetId());
+        CHECK(2 == window->GetCount());
+        CHECK(wxNOT_FOUND == window->GetSelection());
+        CHECK("Hello" == window->GetString(0));
+        CHECK("Goodbye" == window->GetString(1));
+    }
+
+    SECTION("id.ListBox.ranges")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest { 10000, std::vector<std::string> { "Hello", "Goodbye" } };
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(10000 == window->GetId());
+        CHECK(2 == window->GetCount());
+        CHECK(wxNOT_FOUND == window->GetSelection());
+        CHECK("Hello" == window->GetString(0));
+        CHECK("Goodbye" == window->GetString(1));
+    }
+
+    SECTION("size.ListBox.ranges")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest { wxSizerFlags(1), std::vector<std::string> { "Hello", "Goodbye" } };
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(2 == window->GetCount());
+        CHECK(wxNOT_FOUND == window->GetSelection());
+        CHECK("Hello" == window->GetString(0));
+        CHECK("Goodbye" == window->GetString(1));
+    }
+
+    SECTION("size.id.ListBox.ranges")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, std::vector<std::string> { "Hello", "Goodbye" } };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK(2 == window->GetCount());

@@ -38,14 +38,20 @@ struct Generic {
 
     struct Proxy;
 
+    explicit Generic(Window* window)
+        : child(window)
+    {
+    }
+
     Generic(wxSizerFlags const& flags, Window* window)
         : flags(flags)
         , child(window)
     {
     }
 
-    explicit Generic(Window* window)
-        : child(window)
+    template <typename Function>
+    Generic(Function windowFunction)
+        : child(windowFunction)
     {
     }
 
@@ -53,12 +59,6 @@ struct Generic {
     Generic(wxSizerFlags const& flags, Function windowFunction)
         : flags(flags)
         , child(windowFunction)
-    {
-    }
-
-    template <typename Function>
-    Generic(Function windowFunction)
-        : child(windowFunction)
     {
     }
 
