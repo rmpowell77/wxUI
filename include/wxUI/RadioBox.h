@@ -173,7 +173,7 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
         return super::bind(wxEVT_RADIOBOX, func);
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
         [[nodiscard]] auto selection() const
         {

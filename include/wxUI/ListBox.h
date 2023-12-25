@@ -98,7 +98,7 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
         return super::bind(wxEVT_LISTBOX, func);
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
         [[nodiscard]] auto selection() const
         {

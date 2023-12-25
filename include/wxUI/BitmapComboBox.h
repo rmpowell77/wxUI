@@ -125,7 +125,7 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
         return super::bind(wxEVT_COMBOBOX, func);
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const
         {

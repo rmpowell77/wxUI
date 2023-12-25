@@ -89,8 +89,26 @@ struct overloaded : Ts... {
 template <class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
-template <typename Controller, typename Underlying>
-struct WidgetProxy;
+template <typename Underlying>
+struct WidgetProxy {
+    [[nodiscard]] auto control() const -> Underlying*
+    {
+        if (!controller) {
+            throw std::runtime_error("Proxy class has not been attached");
+        }
+        return controller;
+    }
+
+    void setUnderlying(Underlying* control)
+    {
+        controller = control;
+    }
+
+    auto operator->() const { return control(); }
+
+private:
+    Underlying* controller {};
+};
 
 // The WidgetDetails are the base class of the Controllers.  The common details
 // across many controllers are stored in the base class.
@@ -102,27 +120,6 @@ template <typename ConcreteWidget, typename Underlying>
 struct WidgetDetails {
     using Controller = ConcreteWidget;
     using underlying_t = Underlying;
-
-    struct WidgetProxy {
-        using Controller = ConcreteWidget;
-        [[nodiscard]] auto control() const -> Underlying*
-        {
-            if (!controller) {
-                throw std::runtime_error("Proxy class has not been attached");
-            }
-            return controller;
-        }
-
-        void setUnderlying(Underlying* control)
-        {
-            controller = control;
-        }
-
-        auto operator->() const { return control(); }
-
-    private:
-        Underlying* controller {};
-    };
 
     struct WithStyle {
         int64_t mStyle;
@@ -258,7 +255,7 @@ struct WidgetDetails {
     auto getSize() const { return size; }
     auto getStyle() const { return style; }
 
-    void setProxyHandle(WidgetProxy* proxy)
+    void setProxyHandle(WidgetProxy<Underlying>* proxy)
     {
         proxyHandle = proxy;
     }
@@ -267,7 +264,7 @@ protected:
     auto setProxy(Underlying* widget) -> Underlying*
     {
         if (proxyHandle) {
-            (*proxyHandle)->setUnderlying(widget);
+            proxyHandle->setUnderlying(widget);
         }
         return widget;
     }
@@ -285,7 +282,7 @@ private:
     int64_t style {};
     bool enabled = true;
     std::optional<wxFontInfo> fontInfo {};
-    std::optional<WidgetProxy*> proxyHandle {};
+    details::WidgetProxy<Underlying>* proxyHandle {}; // optional WidgetProxy
     std::vector<BindInfo> boundedFunctions;
 };
 

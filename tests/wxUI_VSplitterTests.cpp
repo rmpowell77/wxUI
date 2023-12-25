@@ -74,6 +74,14 @@ TEST_CASE("VSplitter")
         CHECK(10000 == window->GetId());
     }
 
+    SECTION("proxy")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        wxUI::SplitterProxy proxy;
+        auto uut = proxy = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} };
+        [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+    }
+
     COMMON_TESTS(VSplitterTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

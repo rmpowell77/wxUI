@@ -92,7 +92,7 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
         return super::bind(wxEVT_CHOICE, func);
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
         [[nodiscard]] auto selection() const
         {

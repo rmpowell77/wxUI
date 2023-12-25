@@ -74,7 +74,7 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
         return super::bind(wxEVT_SPINCTRL, func);
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
 
         [[nodiscard]] auto value() const

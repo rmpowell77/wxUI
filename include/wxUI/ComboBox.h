@@ -102,7 +102,7 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
         return super::bind(wxEVT_COMBOBOX, func);
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const
         {

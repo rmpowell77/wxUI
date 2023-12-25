@@ -66,7 +66,7 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
         return super::bind(wxEVT_TOGGLEBUTTON, func);
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const
         {
