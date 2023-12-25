@@ -82,6 +82,13 @@ TEST_CASE("HSplitter")
         [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
     }
 
+    SECTION("withGravity")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} }.withStashGravity(1.0);
+        [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+    }
+
     COMMON_TESTS(HSplitterTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
