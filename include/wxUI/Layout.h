@@ -40,24 +40,16 @@ namespace details {
 
     template <details::SizerItem... Items>
     struct Sizer {
-        explicit Sizer(Items const&... items)
-            : Sizer(std::make_tuple(items...))
+        template <details::SizerItem... UItems>
+        explicit Sizer(UItems&&... items)
+            : items(std::forward_as_tuple(std::forward<UItems>(items)...))
         {
         }
 
-        explicit Sizer(wxSizerFlags const& flags, Items const&... items)
-            : Sizer(flags, std::make_tuple(items...))
-        {
-        }
-
-        explicit Sizer(std::tuple<Items...> const& items)
-            : items(items)
-        {
-        }
-
-        Sizer(wxSizerFlags const& flags, std::tuple<Items...> const& items)
+        template <details::SizerItem... UItems>
+        explicit Sizer(wxSizerFlags const& flags, UItems&&... items)
             : flags(flags)
-            , items(items)
+            , items(std::forward_as_tuple(std::forward<UItems>(items)...))
         {
         }
 
@@ -119,46 +111,28 @@ namespace details {
     struct SizerBase : Sizer<Items...> {
         using super = Sizer<Items...>;
 
-        explicit SizerBase(Items const&... items)
-            : super(std::make_tuple(items...))
+        template <details::SizerItem... UItems>
+        explicit SizerBase(UItems&&... items)
+            : super(std::forward<UItems>(items)...)
         {
         }
 
-        explicit SizerBase(wxString const& caption, Items const&... items)
-            : super(std::make_tuple(items...))
+        template <details::SizerItem... UItems>
+        explicit SizerBase(wxString const& caption, UItems&&... items)
+            : super(std::forward<UItems>(items)...)
             , caption(caption)
         {
         }
 
-        explicit SizerBase(wxSizerFlags const& flags, Items const&... items)
-            : super(flags, std::make_tuple(items...))
+        template <details::SizerItem... UItems>
+        explicit SizerBase(wxSizerFlags const& flags, UItems&&... items)
+            : super(flags, std::forward<UItems>(items)...)
         {
         }
 
-        SizerBase(wxString const& caption, wxSizerFlags const& flags, Items const&... items)
-            : super(flags, std::make_tuple(items...))
-            , caption(caption)
-        {
-        }
-
-        explicit SizerBase(std::tuple<Items...> const& items)
-            : super(items)
-        {
-        }
-
-        SizerBase(wxString const& caption, std::tuple<Items...> const& items)
-            : super(items)
-            , caption(caption)
-        {
-        }
-
-        SizerBase(wxSizerFlags const& flags, std::tuple<Items...> const& items)
-            : super(flags, items)
-        {
-        }
-
-        SizerBase(wxString const& caption, wxSizerFlags const& flags, std::tuple<Items...> const& items)
-            : super(flags, items)
+        template <details::SizerItem... UItems>
+        SizerBase(wxString const& caption, wxSizerFlags const& flags, UItems&&... items)
+            : super(flags, std::forward<UItems>(items)...)
             , caption(caption)
         {
         }
@@ -174,91 +148,83 @@ template <details::SizerItem... Items>
 struct VSizer : public details::SizerBase<wxVERTICAL, Items...> {
     using super = details::SizerBase<wxVERTICAL, Items...>;
 
-    explicit VSizer(Items const&... items)
-        : super(std::make_tuple(items...))
+    template <details::SizerItem... UItems>
+    explicit VSizer(UItems&&... items)
+        : super(std::forward<UItems>(items)...)
     {
     }
 
-    explicit VSizer(wxString const& caption, Items const&... items)
-        : super(caption, std::make_tuple(items...))
+    template <details::SizerItem... UItems>
+    explicit VSizer(wxString const& caption, UItems&&... items)
+        : super(caption, std::forward<UItems>(items)...)
     {
     }
 
-    explicit VSizer(wxSizerFlags const& flags, Items const&... items)
-        : super(flags, std::make_tuple(items...))
+    template <details::SizerItem... UItems>
+    explicit VSizer(wxSizerFlags const& flags, UItems&&... items)
+        : super(flags, std::forward<UItems>(items)...)
     {
     }
 
-    VSizer(wxString const& caption, wxSizerFlags const& flags, Items const&... items)
-        : super(caption, flags, std::make_tuple(items...))
-    {
-    }
-
-    explicit VSizer(std::tuple<Items...> const& items)
-        : super(items)
-    {
-    }
-
-    VSizer(wxString const& caption, std::tuple<Items...> const& items)
-        : super(caption, items)
-    {
-    }
-
-    VSizer(wxSizerFlags const& flags, std::tuple<Items...> const& items)
-        : super(flags, items)
-    {
-    }
-
-    VSizer(wxString const& caption, wxSizerFlags const& flags, std::tuple<Items...> const& items)
-        : super(caption, flags, items)
+    template <details::SizerItem... UItems>
+    VSizer(wxString const& caption, wxSizerFlags const& flags, UItems&&... items)
+        : super(caption, flags, std::forward<UItems>(items)...)
     {
     }
 };
+
+template <details::SizerItem... UItems>
+VSizer(UItems&&... items) -> VSizer<UItems...>;
+
+template <details::SizerItem... UItems>
+VSizer(wxString const& caption, UItems&&... items) -> VSizer<UItems...>;
+
+template <details::SizerItem... UItems>
+VSizer(wxSizerFlags const& flags, UItems&&... items) -> VSizer<UItems...>;
+
+template <details::SizerItem... UItems>
+VSizer(wxString const& caption, wxSizerFlags const& flags, UItems&&... items) -> VSizer<UItems...>;
 
 template <details::SizerItem... Items>
 struct HSizer : public details::SizerBase<wxHORIZONTAL, Items...> {
     using super = details::SizerBase<wxHORIZONTAL, Items...>;
 
-    explicit HSizer(Items const&... items)
-        : super(std::make_tuple(items...))
+    template <details::SizerItem... UItems>
+    explicit HSizer(UItems&&... items)
+        : super(std::forward<UItems>(items)...)
     {
     }
 
-    explicit HSizer(wxString const& caption, Items const&... items)
-        : super(caption, std::make_tuple(items...))
+    template <details::SizerItem... UItems>
+    explicit HSizer(wxString const& caption, UItems&&... items)
+        : super(caption, std::forward<UItems>(items)...)
     {
     }
 
-    explicit HSizer(wxSizerFlags const& flags, Items const&... items)
-        : super(flags, std::make_tuple(items...))
+    template <details::SizerItem... UItems>
+    explicit HSizer(wxSizerFlags const& flags, UItems&&... items)
+        : super(flags, std::forward<UItems>(items)...)
     {
     }
 
-    HSizer(wxString const& caption, wxSizerFlags const& flags, Items const&... items)
-        : super(caption, flags, std::make_tuple(items...))
-    {
-    }
-
-    explicit HSizer(std::tuple<Items...> const& items)
-        : super(items)
-    {
-    }
-
-    HSizer(wxString const& caption, std::tuple<Items...> const& items)
-        : super(caption, items)
-    {
-    }
-
-    HSizer(wxSizerFlags const& flags, std::tuple<Items...> const& items)
-        : super(flags, items)
-    {
-    }
-
-    HSizer(wxString const& caption, wxSizerFlags const& flags, std::tuple<Items...> const& items)
-        : super(caption, flags, items)
+    template <details::SizerItem... UItems>
+    HSizer(wxString const& caption, wxSizerFlags const& flags, UItems&&... items)
+        : super(caption, flags, std::forward<UItems>(items)...)
     {
     }
 };
+
+template <details::SizerItem... UItems>
+HSizer(UItems&&... items) -> HSizer<UItems...>;
+
+template <details::SizerItem... UItems>
+HSizer(wxString const& caption, UItems&&... items) -> HSizer<UItems...>;
+
+template <details::SizerItem... UItems>
+HSizer(wxSizerFlags const& flags, UItems&&... items) -> HSizer<UItems...>;
+
+template <details::SizerItem... UItems>
+HSizer(wxString const& caption, wxSizerFlags const& flags, UItems&&... items) -> HSizer<UItems...>;
 
 }
 

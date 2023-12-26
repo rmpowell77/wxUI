@@ -154,22 +154,6 @@ TEST_CASE("Size")
         wxUI::VSizer { wxUI::VSizer { "Test1" } }.attachTo(&frame);
         CheckVSizerNamedEmpty(frame.GetSizer(), "Test1");
     }
-    SECTION("vSizer.vSizer.empty")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer { std::tuple { wxUI::VSizer {} } }.attachTo(&frame);
-        CheckVSizerHasOne(frame.GetSizer(), [](wxSizer* sizer) {
-            CheckVSizerEmpty(sizer);
-        });
-    }
-    SECTION("vSizer.vSizer.named.empty")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer { std::tuple { wxUI::VSizer { "Test1" } } }.attachTo(&frame);
-        CheckVSizerHasOne(frame.GetSizer(), [](wxSizer* sizer) {
-            CheckVSizerNamedEmpty(sizer, "Test1");
-        });
-    }
     SECTION("vSizer.hSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
@@ -248,23 +232,6 @@ TEST_CASE("Size")
         wxUI::HSizer { wxUI::HSizer { "Test2" } }.attachTo(&frame);
         CheckHSizerNamedEmpty(frame.GetSizer(), "Test2");
     }
-    SECTION("hSizer.hSizer.empty")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer { std::tuple { wxUI::HSizer {} } }.attachTo(&frame);
-        CheckHSizerHasOne(frame.GetSizer(), [](wxSizer* sizer) {
-            CheckHSizerEmpty(sizer);
-        });
-    }
-    SECTION("hSizer.hSizer.named.empty")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer { std::tuple { wxUI::HSizer { "Test1" } } }.attachTo(&frame);
-        CheckHSizerHasOne(frame.GetSizer(), [](wxSizer* sizer) {
-            CheckHSizerNamedEmpty(sizer, "Test1");
-        });
-    }
-
     SECTION("hSizer.named.vSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };

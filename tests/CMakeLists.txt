@@ -9,6 +9,7 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_CheckBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ChoiceTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ComboBoxTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ForEachTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_GenericTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_GetterSetterTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_HSplitterTests.cpp

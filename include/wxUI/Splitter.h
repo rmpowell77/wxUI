@@ -95,11 +95,7 @@ private:
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
         auto* widget = super::setProxy(new underlying_t(parent, super::getIdentity(), super::getPos(), super::getSize(), super::getStyle()));
-        auto* widget0 = std::get<0>(widgets).create(widget);
-        auto* widget1 = std::get<1>(widgets).create(widget);
-
-        widget->SplitHorizontally(widget0, widget1);
-
+        widget->SplitHorizontally(std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
         return widget;
     }
 };

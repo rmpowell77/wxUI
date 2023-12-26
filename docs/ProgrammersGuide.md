@@ -58,6 +58,10 @@ Handlers are callable items that handle events.  The handler can be declared wit
                             GenericExample dialog(this);
                             dialog.ShowModal();
                         } },
+            wxUI::Item { "&ForEachExample...", [this] {
+                            ForEachExample dialog(this);
+                            dialog.ShowModal();
+                        } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },
@@ -107,6 +111,10 @@ Items { "Name", "Help", Handler }
                         } },
             wxUI::Item { "&GenericExample...", [this] {
                             GenericExample dialog(this);
+                            dialog.ShowModal();
+                        } },
+            wxUI::Item { "&ForEachExample...", [this] {
+                            ForEachExample dialog(this);
                             dialog.ShowModal();
                         } },
             wxUI::Item { "&Example Item...", [] {
@@ -206,6 +214,41 @@ Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, or 
     }
         .attachTo(this);
 ```
+
+#### ForEach
+
+Often times you will need to layout several widgets which only are different in their wxWindowID and Name.  Or perhaps there are cases where the items to be laid out are dynamic.  `ForEach` allows you to specify a range of values or `std::tuples` that are arguements to a closure that will returns a *Controller*.  These will then be added one at a time.
+
+```
+        HSizer {
+            ForEach {
+                { wxART_PLUS, wxART_MINUS, wxART_FIND },
+                [](auto identity) {
+                    return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
+                } },
+        },
+```
+
+*Ranges* are valid arguments for `ForEach`, which allows you to build up complicated layouts at run time.
+
+```
+        HForEach(
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" } } | std::views::filter([](auto s) { return std::get<1>(s) == "B"; }),
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            }),
+```
+
+Often times you would be laying out a set of buttons in a horizontal sizer.  The `HForEach` and `VForEach` functions are provided as convenience functions:
+
+```
+        HForEach(
+            std::vector { wxART_PLUS, wxART_MINUS, wxART_FIND },
+            [](auto identity) {
+                return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
+            }),
+```
+
 
 ### Controllers
 
