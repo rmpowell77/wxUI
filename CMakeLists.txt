@@ -44,6 +44,7 @@ add_library(
   include/wxUI/ComboBox.h
   include/wxUI/Custom.h
   include/wxUI/ForEach.h
+  include/wxUI/Gauge.h
   include/wxUI/Generic.h
   include/wxUI/GetterSetter.h
   include/wxUI/HelperMacros.h
