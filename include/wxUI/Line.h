@@ -49,7 +49,7 @@ struct Line : public details::WidgetDetails<Line, wxStaticLine> {
         return setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), getStyle()));
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
     };
     RULE_OF_SIX_BOILERPLATE(Line);

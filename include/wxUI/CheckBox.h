@@ -77,7 +77,7 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
         return super::bind(wxEVT_CHECKBOX, func);
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const
         {

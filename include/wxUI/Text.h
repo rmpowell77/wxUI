@@ -63,7 +63,7 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
         return *this;
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
 
         [[nodiscard]] auto label() const

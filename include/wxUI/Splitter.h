@@ -84,7 +84,7 @@ struct HSplitter : public details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWi
     {
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
     };
     RULE_OF_SIX_BOILERPLATE(HSplitter);
@@ -148,7 +148,7 @@ struct VSplitter : public details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWi
     {
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
     };
     RULE_OF_SIX_BOILERPLATE(VSplitter);
@@ -162,6 +162,10 @@ private:
         widget->SplitVertically(std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
         return widget;
     }
+};
+
+struct SplitterProxy : details::WidgetProxy<wxSplitterWindow> {
+    PROXY_BOILERPLATE();
 };
 
 }

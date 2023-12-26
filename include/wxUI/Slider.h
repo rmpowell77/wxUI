@@ -66,7 +66,7 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
         return super::bind(wxEVT_SLIDER, func);
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const
         {

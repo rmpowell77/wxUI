@@ -70,7 +70,7 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
         return super::bind(wxEVT_BUTTON, func);
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
     };
     RULE_OF_SIX_BOILERPLATE(Button);

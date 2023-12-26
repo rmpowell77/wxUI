@@ -65,7 +65,7 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
         return super::bind(wxEVT_TEXT, func);
     }
 
-    struct Proxy : super::WidgetProxy {
+    struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
 
         [[nodiscard]] auto label() const
