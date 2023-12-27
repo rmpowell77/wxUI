@@ -89,10 +89,13 @@ private:
     Function createFunction;
 };
 
-// initializer_list is like a string_view, we want a copy.  So deduce as vector so we have a copy
 template <std::ranges::input_range Range, typename Function>
 ForEach(Range&&, Function&&) -> ForEach<Range, Function>;
 
+template <std::ranges::input_range Range, typename Function>
+ForEach(wxSizerFlags const& flags, Range&&, Function&&) -> ForEach<Range, Function>;
+
+// initializer_list is like a string_view, we want a copy.  So deduce as vector so we have a copy
 template <typename Function, typename T>
 ForEach(std::initializer_list<T>, Function&&) -> ForEach<std::vector<T>, Function>;
 
