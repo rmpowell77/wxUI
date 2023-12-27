@@ -11,4 +11,5 @@ Other changes:
 * [#164](../../issues/164) Add ForEach, which would allow a list of Controllers to be added
 * [#166](../../issues/166) Special Functions for Splitter
 * [#167](../../issues/167) VSplitter and HSplitter proxy's are hard to use
+* [#171](../../issues/171) Need a wxGauge
 

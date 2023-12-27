@@ -195,24 +195,25 @@ ExtendedExample::Reset() {
 
 The "Controllers" currently supported by `wxUI`:
 
-| wxUI                 | wxWidget               | Default Event      | Proxy                     | Proxy accessors value |
-| :------------------- | :--------------------- | :----------------- | :------------------------ | :-------------- |
-| `Bitmap`             | `wxStaticBitmap`       | n/a                | `BitmapProxy`             | n/a             |
-| `BitmapButton`       | `wxBitmapButton`       | `EVT_BUTTON`       | `BitmapButtonProxy`       | n/a             |
-| `BitmapComboBox`     | `wxBitmapComboBox`     | `EVT_COMBOBOX`     | `BitmapComboBoxProxy`     | `selection` -> `int`<BR>`value` -> `std::string`<BR>*default*: `value` |
-| `BitmapToggleButton` | `wxBitmapToggleButton` | `EVT_TOGGLEBUTTON` | `BitmapToggleButtonProxy` | `value` -> `bool`<BR>*default*: `value` |
-| `Button`             | `wxButton`             | `EVT_BUTTON`       | `ButtonProxy`             | n/a             |
-| `CheckBox`           | `wxCheckBox`           | `EVT_CHECKBOX`     | `CheckBoxProxy`           | `value` -> `bool`<BR>*default*: `value` |
-| `Choice`             | `wxChoice`             | `EVT_CHOICE`       | `ChoiceProxy`             | `selection` -> `int`<BR>*default*: `selection` |
-| `ComboBox`           | `wxComboBox`           | `EVT_COMBOBOX`     | `ComboBoxProxy`           | `selection` -> `int`<BR>`value` -> `std::string`<BR>*default*: `value` |
-| `Hypertext`          | `wxHypertextCtrl`      | n/a                | `HypertextProxy`          | n/a             |
-| `Line`               | `wxStaticLine`         | n/a                | `LineProxy`               | n/a             |
-| `ListBox`            | `wxListBox`            | `EVT_LISTBOX`      | `ListBoxProxy`            | `selection` -> `int`<BR>*default*: `selection` |
-| `RadioBox`           | `wxRadioBox`           | `EVT_RADIOBOX`     | `RadioBoxProxy`           | `selection` -> `int`<BR>*default*: `selection` |
-| `Slider`             | `wxSlider`             | `EVT_SLIDER`       | `SliderProxy`             | `value` -> `int`<BR>*default*: `value` |
-| `SpinCtrl`           | `wxSpinCtrl`           | `EVT_SPINCTRL`     | `SpinCtrlProxy`           | `value` -> `int`<BR>*default*: `value` |
-| `Text`               | `wxStaticText`         | n/a                | `TextProxy`               | `label` -> `std::string`<BR>*default*: `label` |
-| `TextCtrl`           | `wxTextCtrl`           | `EVT_TEXT`         | `TextCtrlProxy`           | `label` -> `std::string`<BR>*default*: `label` |
+| wxUI                 | wxWidget               | Default Event      | Proxy accessors value |
+| :------------------- | :--------------------- | :----------------- | :-------------------- |
+| `Bitmap`             | `wxStaticBitmap`       | n/a                | n/a                   |
+| `BitmapButton`       | `wxBitmapButton`       | `EVT_BUTTON`       | n/a                   |
+| `BitmapComboBox`     | `wxBitmapComboBox`     | `EVT_COMBOBOX`     | `selection` -> `int`<BR>`value` -> `std::string`<BR>*default*: `value` |
+| `BitmapToggleButton` | `wxBitmapToggleButton` | `EVT_TOGGLEBUTTON` | `value` -> `bool`<BR>*default*: `value` |
+| `Button`             | `wxButton`             | `EVT_BUTTON`       | n/a                   |
+| `CheckBox`           | `wxCheckBox`           | `EVT_CHECKBOX`     | `value` -> `bool`<BR>*default*: `value` |
+| `Choice`             | `wxChoice`             | `EVT_CHOICE`       | `selection` -> `int`<BR>*default*: `selection` |
+| `ComboBox`           | `wxComboBox`           | `EVT_COMBOBOX`     | `selection` -> `int`<BR>`value` -> `std::string`<BR>*default*: `value` |
+| `Gauge`              | `wxGauge`              | n/a                | `range` -> `int`<BR>`value` -> `int`<BR>*default*: `value` |
+| `Hypertext`          | `wxHypertextCtrl`      | n/a                | n/a                   |
+| `Line`               | `wxStaticLine`         | n/a                | n/a                   |
+| `ListBox`            | `wxListBox`            | `EVT_LISTBOX`      | `selection` -> `int`<BR>*default*: `selection` |
+| `RadioBox`           | `wxRadioBox`           | `EVT_RADIOBOX`     | `selection` -> `int`<BR>*default*: `selection` |
+| `Slider`             | `wxSlider`             | `EVT_SLIDER`       | `value` -> `int`<BR>*default*: `value` |
+| `SpinCtrl`           | `wxSpinCtrl`           | `EVT_SPINCTRL`     | `value` -> `int`<BR>*default*: `value` |
+| `Text`               | `wxStaticText`         | n/a                | `label` -> `std::string`<BR>*default*: `label` |
+| `TextCtrl`           | `wxTextCtrl`           | `EVT_TEXT`         | `label` -> `std::string`<BR>*default*: `label` |
 
 Additional "Contollers" should be easy to add in future updates.
 

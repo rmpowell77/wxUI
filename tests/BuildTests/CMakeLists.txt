@@ -12,6 +12,7 @@ target_sources(wxUI_Tests PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/ComboBox.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Custom.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ForEach.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Gauge.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Generic.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/GetterSetter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/HelperMacros.cpp
