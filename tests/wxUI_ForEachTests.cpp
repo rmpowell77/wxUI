@@ -446,6 +446,69 @@ TEST_CASE("ForEach")
             });
         uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
     }
+    SECTION("ForEach.Flags.lvalue.Vector.T")
+    {
+        auto data = std::vector { "A", "B", "C" };
+        auto builder = [](auto name) {
+            return wxUI::Button { name };
+        };
+        {
+            wxFrame frame { nullptr, wxID_ANY, "" };
+            auto sizer = wxBoxSizer(wxHORIZONTAL);
+            auto uut = wxUI::ForEach {
+                wxSizerFlags {},
+                data,
+                [](auto name) {
+                    return wxUI::Button { name };
+                }
+            };
+            uut.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut2 = wxUI::VForEach(
+                wxSizerFlags {},
+                data,
+                [](auto name) {
+                    return wxUI::Button { name };
+                });
+            uut2.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut3 = wxUI::HForEach(
+                wxSizerFlags {},
+                data,
+                [](auto name) {
+                    return wxUI::Button { name };
+                });
+            uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
+        }
+        {
+            wxFrame frame { nullptr, wxID_ANY, "" };
+            auto sizer = wxBoxSizer(wxHORIZONTAL);
+            auto uut = wxUI::ForEach {
+                wxSizerFlags {},
+                std::vector { "A", "B", "C" },
+                builder
+            };
+            uut.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut2 = wxUI::VForEach(
+                wxSizerFlags {},
+                std::vector { "A", "B", "C" },
+                builder);
+            uut2.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut3 = wxUI::HForEach(
+                wxSizerFlags {},
+                std::vector { "A", "B", "C" },
+                builder);
+            uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
+        }
+        {
+            wxFrame frame { nullptr, wxID_ANY, "" };
+            auto sizer = wxBoxSizer(wxHORIZONTAL);
+            auto uut = wxUI::ForEach { wxSizerFlags {}, data, builder };
+            uut.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut2 = wxUI::VForEach(wxSizerFlags {}, data, builder);
+            uut2.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut3 = wxUI::HForEach(wxSizerFlags {}, data, builder);
+            uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
+        }
+    }
     SECTION("ForEach.Flags.Vector.Tuple")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
@@ -527,6 +590,69 @@ TEST_CASE("ForEach")
             });
         uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
     }
+    SECTION("ForEach.Flags.lvalue.Range.T")
+    {
+        auto data = std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; });
+        auto builder = [](auto name) {
+            return wxUI::Button { name };
+        };
+        {
+            wxFrame frame { nullptr, wxID_ANY, "" };
+            auto sizer = wxBoxSizer(wxHORIZONTAL);
+            auto uut = wxUI::ForEach {
+                wxSizerFlags {},
+                data,
+                [](auto name) {
+                    return wxUI::Button { name };
+                }
+            };
+            uut.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut2 = wxUI::VForEach(
+                wxSizerFlags {},
+                data,
+                [](auto name) {
+                    return wxUI::Button { name };
+                });
+            uut2.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut3 = wxUI::HForEach(
+                wxSizerFlags {},
+                data,
+                [](auto name) {
+                    return wxUI::Button { name };
+                });
+            uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
+        }
+        {
+            wxFrame frame { nullptr, wxID_ANY, "" };
+            auto sizer = wxBoxSizer(wxHORIZONTAL);
+            auto uut = wxUI::ForEach {
+                wxSizerFlags {},
+                std::vector { "A", "B", "C" },
+                builder
+            };
+            uut.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut2 = wxUI::VForEach(
+                wxSizerFlags {},
+                std::vector { "A", "B", "C" },
+                builder);
+            uut2.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut3 = wxUI::HForEach(
+                wxSizerFlags {},
+                std::vector { "A", "B", "C" },
+                builder);
+            uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
+        }
+        {
+            wxFrame frame { nullptr, wxID_ANY, "" };
+            auto sizer = wxBoxSizer(wxHORIZONTAL);
+            auto uut = wxUI::ForEach { wxSizerFlags {}, data, builder };
+            uut.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut2 = wxUI::VForEach(wxSizerFlags {}, data, builder);
+            uut2.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut3 = wxUI::HForEach(wxSizerFlags {}, data, builder);
+            uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
+        }
+    }
     SECTION("ForEach.Flags.Range.Tuple")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
@@ -607,6 +733,69 @@ TEST_CASE("ForEach")
                 return wxUI::Button { name };
             });
         uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
+    }
+    SECTION("ForEach.Flags.lvalue.InitializerList.T")
+    {
+        auto data = { "A", "B", "C" };
+        auto builder = [](auto name) {
+            return wxUI::Button { name };
+        };
+        {
+            wxFrame frame { nullptr, wxID_ANY, "" };
+            auto sizer = wxBoxSizer(wxHORIZONTAL);
+            auto uut = wxUI::ForEach {
+                wxSizerFlags {},
+                data,
+                [](auto name) {
+                    return wxUI::Button { name };
+                }
+            };
+            uut.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut2 = wxUI::VForEach(
+                wxSizerFlags {},
+                data,
+                [](auto name) {
+                    return wxUI::Button { name };
+                });
+            uut2.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut3 = wxUI::HForEach(
+                wxSizerFlags {},
+                data,
+                [](auto name) {
+                    return wxUI::Button { name };
+                });
+            uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
+        }
+        {
+            wxFrame frame { nullptr, wxID_ANY, "" };
+            auto sizer = wxBoxSizer(wxHORIZONTAL);
+            auto uut = wxUI::ForEach {
+                wxSizerFlags {},
+                std::vector { "A", "B", "C" },
+                builder
+            };
+            uut.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut2 = wxUI::VForEach(
+                wxSizerFlags {},
+                std::vector { "A", "B", "C" },
+                builder);
+            uut2.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut3 = wxUI::HForEach(
+                wxSizerFlags {},
+                std::vector { "A", "B", "C" },
+                builder);
+            uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
+        }
+        {
+            wxFrame frame { nullptr, wxID_ANY, "" };
+            auto sizer = wxBoxSizer(wxHORIZONTAL);
+            auto uut = wxUI::ForEach { wxSizerFlags {}, data, builder };
+            uut.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut2 = wxUI::VForEach(wxSizerFlags {}, data, builder);
+            uut2.createAndAdd(&frame, &sizer, wxSizerFlags {});
+            auto uut3 = wxUI::HForEach(wxSizerFlags {}, data, builder);
+            uut3.createAndAdd(&frame, &sizer, wxSizerFlags {});
+        }
     }
     SECTION("ForEach.Flags.InitializerList.Tuple")
     {
