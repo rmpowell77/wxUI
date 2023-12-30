@@ -25,6 +25,7 @@ SOFTWARE.
 
 #include "BindInfo.h"
 #include <optional>
+#include <stdexcept>
 #include <wx/sizer.h>
 
 namespace wxUI::details {

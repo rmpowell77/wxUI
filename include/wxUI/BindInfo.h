@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
+#include <memory>
 #include <optional>
 #include <wx/sizer.h>
 

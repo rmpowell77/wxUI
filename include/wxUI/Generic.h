@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include "Widget.h"
+#include <stdexcept>
 #include <variant>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
