@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::SpinCtrl;
 
 struct SpinCtrlTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::SpinCtrl;
     static auto createUUT() { return TypeUnderTest {}; }
     static auto testStyle() { return wxTE_PROCESS_ENTER; }
     static auto testPosition() { return wxPoint { 5, 2 }; }

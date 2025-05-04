@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::TextCtrl;
 
 struct TextCtrlTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::TextCtrl;
     static auto createUUT() { return TypeUnderTest {}; }
     static auto testStyle() { return wxTE_PROCESS_ENTER; }
     static auto testPosition() { return wxPoint { 1, 2 }; }

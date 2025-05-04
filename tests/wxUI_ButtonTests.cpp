@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::Button;
 
 struct ButtonTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::Button;
     static auto createUUT() { return TypeUnderTest {}; }
     static auto testStyle() { return (wxBU_LEFT | wxBU_EXACTFIT | wxBU_NOTEXT); }
     static auto testPosition() { return wxPoint { 1, 2 }; }

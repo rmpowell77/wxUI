@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::Bitmap;
 
 struct BitmapTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::Bitmap;
     static auto createUUT() { return TypeUnderTest { wxBitmap {} }; }
     static auto testStyle() { return (0); }
     static auto testPosition() { return wxPoint { 1, 2 }; }

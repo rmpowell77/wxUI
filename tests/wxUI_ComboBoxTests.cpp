@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::ComboBox;
 
 struct ComboBoxTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::ComboBox;
     static auto createUUT() { return TypeUnderTest { std::string {} }; }
     static auto testStyle() { return (wxCB_DROPDOWN | wxCB_READONLY); }
     static auto testPosition() { return wxPoint { 1, 2 }; }

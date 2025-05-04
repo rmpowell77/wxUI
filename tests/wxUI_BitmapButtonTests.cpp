@@ -32,7 +32,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::BitmapButton;
 
 struct BitmapButtonTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::BitmapButton;
     static auto createUUT() { return TypeUnderTest { wxBitmap {} }; }
     static auto testStyle() { return (wxBU_LEFT | wxBU_EXACTFIT | wxBU_NOTEXT); }
     static auto testPosition() { return wxPoint { 1, 2 }; }

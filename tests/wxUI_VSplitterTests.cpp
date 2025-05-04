@@ -32,7 +32,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::VSplitter<wxUI::TextCtrl, wxUI::TextCtrl>;
 
 struct VSplitterTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::VSplitter<wxUI::TextCtrl, wxUI::TextCtrl>;
     static auto createUUT() { return TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} }; }
     static auto testStyle() { return wxSP_LIVE_UPDATE; }
     static auto testPosition() { return wxPoint { 14, 2 }; }

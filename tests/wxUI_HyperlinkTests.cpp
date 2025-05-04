@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::Hyperlink;
 
 struct HyperlinkTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::Hyperlink;
     static auto createUUT() { return TypeUnderTest { "Hello", "www.github.com" }; }
     static auto testStyle() { return wxHL_CONTEXTMENU; }
     static auto testPosition() { return wxPoint { 1, 2 }; }

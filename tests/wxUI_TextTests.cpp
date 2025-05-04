@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::Text;
 
 struct TextTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::Text;
     static auto createUUT() { return TypeUnderTest {}; }
     static auto testStyle() { return wxST_ELLIPSIZE_MIDDLE; }
     static auto testPosition() { return wxPoint { 1, 2 }; }

@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::Gauge;
 
 struct GaugeTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::Gauge;
     static auto createUUT() { return TypeUnderTest {}; }
     static auto testStyle() { return wxGA_VERTICAL; }
     static auto testPosition() { return wxPoint { 1, 2 }; }

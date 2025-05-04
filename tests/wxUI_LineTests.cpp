@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::Line;
 
 struct LineTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::Line;
     static auto createUUT() { return TypeUnderTest {}; }
     static auto testStyle() { return wxLI_VERTICAL; }
     static auto testPosition() { return wxPoint { 1, 2 }; }
