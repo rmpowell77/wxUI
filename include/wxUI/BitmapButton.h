@@ -41,7 +41,7 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
 
     BitmapButton(wxWindowID identity, wxBitmap const& bitmap)
         : super(identity)
-        , bitmap(bitmap)
+        , bitmap_(bitmap)
     {
     }
 
@@ -52,13 +52,13 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
 
     BitmapButton(wxSizerFlags const& flags, wxWindowID identity, wxBitmap const& bitmap)
         : super(flags, identity)
-        , bitmap(bitmap)
+        , bitmap_(bitmap)
     {
     }
 
     auto setDefault() -> BitmapButton&
     {
-        isDefault = true;
+        isDefault_ = true;
         return *this;
     }
 
@@ -75,13 +75,13 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
     RULE_OF_SIX_BOILERPLATE(BitmapButton);
 
 private:
-    wxBitmap bitmap;
-    bool isDefault = false;
+    wxBitmap bitmap_;
+    bool isDefault_ = false;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), bitmap, getPos(), getSize(), getStyle()));
-        if (isDefault) {
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
+        if (isDefault_) {
             widget->SetDefault();
         }
         return widget;

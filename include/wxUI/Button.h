@@ -42,7 +42,7 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
 
     explicit Button(wxWindowID identity, std::string text = "")
         : super(identity)
-        , text(std::move(text))
+        , text_(std::move(text))
     {
     }
 
@@ -53,13 +53,13 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
 
     Button(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
         : super(flags, identity)
-        , text(std::move(text))
+        , text_(std::move(text))
     {
     }
 
     auto setDefault() -> Button&
     {
-        isDefault = true;
+        isDefault_ = true;
         return *this;
     }
 
@@ -76,13 +76,13 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
     RULE_OF_SIX_BOILERPLATE(Button);
 
 private:
-    std::string text;
-    bool isDefault = false;
+    std::string text_;
+    bool isDefault_ = false;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
-        if (isDefault) {
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
+        if (isDefault_) {
             widget->SetDefault();
         }
         return widget;

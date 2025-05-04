@@ -42,21 +42,21 @@ namespace details {
     struct Sizer {
         template <details::SizerItem... UItems>
         explicit Sizer(UItems&&... items)
-            : items(std::forward_as_tuple(std::forward<UItems>(items)...))
+            : items_(std::forward_as_tuple(std::forward<UItems>(items)...))
         {
         }
 
         template <details::SizerItem... UItems>
         explicit Sizer(wxSizerFlags const& flags, UItems&&... items)
-            : flags(flags)
-            , items(std::forward_as_tuple(std::forward<UItems>(items)...))
+            : flags_(flags)
+            , items_(std::forward_as_tuple(std::forward<UItems>(items)...))
         {
         }
 
         auto createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
         {
             auto sizer = constructSizer(parent);
-            auto currentFlags = flags ? *flags : parentFlags;
+            auto currentFlags = flags_.value_or(parentFlags);
             createAndAddWidgets(parent, sizer, currentFlags);
 
             // and now add our sizer to the parent
@@ -67,7 +67,7 @@ namespace details {
         auto attachToWithoutSizeHints(wxWindow* parent) -> auto&
         {
             auto sizer = constructSizer(parent);
-            auto currentFlags = flags ? *flags : wxSizerFlags {};
+            auto currentFlags = flags_.value_or(wxSizerFlags {});
             createAndAddWidgets(parent, sizer, currentFlags);
 
             parent->SetSizer(sizer);
@@ -100,11 +100,11 @@ namespace details {
             std::apply([parent, sizer, flags](auto&&... tupleArg) {
                 (createAndAddVisiter(tupleArg, parent, sizer, flags), ...);
             },
-                items);
+                items_);
         }
 
-        std::optional<wxSizerFlags> flags {};
-        std::tuple<Items...> items {};
+        std::optional<wxSizerFlags> flags_ {};
+        std::tuple<Items...> items_ {};
     };
 
     template <wxOrientation orientation, details::SizerItem... Items>

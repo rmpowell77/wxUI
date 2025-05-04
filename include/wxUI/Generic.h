@@ -51,32 +51,32 @@ struct Generic {
     struct Proxy;
 
     explicit Generic(Window* window)
-        : child(window)
+        : child_(window)
     {
     }
 
     Generic(wxSizerFlags const& flags, Window* window)
-        : flags(flags)
-        , child(window)
+        : flags_(flags)
+        , child_(window)
     {
     }
 
     template <details::CreateableWindowFunction Function>
     Generic(Function&& windowFunction)
-        : child(std::forward<Function>(windowFunction))
+        : child_(std::forward<Function>(windowFunction))
     {
     }
 
     template <details::CreateableWindowFunction Function>
     Generic(wxSizerFlags const& flags, Function&& windowFunction)
-        : flags(flags)
-        , child(std::forward<Function>(windowFunction))
+        : flags_(flags)
+        , child_(std::forward<Function>(windowFunction))
     {
     }
 
-    void setProxy(Proxy* proxy_)
+    void setProxy(Proxy* proxy)
     {
-        proxy = proxy_;
+        proxy_ = proxy;
     }
 
     auto create(wxWindow* parent) const -> Window*;
@@ -117,9 +117,9 @@ struct Generic {
     };
 
 private:
-    std::optional<wxSizerFlags> flags {};
-    std::variant<Window*, CreateWindowFunction> child;
-    Proxy* proxy {};
+    std::optional<wxSizerFlags> flags_ {};
+    std::variant<Window*, CreateWindowFunction> child_;
+    Proxy* proxy_ {};
 };
 
 template <typename Window>
@@ -133,9 +133,9 @@ inline auto Generic<Window>::create(wxWindow* parent) const -> Window*
                                       return arg;
                                   },
                               },
-        child);
-    if (proxy) {
-        proxy->setUnderlying(window);
+        child_);
+    if (proxy_) {
+        proxy_->setUnderlying(window);
     }
     return window;
 }
@@ -144,7 +144,7 @@ template <typename Window>
 inline void Generic<Window>::createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
 {
     auto* window = create(parent);
-    parentSizer->Add(window, flags ? *flags : parentFlags);
+    parentSizer->Add(window, flags_.value_or(parentFlags));
 }
 
 }

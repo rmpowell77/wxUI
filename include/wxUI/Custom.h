@@ -42,24 +42,24 @@ concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* s
 template <CreateAndAddFunction Function>
 struct Custom {
     Custom(wxSizerFlags const& flags, Function const& function)
-        : flags(flags)
-        , function(function)
+        : flags_(flags)
+        , function_(function)
     {
     }
 
     explicit Custom(Function const& function)
-        : function(function)
+        : function_(function)
     {
     }
 
     void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
     {
-        function(parent, parentSizer, flags ? *flags : parentFlags);
+        function_(parent, parentSizer, flags_.value_or(parentFlags));
     }
 
 private:
-    std::optional<wxSizerFlags> flags;
-    Function function;
+    std::optional<wxSizerFlags> flags_;
+    Function function_;
 };
 
 }

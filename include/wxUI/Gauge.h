@@ -52,7 +52,7 @@ struct Gauge : public details::WidgetDetails<Gauge, wxGauge> {
 
     explicit Gauge([[maybe_unused]] withIdentity unused, wxWindowID identity, int range = 100)
         : super(identity, super::WithStyle { wxGA_HORIZONTAL })
-        , range(range)
+        , range_(range)
     {
     }
 
@@ -68,7 +68,7 @@ struct Gauge : public details::WidgetDetails<Gauge, wxGauge> {
 
     Gauge(wxSizerFlags const& flags, [[maybe_unused]] withIdentity unused, wxWindowID identity, int range = 100)
         : super(flags, identity, super::WithStyle { wxGA_HORIZONTAL })
-        , range(range)
+        , range_(range)
     {
     }
 
@@ -97,11 +97,11 @@ struct Gauge : public details::WidgetDetails<Gauge, wxGauge> {
     RULE_OF_SIX_BOILERPLATE(Gauge);
 
 private:
-    int range;
+    int range_;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, getIdentity(), range, getPos(), getSize(), getStyle());
+        auto* widget = new underlying_t(parent, getIdentity(), range_, getPos(), getSize(), getStyle());
         return setProxy(widget);
     }
 };

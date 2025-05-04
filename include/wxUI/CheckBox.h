@@ -42,7 +42,7 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
 
     explicit CheckBox(wxWindowID identity, std::string text = "")
         : super(identity)
-        , text(std::move(text))
+        , text_(std::move(text))
     {
     }
 
@@ -53,20 +53,20 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
 
     CheckBox(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
         : super(flags, identity)
-        , text(std::move(text))
+        , text_(std::move(text))
     {
     }
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
-        widget->SetValue(value);
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
+        widget->SetValue(value_);
         return widget;
     }
 
-    auto withValue(bool value_) -> CheckBox&
+    auto withValue(bool value) -> CheckBox&
     {
-        value = value_;
+        value_ = value;
         return *this;
     }
 
@@ -93,8 +93,8 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
     RULE_OF_SIX_BOILERPLATE(CheckBox);
 
 private:
-    std::string text;
-    bool value = false;
+    std::string text_;
+    bool value_ = false;
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(CheckBox);

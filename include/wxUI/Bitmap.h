@@ -41,7 +41,7 @@ struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
 
     Bitmap(wxWindowID identity, wxBitmap const& bitmap)
         : super(identity)
-        , bitmap(bitmap)
+        , bitmap_(bitmap)
     {
     }
 
@@ -52,7 +52,7 @@ struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
 
     explicit Bitmap(wxSizerFlags const& flags, wxWindowID identity, wxBitmap const& bitmap)
         : super(flags, identity)
-        , bitmap(bitmap)
+        , bitmap_(bitmap)
     {
     }
 
@@ -62,11 +62,11 @@ struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
     RULE_OF_SIX_BOILERPLATE(Bitmap);
 
 private:
-    wxBitmap bitmap;
+    wxBitmap bitmap_;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        return setProxy(new underlying_t(parent, getIdentity(), bitmap, getPos(), getSize(), getStyle()));
+        return setProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
     }
 };
 

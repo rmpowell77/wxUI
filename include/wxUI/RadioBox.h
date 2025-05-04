@@ -76,8 +76,8 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
 
     RadioBox(wxWindowID identity, std::string text, [[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
         : super(identity, super::WithStyle { wxRA_SPECIFY_COLS })
-        , text(std::move(text))
-        , choices(details::Ranges::convertTo(choices))
+        , text_(std::move(text))
+        , choices_(details::Ranges::convertTo(choices))
     {
     }
 
@@ -98,8 +98,8 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
 
     explicit RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::string text, [[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
         : super(flags, identity, super::WithStyle { wxRA_SPECIFY_COLS })
-        , text(std::move(text))
-        , choices(details::Ranges::convertTo(choices))
+        , text_(std::move(text))
+        , choices_(details::Ranges::convertTo(choices))
     {
     }
 
@@ -120,8 +120,8 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
 
     RadioBox(wxWindowID identity, std::string text, [[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
         : super(identity, super::WithStyle { wxRA_SPECIFY_COLS })
-        , text(std::move(text))
-        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+        , text_(std::move(text))
+        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
 
@@ -142,27 +142,27 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
 
     RadioBox(wxSizerFlags const& flags, wxWindowID identity, std::string text, [[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
         : super(flags, identity, super::WithStyle { wxRA_SPECIFY_COLS })
-        , text(std::move(text))
-        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+        , text_(std::move(text))
+        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
 
     auto withSelection(int which) -> RadioBox&
     {
-        selection = which;
+        selection_ = which;
         return *this;
     }
 
-    auto withMajorDim(int majorDim_) -> RadioBox&
+    auto withMajorDim(int majorDim) -> RadioBox&
     {
-        majorDim = majorDim_;
+        majorDim_ = majorDim;
         return *this;
     }
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), majorDim, getStyle()));
-        widget->SetSelection(selection);
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), majorDim_, getStyle()));
+        widget->SetSelection(selection_);
         return widget;
     }
 
@@ -189,10 +189,10 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     RULE_OF_SIX_BOILERPLATE(RadioBox);
 
 private:
-    std::string text;
-    std::vector<wxString> choices;
-    int majorDim {};
-    int selection {};
+    std::string text_;
+    std::vector<wxString> choices_;
+    int majorDim_ {};
+    int selection_ {};
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(RadioBox);

@@ -127,86 +127,86 @@ struct WidgetDetails {
     };
 
     explicit WidgetDetails(wxWindowID identity = wxID_ANY)
-        : identity(identity)
+        : identity_(identity)
     {
     }
 
     WidgetDetails(wxSizerFlags const& flags, wxWindowID identity)
-        : flags(flags)
-        , identity(identity)
+        : flags_(flags)
+        , identity_(identity)
     {
     }
 
     explicit WidgetDetails(wxWindowID identity, WithStyle style)
-        : identity(identity)
-        , style(style.mStyle)
+        : identity_(identity)
+        , style_(style.mStyle)
     {
     }
 
     WidgetDetails(wxSizerFlags const& flags, wxWindowID identity, WithStyle style)
-        : flags(flags)
-        , identity(identity)
-        , style(style.mStyle)
+        : flags_(flags)
+        , identity_(identity)
+        , style_(style.mStyle)
     {
     }
 
-    auto withPosition(wxPoint pos_) -> ConcreteWidget&
+    auto withPosition(wxPoint pos) -> ConcreteWidget&
     {
-        pos = pos_;
+        pos_ = pos;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withSize(wxSize size_) & -> ConcreteWidget&
+    auto withSize(wxSize size) & -> ConcreteWidget&
     {
-        size = size_;
+        size_ = size;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withSize(wxSize size_) && -> ConcreteWidget&&
+    auto withSize(wxSize size) && -> ConcreteWidget&&
     {
-        size = size_;
+        size_ = size;
         return static_cast<ConcreteWidget&&>(std::move(*this));
     }
 
-    auto withWidthSize(int size_) -> ConcreteWidget&
+    auto withWidthSize(int size) -> ConcreteWidget&
     {
-        size.SetWidth(size_);
+        size_.SetWidth(size);
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withHeightSize(int size_) -> ConcreteWidget&
+    auto withHeightSize(int size) -> ConcreteWidget&
     {
-        size.SetHeight(size_);
+        size_.SetHeight(size);
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto setStyle(int64_t style_) -> ConcreteWidget&
+    auto setStyle(int64_t style) -> ConcreteWidget&
     {
-        style = style_;
+        style_ = style;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withStyle(int64_t style_) -> ConcreteWidget&
+    auto withStyle(int64_t style) -> ConcreteWidget&
     {
-        style |= style_;
+        style_ |= style;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withoutStyle(int64_t style_) -> ConcreteWidget&
+    auto withoutStyle(int64_t style) -> ConcreteWidget&
     {
-        style &= ~style_;
+        style_ &= ~style;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withFont(wxFontInfo const& fontInfo_) -> ConcreteWidget&
+    auto withFont(wxFontInfo const& fontInfo) -> ConcreteWidget&
     {
-        fontInfo = fontInfo_;
+        fontInfo_ = fontInfo;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto setEnabled(bool enabled_) -> ConcreteWidget&
+    auto setEnabled(bool enabled) -> ConcreteWidget&
     {
-        enabled = enabled_;
+        enabled_ = enabled;
         return static_cast<ConcreteWidget&>(*this);
     }
 
@@ -214,18 +214,18 @@ struct WidgetDetails {
     auto bind(wxEventTypeTag<Event> event, Function function)
     {
         if constexpr (is_noarg_callable<Function>()) {
-            boundedFunctions.emplace_back(event, [function = function](Event&) {
+            boundedFunctions_.emplace_back(event, [function = function](Event&) {
                 function();
             });
         } else {
-            boundedFunctions.emplace_back(event, function);
+            boundedFunctions_.emplace_back(event, function);
         }
         return static_cast<ConcreteWidget&>(*this);
     }
 
     auto bindEvents(Underlying* widget) -> Underlying*
     {
-        for (auto& bounded : boundedFunctions) {
+        for (auto& bounded : boundedFunctions_) {
             bounded.bindTo(widget);
         }
         return widget;
@@ -234,10 +234,10 @@ struct WidgetDetails {
     auto create(wxWindow* parent) -> Underlying*
     {
         auto widget = dynamic_cast<Underlying*>(createImpl(parent));
-        if (fontInfo) {
-            widget->SetFont(wxFont(*fontInfo));
+        if (fontInfo_) {
+            widget->SetFont(wxFont(*fontInfo_));
         }
-        widget->Enable(enabled);
+        widget->Enable(enabled_);
         // bind any events
         widget = bindEvents(widget);
         return widget;
@@ -247,25 +247,25 @@ struct WidgetDetails {
     {
         auto widget = create(parent);
         // add to parent
-        sizer->Add(widget, flags ? *flags : parentFlags);
+        sizer->Add(widget, flags_.value_or(parentFlags));
         return widget;
     }
 
-    auto getIdentity() const { return identity; }
-    auto getPos() const { return pos; }
-    auto getSize() const { return size; }
-    auto getStyle() const { return style; }
+    auto getIdentity() const { return identity_; }
+    auto getPos() const { return pos_; }
+    auto getSize() const { return size_; }
+    auto getStyle() const { return style_; }
 
     void setProxyHandle(WidgetProxy<Underlying>* proxy)
     {
-        proxyHandle = proxy;
+        proxyHandle_ = proxy;
     }
 
 protected:
     auto setProxy(Underlying* widget) -> Underlying*
     {
-        if (proxyHandle) {
-            proxyHandle->setUnderlying(widget);
+        if (proxyHandle_) {
+            proxyHandle_->setUnderlying(widget);
         }
         return widget;
     }
@@ -275,16 +275,16 @@ private:
     // aka the Template Pattern
     virtual auto createImpl(wxWindow* parent) -> wxWindow* = 0;
 
-    std::optional<wxSizerFlags> flags;
+    std::optional<wxSizerFlags> flags_;
     // these are common across the controls
-    wxWindowID identity = wxID_ANY;
-    wxPoint pos = wxDefaultPosition;
-    wxSize size = wxDefaultSize;
-    int64_t style {};
-    bool enabled = true;
-    std::optional<wxFontInfo> fontInfo {};
-    details::WidgetProxy<Underlying>* proxyHandle {}; // optional WidgetProxy
-    std::vector<BindInfo> boundedFunctions;
+    wxWindowID identity_ = wxID_ANY;
+    wxPoint pos_ = wxDefaultPosition;
+    wxSize size_ = wxDefaultSize;
+    int64_t style_ {};
+    bool enabled_ = true;
+    std::optional<wxFontInfo> fontInfo_ {};
+    details::WidgetProxy<Underlying>* proxyHandle_ {}; // optional WidgetProxy
+    std::vector<BindInfo> boundedFunctions_;
 };
 
 }

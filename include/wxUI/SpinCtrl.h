@@ -42,8 +42,8 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
 
     explicit SpinCtrl(wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : super(identity)
-        , range(std::move(range))
-        , initial(initial)
+        , range_(std::move(range))
+        , initial_(initial)
     {
     }
 
@@ -54,16 +54,16 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
 
     explicit SpinCtrl(wxSizerFlags const& flags, wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : super(flags, identity)
-        , range(std::move(range))
-        , initial(initial)
+        , range_(std::move(range))
+        , initial_(initial)
     {
     }
 
     auto createImpl(wxWindow* parent) -> wxWindow*
     {
-        auto min = range ? range->first : 0;
-        auto max = range ? range->second : 100;
-        auto initvalue = initial ? *initial : min;
+        auto min = range_ ? range_->first : 0;
+        auto max = range_ ? range_->second : 100;
+        auto initvalue = initial_.value_or(min);
         return setProxy(new underlying_t(parent, getIdentity(), wxEmptyString, getPos(), getSize(), getStyle(), min, max, initvalue));
     }
 
@@ -92,8 +92,8 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     RULE_OF_SIX_BOILERPLATE(SpinCtrl);
 
 private:
-    std::optional<std::pair<int, int>> range;
-    std::optional<int> initial;
+    std::optional<std::pair<int, int>> range_;
+    std::optional<int> initial_;
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(SpinCtrl);

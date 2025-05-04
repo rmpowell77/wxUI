@@ -59,34 +59,34 @@ struct ForEach {
     // clang-format on
 
     ForEach(Range&& args, Function&& createFunction)
-        : args(std::forward<Range>(args))
-        , createFunction(std::forward<Function>(createFunction))
+        : args_(std::forward<Range>(args))
+        , createFunction_(std::forward<Function>(createFunction))
     {
     }
 
     ForEach(wxSizerFlags const& flags, Range&& args, Function&& createFunction)
-        : flags(flags)
-        , args(std::forward<Range>(args))
-        , createFunction(std::forward<Function>(createFunction))
+        : flags_(flags)
+        , args_(std::forward<Range>(args))
+        , createFunction_(std::forward<Function>(createFunction))
     {
     }
 
     void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         using RawArg = std::remove_cvref_t<std::ranges::range_value_t<Range>>;
-        for (auto&& item : args) {
+        for (auto&& item : args_) {
             if constexpr (details::CanApply<Function, RawArg>::value) {
-                std::apply(createFunction, item).createAndAdd(parent, parentSizer, flags ? *flags : parentFlags);
+                std::apply(createFunction_, item).createAndAdd(parent, parentSizer, flags_.value_or(parentFlags));
             } else {
-                createFunction(item).createAndAdd(parent, parentSizer, flags ? *flags : parentFlags);
+                createFunction_(item).createAndAdd(parent, parentSizer, flags_.value_or(parentFlags));
             }
         }
     }
 
 private:
-    std::optional<wxSizerFlags> flags {};
-    Range args;
-    Function createFunction;
+    std::optional<wxSizerFlags> flags_ {};
+    Range args_;
+    Function createFunction_;
 };
 
 template <std::ranges::input_range Range, typename Function>

@@ -42,8 +42,8 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
 
     explicit Slider(wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : super(identity)
-        , range(std::move(range))
-        , initial(initial)
+        , range_(std::move(range))
+        , initial_(initial)
     {
     }
 
@@ -54,8 +54,8 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
 
     Slider(wxSizerFlags const& flags, wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
         : super(flags, identity)
-        , range(std::move(range))
-        , initial(initial)
+        , range_(std::move(range))
+        , initial_(initial)
     {
     }
 
@@ -82,14 +82,14 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
     RULE_OF_SIX_BOILERPLATE(Slider);
 
 private:
-    std::optional<std::pair<int, int>> range;
-    std::optional<int> initial;
+    std::optional<std::pair<int, int>> range_;
+    std::optional<int> initial_;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto min = range ? range->first : 0;
-        auto max = range ? range->second : 100;
-        auto initvalue = initial ? *initial : min;
+        auto min = range_ ? range_->first : 0;
+        auto max = range_ ? range_->second : 100;
+        auto initvalue = initial_.value_or(min);
         auto* widget = setProxy(new underlying_t(parent, getIdentity(), initvalue, min, max, getPos(), getSize(), getStyle()));
         return widget;
     }

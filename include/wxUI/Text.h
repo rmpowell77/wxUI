@@ -42,7 +42,7 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
 
     explicit Text(wxWindowID identity, std::string text = "")
         : super(identity)
-        , text(std::move(text))
+        , text_(std::move(text))
     {
     }
 
@@ -53,13 +53,13 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
 
     Text(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
         : super(flags, identity)
-        , text(std::move(text))
+        , text_(std::move(text))
     {
     }
 
     auto withWrap(int wrapLength) -> Text&
     {
-        wrap = wrapLength;
+        wrap_ = wrapLength;
         return *this;
     }
 
@@ -81,14 +81,14 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
     RULE_OF_SIX_BOILERPLATE(Text);
 
 private:
-    std::string text;
-    std::optional<int> wrap;
+    std::string text_;
+    std::optional<int> wrap_;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle());
-        if (wrap) {
-            widget->Wrap(*wrap);
+        auto* widget = new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle());
+        if (wrap_) {
+            widget->Wrap(*wrap_);
         }
         return setProxy(widget);
     }

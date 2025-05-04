@@ -38,31 +38,31 @@ struct GetterSetter {
     static_assert(std::is_invocable_v<Setter, std::invoke_result_t<Getter>>);
 
     explicit GetterSetter(Getter getter, Setter setter)
-        : getter(getter)
-        , setter(setter)
+        : getter_(getter)
+        , setter_(setter)
     {
     }
 
     [[nodiscard]] auto get() const -> Type
     {
-        return getter();
+        return getter_();
     }
 
     // we specifically want implicit conversions for ergonomics
     // NOLINTNEXTLINE (hicpp-explicit-conversions)
     operator Type() const
     {
-        return getter();
+        return getter_();
     }
 
     void set(Type const& value)
     {
-        setter(value);
+        setter_(value);
     }
 
     auto operator=(Type const& value) -> GetterSetter&
     {
-        setter(value);
+        setter_(value);
         return *this;
     }
 
@@ -87,8 +87,8 @@ struct GetterSetter {
     }
 
 private:
-    Getter getter;
-    Setter setter;
+    Getter getter_;
+    Setter setter_;
 };
 
 // CTAD for GetterSetter
@@ -107,49 +107,49 @@ struct GetterSetter<bool, Getter, Setter> {
     static_assert(std::is_invocable_v<Setter, Type>);
 
     explicit GetterSetter(Getter getter, Setter setter)
-        : getter(getter)
-        , setter(setter)
+        : getter_(getter)
+        , setter_(setter)
     {
     }
 
     [[nodiscard]] auto get() const -> Type
     {
-        return getter();
+        return getter_();
     }
 
     // we specifically want implicit conversions for ergonomics
     // NOLINTNEXTLINE (hicpp-explicit-conversions)
     operator Type() const
     {
-        return getter();
+        return getter_();
     }
 
     void set(Type value)
     {
-        setter(value);
+        setter_(value);
     }
 
     auto operator=(Type value) -> GetterSetter&
     {
-        setter(value);
+        setter_(value);
         return *this;
     }
 
     auto operator&=(Type value) -> GetterSetter&
     {
-        setter(getter() & value);
+        setter_(getter_() & value);
         return *this;
     }
 
     auto operator^=(Type value) -> GetterSetter&
     {
-        setter(getter() ^ value);
+        setter_(getter_() ^ value);
         return *this;
     }
 
     auto operator|=(Type value) -> GetterSetter&
     {
-        setter(getter() | value);
+        setter_(getter_() | value);
         return *this;
     }
 
@@ -174,8 +174,8 @@ struct GetterSetter<bool, Getter, Setter> {
     }
 
 private:
-    Getter getter;
-    Setter setter;
+    Getter getter_;
+    Setter setter_;
 };
 
 // Specialize for integral types
@@ -190,117 +190,117 @@ struct GetterSetter<Type, Getter, Setter> {
     static_assert(std::is_invocable_v<Setter, std::invoke_result_t<Getter>>);
 
     explicit GetterSetter(Getter getter, Setter setter)
-        : getter(getter)
-        , setter(setter)
+        : getter_(getter)
+        , setter_(setter)
     {
     }
 
     [[nodiscard]] auto get() const -> Type
     {
-        return getter();
+        return getter_();
     }
 
     // we specifically want implicit conversions for ergonomics
     // NOLINTNEXTLINE (hicpp-explicit-conversions)
     operator Type() const
     {
-        return getter();
+        return getter_();
     }
 
     void set(Type value)
     {
-        setter(value);
+        setter_(value);
     }
 
     auto operator=(Type value) -> GetterSetter&
     {
-        setter(value);
+        setter_(value);
         return *this;
     }
 
     auto operator+=(Type value) -> GetterSetter&
     {
-        setter(getter() + value);
+        setter_(getter_() + value);
         return *this;
     }
 
     auto operator-=(Type value) -> GetterSetter&
     {
-        setter(getter() - value);
+        setter_(getter_() - value);
         return *this;
     }
 
     auto operator*=(Type value) -> GetterSetter&
     {
-        setter(getter() * value);
+        setter_(getter_() * value);
         return *this;
     }
 
     auto operator/=(Type value) -> GetterSetter&
     {
-        setter(getter() / value);
+        setter_(getter_() / value);
         return *this;
     }
 
     auto operator%=(Type value) -> GetterSetter&
     {
-        setter(getter() % value);
+        setter_(getter_() % value);
         return *this;
     }
 
     auto operator<<=(Type value) -> GetterSetter&
     {
-        setter(getter() << value);
+        setter_(getter_() << value);
         return *this;
     }
 
     auto operator>>=(Type value) -> GetterSetter&
     {
-        setter(getter() >> value);
+        setter_(getter_() >> value);
         return *this;
     }
 
     auto operator&=(Type value) -> GetterSetter&
     {
-        setter(getter() & value);
+        setter_(getter_() & value);
         return *this;
     }
 
     auto operator^=(Type value) -> GetterSetter&
     {
-        setter(getter() ^ value);
+        setter_(getter_() ^ value);
         return *this;
     }
 
     auto operator|=(Type value) -> GetterSetter&
     {
-        setter(getter() | value);
+        setter_(getter_() | value);
         return *this;
     }
 
     auto operator++() -> GetterSetter&
     {
-        setter(getter() + 1);
+        setter_(getter_() + 1);
         return *this;
     }
 
     auto operator++(int) -> Type
     {
-        auto result = getter();
-        setter(result + 1);
+        auto result = getter_();
+        setter_(result + 1);
         return result;
     }
 
     auto operator--() -> GetterSetter&
     {
-        setter(getter() - 1);
+        setter_(getter_() - 1);
         return *this;
     }
 
     auto operator--(int) -> Type
     {
-        auto result = getter();
-        setter(result - 1);
+        auto result = getter_();
+        setter_(result - 1);
         return result;
     }
 
@@ -325,8 +325,8 @@ struct GetterSetter<Type, Getter, Setter> {
     }
 
 private:
-    Getter getter;
-    Setter setter;
+    Getter getter_;
+    Setter setter_;
 };
 
 // Specialize for Float types
@@ -341,81 +341,81 @@ struct GetterSetter<Type, Getter, Setter> {
     static_assert(std::is_invocable_v<Setter, std::invoke_result_t<Getter>>);
 
     explicit GetterSetter(Getter getter, Setter setter)
-        : getter(getter)
-        , setter(setter)
+        : getter_(getter)
+        , setter_(setter)
     {
     }
 
     [[nodiscard]] auto get() const -> Type
     {
-        return getter();
+        return getter_();
     }
 
     // we specifically want implicit conversions for ergonomics
     // NOLINTNEXTLINE (hicpp-explicit-conversions)
     operator Type() const
     {
-        return getter();
+        return getter_();
     }
 
     void set(Type value)
     {
-        setter(value);
+        setter_(value);
     }
 
     auto operator=(Type value) -> GetterSetter&
     {
-        setter(value);
+        setter_(value);
         return *this;
     }
 
     auto operator+=(Type value) -> GetterSetter&
     {
-        setter(getter() + value);
+        setter_(getter_() + value);
         return *this;
     }
 
     auto operator-=(Type value) -> GetterSetter&
     {
-        setter(getter() - value);
+        setter_(getter_() - value);
         return *this;
     }
 
     auto operator*=(Type value) -> GetterSetter&
     {
-        setter(getter() * value);
+        setter_(getter_() * value);
         return *this;
     }
 
     auto operator/=(Type value) -> GetterSetter&
     {
-        setter(getter() / value);
+        setter_(getter_() / value);
         return *this;
     }
 
     auto operator++() -> GetterSetter&
     {
-        setter(getter() + 1);
+        setter_(getter_() + 1);
         return *this;
     }
 
     auto operator++(int) -> Type
     {
-        auto result = getter();
-        setter(result + 1);
+        auto result = getter_();
+        setter_(result + 1);
         return result;
     }
 
     auto operator--() -> GetterSetter&
     {
-        setter(getter() - 1);
+        setter_(getter_() - 1);
         return *this;
     }
 
     auto operator--(int) -> Type
     {
-        auto result = getter();
-        setter(result - 1);
+        auto result = getter_();
+        setter_(result - 1);
         return result;
     }
 
@@ -440,8 +440,8 @@ struct GetterSetter<Type, Getter, Setter> {
     }
 
 private:
-    Getter getter;
-    Setter setter;
+    Getter getter_;
+    Setter setter_;
 };
 
 }

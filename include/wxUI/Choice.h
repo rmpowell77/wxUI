@@ -42,7 +42,7 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
 
     explicit Choice(wxWindowID identity, std::initializer_list<std::string> choices = {})
         : super(identity)
-        , choices(details::Ranges::convertTo(choices))
+        , choices_(details::Ranges::convertTo(choices))
     {
     }
 
@@ -53,7 +53,7 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
 
     Choice(wxSizerFlags const& flags, wxWindowID identity, std::initializer_list<std::string> choices = {})
         : super(flags, identity)
-        , choices(details::Ranges::convertTo(choices))
+        , choices_(details::Ranges::convertTo(choices))
     {
     }
 
@@ -64,7 +64,7 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
 
     Choice(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
         : super(identity)
-        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
 
@@ -75,13 +75,13 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
 
     explicit Choice(wxSizerFlags const& flags, wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
         : super(flags, identity)
-        , choices(details::Ranges::ToVector<wxString>(choices))
+        , choices_(details::Ranges::ToVector<wxString>(choices))
     {
     }
 
     auto withSelection(int which) -> Choice&
     {
-        selection = which;
+        selection_ = which;
         return *this;
     }
 
@@ -108,13 +108,13 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
     RULE_OF_SIX_BOILERPLATE(Choice);
 
 private:
-    std::vector<wxString> choices {};
-    int selection {};
+    std::vector<wxString> choices_ {};
+    int selection_ {};
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle()));
-        widget->SetSelection(selection);
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
+        widget->SetSelection(selection_);
         return widget;
     }
 };

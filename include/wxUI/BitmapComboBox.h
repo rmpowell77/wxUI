@@ -43,7 +43,7 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
 
     BitmapComboBox(wxWindowID identity, std::initializer_list<std::tuple<std::string, wxBitmap>> bitmapChoices)
         : super(identity)
-        , choices([&bitmapChoices] {
+        , choices_([&bitmapChoices] {
             std::vector<wxString> result;
             result.reserve(bitmapChoices.size());
             for (auto&& [first, _] : bitmapChoices) {
@@ -51,7 +51,7 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
             }
             return result;
         }())
-        , bitmaps([&bitmapChoices] {
+        , bitmaps_([&bitmapChoices] {
             std::vector<wxBitmap> result;
             result.reserve(bitmapChoices.size());
             for (auto&& [_, second] : bitmapChoices) {
@@ -69,7 +69,7 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
 
     BitmapComboBox(wxSizerFlags const& flags, wxWindowID identity, std::initializer_list<std::tuple<std::string, wxBitmap>> bitmapChoices)
         : super(flags, identity)
-        , choices([&bitmapChoices] {
+        , choices_([&bitmapChoices] {
             std::vector<wxString> result;
             result.reserve(bitmapChoices.size());
             for (auto&& [first, _] : bitmapChoices) {
@@ -77,7 +77,7 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
             }
             return result;
         }())
-        , bitmaps([&bitmapChoices] {
+        , bitmaps_([&bitmapChoices] {
             std::vector<wxBitmap> result;
             result.reserve(bitmapChoices.size());
             for (auto&& [_, second] : bitmapChoices) {
@@ -95,8 +95,8 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
 
     BitmapComboBox(wxWindowID identity, details::Ranges::input_range_of<std::tuple<wxString, wxBitmap>> auto&& choices)
         : super(identity)
-        , choices(details::Ranges::ToVector<wxString>(choices | std::views::transform([](auto&& item) { return std::get<0>(item); })))
-        , bitmaps(details::Ranges::ToVector<wxBitmap>(choices | std::views::transform([](auto&& item) { return std::get<1>(item); })))
+        , choices_(details::Ranges::ToVector<wxString>(choices | std::views::transform([](auto&& item) { return std::get<0>(item); })))
+        , bitmaps_(details::Ranges::ToVector<wxBitmap>(choices | std::views::transform([](auto&& item) { return std::get<1>(item); })))
     {
     }
 
@@ -107,8 +107,8 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
 
     BitmapComboBox(wxSizerFlags const& flags, wxWindowID identity, details::Ranges::input_range_of<std::tuple<wxString, wxBitmap>> auto&& choices)
         : super(flags, identity)
-        , choices(details::Ranges::ToVector<wxString>(choices | std::views::transform([](auto&& item) { return std::get<0>(item); })))
-        , bitmaps(details::Ranges::ToVector<wxBitmap>(choices | std::views::transform([](auto&& item) { return std::get<1>(item); })))
+        , choices_(details::Ranges::ToVector<wxString>(choices | std::views::transform([](auto&& item) { return std::get<0>(item); })))
+        , bitmaps_(details::Ranges::ToVector<wxBitmap>(choices | std::views::transform([](auto&& item) { return std::get<1>(item); })))
     {
     }
 
@@ -149,18 +149,18 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
     RULE_OF_SIX_BOILERPLATE(BitmapComboBox);
 
 private:
-    std::vector<wxString> choices;
-    std::vector<wxBitmap> bitmaps;
+    std::vector<wxString> choices_;
+    std::vector<wxBitmap> bitmaps_;
     int selection = 0;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto&& first = (choices.size() > 0) ? wxString(choices.at(0)) : wxString(wxEmptyString);
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle()));
-        for (auto i = 0lu; i < bitmaps.size(); ++i) {
-            widget->SetItemBitmap(i, bitmaps[i]);
+        auto&& first = (choices_.size() > 0) ? wxString(choices_.at(0)) : wxString(wxEmptyString);
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
+        for (auto i = 0lu; i < bitmaps_.size(); ++i) {
+            widget->SetItemBitmap(i, bitmaps_[i]);
         }
-        if (!choices.empty()) {
+        if (!choices_.empty()) {
             widget->SetSelection(selection);
         }
         return widget;
