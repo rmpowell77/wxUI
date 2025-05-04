@@ -63,25 +63,6 @@ TEST_CASE("Hyperlink")
         CHECK("www.github.com" == window->GetURL());
     }
 
-    SECTION("size.name.url")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), "Hello", "www.github.com" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("Hello" == window->GetLabel());
-        CHECK("www.github.com" == window->GetURL());
-    }
-
-    SECTION("size.id.name.url")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, "Hello", "www.github.com" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK("Hello" == window->GetLabel());
-        CHECK("www.github.com" == window->GetURL());
-    }
-
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };

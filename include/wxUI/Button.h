@@ -46,17 +46,6 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
     {
     }
 
-    explicit Button(wxSizerFlags const& flags, std::string const& text = "")
-        : Button(flags, wxID_ANY, text)
-    {
-    }
-
-    Button(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
-        : super(flags, identity)
-        , text_(std::move(text))
-    {
-    }
-
     auto setDefault() -> Button&
     {
         isDefault_ = true;

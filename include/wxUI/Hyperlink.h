@@ -46,18 +46,6 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     {
     }
 
-    Hyperlink(wxSizerFlags const& flags, std::string text, std::string url)
-        : Hyperlink(flags, wxID_ANY, std::move(text), std::move(url))
-    {
-    }
-
-    Hyperlink(wxSizerFlags const& flags, wxWindowID identity, std::string text, std::string url)
-        : super(flags, identity, super::WithStyle { wxHL_DEFAULT_STYLE })
-        , text_(std::move(text))
-        , url_(std::move(url))
-    {
-    }
-
     struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
     };

@@ -131,23 +131,22 @@ struct WidgetDetails {
     {
     }
 
-    WidgetDetails(wxSizerFlags const& flags, wxWindowID identity)
-        : flags_(flags)
-        , identity_(identity)
-    {
-    }
-
-    explicit WidgetDetails(wxWindowID identity, WithStyle style)
+    WidgetDetails(wxWindowID identity, WithStyle style)
         : identity_(identity)
         , style_(style.mStyle)
     {
     }
 
-    WidgetDetails(wxSizerFlags const& flags, wxWindowID identity, WithStyle style)
-        : flags_(flags)
-        , identity_(identity)
-        , style_(style.mStyle)
+    auto withFlags(wxSizerFlags flags) & -> ConcreteWidget&
     {
+        flags_ = flags;
+        return static_cast<ConcreteWidget&>(*this);
+    }
+
+    auto withFlags(wxSizerFlags flags) && -> ConcreteWidget&&
+    {
+        flags_ = flags;
+        return static_cast<ConcreteWidget&&>(std::move(*this));
     }
 
     auto withPosition(wxPoint pos) -> ConcreteWidget&

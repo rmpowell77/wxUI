@@ -39,11 +39,6 @@ struct Line : public details::WidgetDetails<Line, wxStaticLine> {
     {
     }
 
-    explicit Line(wxSizerFlags const& flags, wxWindowID identity = wxID_ANY)
-        : super(flags, identity)
-    {
-    }
-
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
         return setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), getStyle()));
@@ -57,12 +52,12 @@ struct Line : public details::WidgetDetails<Line, wxStaticLine> {
 
 inline auto HLine() -> Line
 {
-    return Line(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_HORIZONTAL);
+    return Line().withFlags(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_HORIZONTAL);
 }
 
 inline auto VLine() -> Line
 {
-    return Line(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_VERTICAL);
+    return Line().withFlags(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_VERTICAL);
 }
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(Line);

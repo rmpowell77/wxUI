@@ -47,18 +47,6 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     {
     }
 
-    explicit SpinCtrl(wxSizerFlags const& flags, std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
-        : SpinCtrl(flags, wxID_ANY, range, initial)
-    {
-    }
-
-    explicit SpinCtrl(wxSizerFlags const& flags, wxWindowID identity, std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
-        : super(flags, identity)
-        , range_(std::move(range))
-        , initial_(initial)
-    {
-    }
-
     auto createImpl(wxWindow* parent) -> wxWindow*
     {
         auto min = range_ ? range_->first : 0;

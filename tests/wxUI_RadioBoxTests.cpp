@@ -96,60 +96,6 @@ TEST_CASE("RadioBox")
         CHECK("Goodbye" == window->GetString(1));
     }
 
-    SECTION("size.choice")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        using namespace std::literals;
-        auto uut = TypeUnderTest { wxSizerFlags(1), TypeUnderTest::withChoices {}, { "Hello"s, "Goodbye"s } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
-    }
-
-    SECTION("size.name.choice")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        using namespace std::literals;
-        auto uut = TypeUnderTest { wxSizerFlags(1), "Greetings", TypeUnderTest::withChoices {}, { "Hello"s, "Goodbye"s } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("Greetings" == window->GetLabel());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
-    }
-
-    SECTION("size.id.choice")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        using namespace std::literals;
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, TypeUnderTest::withChoices {}, { "Hello"s, "Goodbye"s } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
-    }
-
-    SECTION("size.id.name.choice")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        using namespace std::literals;
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, "Greetings", TypeUnderTest::withChoices {}, { "Hello"s, "Goodbye"s } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK("Greetings" == window->GetLabel());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
-    }
-
     SECTION("choices.ranges")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
@@ -193,60 +139,6 @@ TEST_CASE("RadioBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK("Greetings" == window->GetLabel());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
-    }
-
-    SECTION("size.choice.ranges")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        using namespace std::literals;
-        auto uut = TypeUnderTest { wxSizerFlags(1), TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello"s, "Goodbye"s } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
-    }
-
-    SECTION("size.name.choice.ranges")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        using namespace std::literals;
-        auto uut = TypeUnderTest { wxSizerFlags(1), "Greetings", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello"s, "Goodbye"s } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("Greetings" == window->GetLabel());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
-    }
-
-    SECTION("size.id.choice.ranges")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        using namespace std::literals;
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello"s, "Goodbye"s } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
-    }
-
-    SECTION("size.id.name.choice.ranges")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        using namespace std::literals;
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, "Greetings", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello"s, "Goodbye"s } };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK("Greetings" == window->GetLabel());

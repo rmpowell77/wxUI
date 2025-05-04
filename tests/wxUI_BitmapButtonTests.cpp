@@ -62,23 +62,6 @@ TEST_CASE("BitmapButton")
         CHECK(window->GetLabel().empty());
     }
 
-    SECTION("size.bitmap")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.id.bitmap")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
-    }
-
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };

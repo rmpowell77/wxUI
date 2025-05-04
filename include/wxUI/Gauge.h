@@ -56,22 +56,6 @@ struct Gauge : public details::WidgetDetails<Gauge, wxGauge> {
     {
     }
 
-    explicit Gauge(wxSizerFlags const& flags)
-        : Gauge(flags, withIdentity {}, wxID_ANY, 100)
-    {
-    }
-
-    explicit Gauge(wxSizerFlags const& flags, [[maybe_unused]] withRange unused, int range)
-        : Gauge(flags, withIdentity {}, wxID_ANY, range)
-    {
-    }
-
-    Gauge(wxSizerFlags const& flags, [[maybe_unused]] withIdentity unused, wxWindowID identity, int range = 100)
-        : super(flags, identity, super::WithStyle { wxGA_HORIZONTAL })
-        , range_(range)
-    {
-    }
-
     struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const

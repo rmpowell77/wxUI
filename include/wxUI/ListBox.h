@@ -46,17 +46,6 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
     {
     }
 
-    explicit ListBox(wxSizerFlags const& flags, std::initializer_list<std::string> choices = {})
-        : ListBox(flags, wxID_ANY, choices)
-    {
-    }
-
-    ListBox(wxSizerFlags const& flags, wxWindowID identity, std::initializer_list<std::string> choices = {})
-        : super(flags, identity)
-        , choices_(details::Ranges::convertTo(choices))
-    {
-    }
-
     explicit ListBox(details::Ranges::input_range_of<wxString> auto&& choices)
         : ListBox(wxID_ANY, std::forward<decltype(choices)>(choices))
     {
@@ -64,17 +53,6 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
 
     ListBox(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
         : super(identity)
-        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
-    {
-    }
-
-    explicit ListBox(wxSizerFlags const& flags, details::Ranges::input_range_of<wxString> auto&& choices)
-        : ListBox(flags, wxID_ANY, std::forward<decltype(choices)>(choices))
-    {
-    }
-
-    explicit ListBox(wxSizerFlags const& flags, wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
-        : super(flags, identity)
         , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }

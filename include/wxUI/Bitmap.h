@@ -45,17 +45,6 @@ struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
     {
     }
 
-    explicit Bitmap(wxSizerFlags const& flags, wxBitmap const& bitmap)
-        : Bitmap(flags, wxID_ANY, bitmap)
-    {
-    }
-
-    explicit Bitmap(wxSizerFlags const& flags, wxWindowID identity, wxBitmap const& bitmap)
-        : super(flags, identity)
-        , bitmap_(bitmap)
-    {
-    }
-
     struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
     };
