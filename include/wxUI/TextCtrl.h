@@ -42,7 +42,7 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
 
     explicit TextCtrl(wxWindowID identity, std::string text = "")
         : super(identity)
-        , text(std::move(text))
+        , text_(std::move(text))
     {
     }
 
@@ -53,7 +53,7 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
 
     TextCtrl(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
         : super(flags, identity)
-        , text(std::move(text))
+        , text_(std::move(text))
     {
     }
 
@@ -83,11 +83,11 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
     RULE_OF_SIX_BOILERPLATE(TextCtrl);
 
 private:
-    std::string text;
+    std::string text_;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        return setProxy(new underlying_t(parent, getIdentity(), text, getPos(), getSize(), getStyle()));
+        return setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
     }
 };
 

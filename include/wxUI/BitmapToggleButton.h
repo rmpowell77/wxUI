@@ -42,8 +42,8 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
 
     BitmapToggleButton(wxWindowID identity, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = {})
         : super(identity)
-        , bitmap(bitmap)
-        , bitmapPressed(std::move(bitmapPressed))
+        , bitmap_(bitmap)
+        , bitmapPressed_(std::move(bitmapPressed))
     {
     }
 
@@ -54,8 +54,8 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
 
     BitmapToggleButton(wxSizerFlags const& flags, wxWindowID identity, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = {})
         : super(flags, identity)
-        , bitmap(bitmap)
-        , bitmapPressed(std::move(bitmapPressed))
+        , bitmap_(bitmap)
+        , bitmapPressed_(std::move(bitmapPressed))
     {
     }
 
@@ -82,14 +82,14 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
     RULE_OF_SIX_BOILERPLATE(BitmapToggleButton);
 
 private:
-    wxBitmap bitmap;
-    std::optional<wxBitmap> bitmapPressed;
+    wxBitmap bitmap_;
+    std::optional<wxBitmap> bitmapPressed_;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), bitmap, getPos(), getSize(), getStyle()));
-        if (bitmapPressed) {
-            widget->SetBitmapPressed(*bitmapPressed);
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
+        if (bitmapPressed_) {
+            widget->SetBitmapPressed(*bitmapPressed_);
         }
         return widget;
     }

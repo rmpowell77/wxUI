@@ -1,8 +1,8 @@
-# wxUI release notes for v0.1.10
+# wxUI release notes for v0.2.0
 
 Bugs addressed in this release:
 
-* [#175](../../issues/175) Using unique_ptr without including memory
-
 Other changes:
+
+* [#177](../../issues/177) Rename all the private members with trailing _
 

@@ -42,7 +42,7 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
 
     explicit ComboBox(wxWindowID identity, std::initializer_list<std::string> choices = {})
         : super(identity)
-        , choices(details::Ranges::convertTo(choices))
+        , choices_(details::Ranges::convertTo(choices))
     {
     }
 
@@ -53,7 +53,7 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
 
     ComboBox(wxSizerFlags const& flags, wxWindowID identity, std::initializer_list<std::string> choices = {})
         : super(flags, identity)
-        , choices(details::Ranges::convertTo(choices))
+        , choices_(details::Ranges::convertTo(choices))
     {
     }
 
@@ -64,7 +64,7 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
 
     ComboBox(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
         : super(identity)
-        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
 
@@ -75,23 +75,23 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
 
     explicit ComboBox(wxSizerFlags const& flags, wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
         : super(flags, identity)
-        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto&& first = (choices.size() > 0) ? wxString(choices.at(0)) : wxString(wxEmptyString);
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle()));
-        if (!choices.empty()) {
-            widget->SetSelection(selection);
+        auto&& first = (choices_.size() > 0) ? wxString(choices_.at(0)) : wxString(wxEmptyString);
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
+        if (!choices_.empty()) {
+            widget->SetSelection(selection_);
         }
         return widget;
     }
 
     auto withSelection(int which) -> ComboBox&
     {
-        selection = which;
+        selection_ = which;
         return *this;
     }
 
@@ -126,8 +126,8 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
     RULE_OF_SIX_BOILERPLATE(ComboBox);
 
 private:
-    std::vector<wxString> choices;
-    int selection = 0;
+    std::vector<wxString> choices_;
+    int selection_ = 0;
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(ComboBox);

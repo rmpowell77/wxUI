@@ -42,7 +42,7 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
 
     explicit ListBox(wxWindowID identity, std::initializer_list<std::string> choices = {})
         : super(identity)
-        , choices(details::Ranges::convertTo(choices))
+        , choices_(details::Ranges::convertTo(choices))
     {
     }
 
@@ -53,7 +53,7 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
 
     ListBox(wxSizerFlags const& flags, wxWindowID identity, std::initializer_list<std::string> choices = {})
         : super(flags, identity)
-        , choices(details::Ranges::convertTo(choices))
+        , choices_(details::Ranges::convertTo(choices))
     {
     }
 
@@ -64,7 +64,7 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
 
     ListBox(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
         : super(identity)
-        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
 
@@ -75,19 +75,19 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
 
     explicit ListBox(wxSizerFlags const& flags, wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
         : super(flags, identity)
-        , choices(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
 
     auto withSelection(int which) -> ListBox&
     {
-        selection = which;
+        selection_ = which;
         return *this;
     }
 
     auto withEnsureVisible(int which) -> ListBox&
     {
-        ensureVisible = which;
+        ensureVisible_ = which;
         return *this;
     }
 
@@ -114,16 +114,16 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
     RULE_OF_SIX_BOILERPLATE(ListBox);
 
 private:
-    std::vector<wxString> choices {};
-    int selection = wxNOT_FOUND;
-    std::optional<int> ensureVisible {};
+    std::vector<wxString> choices_ {};
+    int selection_ = wxNOT_FOUND;
+    std::optional<int> ensureVisible_ {};
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices.size()), choices.data(), getStyle()));
-        widget->SetSelection(selection);
-        if (ensureVisible) {
-            widget->EnsureVisible(*ensureVisible);
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
+        widget->SetSelection(selection_);
+        if (ensureVisible_) {
+            widget->EnsureVisible(*ensureVisible_);
         }
         return widget;
     }

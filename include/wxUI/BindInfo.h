@@ -54,19 +54,19 @@ struct BindInfo {
 
     void bindTo([[maybe_unused]] wxWindow* widget) const
     {
-        mInfo->bindTo(widget);
+        info_->bindTo(widget);
     }
 
     template <typename Event, typename Function>
     BindInfo([[maybe_unused]] Event event, [[maybe_unused]] Function function)
-        : mInfo(std::make_unique<BindInfoDetails<Event, Function>>(event, function))
+        : info_(std::make_unique<BindInfoDetails<Event, Function>>(event, function))
     {
     }
 
     ~BindInfo() = default;
 
     BindInfo(BindInfo const& bindInfo)
-        : mInfo(bindInfo.mInfo->clone())
+        : info_(bindInfo.info_->clone())
     {
     }
 
@@ -75,18 +75,18 @@ struct BindInfo {
         if (this == &bindInfo) {
             return *this;
         }
-        mInfo = bindInfo.mInfo->clone();
+        info_ = bindInfo.info_->clone();
         return *this;
     }
 
     BindInfo(BindInfo&& bindInfo) noexcept
-        : mInfo(std::move(bindInfo.mInfo))
+        : info_(std::move(bindInfo.info_))
     {
     }
 
     auto operator=(BindInfo&& bindInfo) noexcept -> BindInfo&
     {
-        mInfo = std::move(bindInfo.mInfo);
+        info_ = std::move(bindInfo.info_);
         return *this;
     }
 
@@ -116,7 +116,7 @@ private:
         }
     };
 
-    std::unique_ptr<BindInfoDetailsBase> mInfo;
+    std::unique_ptr<BindInfoDetailsBase> info_;
 };
 
 static_assert(std::is_nothrow_move_constructible_v<BindInfo>);

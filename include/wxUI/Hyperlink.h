@@ -41,8 +41,8 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
 
     Hyperlink(wxWindowID identity, std::string text, std::string url)
         : super(identity, super::WithStyle { wxHL_DEFAULT_STYLE })
-        , text(std::move(text))
-        , url(std::move(url))
+        , text_(std::move(text))
+        , url_(std::move(url))
     {
     }
 
@@ -53,8 +53,8 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
 
     Hyperlink(wxSizerFlags const& flags, wxWindowID identity, std::string text, std::string url)
         : super(flags, identity, super::WithStyle { wxHL_DEFAULT_STYLE })
-        , text(std::move(text))
-        , url(std::move(url))
+        , text_(std::move(text))
+        , url_(std::move(url))
     {
     }
 
@@ -64,12 +64,12 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     RULE_OF_SIX_BOILERPLATE(Hyperlink);
 
 private:
-    std::string text;
-    std::string url;
+    std::string text_;
+    std::string url_;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        return setProxy(new underlying_t(parent, getIdentity(), text, url, getPos(), getSize(), getStyle()));
+        return setProxy(new underlying_t(parent, getIdentity(), text_, url_, getPos(), getSize(), getStyle()));
     }
 };
 
