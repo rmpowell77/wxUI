@@ -49,9 +49,15 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
 
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> BitmapToggleButton&
     {
         return super::bind(wxEVT_TOGGLEBUTTON, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> BitmapToggleButton&&
+    {
+        return std::move(*this).super::bind(wxEVT_TOGGLEBUTTON, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {

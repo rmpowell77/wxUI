@@ -53,17 +53,29 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
         return widget;
     }
 
-    auto withValue(bool value) -> CheckBox&
+    auto withValue(bool value) & -> CheckBox&
     {
         value_ = value;
         return *this;
     }
 
+    auto withValue(bool value) && -> CheckBox&&
+    {
+        value_ = value;
+        return std::move(*this);
+    }
+
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> CheckBox&
     {
         return super::bind(wxEVT_CHECKBOX, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> CheckBox&&
+    {
+        return std::move(*this).super::bind(wxEVT_CHECKBOX, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {

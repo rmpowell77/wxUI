@@ -49,9 +49,15 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
     // Bind
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> TextCtrl&
     {
         return super::bind(wxEVT_TEXT, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> TextCtrl&&
+    {
+        return std::move(*this).super::bind(wxEVT_TEXT, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {

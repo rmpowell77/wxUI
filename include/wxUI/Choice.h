@@ -57,17 +57,29 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
     {
     }
 
-    auto withSelection(int which) -> Choice&
+    auto withSelection(int which) & -> Choice&
     {
         selection_ = which;
         return *this;
     }
 
+    auto withSelection(int which) && -> Choice&&
+    {
+        selection_ = which;
+        return std::move(*this);
+    }
+
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> Choice&
     {
         return super::bind(wxEVT_CHOICE, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> Choice&&
+    {
+        return std::move(*this).super::bind(wxEVT_CHOICE, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {

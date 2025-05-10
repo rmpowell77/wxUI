@@ -26,17 +26,59 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 
-constexpr auto addWithStyle = [](auto style, auto&& inUUT) {
-    return inUUT.withStyle(style);
-};
+template <typename W>
+constexpr auto addWithFlags(wxSizerFlags const& value, W&& inUUT) -> W&&
+{
+    return std::forward<W>(inUUT).withFlags(value);
+}
 
-constexpr auto addWithPosition = [](auto pos, auto&& inUUT) {
-    return inUUT.withPosition(pos);
-};
+template <typename W>
+constexpr auto addWithPosition(wxPoint const& value, W&& inUUT) -> W&&
+{
+    return std::forward<W>(inUUT).withPosition(value);
+}
 
-constexpr auto addWithSize = [](auto size, auto&& inUUT) {
-    return inUUT.withSize(size);
-};
+template <typename W>
+constexpr auto addWithSize(wxSize const& value, W&& inUUT) -> W&&
+{
+    return std::forward<W>(inUUT).withSize(value);
+}
+
+template <typename W>
+constexpr auto addWithWidth(int value, W&& inUUT) -> W&&
+{
+    return std::forward<W>(inUUT).withWidthSize(value);
+}
+
+template <typename W>
+constexpr auto addWithHeight(int value, W&& inUUT) -> W&&
+{
+    return std::forward<W>(inUUT).withHeightSize(value);
+}
+
+template <typename W>
+constexpr auto addSetStyle(int64_t value, W&& inUUT) -> W&&
+{
+    return std::forward<W>(inUUT).setStyle(value);
+}
+
+template <typename W>
+constexpr auto addWithStyle(int64_t value, W&& inUUT) -> W&&
+{
+    return std::forward<W>(inUUT).withStyle(value);
+}
+
+template <typename W>
+constexpr auto addWithoutStyle(int64_t value, W&& inUUT) -> W&&
+{
+    return std::forward<W>(inUUT).withoutStyle(value);
+}
+
+template <typename W>
+constexpr auto addWithFont(wxFontInfo const& value, W&& inUUT) -> W&&
+{
+    return std::forward<W>(inUUT).withFont(value);
+}
 
 constexpr auto checkWithStyle = [](auto style, auto* window) {
     CHECK((window->GetWindowStyle() & style) == style);
@@ -53,6 +95,40 @@ constexpr auto checkWithSize = [](auto size, auto* window) {
     return window;
 };
 
+template <typename W>
+auto checkIdentity(wxWindowID value, W const& window) -> W const&
+{
+    CHECK(window.getIdentity() == value);
+    return window;
+}
+
+template <typename W>
+auto checkPos(wxPoint value, W const& window) -> W const&
+{
+    CHECK(window.getPos() == value);
+    return window;
+}
+
+template <typename W>
+auto checkSize(wxSize value, W const& window) -> W const&
+{
+    CHECK(window.getSize() == value);
+    return window;
+}
+
+template <typename W>
+auto checkStyle(int64_t value, W const& window) -> W const&
+{
+    CHECK((window.getStyle() & value) == value);
+    return window;
+}
+
+template <typename W>
+auto checkAllBeforeCreate(W const& window, int64_t style, wxPoint pos, wxSize size) -> W const&
+{
+    return checkIdentity(wxID_ANY, checkStyle(style, checkPos(pos, checkSize(size, window))));
+}
+
 constexpr auto checkAll = [](auto* window, auto style, auto pos, auto size) {
     return checkWithStyle(style, checkWithPosition(pos, checkWithSize(size, window)));
 };
@@ -68,29 +144,42 @@ auto DoChainingIterations()
     auto expectedStyle = WHICH::expectedStyle();
     auto expectedPos = WHICH::expectedPosition();
     auto expectedSize = WHICH::expectedSize();
+    auto flags = wxSizerFlags(1).Proportion(1).Expand().Border(wxALL, 5);
     wxFrame frame { nullptr, wxID_ANY, "" };
+    // decorate with one flow
     {
-        auto uut = addWithStyle(style, addWithPosition(pos, addWithSize(size, WHICH::createUUT())));
+        auto uut = addWithFlags(flags, addWithStyle(style, addWithPosition(pos, addWithSize(size, WHICH::createUUT()))));
+        checkAllBeforeCreate(uut, style, pos, size);
         checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
     }
+    // inverted the other way around.
     {
         auto uut = addWithPosition(pos, addWithStyle(style, addWithSize(size, WHICH::createUUT())));
+        checkAllBeforeCreate(uut, expectedStyle, expectedPos, expectedSize);
+        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+    }
+    // Do height and width
+    {
+        auto uut = addWithFlags(flags, addWithStyle(style, addWithPosition(pos, addWithHeight(size.GetHeight(), addWithWidth(size.GetWidth(), WHICH::createUUT())))));
+        checkAllBeforeCreate(uut, expectedStyle, expectedPos, expectedSize);
+        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+    }
+    // Expand out style
+    {
+        auto uut = addWithFlags(flags, addWithStyle(style, addWithStyle(0, addWithPosition(pos, addWithHeight(size.GetHeight(), addWithWidth(size.GetWidth(), WHICH::createUUT()))))));
+        checkAllBeforeCreate(uut, expectedStyle, expectedPos, expectedSize);
         checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
     }
     {
-        auto uut = addWithSize(size, addWithStyle(style, addWithPosition(pos, WHICH::createUUT())));
+        auto uut = addWithFlags(flags, addSetStyle(style, addWithStyle(0xFFFF, addWithPosition(pos, addWithHeight(size.GetHeight(), addWithWidth(size.GetWidth(), WHICH::createUUT()))))));
+        checkAllBeforeCreate(uut, expectedStyle, expectedPos, expectedSize);
         checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
     }
+    // specifically test with lvalue.
     {
-        auto uut = addWithStyle(style, addWithSize(size, addWithPosition(pos, WHICH::createUUT())));
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
-    }
-    {
-        auto uut = addWithPosition(pos, addWithSize(size, addWithStyle(style, WHICH::createUUT())));
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
-    }
-    {
-        auto uut = addWithSize(size, addWithPosition(pos, addWithStyle(style, WHICH::createUUT())));
+        auto unit = WHICH::createUUT();
+        auto uut = addWithFlags(flags, addWithStyle(style, addWithPosition(pos, addWithSize(size, WHICH::createUUT()))));
+        checkAllBeforeCreate(uut, expectedStyle, expectedPos, expectedSize);
         checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
     }
 }
