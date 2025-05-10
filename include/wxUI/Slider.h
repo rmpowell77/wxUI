@@ -49,9 +49,15 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
 
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> Slider&
     {
         return super::bind(wxEVT_SLIDER, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> Slider&&
+    {
+        return std::move(*this).super::bind(wxEVT_SLIDER, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {

@@ -103,16 +103,28 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     {
     }
 
-    auto withSelection(int which) -> RadioBox&
+    auto withSelection(int which) & -> RadioBox&
     {
         selection_ = which;
         return *this;
     }
 
-    auto withMajorDim(int majorDim) -> RadioBox&
+    auto withSelection(int which) && -> RadioBox&&
+    {
+        selection_ = which;
+        return std::move(*this);
+    }
+
+    auto withMajorDim(int majorDim) & -> RadioBox&
     {
         majorDim_ = majorDim;
         return *this;
+    }
+
+    auto withMajorDim(int majorDim) && -> RadioBox&&
+    {
+        majorDim_ = majorDim;
+        return std::move(*this);
     }
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
@@ -124,9 +136,15 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
 
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> RadioBox&
     {
         return super::bind(wxEVT_RADIOBOX, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> RadioBox&&
+    {
+        return std::move(*this).super::bind(wxEVT_RADIOBOX, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {

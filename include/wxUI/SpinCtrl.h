@@ -57,9 +57,15 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
 
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> SpinCtrl&
     {
         return super::bind(wxEVT_SPINCTRL, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> SpinCtrl&&
+    {
+        return std::move(*this).super::bind(wxEVT_SPINCTRL, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {

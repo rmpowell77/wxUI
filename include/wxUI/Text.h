@@ -46,10 +46,16 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
     {
     }
 
-    auto withWrap(int wrapLength) -> Text&
+    auto withWrap(int wrapLength) & -> Text&
     {
         wrap_ = wrapLength;
         return *this;
+    }
+
+    auto withWrap(int wrapLength) && -> Text&&
+    {
+        wrap_ = wrapLength;
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {

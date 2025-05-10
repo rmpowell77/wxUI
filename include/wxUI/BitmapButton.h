@@ -45,17 +45,29 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
     {
     }
 
-    auto setDefault() -> BitmapButton&
+    auto setDefault() & -> BitmapButton&
     {
         isDefault_ = true;
         return *this;
     }
 
+    auto setDefault() && -> BitmapButton&&
+    {
+        isDefault_ = true;
+        return std::move(*this);
+    }
+
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> BitmapButton&
     {
         return super::bind(wxEVT_BUTTON, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> BitmapButton&&
+    {
+        return std::move(*this).super::bind(wxEVT_BUTTON, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
