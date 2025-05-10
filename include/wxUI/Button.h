@@ -46,17 +46,29 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
     {
     }
 
-    auto setDefault() -> Button&
+    auto setDefault() & -> Button&
     {
         isDefault_ = true;
         return *this;
     }
 
+    auto setDefault() && -> Button&&
+    {
+        isDefault_ = true;
+        return std::move(*this);
+    }
+
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> Button&
     {
         return super::bind(wxEVT_BUTTON, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> Button&&
+    {
+        return std::move(*this).super::bind(wxEVT_BUTTON, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
