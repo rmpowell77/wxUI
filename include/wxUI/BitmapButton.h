@@ -45,17 +45,6 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
     {
     }
 
-    BitmapButton(wxSizerFlags const& flags, wxBitmap const& bitmap)
-        : BitmapButton(flags, wxID_ANY, bitmap)
-    {
-    }
-
-    BitmapButton(wxSizerFlags const& flags, wxWindowID identity, wxBitmap const& bitmap)
-        : super(flags, identity)
-        , bitmap_(bitmap)
-    {
-    }
-
     auto setDefault() -> BitmapButton&
     {
         isDefault_ = true;

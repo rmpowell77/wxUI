@@ -78,40 +78,6 @@ TEST_CASE("Gauge")
         CHECK(window->GetRange() == 200);
     }
 
-    SECTION("size")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1) };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetRange() == 100);
-    }
-
-    SECTION("size.name")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), wxUI::Gauge::withRange {}, 200 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetRange() == 200);
-    }
-
-    SECTION("size.id")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), wxUI::Gauge::withIdentity {}, 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetRange() == 100);
-    }
-
-    SECTION("size.id.name")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), wxUI::Gauge::withIdentity {}, 10000, 200 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetRange() == 200);
-    }
-
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };

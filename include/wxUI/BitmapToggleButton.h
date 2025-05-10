@@ -47,18 +47,6 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
     {
     }
 
-    BitmapToggleButton(wxSizerFlags const& flags, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
-        : BitmapToggleButton(flags, wxID_ANY, bitmap, std::move(bitmapPressed))
-    {
-    }
-
-    BitmapToggleButton(wxSizerFlags const& flags, wxWindowID identity, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
-        : super(flags, identity)
-        , bitmap_(bitmap)
-        , bitmapPressed_(std::move(bitmapPressed))
-    {
-    }
-
     using super::bind;
     template <typename Function>
     auto bind(Function func)

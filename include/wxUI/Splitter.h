@@ -63,27 +63,6 @@ struct HSplitter : public details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWi
     {
     }
 
-    HSplitter(wxSizerFlags flags, wxWindowID identity, std::pair<W1, W2> widgets)
-        : super(flags, identity, WithStyle { wxSP_3D | wxSP_LIVE_UPDATE })
-        , widgets_(std::move(widgets))
-    {
-    }
-
-    HSplitter(wxSizerFlags flags, wxWindowID identity, W1 widget1, W2 widget2)
-        : HSplitter(flags, identity, std::make_pair(std::move(widget1), std::move(widget2)))
-    {
-    }
-
-    HSplitter(wxSizerFlags flags, std::pair<W1, W2> widgets)
-        : HSplitter(flags, wxID_ANY, std::move(widgets))
-    {
-    }
-
-    HSplitter(wxSizerFlags flags, W1 widget1, W2 widget2)
-        : HSplitter(flags, wxID_ANY, std::make_pair(std::move(widget1), std::move(widget2)))
-    {
-    }
-
     auto withStashGravity(double gravity) -> HSplitter<W1, W2>&
     {
         stashGravity_ = gravity;
@@ -135,27 +114,6 @@ struct VSplitter : public details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWi
 
     VSplitter(W1 widget1, W2 widget2)
         : VSplitter(wxID_ANY, std::make_pair(std::move(widget1), std::move(widget2)))
-    {
-    }
-
-    VSplitter(wxSizerFlags flags, wxWindowID identity, std::pair<W1, W2> widgets)
-        : super(flags, identity, WithStyle { wxSP_3D | wxSP_LIVE_UPDATE })
-        , widgets_(std::move(widgets))
-    {
-    }
-
-    VSplitter(wxSizerFlags flags, wxWindowID identity, W1 widget1, W2 widget2)
-        : VSplitter(flags, identity, std::make_pair(std::move(widget1), std::move(widget2)))
-    {
-    }
-
-    VSplitter(wxSizerFlags flags, std::pair<W1, W2> widgets)
-        : VSplitter(flags, wxID_ANY, std::move(widgets))
-    {
-    }
-
-    VSplitter(wxSizerFlags flags, W1 widget1, W2 widget2)
-        : VSplitter(flags, wxID_ANY, std::make_pair(std::move(widget1), std::move(widget2)))
     {
     }
 

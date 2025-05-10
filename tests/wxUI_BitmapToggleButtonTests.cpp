@@ -78,40 +78,6 @@ TEST_CASE("BitmapToggleButton")
         CHECK(window->GetLabel().empty());
     }
 
-    SECTION("size.bitmap")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.bitmap.toggle")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), wxBitmap {}, wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.id.bitmap")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.id.bitmap.toggle")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, wxBitmap {}, wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
-    }
-
     SECTION("pos")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };

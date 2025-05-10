@@ -78,40 +78,6 @@ TEST_CASE("ComboBox")
         CHECK(window->GetLabel().empty());
     }
 
-    SECTION("size")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1) };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.choice")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), { std::string {} } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.id")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.id.choice")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, { std::string {} } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
-    }
-
     SECTION("choice.ranges")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
@@ -124,23 +90,6 @@ TEST_CASE("ComboBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, std::vector<std::string> { std::string {} } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.choice.ranges")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), std::vector<std::string> { std::string {} } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.id.choice.ranges")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, std::vector<std::string> { std::string {} } };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetLabel().empty());
@@ -165,7 +114,7 @@ TEST_CASE("ComboBox")
     SECTION("setSelection")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, { "Hello", "Goodbye" } }.withSize({ 1, 2 }).withSelection(1);
+        auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } }.withSize({ 1, 2 }).withSelection(1);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK(2 == window->GetCount());

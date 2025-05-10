@@ -46,17 +46,6 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
     {
     }
 
-    explicit ComboBox(wxSizerFlags const& flags, std::initializer_list<std::string> choices = {})
-        : ComboBox(flags, wxID_ANY, choices)
-    {
-    }
-
-    ComboBox(wxSizerFlags const& flags, wxWindowID identity, std::initializer_list<std::string> choices = {})
-        : super(flags, identity)
-        , choices_(details::Ranges::convertTo(choices))
-    {
-    }
-
     explicit ComboBox(details::Ranges::input_range_of<wxString> auto&& choices)
         : ComboBox(wxID_ANY, std::forward<decltype(choices)>(choices))
     {
@@ -64,17 +53,6 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
 
     ComboBox(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
         : super(identity)
-        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
-    {
-    }
-
-    explicit ComboBox(wxSizerFlags const& flags, details::Ranges::input_range_of<wxString> auto&& choices)
-        : ComboBox(flags, wxID_ANY, std::forward<decltype(choices)>(choices))
-    {
-    }
-
-    explicit ComboBox(wxSizerFlags const& flags, wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
-        : super(flags, identity)
         , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }

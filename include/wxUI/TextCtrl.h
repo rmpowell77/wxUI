@@ -46,17 +46,6 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
     {
     }
 
-    explicit TextCtrl(wxSizerFlags const& flags, std::string text = "")
-        : TextCtrl(flags, wxID_ANY, std::move(text))
-    {
-    }
-
-    TextCtrl(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
-        : super(flags, identity)
-        , text_(std::move(text))
-    {
-    }
-
     // Bind
     using super::bind;
     template <typename Function>

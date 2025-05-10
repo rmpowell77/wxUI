@@ -59,15 +59,18 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             "Details",
             CheckBox { "Show" },
             Choice { "Less", "More" },
-            TextCtrl { wxSizerFlags(1).Expand().Border(), "Fill in the blank" }
+            TextCtrl { "Fill in the blank" }
+                .withFlags(wxSizerFlags(1).Expand().Border())
                 .withStyle(wxALIGN_LEFT),
         },
 
         HSizer {
             wxSizerFlags().Center().Border(),
-            Button { wxSizerFlags().Border(wxRIGHT), "Left" }
+            Button { "Left" }
+                .withFlags(wxSizerFlags().Border(wxRIGHT))
                 .bind([] { wxLogMessage("Pressed Left"); }),
-            Button { wxSizerFlags().Border(wxLEFT), "Right" }
+            Button { "Right" }
+                .withFlags(wxSizerFlags().Border(wxLEFT))
                 .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
         },
 

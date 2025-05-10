@@ -64,7 +64,7 @@ TEST_CASE("BitmapComboBox")
     SECTION("size.bitmap")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
+        auto uut = TypeUnderTest { { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(window->GetLabel().empty());
     }
@@ -72,7 +72,7 @@ TEST_CASE("BitmapComboBox")
     SECTION("size.id.bitmap")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
+        auto uut = TypeUnderTest { 10000, { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetLabel().empty());
@@ -90,23 +90,6 @@ TEST_CASE("BitmapComboBox")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto uut = TypeUnderTest { 10000, std::vector<std::tuple<std::string, wxBitmap>> { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.bitmap.ranges")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), std::vector<std::tuple<std::string, wxBitmap>> { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.id.bitmap.ranges")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, std::vector<std::tuple<std::string, wxBitmap>> { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK(window->GetLabel().empty());
@@ -131,7 +114,7 @@ TEST_CASE("BitmapComboBox")
     SECTION("setSelection")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, { { "Hello", wxBitmap {} }, { "Goodbye", wxBitmap {} } } }.withSize({ 1, 2 }).withSelection(1);
+        auto uut = TypeUnderTest { 10000, { { "Hello", wxBitmap {} }, { "Goodbye", wxBitmap {} } } }.withSize({ 1, 2 }).withSelection(1);
         auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
         CHECK(10000 == window->GetId());
         CHECK(2 == window->GetCount());

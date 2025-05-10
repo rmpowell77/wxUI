@@ -259,7 +259,8 @@ Often times you would be laying out a set of buttons in a horizontal sizer.  The
             "Details",
             CheckBox { "Show" },
             Choice { "Less", "More" },
-            TextCtrl { wxSizerFlags(1).Expand().Border(), "Fill in the blank" }
+            TextCtrl { "Fill in the blank" }
+                .withFlags(wxSizerFlags(1).Expand().Border())
                 .withStyle(wxALIGN_LEFT),
         },
 ```
@@ -283,9 +284,11 @@ The list of Methods supported by all controllers:
 *Controllers* support "binding" a function call to their event handlers.  When the event for that *controller* is emitted, the function-like object supplied will be called.  You can bind multiple events on a single *controller*.  For convenience, some *controllers* have default events that will be used if none is supplied.
 
 ```cpp
-            Button { wxSizerFlags().Border(wxRIGHT), "Left" }
+            Button { "Left" }
+                .withFlags(wxSizerFlags().Border(wxRIGHT))
                 .bind([] { wxLogMessage("Pressed Left"); }),
-            Button { wxSizerFlags().Border(wxLEFT), "Right" }
+            Button { "Right" }
+                .withFlags(wxSizerFlags().Border(wxLEFT))
                 .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
 ```
 

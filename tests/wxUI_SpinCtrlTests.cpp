@@ -95,57 +95,6 @@ TEST_CASE("SpinCtrl")
         CHECK(window->GetValue() == 3);
     }
 
-    SECTION("size")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1) };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-    }
-
-    SECTION("size.range")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetValue() == 1);
-    }
-
-    SECTION("size.range.init")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetValue() == 3);
-    }
-
-    SECTION("size.id")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetValue() == 0);
-    }
-
-    SECTION("size.id.range")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetValue() == 1);
-    }
-
-    SECTION("size.id.range.init")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = TypeUnderTest { wxSizerFlags(1), 10000, std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetValue() == 3);
-    }
-
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };

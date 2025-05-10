@@ -46,17 +46,6 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
     {
     }
 
-    explicit Text(wxSizerFlags const& flags, std::string text = "")
-        : Text(flags, wxID_ANY, std::move(text))
-    {
-    }
-
-    Text(wxSizerFlags const& flags, wxWindowID identity, std::string text = "")
-        : super(flags, identity)
-        , text_(std::move(text))
-    {
-    }
-
     auto withWrap(int wrapLength) -> Text&
     {
         wrap_ = wrapLength;
