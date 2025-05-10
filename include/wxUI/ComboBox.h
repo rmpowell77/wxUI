@@ -75,9 +75,15 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
 
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> ComboBox&
     {
         return super::bind(wxEVT_COMBOBOX, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> ComboBox&&
+    {
+        return std::move(*this).super::bind(wxEVT_COMBOBOX, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
