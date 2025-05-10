@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::ListBox;
 
 struct ListBoxTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::ListBox;
     static auto createUUT() { return TypeUnderTest {}; }
     static auto testStyle() { return wxLB_ALWAYS_SB | wxLB_MULTIPLE; }
     static auto testPosition() { return wxPoint { 1, 2 }; }

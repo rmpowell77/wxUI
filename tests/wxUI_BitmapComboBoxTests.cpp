@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::BitmapComboBox;
 
 struct BitmapComboBoxTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::BitmapComboBox;
     static auto createUUT() { return TypeUnderTest { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } }; }
     static auto testStyle() { return (wxCB_SORT); }
     static auto testPosition() { return wxPoint { 1, 2 }; }

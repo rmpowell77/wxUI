@@ -35,24 +35,24 @@ namespace wxUI {
 struct Slider : public details::WidgetDetails<Slider, wxSlider> {
     using super = details::WidgetDetails<Slider, wxSlider>;
 
-    explicit Slider(std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+    explicit Slider(std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
         : Slider(wxID_ANY, range, initial)
     {
     }
 
-    explicit Slider(wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+    explicit Slider(wxWindowID identity, std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
         : super(identity)
         , range_(std::move(range))
         , initial_(initial)
     {
     }
 
-    explicit Slider(wxSizerFlags const& flags, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+    explicit Slider(wxSizerFlags const& flags, std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
         : Slider(flags, wxID_ANY, range, initial)
     {
     }
 
-    Slider(wxSizerFlags const& flags, wxWindowID identity, std::optional<std::pair<int, int>> range = {}, std::optional<int> initial = {})
+    Slider(wxSizerFlags const& flags, wxWindowID identity, std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
         : super(flags, identity)
         , range_(std::move(range))
         , initial_(initial)

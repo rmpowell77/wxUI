@@ -11,17 +11,18 @@ include(FetchContent)
 
 if (WXUI_WITH_TESTS OR WXUI_WITH_EXAMPLES)
   # Have wxWidgets build as static libraries
-  find_package(wxWidgets REQUIRED COMPONENTS net core base)
-  include(${wxWidgets_USE_FILE})
-endif()
-
-if (WXUI_WITH_TESTS)
-  FetchContent_Declare(
-    Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2
-    GIT_TAG        605a34765aa5d5ecbf476b4598a862ada971b0cc # v3.0.1
-  )
-  FetchContent_MakeAvailable(Catch2)
+    # FetchContent is used to download the wxWidgets library
+    # Have wxWidgets build as static libraries
+    set(wxBUILD_SHARED OFF)
+    set(wxUSE_STL ON)
+    set(wxUSE_STC OFF)
+    set(wxUSE_STD_CONTAINERS ON)
+    FetchContent_Declare(
+      wxWidgets
+      GIT_REPOSITORY "https://github.com/wxWidgets/wxWidgets.git"
+      GIT_TAG 8aef5f40b93958719771331ca03866b7b6fff6bf # v3.2.8
+    )
+    FetchContent_MakeAvailable(wxWidgets)
 endif()
 
 

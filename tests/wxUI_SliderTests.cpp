@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::Slider;
 
 struct SliderTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::Slider;
     static auto createUUT() { return TypeUnderTest {}; }
     static auto testStyle() { return wxSL_LABELS; }
     static auto testPosition() { return wxPoint { 14, 2 }; }

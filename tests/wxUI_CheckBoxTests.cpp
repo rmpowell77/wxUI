@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::CheckBox;
 
 struct CheckBoxTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::CheckBox;
     static auto createUUT() { return TypeUnderTest {}; }
     static auto testStyle() { return (wxCHK_3STATE); }
     static auto testPosition() { return wxPoint { 1, 2 }; }

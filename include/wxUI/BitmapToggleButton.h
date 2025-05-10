@@ -35,24 +35,24 @@ namespace wxUI {
 struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton> {
     using super = details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton>;
 
-    explicit BitmapToggleButton(wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = {})
+    explicit BitmapToggleButton(wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
         : BitmapToggleButton(wxID_ANY, bitmap, std::move(bitmapPressed))
     {
     }
 
-    BitmapToggleButton(wxWindowID identity, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = {})
+    BitmapToggleButton(wxWindowID identity, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
         : super(identity)
         , bitmap_(bitmap)
         , bitmapPressed_(std::move(bitmapPressed))
     {
     }
 
-    BitmapToggleButton(wxSizerFlags const& flags, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = {})
+    BitmapToggleButton(wxSizerFlags const& flags, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
         : BitmapToggleButton(flags, wxID_ANY, bitmap, std::move(bitmapPressed))
     {
     }
 
-    BitmapToggleButton(wxSizerFlags const& flags, wxWindowID identity, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = {})
+    BitmapToggleButton(wxSizerFlags const& flags, wxWindowID identity, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
         : super(flags, identity)
         , bitmap_(bitmap)
         , bitmapPressed_(std::move(bitmapPressed))

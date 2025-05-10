@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::RadioBox;
 
 struct RadioBoxTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::RadioBox;
     static auto createUUT() { return TypeUnderTest { TypeUnderTest::withChoices {}, std::vector<wxString> { "Hello", "Goodbye" } }; }
     static auto testStyle() { return wxRA_SPECIFY_COLS; }
     static auto testPosition() { return wxPoint { 1, 2 }; }

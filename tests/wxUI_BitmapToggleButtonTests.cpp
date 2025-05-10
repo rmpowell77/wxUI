@@ -31,7 +31,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::BitmapToggleButton;
 
 struct BitmapToggleButtonTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::BitmapToggleButton;
     static auto createUUT() { return TypeUnderTest { wxBitmap {} }; }
     static auto testStyle() { return (wxBU_LEFT | wxBU_EXACTFIT | wxBU_NOTEXT); }
     static auto testPosition() { return wxPoint { 1, 2 }; }

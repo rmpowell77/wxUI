@@ -32,7 +32,7 @@ SOFTWARE.
 using TypeUnderTest = wxUI::Choice;
 
 struct ChoiceTestPolicy {
-    using TypeUnderTest = TypeUnderTest;
+    using TypeUnderTest = wxUI::Choice;
     static auto createUUT() { return TypeUnderTest {}; }
     static auto testStyle() { return (wxCB_SORT); }
     static auto testPosition() { return wxPoint { 1, 2 }; }
