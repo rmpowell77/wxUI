@@ -77,7 +77,6 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const
         {
             auto* controller = control();
@@ -106,7 +105,7 @@ private:
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
         auto&& first = (choices_.size() > 0) ? wxString(choices_.at(0)) : wxString(wxEmptyString);
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
+        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
         if (!choices_.empty()) {
             widget->SetSelection(selection_);
         }

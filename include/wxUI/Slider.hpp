@@ -61,7 +61,6 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const
         {
             auto* controller = control();
@@ -84,7 +83,7 @@ private:
         auto min = range_ ? range_->first : 0;
         auto max = range_ ? range_->second : 100;
         auto initvalue = initial_.value_or(min);
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), initvalue, min, max, getPos(), getSize(), getStyle()));
+        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), initvalue, min, max, getPos(), getSize(), getStyle()));
         return widget;
     }
 };

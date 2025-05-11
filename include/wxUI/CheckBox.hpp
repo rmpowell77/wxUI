@@ -72,7 +72,6 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const
         {
             auto* controller = control();
@@ -92,7 +91,7 @@ private:
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
+        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
         widget->SetValue(value_);
         return widget;
     }

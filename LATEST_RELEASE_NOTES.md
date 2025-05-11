@@ -13,4 +13,5 @@ Other changes:
 * [#188](../../issues/188) change withWidthSize to withWidth
 * [#189](../../issues/189) Make sure all createImpls are private
 * [#191](../../issues/191) Change all headers to hpp
+* [#197](../../issues/197) Redo Proxy to be an explicit builder
 

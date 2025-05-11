@@ -38,7 +38,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         wxSizerFlags().Expand().Border(),
         // incr example
         HSizer {
-            spinProxy.bind(SpinCtrl { std::pair { 1, 3 } }),
+            SpinCtrl { std::pair { 1, 3 } }.withProxy(spinProxy),
         },
         HSizer {
             Button { "Incr" }
@@ -57,7 +57,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         },
         // getHandle example
         HSizer {
-            textProxy = Text { "Hello" },
+            Text { "Hello" }.withProxy(textProxy),
         },
         HSizer {
             Button { "ReduceText" }
@@ -76,7 +76,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             CheckBox {},
         },
         HSizer {
-            proxy2 = ComboBox { { "hello" } },
+            ComboBox { { "hello" } }.withProxy(proxy2),
         },
         HSizer {
             Line {},
@@ -128,6 +128,8 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
 MultibindExample::MultibindExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "MultibindExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
+    wxUI::Text::Proxy timesTyped;
+    wxUI::Text::Proxy timesEntered;
     using namespace wxUI;
     VSizer {
         wxSizerFlags().Expand().Border(),
@@ -135,16 +137,16 @@ MultibindExample::MultibindExample(wxWindow* parent)
             TextCtrl {}
                 .withWidth(200)
                 .withStyle(wxTE_PROCESS_ENTER)
-                .bind([this]() {
+                .bind([timesTyped]() {
                     *timesTyped = std::to_string(stoi(*timesTyped) + 1);
                 })
-                .bind(wxEVT_TEXT_ENTER, [this]() {
+                .bind(wxEVT_TEXT_ENTER, [timesEntered]() {
                     *timesEntered = std::to_string(stoi(*timesEntered) + 1);
                 }),
         },
         HSizer {
-            timesTyped = Text { "0" },
-            timesEntered = Text { "0" },
+            Text { "0" }.withProxy(timesTyped),
+            Text { "0" }.withProxy(timesEntered),
         },
         CreateStdDialogButtonSizer(wxOK),
     }
@@ -164,9 +166,7 @@ SplitterExample::SplitterExample(wxWindow* parent)
                 .withStyle(wxTE_MULTILINE)
                 .withSize(wxSize(200, 100)),
             HSplitter {
-                rightUpper = TextCtrl { "This is Right Top.\n" }
-                                 .withStyle(wxTE_MULTILINE)
-                                 .withSize(wxSize(200, 100)),
+                TextCtrl { "This is Right Top.\n" }.withProxy(rightUpper).withStyle(wxTE_MULTILINE).withSize(wxSize(200, 100)),
                 Button { "Incr" }
                     .bind([this]() {
                         auto original = std::string { *rightUpper } + "\nThis is Right Top.\n";

@@ -61,8 +61,6 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
-
         [[nodiscard]] auto label() const
         {
             auto* controller = control();
@@ -82,7 +80,7 @@ private:
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        return setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
+        return bindProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
     }
 };
 

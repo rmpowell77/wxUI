@@ -123,7 +123,7 @@ TEST_CASE("SpinCtrl")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto proxy = TypeUnderTest::Proxy {};
-        auto uut = proxy = createUUT().withSize({ 1, 2 });
+        auto uut = createUUT().withSize({ 1, 2 }).withProxy(proxy);
         uut.create(&frame);
 
         CHECK(*proxy == 0);

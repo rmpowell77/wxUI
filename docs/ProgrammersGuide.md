@@ -200,9 +200,7 @@ Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, or 
                 .withStyle(wxTE_MULTILINE)
                 .withSize(wxSize(200, 100)),
             HSplitter {
-                rightUpper = TextCtrl { "This is Right Top.\n" }
-                                 .withStyle(wxTE_MULTILINE)
-                                 .withSize(wxSize(200, 100)),
+                TextCtrl { "This is Right Top.\n" }.withProxy(rightUpper).withStyle(wxTE_MULTILINE).withSize(wxSize(200, 100)),
                 Button { "Incr" }
                     .bind([this]() {
                         auto original = std::string { *rightUpper } + "\nThis is Right Top.\n";

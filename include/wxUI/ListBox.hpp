@@ -95,7 +95,6 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
         [[nodiscard]] auto selection() const
         {
             auto* controller = control();
@@ -116,7 +115,7 @@ private:
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
+        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
         widget->SetSelection(selection_);
         if (ensureVisible_) {
             widget->EnsureVisible(*ensureVisible_);

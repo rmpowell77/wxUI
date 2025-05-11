@@ -61,7 +61,6 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const
         {
             auto* controller = control();
@@ -81,7 +80,7 @@ private:
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
+        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
         if (bitmapPressed_) {
             widget->SetBitmapPressed(*bitmapPressed_);
         }

@@ -57,7 +57,6 @@ struct Gauge : public details::WidgetDetails<Gauge, wxGauge> {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const
         {
             auto* controller = control();
@@ -85,8 +84,7 @@ private:
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, getIdentity(), range_, getPos(), getSize(), getStyle());
-        return setProxy(widget);
+        return bindProxy(new underlying_t(parent, getIdentity(), range_, getPos(), getSize(), getStyle()));
     }
 };
 

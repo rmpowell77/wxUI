@@ -74,7 +74,7 @@ struct Generic {
     {
     }
 
-    void setProxy(Proxy* proxy)
+    void bindProxy(Proxy* proxy)
     {
         proxy_ = proxy;
     }
@@ -92,7 +92,7 @@ struct Generic {
         template <typename Generic>
         auto bind(Generic&& widget) -> Generic&&
         {
-            widget.setProxy(this);
+            widget.bindProxy(this);
             return std::forward<Generic>(widget);
         }
 

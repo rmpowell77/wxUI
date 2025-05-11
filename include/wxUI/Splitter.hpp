@@ -70,7 +70,6 @@ struct HSplitter : public details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWi
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
     };
 
     RULE_OF_SIX_BOILERPLATE(HSplitter);
@@ -81,7 +80,7 @@ private:
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = super::setProxy(new underlying_t(parent, super::getIdentity(), super::getPos(), super::getSize(), super::getStyle()));
+        auto* widget = super::bindProxy(new underlying_t(parent, super::getIdentity(), super::getPos(), super::getSize(), super::getStyle()));
         widget->SplitHorizontally(std::get<0>(widgets_).create(widget), std::get<1>(widgets_).create(widget));
         if (stashGravity_) {
             widget->SetSashGravity(*stashGravity_);
@@ -124,7 +123,6 @@ struct VSplitter : public details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWi
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
     };
     RULE_OF_SIX_BOILERPLATE(VSplitter);
 
@@ -134,7 +132,7 @@ private:
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = super::setProxy(new underlying_t(parent, super::getIdentity(), super::getPos(), super::getSize(), super::getStyle()));
+        auto* widget = super::bindProxy(new underlying_t(parent, super::getIdentity(), super::getPos(), super::getSize(), super::getStyle()));
         widget->SplitVertically(std::get<0>(widgets_).create(widget), std::get<1>(widgets_).create(widget));
         if (stashGravity_) {
             widget->SetSashGravity(*stashGravity_);
@@ -144,7 +142,6 @@ private:
 };
 
 struct SplitterProxy : details::WidgetProxy<wxSplitterWindow> {
-    PROXY_BOILERPLATE();
 };
 
 }

@@ -189,7 +189,7 @@ auto DoProxyTests()
 {
     wxFrame frame { nullptr, wxID_ANY, "" };
     auto proxy = typename WHICH::TypeUnderTest::Proxy {};
-    auto uut = proxy = WHICH::createUUT();
+    auto uut = WHICH::createUUT().withProxy(proxy);
     uut.create(&frame);
 
     CHECK(proxy.control() != nullptr);

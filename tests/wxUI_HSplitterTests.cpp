@@ -63,7 +63,7 @@ TEST_CASE("HSplitter")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         wxUI::SplitterProxy proxy;
-        auto uut = proxy = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} };
+        auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} }.withProxy(proxy);
         [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
     }
 

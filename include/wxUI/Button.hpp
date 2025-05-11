@@ -72,7 +72,6 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
     };
     RULE_OF_SIX_BOILERPLATE(Button);
 
@@ -82,7 +81,7 @@ private:
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
+        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
         if (isDefault_) {
             widget->SetDefault();
         }

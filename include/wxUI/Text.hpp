@@ -59,8 +59,6 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
-
         [[nodiscard]] auto label() const
         {
             auto* controller = control();
@@ -85,7 +83,7 @@ private:
         if (wrap_) {
             widget->Wrap(*wrap_);
         }
-        return setProxy(widget);
+        return bindProxy(widget);
     }
 };
 

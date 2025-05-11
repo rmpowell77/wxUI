@@ -113,7 +113,7 @@ TEST_CASE("Text")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto proxy = TypeUnderTest::Proxy {};
-        auto uut = proxy.bind(TypeUnderTest { "label1" }.withSize({ 1, 2 }));
+        auto uut = TypeUnderTest { "label1" }.withSize({ 1, 2 }).withProxy(proxy);
         uut.create(&frame);
         CHECK(static_cast<std::string>(*proxy) == std::string("label1"));
         //        CHECK(static_cast<std::string>(proxy) == "label1");

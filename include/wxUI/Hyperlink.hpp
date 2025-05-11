@@ -47,7 +47,6 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
     };
     RULE_OF_SIX_BOILERPLATE(Hyperlink);
 
@@ -57,7 +56,7 @@ private:
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        return setProxy(new underlying_t(parent, getIdentity(), text_, url_, getPos(), getSize(), getStyle()));
+        return bindProxy(new underlying_t(parent, getIdentity(), text_, url_, getPos(), getSize(), getStyle()));
     }
 };
 
