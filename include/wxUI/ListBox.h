@@ -57,23 +57,41 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
     {
     }
 
-    auto withSelection(int which) -> ListBox&
+    auto withSelection(int which) & -> ListBox&
     {
         selection_ = which;
         return *this;
     }
 
-    auto withEnsureVisible(int which) -> ListBox&
+    auto withSelection(int which) && -> ListBox&&
+    {
+        selection_ = which;
+        return std::move(*this);
+    }
+
+    auto withEnsureVisible(int which) & -> ListBox&
     {
         ensureVisible_ = which;
         return *this;
     }
 
+    auto withEnsureVisible(int which) && -> ListBox&&
+    {
+        ensureVisible_ = which;
+        return std::move(*this);
+    }
+
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> ListBox&
     {
         return super::bind(wxEVT_LISTBOX, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> ListBox&&
+    {
+        return std::move(*this).super::bind(wxEVT_LISTBOX, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {

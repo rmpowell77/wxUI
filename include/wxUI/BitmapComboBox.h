@@ -74,17 +74,29 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
     {
     }
 
-    auto withSelection(int which) -> BitmapComboBox&
+    auto withSelection(int which) & -> BitmapComboBox&
     {
         selection = which;
         return *this;
     }
 
+    auto withSelection(int which) && -> BitmapComboBox&&
+    {
+        selection = which;
+        return std::move(*this);
+    }
+
     using super::bind;
     template <typename Function>
-    auto bind(Function func)
+    auto bind(Function func) & -> BitmapComboBox&
     {
         return super::bind(wxEVT_COMBOBOX, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> BitmapComboBox&&
+    {
+        return std::move(*this).super::bind(wxEVT_COMBOBOX, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {

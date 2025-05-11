@@ -149,10 +149,16 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&&>(std::move(*this));
     }
 
-    auto withPosition(wxPoint pos) -> ConcreteWidget&
+    auto withPosition(wxPoint pos) & -> ConcreteWidget&
     {
         pos_ = pos;
         return static_cast<ConcreteWidget&>(*this);
+    }
+
+    auto withPosition(wxPoint pos) && -> ConcreteWidget&&
+    {
+        pos_ = pos;
+        return static_cast<ConcreteWidget&&>(std::move(*this));
     }
 
     auto withSize(wxSize size) & -> ConcreteWidget&
@@ -167,67 +173,88 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&&>(std::move(*this));
     }
 
-    auto withWidthSize(int size) -> ConcreteWidget&
+    auto withWidthSize(int size) & -> ConcreteWidget&
     {
         size_.SetWidth(size);
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withHeightSize(int size) -> ConcreteWidget&
+    auto withWidthSize(int size) && -> ConcreteWidget&&
+    {
+        size_.SetWidth(size);
+        return static_cast<ConcreteWidget&&>(std::move(*this));
+    }
+
+    auto withHeightSize(int size) & -> ConcreteWidget&
     {
         size_.SetHeight(size);
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto setStyle(int64_t style) -> ConcreteWidget&
+    auto withHeightSize(int size) && -> ConcreteWidget&&
+    {
+        size_.SetHeight(size);
+        return static_cast<ConcreteWidget&&>(std::move(*this));
+    }
+
+    auto setStyle(int64_t style) & -> ConcreteWidget&
     {
         style_ = style;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withStyle(int64_t style) -> ConcreteWidget&
+    auto setStyle(int64_t style) && -> ConcreteWidget&&
+    {
+        style_ = style;
+        return static_cast<ConcreteWidget&&>(std::move(*this));
+    }
+
+    auto withStyle(int64_t style) & -> ConcreteWidget&
     {
         style_ |= style;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withoutStyle(int64_t style) -> ConcreteWidget&
+    auto withStyle(int64_t style) && -> ConcreteWidget&&
+    {
+        style_ |= style;
+        return static_cast<ConcreteWidget&&>(std::move(*this));
+    }
+
+    auto withoutStyle(int64_t style) & -> ConcreteWidget&
     {
         style_ &= ~style;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withFont(wxFontInfo const& fontInfo) -> ConcreteWidget&
+    auto withoutStyle(int64_t style) && -> ConcreteWidget&&
+    {
+        style_ &= ~style;
+        return static_cast<ConcreteWidget&&>(std::move(*this));
+    }
+
+    auto withFont(wxFontInfo const& fontInfo) & -> ConcreteWidget&
     {
         fontInfo_ = fontInfo;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto setEnabled(bool enabled) -> ConcreteWidget&
+    auto withFont(wxFontInfo const& fontInfo) && -> ConcreteWidget&&
+    {
+        fontInfo_ = fontInfo;
+        return static_cast<ConcreteWidget&&>(std::move(*this));
+    }
+
+    auto setEnabled(bool enabled) & -> ConcreteWidget&
     {
         enabled_ = enabled;
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    template <typename Function, typename Event = wxCommandEvent>
-    auto bind(wxEventTypeTag<Event> event, Function function)
+    auto setEnabled(bool enabled) && -> ConcreteWidget&&
     {
-        if constexpr (is_noarg_callable<Function>()) {
-            boundedFunctions_.emplace_back(event, [function = function](Event&) {
-                function();
-            });
-        } else {
-            boundedFunctions_.emplace_back(event, function);
-        }
-        return static_cast<ConcreteWidget&>(*this);
-    }
-
-    auto bindEvents(Underlying* widget) -> Underlying*
-    {
-        for (auto& bounded : boundedFunctions_) {
-            bounded.bindTo(widget);
-        }
-        return widget;
+        enabled_ = enabled;
+        return static_cast<ConcreteWidget&&>(std::move(*this));
     }
 
     auto create(wxWindow* parent) -> Underlying*
@@ -254,6 +281,7 @@ struct WidgetDetails {
     auto getPos() const { return pos_; }
     auto getSize() const { return size_; }
     auto getStyle() const { return style_; }
+    auto getFlags() const { return flags_; }
 
     void setProxyHandle(WidgetProxy<Underlying>* proxy)
     {
@@ -261,6 +289,32 @@ struct WidgetDetails {
     }
 
 protected:
+    template <typename Function, typename Event = wxCommandEvent>
+    auto bind(wxEventTypeTag<Event> event, Function function) & -> ConcreteWidget&
+    {
+        if constexpr (is_noarg_callable<Function>()) {
+            boundedFunctions_.emplace_back(event, [function = function](Event&) {
+                function();
+            });
+        } else {
+            boundedFunctions_.emplace_back(event, function);
+        }
+        return static_cast<ConcreteWidget&>(*this);
+    }
+
+    template <typename Function, typename Event = wxCommandEvent>
+    auto bind(wxEventTypeTag<Event> event, Function function) && -> ConcreteWidget&&
+    {
+        if constexpr (is_noarg_callable<Function>()) {
+            boundedFunctions_.emplace_back(event, [function = function](Event&) {
+                function();
+            });
+        } else {
+            boundedFunctions_.emplace_back(event, function);
+        }
+        return static_cast<ConcreteWidget&&>(std::move(*this));
+    }
+
     auto setProxy(Underlying* widget) -> Underlying*
     {
         if (proxyHandle_) {
@@ -270,6 +324,14 @@ protected:
     }
 
 private:
+    auto bindEvents(Underlying* widget) -> Underlying*
+    {
+        for (auto& bounded : boundedFunctions_) {
+            bounded.bindTo(widget);
+        }
+        return widget;
+    }
+
     // these should be implemented in the derived classes.
     // aka the Template Pattern
     virtual auto createImpl(wxWindow* parent) -> wxWindow* = 0;
