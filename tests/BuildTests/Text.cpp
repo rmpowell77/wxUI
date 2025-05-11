@@ -22,15 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 // Generated with bash command
-// for i in *.cpp; do echo \#include \<wxUI\/Text.hpp\> > Text.cpp; for j in RULE_OF_SIX_BOILERPLATE PROXY_BOILERPLATE WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WIDGET_STATIC_ASSERT_BOILERPLATE\) >> Text.cpp; echo \#error Missed zapping WIDGET_STATIC_ASSERT_BOILERPLATE >> Text.cpp; echo \#endif >> Text.cpp; done; done
+// for i in *.cpp; do echo \#include \<wxUI\/Text.hpp\> > Text.cpp; for j in RULE_OF_SIX_BOILERPLATE WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WIDGET_STATIC_ASSERT_BOILERPLATE\) >> Text.cpp; echo \#error Missed zapping WIDGET_STATIC_ASSERT_BOILERPLATE >> Text.cpp; echo \#endif >> Text.cpp; done; done
 #include <wxUI/Text.hpp>
 
 #if defined(RULE_OF_SIX_BOILERPLATE)
 #error Missed zapping RULE_OF_SIX_BOILERPLATE
-#endif
-
-#if defined(PROXY_BOILERPLATE)
-#error Missed zapping PROXY_BOILERPLATE
 #endif
 
 #if defined(WIDGET_STATIC_ASSERT_BOILERPLATE)

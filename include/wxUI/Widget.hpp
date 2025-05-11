@@ -92,23 +92,28 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
 template <typename Underlying>
 struct WidgetProxy {
+    WidgetProxy()
+        : controller(std::make_shared<Underlying*>())
+    {
+    }
+
     [[nodiscard]] auto control() const -> Underlying*
     {
         if (!controller) {
             throw std::runtime_error("Proxy class has not been attached");
         }
-        return controller;
+        return *controller;
     }
 
     void setUnderlying(Underlying* control)
     {
-        controller = control;
+        *controller = control;
     }
 
     auto operator->() const { return control(); }
 
 private:
-    Underlying* controller {};
+    std::shared_ptr<Underlying*> controller {};
 };
 
 // The WidgetDetails are the base class of the Controllers.  The common details
@@ -257,6 +262,18 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&&>(std::move(*this));
     }
 
+    auto withProxy(WidgetProxy<Underlying> const& proxy) & -> ConcreteWidget&
+    {
+        proxyHandles_.push_back(proxy);
+        return static_cast<ConcreteWidget&>(*this);
+    }
+
+    auto withProxy(WidgetProxy<Underlying> const& proxy) && -> ConcreteWidget&&
+    {
+        proxyHandles_.push_back(proxy);
+        return static_cast<ConcreteWidget&&>(std::move(*this));
+    }
+
     auto create(wxWindow* parent) -> Underlying*
     {
         auto widget = dynamic_cast<Underlying*>(createImpl(parent));
@@ -282,11 +299,6 @@ struct WidgetDetails {
     auto getSize() const { return size_; }
     auto getStyle() const { return style_; }
     auto getFlags() const { return flags_; }
-
-    void setProxyHandle(WidgetProxy<Underlying>* proxy)
-    {
-        proxyHandle_ = proxy;
-    }
 
 protected:
     template <typename Function, typename Event = wxCommandEvent>
@@ -315,10 +327,10 @@ protected:
         return static_cast<ConcreteWidget&&>(std::move(*this));
     }
 
-    auto setProxy(Underlying* widget) -> Underlying*
+    auto bindProxy(Underlying* widget) -> Underlying*
     {
-        if (proxyHandle_) {
-            proxyHandle_->setUnderlying(widget);
+        for (auto& proxyHandle : proxyHandles_) {
+            proxyHandle.setUnderlying(widget);
         }
         return widget;
     }
@@ -344,7 +356,7 @@ private:
     int64_t style_ {};
     bool enabled_ = true;
     std::optional<wxFontInfo> fontInfo_ {};
-    details::WidgetProxy<Underlying>* proxyHandle_ {}; // optional WidgetProxy
+    std::vector<details::WidgetProxy<Underlying>> proxyHandles_ {}; // optional WidgetProxy
     std::vector<BindInfo> boundedFunctions_;
 };
 

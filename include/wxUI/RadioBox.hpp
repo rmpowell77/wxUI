@@ -141,7 +141,6 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
         [[nodiscard]] auto selection() const
         {
             auto* controller = control();
@@ -163,7 +162,7 @@ private:
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), majorDim_, getStyle()));
+        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), majorDim_, getStyle()));
         widget->SetSelection(selection_);
         return widget;
     }

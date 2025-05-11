@@ -98,7 +98,7 @@ TEST_CASE("Gauge")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         auto proxy = TypeUnderTest::Proxy {};
-        auto uut = proxy.bind(TypeUnderTest {}.withSize({ 1, 2 }));
+        auto uut = TypeUnderTest {}.withSize({ 1, 2 }).withProxy(proxy);
         uut.create(&frame);
         CHECK(static_cast<int>(*proxy) == 0);
         *proxy = 30;

@@ -46,7 +46,6 @@ struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
     };
     RULE_OF_SIX_BOILERPLATE(Bitmap);
 
@@ -55,7 +54,7 @@ private:
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        return setProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
+        return bindProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
     }
 };
 

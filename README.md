@@ -38,17 +38,15 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         },
         HSizer {
             Text { "A =" },
-            a = SpinCtrl { std::pair { 1, 10000 } }
-                    .bind([this]() {
-                        *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b)));
-                    }),
+            SpinCtrl { std::pair { 1, 10000 } }.withProxy(a).bind([this]() {
+                *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b)));
+            }),
 
             Text { "B =" },
-            b = SpinCtrl { std::pair { 1, 10000 } }
-                    .bind([this]() { *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b))); }),
+            SpinCtrl { std::pair { 1, 10000 } }.withProxy(b).bind([this]() { *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b))); }),
 
             Text { "GCD = " },
-            result = Text { "1" },
+            Text { "1" }.withProxy(result),
         },
         RadioBox { "&Log Levels:", RadioBox::withChoices {}, { "&Information", "&Warning", "&Error", "&None", "&Custom" } }
             .setStyle(wxRA_SPECIFY_ROWS)
@@ -136,17 +134,15 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         },
         HSizer {
             Text { "A =" },
-            a = SpinCtrl { std::pair { 1, 10000 } }
-                    .bind([this]() {
-                        *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b)));
-                    }),
+            SpinCtrl { std::pair { 1, 10000 } }.withProxy(a).bind([this]() {
+                *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b)));
+            }),
 
             Text { "B =" },
-            b = SpinCtrl { std::pair { 1, 10000 } }
-                    .bind([this]() { *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b))); }),
+            SpinCtrl { std::pair { 1, 10000 } }.withProxy(b).bind([this]() { *result = std::to_string(std::gcd(static_cast<int>(*a), static_cast<int>(*b))); }),
 
             Text { "GCD = " },
-            result = Text { "1" },
+            Text { "1" }.withProxy(result),
         },
     // ...
     }

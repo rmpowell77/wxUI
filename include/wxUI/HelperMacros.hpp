@@ -42,18 +42,6 @@ SOFTWARE.
 
 // clang-format on
 
-#if !defined(PROXY_BOILERPLATE)
-#define PROXY_BOILERPLATE()                                                           \
-    template <typename W>                                                             \
-    auto operator=(W&& controller)->W&& { return bind(std::forward<W>(controller)); } \
-    template <typename W>                                                             \
-    auto bind(W&& widget)->W&&                                                        \
-    {                                                                                 \
-        widget.setProxyHandle(this);                                                  \
-        return std::forward<W>(widget);                                               \
-    }
-#endif
-
 #if !defined(WIDGET_STATIC_ASSERT_BOILERPLATE)
 #define WIDGET_STATIC_ASSERT_BOILERPLATE(WIDGET)                 \
     static_assert(details::CreateAndAddable<WIDGET>);            \

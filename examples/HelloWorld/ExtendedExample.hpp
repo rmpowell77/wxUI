@@ -39,10 +39,6 @@ private:
 class MultibindExample : public wxDialog {
 public:
     explicit MultibindExample(wxWindow* parent);
-
-private:
-    wxUI::Text::Proxy timesTyped;
-    wxUI::Text::Proxy timesEntered;
 };
 
 class SplitterExample : public wxDialog {

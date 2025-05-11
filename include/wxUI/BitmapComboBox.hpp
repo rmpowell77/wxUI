@@ -100,7 +100,6 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
         [[nodiscard]] auto value() const
         {
             auto* controller = control();
@@ -130,7 +129,7 @@ private:
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
         auto&& first = (choices_.size() > 0) ? wxString(choices_.at(0)) : wxString(wxEmptyString);
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
+        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
         for (auto i = 0lu; i < bitmaps_.size(); ++i) {
             widget->SetItemBitmap(i, bitmaps_[i]);
         }
