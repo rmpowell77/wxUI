@@ -3,7 +3,7 @@ project(wxUI_examples VERSION 0.1)
 
 add_executable(wxUI_HelloWorld
   ExtendedExample.cpp
-  ExtendedExample.h
+  ExtendedExample.hpp
   HelloWorld.cpp
 )
 

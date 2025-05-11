@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.h"
+#include "Widget.hpp"
 #include <stdexcept>
 #include <variant>
 #include <wx/sizer.h>
@@ -149,4 +149,4 @@ inline void Generic<Window>::createAndAdd(wxWindow* parent, wxSizer* parentSizer
 
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

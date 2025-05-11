@@ -23,9 +23,9 @@ SOFTWARE.
 */
 // wxUI "Hello World" example
 
-#include "ExtendedExample.h"
+#include "ExtendedExample.hpp"
 #include <wx/artprov.h>
-#include <wxUI/wxUI.h>
+#include <wxUI/wxUI.hpp>
 
 ExtendedExample::ExtendedExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExtendedExample",

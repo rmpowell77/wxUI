@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #include <catch2/catch_test_macros.hpp>
 #include <sstream>
-#include <wxUI/GetterSetter.h>
+#include <wxUI/GetterSetter.hpp>
 
 #include <wx/wx.h>
 

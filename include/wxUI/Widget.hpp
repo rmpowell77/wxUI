@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
-#include "BindInfo.h"
+#include "BindInfo.hpp"
 #include <optional>
 #include <stdexcept>
 #include <wx/sizer.h>

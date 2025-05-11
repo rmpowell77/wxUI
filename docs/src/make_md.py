@@ -31,8 +31,8 @@ And grab everything in between, and then print them out with the delimantor.
 def get_sentences(lines):
   activeParses = {}
   for line in lines:
-    d1 = re.match(".*//\s*snippet\s+(\w+)", line)
-    d2 = re.match(".*//\s*endsnippet\s+(\w+)", line)
+    d1 = re.match(r".*//\s*snippet\s+(\w+)", line)
+    d2 = re.match(r".*//\s*endsnippet\s+(\w+)", line)
     if d1:
       activeParses[d1.group(1)] = []
     elif d2:
@@ -75,7 +75,7 @@ if __name__ == "__main__":
   doctest.testmod()
   database = {}
   for line in fileinput.input():
-    m = re.match("\{\{\{\s*(.+)\s+(\w+)\s+\"(.*)\"\s*\}\}\}", line)
+    m = re.match(r"\{\{\{\s*(.+)\s+(\w+)\s+\"(.*)\"\s*\}\}\}", line)
     if m:
       file = m.group(1)
       if not file in database:

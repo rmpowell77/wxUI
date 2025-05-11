@@ -23,59 +23,41 @@ SOFTWARE.
 */
 #pragma once
 
-#include "GetterSetter.h"
-#include "Widget.h"
-#include <wx/checkbox.h>
+#include "GetterSetter.hpp"
+#include "Widget.hpp"
+#include <wx/tglbtn.h>
 
-#include "HelperMacros.h"
+#include "HelperMacros.hpp"
 
 namespace wxUI {
 
-// https://docs.wxwidgets.org/latest/classwx_check_box.html
-struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
-    using super = details::WidgetDetails<CheckBox, wxCheckBox>;
+// https://docs.wxwidgets.org/latest/classwx_bitmap_toggle_button.html
+struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton> {
+    using super = details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton>;
 
-    explicit CheckBox(std::string text = "")
-        : CheckBox(wxID_ANY, std::move(text))
+    explicit BitmapToggleButton(wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
+        : BitmapToggleButton(wxID_ANY, bitmap, std::move(bitmapPressed))
     {
     }
 
-    explicit CheckBox(wxWindowID identity, std::string text = "")
+    BitmapToggleButton(wxWindowID identity, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
         : super(identity)
-        , text_(std::move(text))
+        , bitmap_(bitmap)
+        , bitmapPressed_(std::move(bitmapPressed))
     {
-    }
-
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
-        widget->SetValue(value_);
-        return widget;
-    }
-
-    auto withValue(bool value) & -> CheckBox&
-    {
-        value_ = value;
-        return *this;
-    }
-
-    auto withValue(bool value) && -> CheckBox&&
-    {
-        value_ = value;
-        return std::move(*this);
     }
 
     using super::bind;
     template <typename Function>
-    auto bind(Function func) & -> CheckBox&
+    auto bind(Function func) & -> BitmapToggleButton&
     {
-        return super::bind(wxEVT_CHECKBOX, func);
+        return super::bind(wxEVT_TOGGLEBUTTON, func);
     }
 
     template <typename Function>
-    auto bind(Function func) && -> CheckBox&&
+    auto bind(Function func) && -> BitmapToggleButton&&
     {
-        return std::move(*this).super::bind(wxEVT_CHECKBOX, func);
+        return std::move(*this).super::bind(wxEVT_TOGGLEBUTTON, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -91,14 +73,23 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
 
         auto operator*() const { return value(); }
     };
-    RULE_OF_SIX_BOILERPLATE(CheckBox);
+    RULE_OF_SIX_BOILERPLATE(BitmapToggleButton);
 
 private:
-    std::string text_;
-    bool value_ = false;
+    wxBitmap bitmap_;
+    std::optional<wxBitmap> bitmapPressed_;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
+        if (bitmapPressed_) {
+            widget->SetBitmapPressed(*bitmapPressed_);
+        }
+        return widget;
+    }
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(CheckBox);
+WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapToggleButton);
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

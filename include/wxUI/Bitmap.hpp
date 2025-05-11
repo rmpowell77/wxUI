@@ -23,44 +23,44 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.h"
-#include <wx/statline.h>
+#include "Widget.hpp"
+#include <wx/statbmp.h>
 
-#include "HelperMacros.h"
+#include "HelperMacros.hpp"
 
 namespace wxUI {
 
-// https://docs.wxwidgets.org/latest/classwx_static_line.html
-struct Line : public details::WidgetDetails<Line, wxStaticLine> {
-    using super = details::WidgetDetails<Line, wxStaticLine>;
+// https://docs.wxwidgets.org/latest/classwx_static_bitmap.html
+struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
+    using super = details::WidgetDetails<Bitmap, wxStaticBitmap>;
 
-    explicit Line(wxWindowID identity = wxID_ANY)
-        : super(identity)
+    explicit Bitmap(wxBitmap const& bitmap)
+        : Bitmap(wxID_ANY, bitmap)
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    Bitmap(wxWindowID identity, wxBitmap const& bitmap)
+        : super(identity)
+        , bitmap_(bitmap)
     {
-        return setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), getStyle()));
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
     };
-    RULE_OF_SIX_BOILERPLATE(Line);
+    RULE_OF_SIX_BOILERPLATE(Bitmap);
+
+private:
+    wxBitmap bitmap_;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        return setProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
+    }
 };
 
-inline auto HLine() -> Line
-{
-    return Line().withFlags(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_HORIZONTAL);
+WIDGET_STATIC_ASSERT_BOILERPLATE(Bitmap);
+
 }
 
-inline auto VLine() -> Line
-{
-    return Line().withFlags(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_VERTICAL);
-}
-
-WIDGET_STATIC_ASSERT_BOILERPLATE(Line);
-}
-
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

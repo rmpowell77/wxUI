@@ -32,34 +32,34 @@ endif()
 add_library(
   wxUI
   INTERFACE
-  include/wxUI/wxUI.h
-  include/wxUI/BindInfo.h
-  include/wxUI/Bitmap.h
-  include/wxUI/BitmapToggleButton.h
-  include/wxUI/BitmapComboBox.h
-  include/wxUI/BitmapButton.h
-  include/wxUI/Button.h
-  include/wxUI/CheckBox.h
-  include/wxUI/Choice.h
-  include/wxUI/ComboBox.h
-  include/wxUI/Custom.h
-  include/wxUI/ForEach.h
-  include/wxUI/Gauge.h
-  include/wxUI/Generic.h
-  include/wxUI/GetterSetter.h
-  include/wxUI/HelperMacros.h
-  include/wxUI/Hyperlink.h
-  include/wxUI/Layout.h
-  include/wxUI/Line.h
-  include/wxUI/Menu.h
-  include/wxUI/RadioBox.h
-  include/wxUI/SpinCtrl.h
-  include/wxUI/Splitter.h
-  include/wxUI/Slider.h
-  include/wxUI/Text.h
-  include/wxUI/TextCtrl.h
-  include/wxUI/Widget.h
-  include/wxUI/ZapMacros.h
+  include/wxUI/wxUI.hpp
+  include/wxUI/BindInfo.hpp
+  include/wxUI/Bitmap.hpp
+  include/wxUI/BitmapToggleButton.hpp
+  include/wxUI/BitmapComboBox.hpp
+  include/wxUI/BitmapButton.hpp
+  include/wxUI/Button.hpp
+  include/wxUI/CheckBox.hpp
+  include/wxUI/Choice.hpp
+  include/wxUI/ComboBox.hpp
+  include/wxUI/Custom.hpp
+  include/wxUI/ForEach.hpp
+  include/wxUI/Gauge.hpp
+  include/wxUI/Generic.hpp
+  include/wxUI/GetterSetter.hpp
+  include/wxUI/HelperMacros.hpp
+  include/wxUI/Hyperlink.hpp
+  include/wxUI/Layout.hpp
+  include/wxUI/Line.hpp
+  include/wxUI/Menu.hpp
+  include/wxUI/RadioBox.hpp
+  include/wxUI/SpinCtrl.hpp
+  include/wxUI/Splitter.hpp
+  include/wxUI/Slider.hpp
+  include/wxUI/Text.hpp
+  include/wxUI/TextCtrl.hpp
+  include/wxUI/Widget.hpp
+  include/wxUI/ZapMacros.hpp
 )
 
 target_include_directories(

@@ -23,74 +23,82 @@ SOFTWARE.
 */
 #pragma once
 
-#include "GetterSetter.h"
-#include "Widget.h"
-#include <wx/spinctrl.h>
+#include "GetterSetter.hpp"
+#include "Widget.hpp"
+#include <wx/checkbox.h>
 
-#include "HelperMacros.h"
+#include "HelperMacros.hpp"
 
 namespace wxUI {
 
-// https://docs.wxwidgets.org/latest/classwx_spin_ctrl.html
-struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
-    using super = details::WidgetDetails<SpinCtrl, wxSpinCtrl>;
+// https://docs.wxwidgets.org/latest/classwx_check_box.html
+struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
+    using super = details::WidgetDetails<CheckBox, wxCheckBox>;
 
-    explicit SpinCtrl(std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
-        : SpinCtrl(wxID_ANY, range, initial)
+    explicit CheckBox(std::string text = "")
+        : CheckBox(wxID_ANY, std::move(text))
     {
     }
 
-    explicit SpinCtrl(wxWindowID identity, std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
+    explicit CheckBox(wxWindowID identity, std::string text = "")
         : super(identity)
-        , range_(std::move(range))
-        , initial_(initial)
+        , text_(std::move(text))
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow*
+    auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto min = range_ ? range_->first : 0;
-        auto max = range_ ? range_->second : 100;
-        auto initvalue = initial_.value_or(min);
-        return setProxy(new underlying_t(parent, getIdentity(), wxEmptyString, getPos(), getSize(), getStyle(), min, max, initvalue));
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
+        widget->SetValue(value_);
+        return widget;
+    }
+
+    auto withValue(bool value) & -> CheckBox&
+    {
+        value_ = value;
+        return *this;
+    }
+
+    auto withValue(bool value) && -> CheckBox&&
+    {
+        value_ = value;
+        return std::move(*this);
     }
 
     using super::bind;
     template <typename Function>
-    auto bind(Function func) & -> SpinCtrl&
+    auto bind(Function func) & -> CheckBox&
     {
-        return super::bind(wxEVT_SPINCTRL, func);
+        return super::bind(wxEVT_CHECKBOX, func);
     }
 
     template <typename Function>
-    auto bind(Function func) && -> SpinCtrl&&
+    auto bind(Function func) && -> CheckBox&&
     {
-        return std::move(*this).super::bind(wxEVT_SPINCTRL, func);
+        return std::move(*this).super::bind(wxEVT_CHECKBOX, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
-
         [[nodiscard]] auto value() const
         {
             auto* controller = control();
             return details::GetterSetter {
                 [controller] { return controller->GetValue(); },
-                [controller](int value) { controller->SetValue(value); }
+                [controller](bool value) { controller->SetValue(value); }
             };
         }
 
         auto operator*() const { return value(); }
     };
-
-    RULE_OF_SIX_BOILERPLATE(SpinCtrl);
+    RULE_OF_SIX_BOILERPLATE(CheckBox);
 
 private:
-    std::optional<std::pair<int, int>> range_;
-    std::optional<int> initial_;
+    std::string text_;
+    bool value_ = false;
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(SpinCtrl);
+WIDGET_STATIC_ASSERT_BOILERPLATE(CheckBox);
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

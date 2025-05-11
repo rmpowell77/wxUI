@@ -23,73 +23,74 @@ SOFTWARE.
 */
 #pragma once
 
-#include "GetterSetter.h"
-#include "Widget.h"
-#include <wx/stattext.h>
+#include "Widget.hpp"
+#include <wx/button.h>
 
-#include "HelperMacros.h"
+#include "HelperMacros.hpp"
 
 namespace wxUI {
 
-// https://docs.wxwidgets.org/latest/classwx_text.html
-struct Text : public details::WidgetDetails<Text, wxStaticText> {
-    using super = details::WidgetDetails<Text, wxStaticText>;
+// https://docs.wxwidgets.org/latest/classwx_button.html
+struct Button : public details::WidgetDetails<Button, wxButton> {
+    using super = details::WidgetDetails<Button, wxButton>;
+    using details::WidgetDetails<Button, wxButton>::underlying_t;
 
-    explicit Text(std::string text = "")
-        : Text(wxID_ANY, std::move(text))
+    explicit Button(std::string text = "")
+        : Button(wxID_ANY, std::move(text))
     {
     }
 
-    explicit Text(wxWindowID identity, std::string text = "")
+    explicit Button(wxWindowID identity, std::string text = "")
         : super(identity)
         , text_(std::move(text))
     {
     }
 
-    auto withWrap(int wrapLength) & -> Text&
+    auto setDefault() & -> Button&
     {
-        wrap_ = wrapLength;
+        isDefault_ = true;
         return *this;
     }
 
-    auto withWrap(int wrapLength) && -> Text&&
+    auto setDefault() && -> Button&&
     {
-        wrap_ = wrapLength;
+        isDefault_ = true;
         return std::move(*this);
+    }
+
+    using super::bind;
+    template <typename Function>
+    auto bind(Function func) & -> Button&
+    {
+        return super::bind(wxEVT_BUTTON, func);
+    }
+
+    template <typename Function>
+    auto bind(Function func) && -> Button&&
+    {
+        return std::move(*this).super::bind(wxEVT_BUTTON, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
-
-        [[nodiscard]] auto label() const
-        {
-            auto* controller = control();
-            return details::GetterSetter {
-                [controller] { return static_cast<std::string>(controller->GetLabel()); },
-                [controller](std::string label) { controller->SetLabel(label); }
-            };
-        }
-
-        auto operator*() const { return label(); }
     };
-
-    RULE_OF_SIX_BOILERPLATE(Text);
+    RULE_OF_SIX_BOILERPLATE(Button);
 
 private:
     std::string text_;
-    std::optional<int> wrap_;
+    bool isDefault_ = false;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle());
-        if (wrap_) {
-            widget->Wrap(*wrap_);
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
+        if (isDefault_) {
+            widget->SetDefault();
         }
-        return setProxy(widget);
+        return widget;
     }
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(Text);
+WIDGET_STATIC_ASSERT_BOILERPLATE(Button);
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

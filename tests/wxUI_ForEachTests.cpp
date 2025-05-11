@@ -23,8 +23,8 @@ SOFTWARE.
 */
 #include <catch2/catch_test_macros.hpp>
 #include <ranges>
-#include <wxUI/Button.h>
-#include <wxUI/ForEach.h>
+#include <wxUI/Button.hpp>
+#include <wxUI/ForEach.hpp>
 
 #include <wx/wx.h>
 

@@ -23,11 +23,11 @@ SOFTWARE.
 */
 #pragma once
 
-#include "GetterSetter.h"
-#include "Widget.h"
+#include "GetterSetter.hpp"
+#include "Widget.hpp"
 #include <wx/slider.h>
 
-#include "HelperMacros.h"
+#include "HelperMacros.hpp"
 
 namespace wxUI {
 
@@ -92,4 +92,4 @@ private:
 WIDGET_STATIC_ASSERT_BOILERPLATE(Slider);
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

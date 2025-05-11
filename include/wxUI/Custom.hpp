@@ -23,44 +23,45 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.h"
-#include <wx/statbmp.h>
-
-#include "HelperMacros.h"
+#include "Widget.hpp"
 
 namespace wxUI {
 
-// https://docs.wxwidgets.org/latest/classwx_static_bitmap.html
-struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
-    using super = details::WidgetDetails<Bitmap, wxStaticBitmap>;
+// A Custom Controller can only be created with something that supports the CreateAndAdd function.
 
-    explicit Bitmap(wxBitmap const& bitmap)
-        : Bitmap(wxID_ANY, bitmap)
+// clang-format off
+// snippet requires
+template <typename T>
+concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer)
+{
+    function(window, sizer, wxSizerFlags {});
+};
+// endsnippet requires
+// clang-format on
+
+template <CreateAndAddFunction Function>
+struct Custom {
+    Custom(wxSizerFlags const& flags, Function const& function)
+        : flags_(flags)
+        , function_(function)
     {
     }
 
-    Bitmap(wxWindowID identity, wxBitmap const& bitmap)
-        : super(identity)
-        , bitmap_(bitmap)
+    explicit Custom(Function const& function)
+        : function_(function)
     {
     }
 
-    struct Proxy : details::WidgetProxy<underlying_t> {
-        PROXY_BOILERPLATE();
-    };
-    RULE_OF_SIX_BOILERPLATE(Bitmap);
+    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
+    {
+        function_(parent, parentSizer, flags_.value_or(parentFlags));
+    }
 
 private:
-    wxBitmap bitmap_;
-
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        return setProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
-    }
+    std::optional<wxSizerFlags> flags_;
+    Function function_;
 };
-
-WIDGET_STATIC_ASSERT_BOILERPLATE(Bitmap);
 
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

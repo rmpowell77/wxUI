@@ -23,45 +23,44 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.h"
-#include <wx/hyperlink.h>
+#include "Widget.hpp"
+#include <wx/statline.h>
 
-#include "HelperMacros.h"
+#include "HelperMacros.hpp"
 
 namespace wxUI {
 
-// https://docs.wxwidgets.org/latest/classwx_hyperlink_ctrl.html
-struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
-    using super = details::WidgetDetails<Hyperlink, wxHyperlinkCtrl>;
+// https://docs.wxwidgets.org/latest/classwx_static_line.html
+struct Line : public details::WidgetDetails<Line, wxStaticLine> {
+    using super = details::WidgetDetails<Line, wxStaticLine>;
 
-    Hyperlink(std::string text, std::string url)
-        : Hyperlink(wxID_ANY, std::move(text), std::move(url))
+    explicit Line(wxWindowID identity = wxID_ANY)
+        : super(identity)
     {
     }
 
-    Hyperlink(wxWindowID identity, std::string text, std::string url)
-        : super(identity, super::WithStyle { wxHL_DEFAULT_STYLE })
-        , text_(std::move(text))
-        , url_(std::move(url))
+    auto createImpl(wxWindow* parent) -> wxWindow* override
     {
+        return setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), getStyle()));
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
     };
-    RULE_OF_SIX_BOILERPLATE(Hyperlink);
-
-private:
-    std::string text_;
-    std::string url_;
-
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        return setProxy(new underlying_t(parent, getIdentity(), text_, url_, getPos(), getSize(), getStyle()));
-    }
+    RULE_OF_SIX_BOILERPLATE(Line);
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(Hyperlink);
+inline auto HLine() -> Line
+{
+    return Line().withFlags(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_HORIZONTAL);
 }
 
-#include "ZapMacros.h"
+inline auto VLine() -> Line
+{
+    return Line().withFlags(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_VERTICAL);
+}
+
+WIDGET_STATIC_ASSERT_BOILERPLATE(Line);
+}
+
+#include "ZapMacros.hpp"

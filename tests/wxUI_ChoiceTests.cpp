@@ -21,10 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include "wxUI_TestControlCommon.h"
+#include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <ranges>
-#include <wxUI/Choice.h>
+#include <wxUI/Choice.hpp>
 
 #include <wx/wx.h>
 

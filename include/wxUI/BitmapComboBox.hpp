@@ -23,12 +23,12 @@ SOFTWARE.
 */
 #pragma once
 
-#include "GetterSetter.h"
-#include "Widget.h"
+#include "GetterSetter.hpp"
+#include "Widget.hpp"
 #include <ranges>
 #include <wx/bmpcbox.h>
 
-#include "HelperMacros.h"
+#include "HelperMacros.hpp"
 
 namespace wxUI {
 
@@ -144,4 +144,4 @@ private:
 WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapComboBox);
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

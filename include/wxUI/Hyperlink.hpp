@@ -23,45 +23,45 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.h"
+#include "Widget.hpp"
+#include <wx/hyperlink.h>
+
+#include "HelperMacros.hpp"
 
 namespace wxUI {
 
-// A Custom Controller can only be created with something that supports the CreateAndAdd function.
+// https://docs.wxwidgets.org/latest/classwx_hyperlink_ctrl.html
+struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
+    using super = details::WidgetDetails<Hyperlink, wxHyperlinkCtrl>;
 
-// clang-format off
-// snippet requires
-template <typename T>
-concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer)
-{
-    function(window, sizer, wxSizerFlags {});
-};
-// endsnippet requires
-// clang-format on
-
-template <CreateAndAddFunction Function>
-struct Custom {
-    Custom(wxSizerFlags const& flags, Function const& function)
-        : flags_(flags)
-        , function_(function)
+    Hyperlink(std::string text, std::string url)
+        : Hyperlink(wxID_ANY, std::move(text), std::move(url))
     {
     }
 
-    explicit Custom(Function const& function)
-        : function_(function)
+    Hyperlink(wxWindowID identity, std::string text, std::string url)
+        : super(identity, super::WithStyle { wxHL_DEFAULT_STYLE })
+        , text_(std::move(text))
+        , url_(std::move(url))
     {
     }
 
-    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
-    {
-        function_(parent, parentSizer, flags_.value_or(parentFlags));
-    }
+    struct Proxy : details::WidgetProxy<underlying_t> {
+        PROXY_BOILERPLATE();
+    };
+    RULE_OF_SIX_BOILERPLATE(Hyperlink);
 
 private:
-    std::optional<wxSizerFlags> flags_;
-    Function function_;
+    std::string text_;
+    std::string url_;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        return setProxy(new underlying_t(parent, getIdentity(), text_, url_, getPos(), getSize(), getStyle()));
+    }
 };
 
+WIDGET_STATIC_ASSERT_BOILERPLATE(Hyperlink);
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

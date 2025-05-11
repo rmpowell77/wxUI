@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include <catch2/catch_test_macros.hpp>
-#include <wxUI/Menu.h>
+#include <wxUI/Menu.hpp>
 
 #include <wx/wx.h>
 
