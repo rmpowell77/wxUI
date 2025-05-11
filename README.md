@@ -153,3 +153,11 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
 `wxUI` is not intended to be a replacement for `wxWidgets`, but instead is a library to simplify usage.  It is written such that it should be easy to "step outside" of `wxUI` and access `wxWidgets` directly.
 
 Please consult the [Programmer's Guide](docs/ProgrammersGuide.md) for more information on Library details.
+
+## Contributing
+
+Contributions are welcome! If you’d like to contribute to `wxUI`, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bugfix.
+3. Submit a pull request with a clear description of your changes.
