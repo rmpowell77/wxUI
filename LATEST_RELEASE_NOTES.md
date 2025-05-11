@@ -9,4 +9,5 @@ Other changes:
 * [#177](../../issues/177) Rename all the private members with trailing _
 * [#185](../../issues/185) move sizer flags out of constructors
 * [#187](../../issues/187) Make sure to have lvalue and rvalue variants for builder pattern
+* [#191](../../issues/191) Change all headers to hpp
 

@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #include <catch2/catch_test_macros.hpp>
 #include <wx/button.h>
-#include <wxUI/Generic.h>
+#include <wxUI/Generic.hpp>
 
 #include <wx/wx.h>
 

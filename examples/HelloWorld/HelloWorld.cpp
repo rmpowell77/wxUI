@@ -24,11 +24,11 @@ SOFTWARE.
 // wxUI "Hello World" example
 // This example is inspired from https://docs.wxwidgets.org/latest/overview_helloworld.html
 
-#include "ExtendedExample.h"
+#include "ExtendedExample.hpp"
 // snippet Example headers to include
 #include <numeric>
 #include <wx/wx.h>
-#include <wxUI/wxUI.h>
+#include <wxUI/wxUI.hpp>
 // endsnippet Example
 
 class HelloWorldApp : public wxApp {

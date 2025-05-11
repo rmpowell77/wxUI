@@ -23,73 +23,74 @@ SOFTWARE.
 */
 #pragma once
 
-#include "GetterSetter.h"
-#include "Widget.h"
-#include <wx/tglbtn.h>
+#include "GetterSetter.hpp"
+#include "Widget.hpp"
+#include <wx/spinctrl.h>
 
-#include "HelperMacros.h"
+#include "HelperMacros.hpp"
 
 namespace wxUI {
 
-// https://docs.wxwidgets.org/latest/classwx_bitmap_toggle_button.html
-struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton> {
-    using super = details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton>;
+// https://docs.wxwidgets.org/latest/classwx_spin_ctrl.html
+struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
+    using super = details::WidgetDetails<SpinCtrl, wxSpinCtrl>;
 
-    explicit BitmapToggleButton(wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
-        : BitmapToggleButton(wxID_ANY, bitmap, std::move(bitmapPressed))
+    explicit SpinCtrl(std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
+        : SpinCtrl(wxID_ANY, range, initial)
     {
     }
 
-    BitmapToggleButton(wxWindowID identity, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
+    explicit SpinCtrl(wxWindowID identity, std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
         : super(identity)
-        , bitmap_(bitmap)
-        , bitmapPressed_(std::move(bitmapPressed))
+        , range_(std::move(range))
+        , initial_(initial)
     {
+    }
+
+    auto createImpl(wxWindow* parent) -> wxWindow*
+    {
+        auto min = range_ ? range_->first : 0;
+        auto max = range_ ? range_->second : 100;
+        auto initvalue = initial_.value_or(min);
+        return setProxy(new underlying_t(parent, getIdentity(), wxEmptyString, getPos(), getSize(), getStyle(), min, max, initvalue));
     }
 
     using super::bind;
     template <typename Function>
-    auto bind(Function func) & -> BitmapToggleButton&
+    auto bind(Function func) & -> SpinCtrl&
     {
-        return super::bind(wxEVT_TOGGLEBUTTON, func);
+        return super::bind(wxEVT_SPINCTRL, func);
     }
 
     template <typename Function>
-    auto bind(Function func) && -> BitmapToggleButton&&
+    auto bind(Function func) && -> SpinCtrl&&
     {
-        return std::move(*this).super::bind(wxEVT_TOGGLEBUTTON, func);
+        return std::move(*this).super::bind(wxEVT_SPINCTRL, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
+
         [[nodiscard]] auto value() const
         {
             auto* controller = control();
             return details::GetterSetter {
                 [controller] { return controller->GetValue(); },
-                [controller](bool value) { controller->SetValue(value); }
+                [controller](int value) { controller->SetValue(value); }
             };
         }
 
         auto operator*() const { return value(); }
     };
-    RULE_OF_SIX_BOILERPLATE(BitmapToggleButton);
+
+    RULE_OF_SIX_BOILERPLATE(SpinCtrl);
 
 private:
-    wxBitmap bitmap_;
-    std::optional<wxBitmap> bitmapPressed_;
-
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
-        if (bitmapPressed_) {
-            widget->SetBitmapPressed(*bitmapPressed_);
-        }
-        return widget;
-    }
+    std::optional<std::pair<int, int>> range_;
+    std::optional<int> initial_;
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapToggleButton);
+WIDGET_STATIC_ASSERT_BOILERPLATE(SpinCtrl);
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.h"
+#include "Widget.hpp"
 #include <variant>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
@@ -228,4 +228,4 @@ HSizer(wxString const& caption, wxSizerFlags const& flags, UItems&&... items) ->
 
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

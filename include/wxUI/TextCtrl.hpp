@@ -23,73 +23,70 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.h"
-#include <wx/bmpbuttn.h>
+#include "GetterSetter.hpp"
+#include "Widget.hpp"
+#include <wx/textctrl.h>
 
-#include "HelperMacros.h"
+#include "HelperMacros.hpp"
 
 namespace wxUI {
 
-// https://docs.wxwidgets.org/latest/classwx_bitmap_button.html
-struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton> {
-    using super = details::WidgetDetails<BitmapButton, wxBitmapButton>;
+// https://docs.wxwidgets.org/latest/classwx_text_ctrl.html
+struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
+    using super = details::WidgetDetails<TextCtrl, wxTextCtrl>;
 
-    explicit BitmapButton(wxBitmap const& bitmap)
-        : BitmapButton(wxID_ANY, bitmap)
+    explicit TextCtrl(std::string text = "")
+        : TextCtrl(wxID_ANY, std::move(text))
     {
     }
 
-    BitmapButton(wxWindowID identity, wxBitmap const& bitmap)
+    explicit TextCtrl(wxWindowID identity, std::string text = "")
         : super(identity)
-        , bitmap_(bitmap)
+        , text_(std::move(text))
     {
     }
 
-    auto setDefault() & -> BitmapButton&
-    {
-        isDefault_ = true;
-        return *this;
-    }
-
-    auto setDefault() && -> BitmapButton&&
-    {
-        isDefault_ = true;
-        return std::move(*this);
-    }
-
+    // Bind
     using super::bind;
     template <typename Function>
-    auto bind(Function func) & -> BitmapButton&
+    auto bind(Function func) & -> TextCtrl&
     {
-        return super::bind(wxEVT_BUTTON, func);
+        return super::bind(wxEVT_TEXT, func);
     }
 
     template <typename Function>
-    auto bind(Function func) && -> BitmapButton&&
+    auto bind(Function func) && -> TextCtrl&&
     {
-        return std::move(*this).super::bind(wxEVT_BUTTON, func);
+        return std::move(*this).super::bind(wxEVT_TEXT, func);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
+
+        [[nodiscard]] auto label() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller] { return static_cast<std::string>(controller->GetValue()); },
+                [controller](std::string label) { controller->SetValue(label); }
+            };
+        }
+
+        auto operator*() const { return label(); }
     };
-    RULE_OF_SIX_BOILERPLATE(BitmapButton);
+
+    RULE_OF_SIX_BOILERPLATE(TextCtrl);
 
 private:
-    wxBitmap bitmap_;
-    bool isDefault_ = false;
+    std::string text_;
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
-        if (isDefault_) {
-            widget->SetDefault();
-        }
-        return widget;
+        return setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
     }
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapButton);
+WIDGET_STATIC_ASSERT_BOILERPLATE(TextCtrl);
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

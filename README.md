@@ -6,7 +6,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
 ```cpp
 #include <numeric>
 #include <wx/wx.h>
-#include <wxUI/wxUI.h>
+#include <wxUI/wxUI.hpp>
 
 class ExampleDialog : public wxDialog {
 public:

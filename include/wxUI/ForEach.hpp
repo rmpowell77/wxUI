@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Layout.h"
+#include "Layout.hpp"
 
 namespace wxUI::details {
 // clang-format off
@@ -167,4 +167,4 @@ auto HForEach(wxSizerFlags const& flags, Range&& args, Function&& function)
 }
 }
 
-#include "ZapMacros.h"
+#include "ZapMacros.hpp"

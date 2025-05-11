@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 // Generated with bash command
-// for i in *.cpp; do echo \#include \<wxUI\/Slider.h\> > Slider.cpp; for j in RULE_OF_SIX_BOILERPLATE PROXY_BOILERPLATE WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WIDGET_STATIC_ASSERT_BOILERPLATE\) >> Slider.cpp; echo \#error Missed zapping WIDGET_STATIC_ASSERT_BOILERPLATE >> Slider.cpp; echo \#endif >> Slider.cpp; done; done
-#include <wxUI/Slider.h>
+// for i in *.cpp; do echo \#include \<wxUI\/Slider.hpp\> > Slider.cpp; for j in RULE_OF_SIX_BOILERPLATE PROXY_BOILERPLATE WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WIDGET_STATIC_ASSERT_BOILERPLATE\) >> Slider.cpp; echo \#error Missed zapping WIDGET_STATIC_ASSERT_BOILERPLATE >> Slider.cpp; echo \#endif >> Slider.cpp; done; done
+#include <wxUI/Slider.hpp>
 
 #if defined(RULE_OF_SIX_BOILERPLATE)
 #error Missed zapping RULE_OF_SIX_BOILERPLATE

@@ -222,7 +222,7 @@ Additional "Contollers" should be easy to add in future updates.
 From time to time you may need to do some complicated custom wxWidget "controller" construction.  Use `Custom` "controller" to hook into the construction of the widget tree.  A `Custom` object is created supplying a function that conforms to the `CreateAndAdd` function.
 
 ```cpp
-{{{ include/wxUI/Custom.h requires "    // ..." }}}
+{{{ include/wxUI/Custom.hpp requires "    // ..." }}}
 ```
 
 An example of how to use could be as follows:

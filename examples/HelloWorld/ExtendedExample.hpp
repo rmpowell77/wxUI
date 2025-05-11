@@ -25,7 +25,7 @@ SOFTWARE.
 // wxUI Extended Dialog Example
 
 #include <wx/wx.h>
-#include <wxUI/wxUI.h>
+#include <wxUI/wxUI.hpp>
 
 class ExtendedExample : public wxDialog {
 public:
