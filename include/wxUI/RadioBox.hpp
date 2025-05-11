@@ -127,13 +127,6 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
         return std::move(*this);
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), majorDim_, getStyle()));
-        widget->SetSelection(selection_);
-        return widget;
-    }
-
     using super::bind;
     template <typename Function>
     auto bind(Function func) & -> RadioBox&
@@ -167,6 +160,13 @@ private:
     std::vector<wxString> choices_;
     int majorDim_ {};
     int selection_ {};
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), majorDim_, getStyle()));
+        widget->SetSelection(selection_);
+        return widget;
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(RadioBox);

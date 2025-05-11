@@ -46,13 +46,6 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
-        widget->SetValue(value_);
-        return widget;
-    }
-
     auto withValue(bool value) & -> CheckBox&
     {
         value_ = value;
@@ -96,6 +89,13 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
 private:
     std::string text_;
     bool value_ = false;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
+        widget->SetValue(value_);
+        return widget;
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(CheckBox);

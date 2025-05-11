@@ -47,14 +47,6 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow*
-    {
-        auto min = range_ ? range_->first : 0;
-        auto max = range_ ? range_->second : 100;
-        auto initvalue = initial_.value_or(min);
-        return setProxy(new underlying_t(parent, getIdentity(), wxEmptyString, getPos(), getSize(), getStyle(), min, max, initvalue));
-    }
-
     using super::bind;
     template <typename Function>
     auto bind(Function func) & -> SpinCtrl&
@@ -88,6 +80,14 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
 private:
     std::optional<std::pair<int, int>> range_;
     std::optional<int> initial_;
+
+    auto createImpl(wxWindow* parent) -> wxWindow*
+    {
+        auto min = range_ ? range_->first : 0;
+        auto max = range_ ? range_->second : 100;
+        auto initvalue = initial_.value_or(min);
+        return setProxy(new underlying_t(parent, getIdentity(), wxEmptyString, getPos(), getSize(), getStyle(), min, max, initvalue));
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(SpinCtrl);
