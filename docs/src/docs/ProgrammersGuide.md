@@ -11,7 +11,7 @@ In `wxUI`, you use `wxUI::Menu` to declare the layout of your menu items and the
 
 `wxUI::Menu` is a way to lay out menus in a declarative, visual way.
 
-The general concept is you declare a set of structures and then `attachTo` a frame.
+The general concept is you declare a set of structures and then `fitTo` a frame.
 
 ```cpp
 {{{ examples/HelloWorld/HelloWorld.cpp wxUIMenu "    // ..." }}}
@@ -48,7 +48,7 @@ Items { "Name", "Help", Handler }
 {{{ examples/HelloWorld/HelloWorld.cpp wxUIMenuSubMenu "    // ..." }}}
 ```
 
-The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primatives on construction.  When `attachTo` a frame is invoked does the underlying logic construct the menu structure.
+The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primatives on construction.  When `fitTo` a frame is invoked does the underlying logic construct the menu structure.
 
 
 ### Layout
@@ -75,13 +75,13 @@ Sizer { "Name", SizerFlags, Items... }
 Note: Because Sizers are intented to be "recursive" data structures, it is possible for a `wxUI::VSizer` to contain a `wxUI::VSizer`.  However, be aware that if an empty `wxUI::VSizer` is created with *just* a `wxUI::VSizer` as the argument, we collapse that to be a single `wxUI::VSizer`.  ie, this:
 
 ```
-wxUI::VSizer { wxUI::VSizer { "Current Frame" } }.attachTo(this);
+wxUI::VSizer { wxUI::VSizer { "Current Frame" } }.fitTo(this);
 ```
 
 is equivalant to:
 
 ```
-wxUI::VSizer { "Current Frame" }.attachTo(this);
+wxUI::VSizer { "Current Frame" }.fitTo(this);
 ```
 
 
@@ -183,7 +183,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
     VSizer {
         mText = TextCtrl { "Hello" }
     }
-        .attachTo(this);
+        .fitTo(this);
 }
 
 ExtendedExample::Reset() {

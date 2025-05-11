@@ -121,7 +121,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         CreateStdDialogButtonSizer(wxOK),
         // endsnippet CustomExample
     }
-        .attachTo(this);
+        .fitTo(this);
     proxy2->SetFocus();
 }
 
@@ -148,7 +148,7 @@ MultibindExample::MultibindExample(wxWindow* parent)
         },
         CreateStdDialogButtonSizer(wxOK),
     }
-        .attachTo(this);
+        .fitTo(this);
 }
 
 SplitterExample::SplitterExample(wxWindow* parent)
@@ -190,7 +190,7 @@ SplitterExample::SplitterExample(wxWindow* parent)
         // snippet SplitterExample
         CreateStdDialogButtonSizer(wxOK),
     }
-        .attachTo(this);
+        .fitTo(this);
     // endsnippet SplitterExample
     *rightUpper = std::string { proxy->GetLabel() };
 }
@@ -219,7 +219,7 @@ GenericExample::GenericExample(wxWindow* parent)
         // snippet GenericExample
         CreateStdDialogButtonSizer(wxOK),
     }
-        .attachTo(this);
+        .fitTo(this);
     // endsnippet GenericExample
     assert(proxy1->GetLabel() == "Raw 1");
     assert(proxy2->GetLabel() == "Raw 2");
@@ -339,5 +339,5 @@ ForEachExample::ForEachExample(wxWindow* parent)
             }),
         CreateStdDialogButtonSizer(wxOK),
     }
-        .attachTo(this);
+        .fitTo(this);
 }

@@ -120,44 +120,44 @@ TEST_CASE("Size")
     SECTION("vSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer {}.attachTo(&frame);
+        wxUI::VSizer {}.fitTo(&frame);
         CheckVSizerEmpty(frame.GetSizer());
     }
     SECTION("vSizer.named.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer { "Test1" }.attachTo(&frame);
+        wxUI::VSizer { "Test1" }.fitTo(&frame);
         CheckVSizerNamedEmpty(frame.GetSizer(), "Test1");
     }
     SECTION("hSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer {}.attachTo(&frame);
+        wxUI::HSizer {}.fitTo(&frame);
         CheckHSizerEmpty(frame.GetSizer());
     }
     SECTION("hSizer.named.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer { "Test2" }.attachTo(&frame);
+        wxUI::HSizer { "Test2" }.fitTo(&frame);
         CheckHSizerNamedEmpty(frame.GetSizer(), "Test2");
     }
 
     SECTION("vSizer.collapse.vSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer { wxUI::VSizer {} }.attachTo(&frame);
+        wxUI::VSizer { wxUI::VSizer {} }.fitTo(&frame);
         CheckVSizerEmpty(frame.GetSizer());
     }
     SECTION("vSizer.collapse.vSizer.named.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer { wxUI::VSizer { "Test1" } }.attachTo(&frame);
+        wxUI::VSizer { wxUI::VSizer { "Test1" } }.fitTo(&frame);
         CheckVSizerNamedEmpty(frame.GetSizer(), "Test1");
     }
     SECTION("vSizer.hSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer { wxUI::HSizer {} }.attachTo(&frame);
+        wxUI::VSizer { wxUI::HSizer {} }.fitTo(&frame);
         CheckVSizerHasOne(frame.GetSizer(), [](wxSizer* sizer) {
             CheckHSizerEmpty(sizer);
         });
@@ -165,7 +165,7 @@ TEST_CASE("Size")
     SECTION("vSizer.hSizer.named.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer { wxUI::HSizer { "Test2" } }.attachTo(&frame);
+        wxUI::VSizer { wxUI::HSizer { "Test2" } }.fitTo(&frame);
         CheckVSizerHasOne(frame.GetSizer(), [](wxSizer* sizer) {
             CheckHSizerNamedEmpty(sizer, "Test2");
         });
@@ -174,7 +174,7 @@ TEST_CASE("Size")
     SECTION("vSizer.named.vSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer { "Test3", wxUI::VSizer {} }.attachTo(&frame);
+        wxUI::VSizer { "Test3", wxUI::VSizer {} }.fitTo(&frame);
         CheckVSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckVSizerEmpty(sizer);
         });
@@ -182,7 +182,7 @@ TEST_CASE("Size")
     SECTION("vSizer.named.vSizer.named.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer { "Test3", wxUI::VSizer { "Test1" } }.attachTo(&frame);
+        wxUI::VSizer { "Test3", wxUI::VSizer { "Test1" } }.fitTo(&frame);
         CheckVSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckVSizerNamedEmpty(sizer, "Test1");
         });
@@ -190,7 +190,7 @@ TEST_CASE("Size")
     SECTION("vSizer.named.hSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer { "Test3", wxUI::HSizer {} }.attachTo(&frame);
+        wxUI::VSizer { "Test3", wxUI::HSizer {} }.fitTo(&frame);
         CheckVSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckHSizerEmpty(sizer);
         });
@@ -198,7 +198,7 @@ TEST_CASE("Size")
     SECTION("vSizer.named.hSizer.named.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::VSizer { "Test3", wxUI::HSizer { "Test2" } }.attachTo(&frame);
+        wxUI::VSizer { "Test3", wxUI::HSizer { "Test2" } }.fitTo(&frame);
         CheckVSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckHSizerNamedEmpty(sizer, "Test2");
         });
@@ -207,7 +207,7 @@ TEST_CASE("Size")
     SECTION("hSizer.vSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer { wxUI::VSizer {} }.attachTo(&frame);
+        wxUI::HSizer { wxUI::VSizer {} }.fitTo(&frame);
         CheckHSizerHasOne(frame.GetSizer(), [](wxSizer* sizer) {
             CheckVSizerEmpty(sizer);
         });
@@ -215,7 +215,7 @@ TEST_CASE("Size")
     SECTION("hSizer.vSizer.named.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer { wxUI::VSizer { "Test1" } }.attachTo(&frame);
+        wxUI::HSizer { wxUI::VSizer { "Test1" } }.fitTo(&frame);
         CheckHSizerHasOne(frame.GetSizer(), [](wxSizer* sizer) {
             CheckVSizerNamedEmpty(sizer, "Test1");
         });
@@ -223,19 +223,19 @@ TEST_CASE("Size")
     SECTION("hSizer.collapse.hSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer { wxUI::HSizer {} }.attachTo(&frame);
+        wxUI::HSizer { wxUI::HSizer {} }.fitTo(&frame);
         CheckHSizerEmpty(frame.GetSizer());
     }
     SECTION("hSizer.collapse.hSizer.named.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer { wxUI::HSizer { "Test2" } }.attachTo(&frame);
+        wxUI::HSizer { wxUI::HSizer { "Test2" } }.fitTo(&frame);
         CheckHSizerNamedEmpty(frame.GetSizer(), "Test2");
     }
     SECTION("hSizer.named.vSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer { "Test3", wxUI::VSizer {} }.attachTo(&frame);
+        wxUI::HSizer { "Test3", wxUI::VSizer {} }.fitTo(&frame);
         CheckHSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckVSizerEmpty(sizer);
         });
@@ -243,7 +243,7 @@ TEST_CASE("Size")
     SECTION("hSizer.named.vSizer.named.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer { "Test3", wxUI::VSizer { "Test1" } }.attachTo(&frame);
+        wxUI::HSizer { "Test3", wxUI::VSizer { "Test1" } }.fitTo(&frame);
         CheckHSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckVSizerNamedEmpty(sizer, "Test1");
         });
@@ -251,7 +251,7 @@ TEST_CASE("Size")
     SECTION("hSizer.named.hSizer.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer { "Test3", wxUI::HSizer {} }.attachTo(&frame);
+        wxUI::HSizer { "Test3", wxUI::HSizer {} }.fitTo(&frame);
         CheckHSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckHSizerEmpty(sizer);
         });
@@ -259,7 +259,7 @@ TEST_CASE("Size")
     SECTION("hSizer.named.hSizer.named.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::HSizer { "Test3", wxUI::HSizer { "Test2" } }.attachTo(&frame);
+        wxUI::HSizer { "Test3", wxUI::HSizer { "Test2" } }.fitTo(&frame);
         CheckHSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckHSizerNamedEmpty(sizer, "Test2");
         });

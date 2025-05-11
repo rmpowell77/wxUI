@@ -324,7 +324,7 @@ struct MenuBar {
     {
     }
 
-    auto attachTo(wxFrame* frame) -> auto&
+    auto fitTo(wxFrame* frame) -> auto&
     {
         auto numbering = int(wxID_AUTO_LOWEST);
         auto menuBar = std::make_unique<wxMenuBar>();
