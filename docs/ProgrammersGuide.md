@@ -271,8 +271,8 @@ The list of Methods supported by all controllers:
 
  * `withPosition(wxPoint pos)` : Specifies the `pos` of the `wxControl`.
  * `withSize(wxSize size)` : Specifies the `size` of the `wxControl`.
- * `withWidthSize(int size)` : Specifies the width of `size` of the `wxControl`.
- * `withHeightSize(int size)` : Specifies the height of `size` of the `wxControl`.
+ * `withWidth(int size)` : Specifies the width of `size` of the `wxControl`.
+ * `withHeight(int size)` : Specifies the height of `size` of the `wxControl`.
  * `withStyle(long style)` : Adds the style flags for the `style` of the `wxControl`.
  * `withoutStyle(long style)` : Removes the style flags  for the `style` of the `wxControl`.
  * `setStyle(long style)` : Sets the style flag for the `style` of the `wxControl`.

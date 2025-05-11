@@ -133,7 +133,7 @@ MultibindExample::MultibindExample(wxWindow* parent)
         wxSizerFlags().Expand().Border(),
         HSizer {
             TextCtrl {}
-                .withWidthSize(200)
+                .withWidth(200)
                 .withStyle(wxTE_PROCESS_ENTER)
                 .bind([this]() {
                     *timesTyped = std::to_string(stoi(*timesTyped) + 1);

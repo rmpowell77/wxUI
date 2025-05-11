@@ -173,25 +173,25 @@ struct WidgetDetails {
         return static_cast<ConcreteWidget&&>(std::move(*this));
     }
 
-    auto withWidthSize(int size) & -> ConcreteWidget&
+    auto withWidth(int size) & -> ConcreteWidget&
     {
         size_.SetWidth(size);
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withWidthSize(int size) && -> ConcreteWidget&&
+    auto withWidth(int size) && -> ConcreteWidget&&
     {
         size_.SetWidth(size);
         return static_cast<ConcreteWidget&&>(std::move(*this));
     }
 
-    auto withHeightSize(int size) & -> ConcreteWidget&
+    auto withHeight(int size) & -> ConcreteWidget&
     {
         size_.SetHeight(size);
         return static_cast<ConcreteWidget&>(*this);
     }
 
-    auto withHeightSize(int size) && -> ConcreteWidget&&
+    auto withHeight(int size) && -> ConcreteWidget&&
     {
         size_.SetHeight(size);
         return static_cast<ConcreteWidget&&>(std::move(*this));

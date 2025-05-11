@@ -47,13 +47,13 @@ constexpr auto addWithSize(wxSize const& value, W&& inUUT) -> W&&
 template <typename W>
 constexpr auto addWithWidth(int value, W&& inUUT) -> W&&
 {
-    return std::forward<W>(inUUT).withWidthSize(value);
+    return std::forward<W>(inUUT).withWidth(value);
 }
 
 template <typename W>
 constexpr auto addWithHeight(int value, W&& inUUT) -> W&&
 {
-    return std::forward<W>(inUUT).withHeightSize(value);
+    return std::forward<W>(inUUT).withHeight(value);
 }
 
 template <typename W>
