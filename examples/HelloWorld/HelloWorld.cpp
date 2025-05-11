@@ -158,7 +158,7 @@ HelloWorldFrame::HelloWorldFrame()
 
             // snippet wxUIMenu
         }
-    }.attachTo(this);
+    }.fitTo(this);
     // endsnippet wxUIMenu
 
     CreateStatusBar();
@@ -347,7 +347,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
         // snippet withwxUI
         // snippet wxUILayoutBasic
     }
-        .attachTo(this);
+        .fitTo(this);
     // endsnippet wxUILayoutBasic
 }
 // endsnippet withwxUI

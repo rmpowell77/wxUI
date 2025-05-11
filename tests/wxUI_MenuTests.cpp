@@ -72,7 +72,7 @@ auto RunMenuTest_id()
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT } }
     };
-    menu.attachTo(&frame);
+    menu.fitTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
     CheckMenu0(frame, wxID_EXIT, "&Quit", "Quit this program", MenuTypeLookup<MenuType> {}.itemKind);
 }
@@ -85,7 +85,7 @@ auto RunMenuTest_id_func(Function function)
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, function } }
     };
-    menu.attachTo(&frame);
+    menu.fitTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
     CheckMenu0(frame, wxID_EXIT, "&Quit", "Quit this program", MenuTypeLookup<MenuType> {}.itemKind);
 }
@@ -110,7 +110,7 @@ auto RunMenuTest_id_name()
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1" } }
     };
-    menu.attachTo(&frame);
+    menu.fitTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
     CheckMenu0(frame, wxID_EXIT, "Item1", "Quit this program", MenuTypeLookup<MenuType> {}.itemKind);
 }
@@ -123,7 +123,7 @@ auto RunMenuTest_id_name_func(Function function)
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1", function } }
     };
-    menu.attachTo(&frame);
+    menu.fitTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
     CheckMenu0(frame, wxID_EXIT, "Item1", "Quit this program", MenuTypeLookup<MenuType> {}.itemKind);
 }
@@ -148,7 +148,7 @@ auto RunMenuTest_id_name_help()
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1", "Help1" } }
     };
-    menu.attachTo(&frame);
+    menu.fitTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
     CheckMenu0(frame, wxID_EXIT, "Item1", "Help1", MenuTypeLookup<MenuType> {}.itemKind);
 }
@@ -161,7 +161,7 @@ auto RunMenuTest_id_name_help_func(Function function)
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1", "Help1", function } }
     };
-    menu.attachTo(&frame);
+    menu.fitTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
     CheckMenu0(frame, wxID_EXIT, "Item1", "Help1", MenuTypeLookup<MenuType> {}.itemKind);
 }
@@ -186,7 +186,7 @@ auto RunMenuTest_name_func(Function function)
         wxUI::Menu {
             "Menu1", MenuType { "Item1", function } }
     };
-    menu.attachTo(&frame);
+    menu.fitTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
     CheckMenu0(frame, wxID_AUTO_LOWEST, "Item1", "", MenuTypeLookup<MenuType> {}.itemKind);
 }
@@ -211,7 +211,7 @@ auto RunMenuTest_name_help_func(Function function)
         wxUI::Menu {
             "Menu1", MenuType { "Item1", "Help1", function } }
     };
-    menu.attachTo(&frame);
+    menu.fitTo(&frame);
     CheckMenuBar0(frame, 1, "Menu1", 1);
     CheckMenu0(frame, wxID_AUTO_LOWEST, "Item1", "Help1", MenuTypeLookup<MenuType> {}.itemKind);
 }
@@ -234,7 +234,7 @@ TEST_CASE("Menu")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         wxUI::MenuBar menu {};
-        menu.attachTo(&frame);
+        menu.fitTo(&frame);
         CheckMenuBar0(frame, 0, "", 0);
     }
 
@@ -242,14 +242,14 @@ TEST_CASE("Menu")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         wxUI::MenuBar menu {};
-        menu.attachTo(&frame);
+        menu.fitTo(&frame);
         CheckMenuBar0(frame, 0, "", 0);
     }
     SECTION("menu.empty")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         wxUI::MenuBar menu { wxUI::Menu { "Menu1" } };
-        menu.attachTo(&frame);
+        menu.fitTo(&frame);
         CheckMenuBar0(frame, 1, "Menu1", 0);
     }
 
@@ -259,7 +259,7 @@ TEST_CASE("Menu")
         wxUI::MenuBar menu { wxUI::Menu {
             "Menu1",
         } };
-        menu.attachTo(&frame);
+        menu.fitTo(&frame);
         CheckMenuBar0(frame, 1, "Menu1", 0);
     }
 

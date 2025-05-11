@@ -11,7 +11,7 @@ In `wxUI`, you use `wxUI::Menu` to declare the layout of your menu items and the
 
 `wxUI::Menu` is a way to lay out menus in a declarative, visual way.
 
-The general concept is you declare a set of structures and then `attachTo` a frame.
+The general concept is you declare a set of structures and then `fitTo` a frame.
 
 ```cpp
 HelloWorldFrame::HelloWorldFrame()
@@ -30,7 +30,7 @@ HelloWorldFrame::HelloWorldFrame()
                                             } },
     // ...
         }
-    }.attachTo(this);
+    }.fitTo(this);
 ```
 
 In `wxWidgets` the general paradigm is to create an enumeration of identity ints that you associate with a member, then you would bind, either statically or dynamically, to a function.  With `wxUI::Menu` the construction of the identify and assocation with a function is handled automatically.  By default `wxUI::Menu` starts the enumeration with `wxID_AUTO_LOWEST` and increments for each item.  Take caution if you use these enumerations as it may collide with other ids assocated with the frame.
@@ -126,7 +126,7 @@ Items { "Name", "Help", Handler }
         },
 ```
 
-The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primatives on construction.  When `attachTo` a frame is invoked does the underlying logic construct the menu structure.
+The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primatives on construction.  When `fitTo` a frame is invoked does the underlying logic construct the menu structure.
 
 
 ### Layout
@@ -140,7 +140,7 @@ The basics of `wxUI` layout is the *Layout*.  You use a specific type of *Layout
             "Text examples",
     // ...
     }
-        .attachTo(this);
+        .fitTo(this);
 ```
 
 In the above example we have constructed a vertical layout sizer that will use a `wxSizer` with the `wxSizerFlags` set to expand with a default border.  Then the first item in the sizer is a second layer sizer with horizontal layout.  The `wxSizerFlags` are propogated to each layer so the horizontal layout in this example would also be set to expand with a default border.  The second sizer would be created as a "named" box horizonal sizer.
@@ -159,13 +159,13 @@ Sizer { "Name", SizerFlags, Items... }
 Note: Because Sizers are intented to be "recursive" data structures, it is possible for a `wxUI::VSizer` to contain a `wxUI::VSizer`.  However, be aware that if an empty `wxUI::VSizer` is created with *just* a `wxUI::VSizer` as the argument, we collapse that to be a single `wxUI::VSizer`.  ie, this:
 
 ```
-wxUI::VSizer { wxUI::VSizer { "Current Frame" } }.attachTo(this);
+wxUI::VSizer { wxUI::VSizer { "Current Frame" } }.fitTo(this);
 ```
 
 is equivalant to:
 
 ```
-wxUI::VSizer { "Current Frame" }.attachTo(this);
+wxUI::VSizer { "Current Frame" }.fitTo(this);
 ```
 
 
@@ -183,7 +183,7 @@ One special type of *Layout* is `Generic`.  There are cases where you have to co
     // ...
         CreateStdDialogButtonSizer(wxOK),
     }
-        .attachTo(this);
+        .fitTo(this);
 ```
 
 Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, or a closure or function that returns a `wxWindow*` when supplied with a `wxWindow*`, and it will be inserted into the *Layout*.
@@ -212,7 +212,7 @@ Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, or 
     // ...
         CreateStdDialogButtonSizer(wxOK),
     }
-        .attachTo(this);
+        .fitTo(this);
 ```
 
 #### ForEach
@@ -321,7 +321,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
     VSizer {
         mText = TextCtrl { "Hello" }
     }
-        .attachTo(this);
+        .fitTo(this);
 }
 
 ExtendedExample::Reset() {
