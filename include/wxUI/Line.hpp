@@ -39,15 +39,16 @@ struct Line : public details::WidgetDetails<Line, wxStaticLine> {
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        return setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), getStyle()));
-    }
-
     struct Proxy : details::WidgetProxy<underlying_t> {
         PROXY_BOILERPLATE();
     };
     RULE_OF_SIX_BOILERPLATE(Line);
+
+private:
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        return setProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), getStyle()));
+    }
 };
 
 inline auto HLine() -> Line

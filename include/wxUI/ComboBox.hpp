@@ -57,16 +57,6 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
     {
     }
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
-    {
-        auto&& first = (choices_.size() > 0) ? wxString(choices_.at(0)) : wxString(wxEmptyString);
-        auto* widget = setProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
-        if (!choices_.empty()) {
-            widget->SetSelection(selection_);
-        }
-        return widget;
-    }
-
     auto withSelection(int which) -> ComboBox&
     {
         selection_ = which;
@@ -112,6 +102,16 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
 private:
     std::vector<wxString> choices_;
     int selection_ = 0;
+
+    auto createImpl(wxWindow* parent) -> wxWindow* override
+    {
+        auto&& first = (choices_.size() > 0) ? wxString(choices_.at(0)) : wxString(wxEmptyString);
+        auto* widget = setProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
+        if (!choices_.empty()) {
+            widget->SetSelection(selection_);
+        }
+        return widget;
+    }
 };
 
 WIDGET_STATIC_ASSERT_BOILERPLATE(ComboBox);
