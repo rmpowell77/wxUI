@@ -108,6 +108,24 @@ TEST_CASE("ListBox")
         CHECK("Goodbye" == window->GetString(1));
     }
 
+    SECTION("setSelections")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        wxUI::ListBox::Proxy listProxy {};
+        auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } }.withStyle(wxLB_MULTIPLE).withSelections({ 0, 1 }).withProxy(listProxy);
+        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        CHECK(2 == window->GetCount());
+        wxArrayInt selectedItems;
+        CHECK(2 == window->GetSelections(selectedItems));
+        CHECK(wxArrayInt { 0, 1 } == selectedItems);
+        CHECK(std::vector<int> { 0, 1 } == listProxy.selections().get());
+        listProxy.selections() = { 0 };
+        CHECK(1 == window->GetSelections(selectedItems));
+        CHECK(wxArrayInt { 0 } == selectedItems);
+        std::vector<int> data = listProxy.selections();
+        CHECK(std::vector<int> { 0 } == data);
+    }
+
     SECTION("style")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };

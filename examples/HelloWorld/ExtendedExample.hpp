@@ -60,3 +60,8 @@ class ForEachExample : public wxDialog {
 public:
     explicit ForEachExample(wxWindow* parent);
 };
+
+class ListExample : public wxDialog {
+public:
+    explicit ListExample(wxWindow* parent);
+};
