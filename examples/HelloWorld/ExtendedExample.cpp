@@ -341,3 +341,62 @@ ForEachExample::ForEachExample(wxWindow* parent)
     }
         .fitTo(this);
 }
+
+namespace {
+auto CreateSelect(std::string title, int64_t withStyle)
+{
+    using namespace wxUI;
+    ListBox::Proxy listProxy {};
+    Text::Proxy textProxy {};
+    auto redoText = [listProxy, textProxy]() {
+        std::string selectedStrings;
+        for (auto&& item : listProxy.selections().get()) {
+            selectedStrings += listProxy->GetString(item) + ", ";
+        }
+        *textProxy = selectedStrings;
+    };
+    return HSizer {
+        VSizer {
+            Text { title },
+            ListBox { { "A", "B", "C" } }
+                .withStyle(withStyle)
+                .withProxy(listProxy)
+                .bind(redoText)
+                .bindDClick([listProxy, textProxy, redoText]() {
+                    std::vector<int> selectedItems = { 0, 1, 2 };
+                    listProxy.selections() = selectedItems;
+                    redoText();
+                }),
+            HSizer {
+                Text { "Selected: " },
+                Text {}.withProxy(textProxy),
+            },
+        },
+        Button { "Add A" }
+            .bind([listProxy, redoText]() {
+                auto selected = listProxy.selections().get();
+                selected.push_back(0);
+                listProxy.selections() = selected;
+                redoText();
+            }),
+    };
+}
+} // namespace
+
+ListExample::ListExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "List Example", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    ListBox::Proxy listProxy {};
+    Text::Proxy textProxy {};
+    ListBox::Proxy listProxy2 {};
+    Text::Proxy textProxy2 {};
+    VSizer {
+        wxSizerFlags {}.Border(wxALL, 2),
+        CreateSelect("Single select", 0),
+        CreateSelect("Multi select", wxLB_EXTENDED),
+
+        CreateStdDialogButtonSizer(wxOK),
+    }
+        .fitTo(this);
+}

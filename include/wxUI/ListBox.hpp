@@ -57,15 +57,39 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
     {
     }
 
+    auto setSelection(int which) & -> ListBox&
+    {
+        selection_ = { which };
+        return *this;
+    }
+
+    auto setSelection(int which) && -> ListBox&&
+    {
+        selection_ = { which };
+        return std::move(*this);
+    }
+
     auto withSelection(int which) & -> ListBox&
     {
-        selection_ = which;
+        selection_.push_back(which);
         return *this;
     }
 
     auto withSelection(int which) && -> ListBox&&
     {
-        selection_ = which;
+        selection_.push_back(which);
+        return std::move(*this);
+    }
+
+    auto withSelections(std::vector<int> which) & -> ListBox&
+    {
+        selection_.insert(selection_.end(), which.begin(), which.end());
+        return *this;
+    }
+
+    auto withSelections(std::vector<int> which) && -> ListBox&&
+    {
+        selection_.insert(selection_.end(), which.begin(), which.end());
         return std::move(*this);
     }
 
@@ -94,6 +118,18 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
         return std::move(*this).super::bind(wxEVT_LISTBOX, func);
     }
 
+    template <typename Function>
+    auto bindDClick(Function func) & -> ListBox&
+    {
+        return super::bind(wxEVT_LISTBOX_DCLICK, func);
+    }
+
+    template <typename Function>
+    auto bindDClick(Function func) && -> ListBox&&
+    {
+        return std::move(*this).super::bind(wxEVT_LISTBOX_DCLICK, func);
+    }
+
     struct Proxy : details::WidgetProxy<underlying_t> {
         [[nodiscard]] auto selection() const
         {
@@ -104,19 +140,43 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
             };
         }
 
-        auto operator*() const { return selection(); }
+        [[nodiscard]] auto selections() const
+        {
+            auto* controller = control();
+            return details::GetterSetter {
+                [controller]() -> std::vector<int> {
+                    wxArrayInt selectedItems;
+                    controller->GetSelections(selectedItems);
+                    return std::vector<int>(selectedItems.begin(), selectedItems.end());
+                },
+                [controller](std::vector<int> const& selections) {
+                    controller->DeselectAll();
+                    for (auto&& selection : selections) {
+                        controller->SetSelection(selection);
+                    }
+                }
+            };
+        }
+
+        auto
+        operator*() const
+        {
+            return selection();
+        }
     };
     RULE_OF_SIX_BOILERPLATE(ListBox);
 
 private:
     std::vector<wxString> choices_ {};
-    int selection_ = wxNOT_FOUND;
+    std::vector<int> selection_;
     std::optional<int> ensureVisible_ {};
 
     auto createImpl(wxWindow* parent) -> wxWindow* override
     {
         auto* widget = bindProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
-        widget->SetSelection(selection_);
+        for (auto&& selection : selection_) {
+            widget->SetSelection(selection);
+        }
         if (ensureVisible_) {
             widget->EnsureVisible(*ensureVisible_);
         }

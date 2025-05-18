@@ -76,6 +76,9 @@ Handlers are callable items that handle events.  The handler can be declared wit
                             ForEachExample dialog(this);
                             dialog.ShowModal();
                         } },
+            wxUI::Item { "&ListExample...", [this] {
+                            ListExample(this).ShowModal();
+                        } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },
@@ -130,6 +133,9 @@ Items { "Name", "Help", Handler }
             wxUI::Item { "&ForEachExample...", [this] {
                             ForEachExample dialog(this);
                             dialog.ShowModal();
+                        } },
+            wxUI::Item { "&ListExample...", [this] {
+                            ListExample(this).ShowModal();
                         } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
@@ -294,7 +300,7 @@ The list of Methods supported by all controllers:
 
 #### Bind
 
-*Controllers* support "binding" a function call to their event handlers.  When the event for that *controller* is emitted, the function-like object supplied will be called.  You can bind multiple events on a single *controller*.  For convenience, some *controllers* have default events that will be used if none is supplied.
+*Controllers* support "binding" a function call to their event handlers.  When the event for that *controller* is emitted, the function-like object supplied will be called.  You can bind multiple events on a single *controller*.  *Controllers* `bind` the most common events, and supply additional `bind` extensions (like `ListBox::bindDClick`) for more specialized events.
 
 ```cpp
             Button { "Left" }
@@ -360,7 +366,7 @@ The "Controllers" currently supported by `wxUI`:
 | `Gauge`              | `wxGauge`              | n/a                | `range` -> `int`<BR>`value` -> `int`<BR>*default*: `value` |
 | `Hypertext`          | `wxHypertextCtrl`      | n/a                | n/a                   |
 | `Line`               | `wxStaticLine`         | n/a                | n/a                   |
-| `ListBox`            | `wxListBox`            | `EVT_LISTBOX`      | `selection` -> `int`<BR>*default*: `selection` |
+| `ListBox`            | `wxListBox`            | `EVT_LISTBOX`      | `selection` -> `int`<BR>`selections` -> `std::vector<int>`<BR>*default*: `selection` |
 | `RadioBox`           | `wxRadioBox`           | `EVT_RADIOBOX`     | `selection` -> `int`<BR>*default*: `selection` |
 | `Slider`             | `wxSlider`             | `EVT_SLIDER`       | `value` -> `int`<BR>*default*: `value` |
 | `SpinCtrl`           | `wxSpinCtrl`           | `EVT_SPINCTRL`     | `value` -> `int`<BR>*default*: `value` |
