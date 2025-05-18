@@ -5,4 +5,5 @@ Bugs addressed in this release:
 Other changes:
 
 * [#202](../../issues/202) Add doubleClick to ListBox
+* [#205](../../issues/205) Add LayoutIf
 

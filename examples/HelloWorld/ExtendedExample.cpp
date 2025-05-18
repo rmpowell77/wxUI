@@ -400,3 +400,43 @@ ListExample::ListExample(wxWindow* parent)
     }
         .fitTo(this);
 }
+
+auto MakeLayout(bool layout)
+{
+    using namespace wxUI;
+    SpinCtrl::Proxy spinProxy;
+    return VSizer {
+        LayoutIf {
+            layout,
+            HSizer {
+                SpinCtrl { std::pair { 1, 3 } }.withProxy(spinProxy),
+            },
+            HSizer {
+                Button { "Incr" }
+                    .bind([spinProxy]() {
+                        *spinProxy = 1 + *spinProxy;
+                    }),
+            },
+        },
+        // snippet LayoutIfExample
+        HSizer {
+            LayoutIf { layout, BitmapButton { wxArtProvider::GetBitmap(wxART_PLUS) } },
+            BitmapButton { wxArtProvider::GetBitmap(wxART_MINUS) },
+        },
+        // endsnippet LayoutIfExample
+    };
+}
+
+LayoutIfExample::LayoutIfExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "LayoutIf",
+        wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        VSizer { "Layout Enabled", MakeLayout(true) },
+        VSizer { "Layout Disabled", MakeLayout(false) },
+    }
+        .fitTo(this);
+}

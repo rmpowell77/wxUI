@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include <catch2/catch_test_macros.hpp>
+#include <ranges>
+#include <wxUI/Button.hpp>
 #include <wxUI/Layout.hpp>
 #include <wxUI/Menu.hpp>
 
@@ -97,22 +99,30 @@ auto CheckVSizerHasOne(wxSizer* sizer, std::string_view name, auto passAnswer)
     passAnswer((*children.begin())->GetSizer());
 }
 
-auto CheckHSizerHasOne(wxSizer* sizer, auto passAnswer)
+auto CheckHSizerHasN(size_t n, wxSizer* sizer, auto passAnswer)
 {
     CheckSizer(sizer, wxHORIZONTAL);
 
     auto children = sizer->GetChildren();
-    CHECK(children.GetCount() == 1);
+    CHECK(children.GetCount() == n);
     passAnswer((*children.begin())->GetSizer());
 }
 
-auto CheckHSizerHasOne(wxSizer* sizer, std::string_view name, auto passAnswer)
+auto CheckHSizerHasN(size_t n, wxSizer* sizer, std::string_view name, auto passAnswer)
 {
     CheckSizer(sizer, wxHORIZONTAL, name);
 
     auto children = sizer->GetChildren();
-    CHECK(children.GetCount() == 1);
+    CHECK(children.GetCount() == n);
     passAnswer((*children.begin())->GetSizer());
+}
+
+auto CheckHSizerHasNItems(size_t n, wxSizer* sizer, std::string_view name)
+{
+    CheckSizer(sizer, wxHORIZONTAL, name);
+
+    auto numberItems = sizer->GetItemCount();
+    CHECK(numberItems == n);
 }
 
 TEST_CASE("Size")
@@ -208,7 +218,7 @@ TEST_CASE("Size")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         wxUI::HSizer { wxUI::VSizer {} }.fitTo(&frame);
-        CheckHSizerHasOne(frame.GetSizer(), [](wxSizer* sizer) {
+        CheckHSizerHasN(1, frame.GetSizer(), [](wxSizer* sizer) {
             CheckVSizerEmpty(sizer);
         });
     }
@@ -216,7 +226,7 @@ TEST_CASE("Size")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         wxUI::HSizer { wxUI::VSizer { "Test1" } }.fitTo(&frame);
-        CheckHSizerHasOne(frame.GetSizer(), [](wxSizer* sizer) {
+        CheckHSizerHasN(1, frame.GetSizer(), [](wxSizer* sizer) {
             CheckVSizerNamedEmpty(sizer, "Test1");
         });
     }
@@ -236,7 +246,7 @@ TEST_CASE("Size")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         wxUI::HSizer { "Test3", wxUI::VSizer {} }.fitTo(&frame);
-        CheckHSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
+        CheckHSizerHasN(1, frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckVSizerEmpty(sizer);
         });
     }
@@ -244,7 +254,7 @@ TEST_CASE("Size")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         wxUI::HSizer { "Test3", wxUI::VSizer { "Test1" } }.fitTo(&frame);
-        CheckHSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
+        CheckHSizerHasN(1, frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckVSizerNamedEmpty(sizer, "Test1");
         });
     }
@@ -252,7 +262,7 @@ TEST_CASE("Size")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         wxUI::HSizer { "Test3", wxUI::HSizer {} }.fitTo(&frame);
-        CheckHSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
+        CheckHSizerHasN(1, frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckHSizerEmpty(sizer);
         });
     }
@@ -260,9 +270,47 @@ TEST_CASE("Size")
     {
         wxFrame frame { nullptr, wxID_ANY, "" };
         wxUI::HSizer { "Test3", wxUI::HSizer { "Test2" } }.fitTo(&frame);
-        CheckHSizerHasOne(frame.GetSizer(), "Test3", [](wxSizer* sizer) {
+        CheckHSizerHasN(1, frame.GetSizer(), "Test3", [](wxSizer* sizer) {
             CheckHSizerNamedEmpty(sizer, "Test2");
         });
+    }
+    SECTION("layoutif.true.1sizer")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        wxUI::HSizer { "Test3", wxUI::LayoutIf { true, wxUI::HSizer { "Test2" } } }.fitTo(&frame);
+        CheckHSizerHasN(1, frame.GetSizer(), "Test3", [](wxSizer* sizer) {
+            CheckHSizerNamedEmpty(sizer, "Test2");
+        });
+    }
+    SECTION("layoutif.false.1sizer")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        wxUI::HSizer { "Test3", wxUI::LayoutIf { false, wxUI::HSizer { "Test2" } } }.fitTo(&frame);
+        CheckHSizerNamedEmpty(frame.GetSizer(), "Test3");
+    }
+    SECTION("layoutif.true.button")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        wxUI::HSizer { "Test3", wxUI::LayoutIf { true, wxUI::Button { "Test2" } } }.fitTo(&frame);
+        CheckHSizerHasNItems(1, frame.GetSizer(), "Test3");
+    }
+    SECTION("layoutif.false.button")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        wxUI::HSizer { "Test3", wxUI::LayoutIf { false, wxUI::Button { "Test2" } } }.fitTo(&frame);
+        CheckHSizerHasNItems(0, frame.GetSizer(), "Test3");
+    }
+    SECTION("layoutif.true.true.button")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        wxUI::HSizer { "Test3", wxUI::LayoutIf { true, wxUI::Button { "Test2" }, wxUI::LayoutIf { true, wxUI::Button { "Test2" } } } }.fitTo(&frame);
+        CheckHSizerHasNItems(2, frame.GetSizer(), "Test3");
+    }
+    SECTION("layoutif.true.false.button")
+    {
+        wxFrame frame { nullptr, wxID_ANY, "" };
+        wxUI::HSizer { "Test3", wxUI::LayoutIf { true, wxUI::Button { "Test2" }, wxUI::LayoutIf { false, wxUI::Button { "Test2" } } } }.fitTo(&frame);
+        CheckHSizerHasNItems(1, frame.GetSizer(), "Test3");
     }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

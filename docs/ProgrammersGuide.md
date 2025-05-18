@@ -7,6 +7,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
 - [Layout](#layout)
   - [Generic](#generic)
   - [Splitter](#splitter)
+  - [LayoutIf](#layoutif)
   - [ForEach](#foreach)
 - [Controllers](#controllers)
   - [Bind](#bind)
@@ -61,24 +62,9 @@ Handlers are callable items that handle events.  The handler can be declared wit
                                                 dialog.ShowModal();
                                             } },
             wxUI::Item { "&MultibindExample...", [this] {
-                            MultibindExample dialog(this);
-                            dialog.ShowModal();
+                            MultibindExample { this }.ShowModal();
                         } },
-            wxUI::Item { "&SplitterExample...", [this] {
-                            SplitterExample dialog(this);
-                            dialog.ShowModal();
-                        } },
-            wxUI::Item { "&GenericExample...", [this] {
-                            GenericExample dialog(this);
-                            dialog.ShowModal();
-                        } },
-            wxUI::Item { "&ForEachExample...", [this] {
-                            ForEachExample dialog(this);
-                            dialog.ShowModal();
-                        } },
-            wxUI::Item { "&ListExample...", [this] {
-                            ListExample(this).ShowModal();
-                        } },
+    // ...
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },
@@ -119,23 +105,22 @@ Items { "Name", "Help", Handler }
                                                 dialog.ShowModal();
                                             } },
             wxUI::Item { "&MultibindExample...", [this] {
-                            MultibindExample dialog(this);
-                            dialog.ShowModal();
+                            MultibindExample { this }.ShowModal();
                         } },
             wxUI::Item { "&SplitterExample...", [this] {
-                            SplitterExample dialog(this);
-                            dialog.ShowModal();
+                            SplitterExample { this }.ShowModal();
                         } },
             wxUI::Item { "&GenericExample...", [this] {
-                            GenericExample dialog(this);
-                            dialog.ShowModal();
+                            GenericExample { this }.ShowModal();
                         } },
             wxUI::Item { "&ForEachExample...", [this] {
-                            ForEachExample dialog(this);
-                            dialog.ShowModal();
+                            ForEachExample { this }.ShowModal();
                         } },
             wxUI::Item { "&ListExample...", [this] {
                             ListExample(this).ShowModal();
+                        } },
+            wxUI::Item { "&LayoutIf...", [this] {
+                            LayoutIfExample { this }.ShowModal();
                         } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
@@ -232,6 +217,18 @@ Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, or 
     }
         .fitTo(this);
 ```
+
+#### LayoutIf
+
+`LayoutIf` is useful for when parts of a Layout are not needed depending on runtime logic.  `LayoutIf` takes a boolean which determines if a set of "Items" should be created or not.
+
+```
+        HSizer {
+            LayoutIf { layout, BitmapButton { wxArtProvider::GetBitmap(wxART_PLUS) } },
+            BitmapButton { wxArtProvider::GetBitmap(wxART_MINUS) },
+        },
+```
+
 
 #### ForEach
 
@@ -402,7 +399,7 @@ An example of how to use could be as follows:
         CreateStdDialogButtonSizer(wxOK),
 ```
 
-#### Misc notes.
+#### Miscellaneous Notes
 
 `wxRadioBox` requires a list of strings to operate correctly, so `RadioBox` requires a `std::vector` of strings.  Note, you *can* provide an empty `std::vector`, but a crash may occur if you do so.  In addition, because `RadioBox` can take in a string as a "caption", a key-value is necessary to prevent `char`-arrays from being interpreted as `initializer_list<std::string>`.
 

@@ -38,6 +38,16 @@ namespace details {
         || (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>);
     // clang-format on
 
+    template <typename T>
+    static inline auto createAndAddVisiter(T& arg, wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+    {
+        if constexpr (details::CreateAndAddable<T>) {
+            arg.createAndAdd(parent, sizer, flags);
+        } else {
+            sizer->Add(arg, flags);
+        }
+    }
+
     template <details::SizerItem... Items>
     struct Sizer {
         template <details::SizerItem... UItems>
@@ -84,16 +94,6 @@ namespace details {
 
     private:
         virtual auto constructSizer(wxWindow* parent) const -> wxSizer* = 0;
-
-        template <typename T>
-        static inline auto createAndAddVisiter(T& arg, wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
-        {
-            if constexpr (details::CreateAndAddable<T>) {
-                arg.createAndAdd(parent, sizer, flags);
-            } else {
-                sizer->Add(arg, flags);
-            }
-        }
 
         void createAndAddWidgets(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
         {
@@ -225,6 +225,38 @@ HSizer(wxSizerFlags const& flags, UItems&&... items) -> HSizer<UItems...>;
 
 template <details::SizerItem... UItems>
 HSizer(wxString const& caption, wxSizerFlags const& flags, UItems&&... items) -> HSizer<UItems...>;
+
+template <details::SizerItem... Items>
+struct LayoutIf {
+    template <details::SizerItem... UItems>
+    explicit LayoutIf(bool enabled, UItems&&... items)
+    {
+        if (enabled) {
+            items_ = std::forward_as_tuple(std::forward<UItems>(items)...);
+        }
+    }
+    auto createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
+    {
+        if (!items_) {
+            return;
+        }
+        createAndAddWidgets(parent, parentSizer, parentFlags);
+    }
+
+private:
+    void createAndAddWidgets(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+    {
+        std::apply([parent, sizer, flags](auto&&... tupleArg) {
+            (createAndAddVisiter(tupleArg, parent, sizer, flags), ...);
+        },
+            *items_);
+    }
+
+    std::optional<std::tuple<Items...>> items_ {};
+};
+
+template <details::SizerItem... Item>
+LayoutIf(bool, Item... item) -> LayoutIf<Item...>;
 
 }
 
