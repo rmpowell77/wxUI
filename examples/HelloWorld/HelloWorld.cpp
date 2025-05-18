@@ -127,24 +127,25 @@ HelloWorldFrame::HelloWorldFrame()
                                                 dialog.ShowModal();
                                             } },
             wxUI::Item { "&MultibindExample...", [this] {
-                            MultibindExample dialog(this);
-                            dialog.ShowModal();
+                            MultibindExample { this }.ShowModal();
                         } },
+            // endsnippet wxUIMenuExample1
             wxUI::Item { "&SplitterExample...", [this] {
-                            SplitterExample dialog(this);
-                            dialog.ShowModal();
+                            SplitterExample { this }.ShowModal();
                         } },
             wxUI::Item { "&GenericExample...", [this] {
-                            GenericExample dialog(this);
-                            dialog.ShowModal();
+                            GenericExample { this }.ShowModal();
                         } },
             wxUI::Item { "&ForEachExample...", [this] {
-                            ForEachExample dialog(this);
-                            dialog.ShowModal();
+                            ForEachExample { this }.ShowModal();
                         } },
             wxUI::Item { "&ListExample...", [this] {
                             ListExample(this).ShowModal();
                         } },
+            wxUI::Item { "&LayoutIf...", [this] {
+                            LayoutIfExample { this }.ShowModal();
+                        } },
+            // snippet wxUIMenuExample1
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },

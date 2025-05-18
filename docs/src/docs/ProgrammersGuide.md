@@ -7,6 +7,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
 - [Layout](#layout)
   - [Generic](#generic)
   - [Splitter](#splitter)
+  - [LayoutIf](#layoutif)
   - [ForEach](#foreach)
 - [Controllers](#controllers)
   - [Bind](#bind)
@@ -116,6 +117,15 @@ Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, or 
 ```cpp
 {{{ examples/HelloWorld/ExtendedExample.cpp SplitterExample "    // ..." }}}
 ```
+
+#### LayoutIf
+
+`LayoutIf` is useful for when parts of a Layout are not needed depending on runtime logic.  `LayoutIf` takes a boolean which determines if a set of "Items" should be created or not.
+
+```
+{{{ examples/HelloWorld/ExtendedExample.cpp LayoutIfExample "    // ..." }}}
+```
+
 
 #### ForEach
 
@@ -247,7 +257,7 @@ An example of how to use could be as follows:
 {{{ examples/HelloWorld/ExtendedExample.cpp CustomExample "    // ..." }}}
 ```
 
-#### Misc notes.
+#### Miscellaneous Notes
 
 `wxRadioBox` requires a list of strings to operate correctly, so `RadioBox` requires a `std::vector` of strings.  Note, you *can* provide an empty `std::vector`, but a crash may occur if you do so.  In addition, because `RadioBox` can take in a string as a "caption", a key-value is necessary to prevent `char`-arrays from being interpreted as `initializer_list<std::string>`.
 

@@ -65,3 +65,8 @@ class ListExample : public wxDialog {
 public:
     explicit ListExample(wxWindow* parent);
 };
+
+class LayoutIfExample : public wxDialog {
+public:
+    explicit LayoutIfExample(wxWindow* parent);
+};
