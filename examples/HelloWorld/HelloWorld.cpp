@@ -71,9 +71,12 @@ bool HelloWorldApp::OnInit()
 }
 
 // snippet wxUIMenu
+// snippet wxUIMenuProxy
 HelloWorldFrame::HelloWorldFrame()
     : wxFrame(NULL, wxID_ANY, "Hello World")
 {
+    wxUI::MenuItemProxy proxyItem;
+    // endsnippet wxUIMenuProxy
     wxUI::MenuBar {
         wxUI::Menu {
             "&File",
@@ -120,6 +123,17 @@ HelloWorldFrame::HelloWorldFrame()
                                      wxLogMessage("Blue %s checked", event.IsChecked() ? "is" : "is not");
                                  } },
             },
+            // snippet wxUIMenuProxy
+            wxUI::Menu {
+                "ProxyMenu",
+                wxUI::Item { "Label Off", [] {
+                            } }
+                    .withProxy(proxyItem),
+                wxUI::CheckItem { "Label Enable", [proxyItem](wxCommandEvent& event) {
+                                     proxyItem->SetItemLabel(event.IsChecked() ? "Label On" : "Label Off");
+                                 } },
+            },
+            // endsnippet wxUIMenuProxy
             // snippet wxUIMenuSubMenu
             // snippet wxUIMenuExample1
             wxUI::Separator {}, wxUI::Item { "&ExtendedExample...", [this] {

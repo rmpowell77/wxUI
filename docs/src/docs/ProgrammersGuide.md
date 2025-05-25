@@ -4,6 +4,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
 ## Table of Contents
 - [Overview](#overview)
 - [Menu](#menu)
+  - [Menu Proxy](#menu-proxy)
 - [Layout](#layout)
   - [Generic](#generic)
   - [Splitter](#splitter)
@@ -65,6 +66,13 @@ Items { "Name", "Help", Handler }
 
 The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primitives on construction.  When `fitTo` a frame is invoked does the underlying logic construct the menu structure.
 
+### Menu Proxy
+
+Sometime the `wxMenuItem` needs to be referenced.  *Menu* supports `MenuItemProxy` objects, a way to get the handle to the underlying `wxMenuItem` that is created for the *Menu*.
+
+```cpp
+{{{ examples/HelloWorld/HelloWorld.cpp wxUIMenuProxy "    // ..." }}}
+```
 
 ### Layout
 

@@ -4,6 +4,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
 ## Table of Contents
 - [Overview](#overview)
 - [Menu](#menu)
+  - [Menu Proxy](#menu-proxy)
 - [Layout](#layout)
   - [Generic](#generic)
   - [Splitter](#splitter)
@@ -32,6 +33,7 @@ The general concept is you declare a set of structures and then `fitTo` a frame.
 HelloWorldFrame::HelloWorldFrame()
     : wxFrame(NULL, wxID_ANY, "Hello World")
 {
+    wxUI::MenuItemProxy proxyItem;
     wxUI::MenuBar {
         wxUI::Menu {
             "&File",
@@ -133,6 +135,26 @@ Items { "Name", "Help", Handler }
 
 The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primitives on construction.  When `fitTo` a frame is invoked does the underlying logic construct the menu structure.
 
+### Menu Proxy
+
+Sometime the `wxMenuItem` needs to be referenced.  *Menu* supports `MenuItemProxy` objects, a way to get the handle to the underlying `wxMenuItem` that is created for the *Menu*.
+
+```cpp
+HelloWorldFrame::HelloWorldFrame()
+    : wxFrame(NULL, wxID_ANY, "Hello World")
+{
+    wxUI::MenuItemProxy proxyItem;
+    // ...
+            wxUI::Menu {
+                "ProxyMenu",
+                wxUI::Item { "Label Off", [] {
+                            } }
+                    .withProxy(proxyItem),
+                wxUI::CheckItem { "Label Enable", [proxyItem](wxCommandEvent& event) {
+                                     proxyItem->SetItemLabel(event.IsChecked() ? "Label On" : "Label Off");
+                                 } },
+            },
+```
 
 ### Layout
 
