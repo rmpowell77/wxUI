@@ -32,11 +32,9 @@ namespace wxUI {
 
 namespace details {
 
-    // clang-format off
     template <typename T>
     concept SizerItem = details::CreateAndAddable<T>
         || (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>);
-    // clang-format on
 
     template <typename T>
     static inline auto createAndAddVisiter(T& arg, wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)

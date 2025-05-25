@@ -26,7 +26,6 @@ SOFTWARE.
 #include "Layout.hpp"
 
 namespace wxUI::details {
-// clang-format off
 // Big help to Dennis Kormalev (https://www.linkedin.com/in/dkormalev/) for the example at:
 // https://godbolt.org/z/sv5seP79q
 template <typename, typename, typename = void>
@@ -44,19 +43,16 @@ struct invoke_apply_result<F, std::tuple<Args1...>, std::enable_if_t<std::is_inv
 template <typename F, typename... Args>
 using invoke_apply_result_t = typename invoke_apply_result<F, Args...>::type;
 
-template <typename F, typename Arg> 
+template <typename F, typename Arg>
 concept ForEachFunction = CreateAndAddable<typename invoke_apply_result<F, Arg>::type>;
-// clang-format on
 
 }
 
 namespace wxUI {
 
-// clang-format off
 template <std::ranges::input_range Range, typename Function>
 requires(details::ForEachFunction<Function, std::ranges::range_value_t<Range>>)
 struct ForEach {
-    // clang-format on
 
     ForEach(Range&& args, Function&& createFunction)
         : args_(std::forward<Range>(args))

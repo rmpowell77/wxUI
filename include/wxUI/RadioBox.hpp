@@ -55,9 +55,7 @@ struct Foo {
 struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     using super = details::WidgetDetails<RadioBox, wxRadioBox>;
 
-    // clang-format off
     struct withChoices { };
-    // clang-format on
 
     RadioBox([[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
         : RadioBox(wxID_ANY, "", unused, choices)

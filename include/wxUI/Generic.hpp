@@ -31,12 +31,12 @@ SOFTWARE.
 
 namespace wxUI::details {
 template <typename T>
-// clang-format off
 // Concept for a function takes a wxWindow* and returns something convertible to wxWindow*
 concept CreateableWindowFunction = requires(T function, wxWindow* window) {
-    { function(window) } -> std::convertible_to<wxWindow*>;
+    {
+        function(window)
+    } -> std::convertible_to<wxWindow*>;
 };
-// clang-format on
 
 }
 

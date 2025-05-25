@@ -29,18 +29,14 @@ SOFTWARE.
 // ZapMacros.h should be the last line included in all Header files.
 // Due to the way we are using these header files, they should *not* use #pragma once
 
-// clang-format off
-
 #if !defined(RULE_OF_SIX_BOILERPLATE)
-#define RULE_OF_SIX_BOILERPLATE(WIDGET)               \
-    virtual ~WIDGET() = default;                      \
-    WIDGET(WIDGET const&) = default;                  \
-    WIDGET(WIDGET&&) noexcept = default;              \
-    auto operator=(WIDGET const&)->WIDGET& = default; \
+#define RULE_OF_SIX_BOILERPLATE(WIDGET)                 \
+    virtual ~WIDGET() = default;                        \
+    WIDGET(WIDGET const&) = default;                    \
+    WIDGET(WIDGET&&) noexcept = default;                \
+    auto operator=(WIDGET const&) -> WIDGET& = default; \
     auto operator=(WIDGET&&) noexcept -> WIDGET& = default;
 #endif
-
-// clang-format on
 
 #if !defined(WIDGET_STATIC_ASSERT_BOILERPLATE)
 #define WIDGET_STATIC_ASSERT_BOILERPLATE(WIDGET)                 \
