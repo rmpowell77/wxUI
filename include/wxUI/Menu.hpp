@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
+#include "wxUITypes.hpp"
 #include <functional>
 #include <memory>
 #include <stdexcept>
@@ -52,8 +53,10 @@ namespace details {
     };
     // clang-format on
 
-}
+    template <typename F, typename Arg>
+    concept MenuForEachFunction = MenuItem<typename invoke_apply_result<F, Arg>::type>;
 
+}
 namespace details {
 
     // We provide a way to bind either a function that takes in a commandEvent
@@ -329,6 +332,34 @@ struct Separator {
     }
 };
 
+// clang-format off
+template <std::ranges::input_range Range, typename Function>
+requires(details::MenuForEachFunction<Function, std::ranges::range_value_t<Range>>)
+struct MenuForEach {
+    // clang-format on
+    MenuForEach(Range&& args, Function&& createFunction)
+        : args_(std::forward<Range>(args))
+        , createFunction_(std::forward<Function>(createFunction))
+    {
+    }
+
+    void createAndAdd([[maybe_unused]] wxFrame& frame, [[maybe_unused]] wxMenu& menu, [[maybe_unused]] int& identity)
+    {
+        using RawArg = std::remove_cvref_t<std::ranges::range_value_t<Range>>;
+        for (auto&& item : args_) {
+            if constexpr (details::CanApply<Function, RawArg>::value) {
+                std::apply(createFunction_, item).createAndAdd(frame, menu, identity);
+            } else {
+                createFunction_(item).createAndAdd(frame, menu, identity);
+            }
+        }
+    }
+
+private:
+    Range args_;
+    Function createFunction_;
+};
+
 // a submenu constructs menu to give to a menubar
 template <details::MenuItem... M>
 struct Menu {
@@ -368,17 +399,17 @@ struct Menu {
         menuBar.Append(menu.release(), name);
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menuBar, int& identity)
+    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity)
     {
-        auto menu = std::make_unique<wxMenu>();
-        std::apply([&frame, menu = menu.get(), &identity](auto&&... tupleArg) {
-            (tupleArg.createAndAdd(frame, *menu, identity), ...);
+        auto subMenu = std::make_unique<wxMenu>();
+        std::apply([&frame, subMenu = subMenu.get(), &identity](auto&&... tupleArg) {
+            (tupleArg.createAndAdd(frame, *subMenu, identity), ...);
         },
             items);
         for (auto& proxyHandle : proxyHandles_) {
-            proxyHandle.setUnderlying(menu.get());
+            proxyHandle.setUnderlying(subMenu.get());
         }
-        menuBar.AppendSubMenu(menu.release(), name);
+        menu.AppendSubMenu(subMenu.release(), name);
     }
 
 private:
