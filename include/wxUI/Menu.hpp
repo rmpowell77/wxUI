@@ -25,6 +25,7 @@ SOFTWARE.
 
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include <tuple>
 #include <variant>
 #include <wx/frame.h>
@@ -77,9 +78,6 @@ namespace details {
             function);
     }
 
-}
-
-namespace details {
     // This is for "type erasure": we support several modes of creating a menu,
     // these are the details on how it is added.
     // We support
@@ -118,11 +116,41 @@ namespace details {
         },
             item);
     }
+
+    template <typename Underlying>
+    struct MenuProxy {
+        MenuProxy()
+            : controller(std::make_shared<Underlying*>())
+        {
+        }
+
+        [[nodiscard]] auto control() const -> Underlying*
+        {
+            if (!controller) {
+                throw std::runtime_error("Proxy class has not been attached");
+            }
+            return *controller;
+        }
+
+        void setUnderlying(Underlying* control)
+        {
+            *controller = control;
+        }
+
+        auto operator->() const { return control(); }
+
+    private:
+        std::shared_ptr<Underlying*> controller {};
+    };
 }
+
+using MenuProxy = details::MenuProxy<wxMenu>;
+using MenuBarProxy = details::MenuProxy<wxMenuBar>;
+using MenuItemProxy = details::MenuProxy<wxMenuItem>;
 
 struct Item {
     explicit Item(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
-        : menuDetails(details::IDMenuDetails_t { identity, name, helpString })
+        : menuDetails_(details::IDMenuDetails_t { identity, name, helpString })
     {
     }
 
@@ -137,7 +165,7 @@ struct Item {
     }
 
     Item(wxStandardID identity, std::string const& name, std::string const& helpString, details::function_t function)
-        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
+        : menuDetails_(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
     {
     }
 
@@ -147,22 +175,40 @@ struct Item {
     }
 
     Item(std::string const& name, std::string const& help, details::function_t function)
-        : menuDetails(details::NamedMenuDetails_t(name, help, std::move(function)))
+        : menuDetails_(details::NamedMenuDetails_t(name, help, std::move(function)))
     {
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity) const
+    auto withProxy(MenuItemProxy const& proxy) & -> Item&
     {
-        details::createAndAdd(frame, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
-            menu.Append(identity, item, helpString);
+        proxyHandles_.push_back(proxy);
+        return *this;
+    }
+
+    auto withProxy(MenuItemProxy const& proxy) && -> Item&&
+    {
+        proxyHandles_.push_back(proxy);
+        return std::move(*this);
+    }
+
+    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity)
+    {
+        details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& helpString) {
+            auto* menuItem = menu.Append(identity, item, helpString);
+            for (auto& proxyHandle : proxyHandles_) {
+                proxyHandle.setUnderlying(menuItem);
+            }
         });
     }
-    details::MenuDetails menuDetails;
+
+private:
+    details::MenuDetails menuDetails_;
+    std::vector<MenuItemProxy> proxyHandles_;
 };
 
 struct CheckItem {
     explicit CheckItem(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
-        : menuDetails(details::IDMenuDetails_t { identity, name, helpString })
+        : menuDetails_(details::IDMenuDetails_t { identity, name, helpString })
     {
     }
 
@@ -177,7 +223,7 @@ struct CheckItem {
     }
 
     CheckItem(wxStandardID identity, std::string const& name, std::string const& helpString, details::function_t function)
-        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
+        : menuDetails_(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
     {
     }
 
@@ -187,22 +233,40 @@ struct CheckItem {
     }
 
     CheckItem(std::string const& name, std::string const& help, details::function_t function)
-        : menuDetails(details::NamedMenuDetails_t(name, help, std::move(function)))
+        : menuDetails_(details::NamedMenuDetails_t(name, help, std::move(function)))
     {
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity) const
+    auto withProxy(MenuItemProxy const& proxy) & -> CheckItem&
     {
-        details::createAndAdd(frame, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
-            menu.AppendCheckItem(identity, item, helpString);
+        proxyHandles_.push_back(proxy);
+        return *this;
+    }
+
+    auto withProxy(MenuItemProxy const& proxy) && -> CheckItem&&
+    {
+        proxyHandles_.push_back(proxy);
+        return std::move(*this);
+    }
+
+    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity)
+    {
+        details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& helpString) {
+            auto* menuItem = menu.AppendCheckItem(identity, item, helpString);
+            for (auto& proxyHandle : proxyHandles_) {
+                proxyHandle.setUnderlying(menuItem);
+            }
         });
     }
-    details::MenuDetails menuDetails;
+
+private:
+    details::MenuDetails menuDetails_;
+    std::vector<MenuItemProxy> proxyHandles_;
 };
 
 struct RadioItem {
     explicit RadioItem(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
-        : menuDetails(details::IDMenuDetails_t { identity, name, helpString })
+        : menuDetails_(details::IDMenuDetails_t { identity, name, helpString })
     {
     }
 
@@ -217,7 +281,7 @@ struct RadioItem {
     }
 
     RadioItem(wxStandardID identity, std::string const& name, std::string const& helpString, details::function_t function)
-        : menuDetails(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
+        : menuDetails_(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
     {
     }
 
@@ -227,17 +291,35 @@ struct RadioItem {
     }
 
     RadioItem(std::string const& name, std::string const& help, details::function_t function)
-        : menuDetails(details::NamedMenuDetails_t(name, help, std::move(function)))
+        : menuDetails_(details::NamedMenuDetails_t(name, help, std::move(function)))
     {
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity) const
+    auto withProxy(MenuItemProxy const& proxy) & -> RadioItem&
     {
-        details::createAndAdd(frame, menuDetails, identity, [&menu](int identity, wxString const& item, wxString const& helpString) {
-            menu.AppendRadioItem(identity, item, helpString);
+        proxyHandles_.push_back(proxy);
+        return *this;
+    }
+
+    auto withProxy(MenuItemProxy const& proxy) && -> RadioItem&&
+    {
+        proxyHandles_.push_back(proxy);
+        return std::move(*this);
+    }
+
+    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity)
+    {
+        details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& helpString) {
+            auto* menuItem = menu.AppendRadioItem(identity, item, helpString);
+            for (auto& proxyHandle : proxyHandles_) {
+                proxyHandle.setUnderlying(menuItem);
+            }
         });
     }
-    details::MenuDetails menuDetails;
+
+private:
+    details::MenuDetails menuDetails_;
+    std::vector<MenuItemProxy> proxyHandles_;
 };
 
 struct Separator {
@@ -245,34 +327,6 @@ struct Separator {
     {
         menu.AppendSeparator();
     }
-};
-
-// a submenu constructs menu to give to a menubar
-template <details::MenuItem... M>
-struct SubMenu {
-    explicit SubMenu(std::string name, M const&... items)
-        : SubMenu(std::move(name), std::make_tuple(items...))
-    {
-    }
-
-    SubMenu(std::string name, std::tuple<M...> const& items)
-        : name(std::move(name))
-        , items(items)
-    {
-    }
-
-    void createAndAdd(wxFrame& frame, wxMenu& menuBar, int& identity)
-    {
-        auto menu = std::make_unique<wxMenu>();
-        std::apply([&frame, menu = menu.get(), &identity](auto&&... tupleArg) {
-            (tupleArg.createAndAdd(frame, *menu, identity), ...);
-        },
-            items);
-        menuBar.AppendSubMenu(menu.release(), name);
-    }
-
-    std::string name;
-    std::tuple<M...> items;
 };
 
 // a submenu constructs menu to give to a menubar
@@ -289,6 +343,18 @@ struct Menu {
     {
     }
 
+    auto withProxy(MenuProxy const& proxy) & -> Menu&
+    {
+        proxyHandles_.push_back(proxy);
+        return *this;
+    }
+
+    auto withProxy(MenuProxy const& proxy) && -> Menu&&
+    {
+        proxyHandles_.push_back(proxy);
+        return std::move(*this);
+    }
+
     void createAndAdd(wxFrame& frame, wxMenuBar& menuBar, int& identity)
     {
         auto menu = std::make_unique<wxMenu>();
@@ -296,6 +362,9 @@ struct Menu {
             (tupleArg.createAndAdd(frame, *menu, identity), ...);
         },
             items);
+        for (auto& proxyHandle : proxyHandles_) {
+            proxyHandle.setUnderlying(menu.get());
+        }
         menuBar.Append(menu.release(), name);
     }
 
@@ -306,11 +375,16 @@ struct Menu {
             (tupleArg.createAndAdd(frame, *menu, identity), ...);
         },
             items);
+        for (auto& proxyHandle : proxyHandles_) {
+            proxyHandle.setUnderlying(menu.get());
+        }
         menuBar.AppendSubMenu(menu.release(), name);
     }
 
+private:
     std::string name;
     std::tuple<M...> items;
+    std::vector<MenuProxy> proxyHandles_;
 };
 
 template <details::MenuBarItem... M>
@@ -324,6 +398,18 @@ struct MenuBar {
     {
     }
 
+    auto withProxy(MenuBarProxy const& proxy) & -> MenuBar&
+    {
+        proxyHandles_.push_back(proxy);
+        return *this;
+    }
+
+    auto withProxy(MenuBarProxy const& proxy) && -> MenuBar&&
+    {
+        proxyHandles_.push_back(proxy);
+        return std::move(*this);
+    }
+
     auto fitTo(wxFrame* frame) -> auto&
     {
         auto numbering = int(wxID_AUTO_LOWEST);
@@ -332,11 +418,16 @@ struct MenuBar {
             (tupleArg.createAndAdd(*frame, *menuBar, numbering), ...);
         },
             menus);
+        for (auto& proxyHandle : proxyHandles_) {
+            proxyHandle.setUnderlying(menuBar.get());
+        }
         frame->SetMenuBar(menuBar.release());
         return *this;
     }
 
+private:
     std::tuple<M...> menus;
+    std::vector<MenuBarProxy> proxyHandles_;
 };
 }
 

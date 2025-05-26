@@ -1,9 +1,8 @@
-# wxUI release notes for v0.2.1
+# wxUI release notes for v0.2.2
 
 Bugs addressed in this release:
 
 Other changes:
 
-* [#202](../../issues/202) Add doubleClick to ListBox
-* [#205](../../issues/205) Add LayoutIf
+* [#124](../../issues/124) Menu should have a proxy
 
