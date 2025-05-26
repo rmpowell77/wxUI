@@ -24,30 +24,11 @@ SOFTWARE.
 #pragma once
 
 #include "Layout.hpp"
+#include "wxUITypes.hpp"
 
 namespace wxUI::details {
-// clang-format off
-// Big help to Dennis Kormalev (https://www.linkedin.com/in/dkormalev/) for the example at:
-// https://godbolt.org/z/sv5seP79q
-template <typename, typename, typename = void>
-struct CanApply : std::false_type { };
-
-template <typename F, typename... Arg>
-struct CanApply<F, std::tuple<Arg...>, std::enable_if_t<std::is_invocable_v<F, Arg...>, void>> : std::true_type { };
-
-template <typename F, typename Arg, typename = void>
-struct invoke_apply_result : std::invoke_result<F, Arg> { };
-
-template <typename F, typename... Args1>
-struct invoke_apply_result<F, std::tuple<Args1...>, std::enable_if_t<std::is_invocable_v<F, Args1...>, void>> : std::invoke_result<F, Args1...> { };
-
-template <typename F, typename... Args>
-using invoke_apply_result_t = typename invoke_apply_result<F, Args...>::type;
-
-template <typename F, typename Arg> 
+template <typename F, typename Arg>
 concept ForEachFunction = CreateAndAddable<typename invoke_apply_result<F, Arg>::type>;
-// clang-format on
-
 }
 
 namespace wxUI {

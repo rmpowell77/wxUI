@@ -33,6 +33,7 @@ add_library(
   wxUI
   INTERFACE
   include/wxUI/wxUI.hpp
+  include/wxUI/wxUITypes.hpp
   include/wxUI/BindInfo.hpp
   include/wxUI/Bitmap.hpp
   include/wxUI/BitmapToggleButton.hpp

@@ -5,6 +5,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
 - [Overview](#overview)
 - [Menu](#menu)
   - [Menu Proxy](#menu-proxy)
+  - [Menu ForEach](#menu-foreach)
 - [Layout](#layout)
   - [Generic](#generic)
   - [Splitter](#splitter)
@@ -135,7 +136,7 @@ Items { "Name", "Help", Handler }
 
 The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primitives on construction.  When `fitTo` a frame is invoked does the underlying logic construct the menu structure.
 
-### Menu Proxy
+#### Menu Proxy
 
 Sometime the `wxMenuItem` needs to be referenced.  *Menu* supports `MenuItemProxy` objects, a way to get the handle to the underlying `wxMenuItem` that is created for the *Menu*.
 
@@ -153,6 +154,21 @@ HelloWorldFrame::HelloWorldFrame()
                 wxUI::CheckItem { "Label Enable", [proxyItem](wxCommandEvent& event) {
                                      proxyItem->SetItemLabel(event.IsChecked() ? "Label On" : "Label Off");
                                  } },
+            },
+```
+
+#### Menu ForEach
+
+`MenuForEach` Allows you to specify a range of values or `std::tuples` that are arguments to a closure that will returns a *MenuItem*.  These will then be added one at a time.
+
+```cpp
+            wxUI::Menu {
+                "Foreach",
+                wxUI::MenuForEach { std::vector { "Red", "Green", "Blue" }, [](auto name) {
+                                       return wxUI::RadioItem { name, [name](wxCommandEvent& event) {
+                                                                   wxLogMessage("%s %s checked", name, event.IsChecked() ? "is" : "is not");
+                                                               } };
+                                   } },
             },
 ```
 

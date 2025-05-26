@@ -30,5 +30,6 @@ target_sources(wxUI_Tests PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/Widget.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ZapMacros.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUITypes.cpp
 )
 

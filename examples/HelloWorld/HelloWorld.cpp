@@ -134,6 +134,16 @@ HelloWorldFrame::HelloWorldFrame()
                                  } },
             },
             // endsnippet wxUIMenuProxy
+            // snippet wxUIMenuForEach
+            wxUI::Menu {
+                "Foreach",
+                wxUI::MenuForEach { std::vector { "Red", "Green", "Blue" }, [](auto name) {
+                                       return wxUI::RadioItem { name, [name](wxCommandEvent& event) {
+                                                                   wxLogMessage("%s %s checked", name, event.IsChecked() ? "is" : "is not");
+                                                               } };
+                                   } },
+            },
+            // endsnippet wxUIMenuForEach
             // snippet wxUIMenuSubMenu
             // snippet wxUIMenuExample1
             wxUI::Separator {}, wxUI::Item { "&ExtendedExample...", [this] {
