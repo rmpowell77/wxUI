@@ -112,6 +112,8 @@ struct WidgetProxy {
 
     auto operator->() const { return control(); }
 
+    explicit operator bool() const noexcept { return controller != nullptr; }
+
 private:
     std::shared_ptr<Underlying*> controller {};
 };
