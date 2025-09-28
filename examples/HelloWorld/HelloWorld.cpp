@@ -28,6 +28,7 @@ SOFTWARE.
 // snippet Example headers to include
 #include <numeric>
 #include <wx/wx.h>
+#include <wx/app.h>
 #include <wxUI/wxUI.hpp>
 // endsnippet Example
 
