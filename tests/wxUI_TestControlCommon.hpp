@@ -189,10 +189,13 @@ auto DoProxyTests()
 {
     wxFrame frame { nullptr, wxID_ANY, "" };
     auto proxy = typename WHICH::TypeUnderTest::Proxy {};
+    CHECK(proxy.control() == nullptr);
+    CHECK(!proxy.control());
     auto uut = WHICH::createUUT().withProxy(proxy);
     uut.create(&frame);
 
     CHECK(proxy.control() != nullptr);
+    CHECK(proxy.control());
 }
 
 #define COMMON_TESTS(WHICH)            \
