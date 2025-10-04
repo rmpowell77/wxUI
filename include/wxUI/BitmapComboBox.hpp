@@ -33,8 +33,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_bitmap_combo_box.html
-struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapComboBox> {
-    using super = details::WidgetDetails<BitmapComboBox, wxBitmapComboBox>;
+struct BitmapComboBox {
+    using underlying_t = wxBitmapComboBox;
 
     explicit BitmapComboBox(std::initializer_list<std::tuple<std::string, wxBitmap>> bitmapChoices)
         : BitmapComboBox(wxID_ANY, bitmapChoices)
@@ -42,7 +42,7 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
     }
 
     BitmapComboBox(wxWindowID identity, std::initializer_list<std::tuple<std::string, wxBitmap>> bitmapChoices)
-        : super(identity)
+        : details_(identity)
         , choices_([&bitmapChoices] {
             std::vector<wxString> result;
             result.reserve(bitmapChoices.size());
@@ -68,7 +68,7 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
     }
 
     BitmapComboBox(wxWindowID identity, details::Ranges::input_range_of<std::tuple<wxString, wxBitmap>> auto&& choices)
-        : super(identity)
+        : details_(identity)
         , choices_(details::Ranges::ToVector<wxString>(choices | std::views::transform([](auto&& item) { return std::get<0>(item); })))
         , bitmaps_(details::Ranges::ToVector<wxBitmap>(choices | std::views::transform([](auto&& item) { return std::get<1>(item); })))
     {
@@ -76,27 +76,28 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
 
     auto withSelection(int which) & -> BitmapComboBox&
     {
-        selection = which;
+        selection_ = which;
         return *this;
     }
 
     auto withSelection(int which) && -> BitmapComboBox&&
     {
-        selection = which;
+        selection_ = which;
         return std::move(*this);
     }
 
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> BitmapComboBox&
     {
-        return super::bind(wxEVT_COMBOBOX, func);
+        details_.bind(wxEVT_COMBOBOX, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> BitmapComboBox&&
     {
-        return std::move(*this).super::bind(wxEVT_COMBOBOX, func);
+        details_.bind(wxEVT_COMBOBOX, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -119,28 +120,33 @@ struct BitmapComboBox : public details::WidgetDetails<BitmapComboBox, wxBitmapCo
 
         auto operator*() const { return value(); }
     };
-    RULE_OF_SIX_BOILERPLATE(BitmapComboBox);
 
 private:
+    details::WidgetDetails<BitmapComboBox, wxBitmapComboBox> details_;
     std::vector<wxString> choices_;
     std::vector<wxBitmap> bitmaps_;
-    int selection = 0;
+    int selection_ = 0;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto&& first = (choices_.size() > 0) ? wxString(choices_.at(0)) : wxString(wxEmptyString);
-        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
-        for (auto i = 0lu; i < bitmaps_.size(); ++i) {
-            widget->SetItemBitmap(i, bitmaps_[i]);
-        }
-        if (!choices_.empty()) {
-            widget->SetSelection(selection);
-        }
-        return widget;
+        return [&choices = choices_, &bitmaps = bitmaps_, selection = selection_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto&& first = (choices.size() > 0) ? wxString(choices.at(0)) : wxString(wxEmptyString);
+            auto* widget = new underlying_t(parent, id, first, pos, size, static_cast<int>(choices.size()), choices.data(), style);
+            for (auto i = 0lu; i < bitmaps.size(); ++i) {
+                widget->SetItemBitmap(i, bitmaps[i]);
+            }
+            if (!choices.empty()) {
+                widget->SetSelection(selection);
+            }
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(BitmapComboBox)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapComboBox);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapComboBox);
 }
 
 #include "ZapMacros.hpp"

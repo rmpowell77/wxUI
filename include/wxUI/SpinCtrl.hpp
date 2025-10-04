@@ -32,8 +32,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_spin_ctrl.html
-struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
-    using super = details::WidgetDetails<SpinCtrl, wxSpinCtrl>;
+struct SpinCtrl {
+    using underlying_t = wxSpinCtrl;
 
     explicit SpinCtrl(std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
         : SpinCtrl(wxID_ANY, range, initial)
@@ -41,23 +41,24 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
     }
 
     explicit SpinCtrl(wxWindowID identity, std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
-        : super(identity)
+        : details_(identity)
         , range_(std::move(range))
         , initial_(initial)
     {
     }
 
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> SpinCtrl&
     {
-        return super::bind(wxEVT_SPINCTRL, func);
+        details_.bind(wxEVT_SPINCTRL, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> SpinCtrl&&
     {
-        return std::move(*this).super::bind(wxEVT_SPINCTRL, func);
+        details_.bind(wxEVT_SPINCTRL, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -73,22 +74,27 @@ struct SpinCtrl : public details::WidgetDetails<SpinCtrl, wxSpinCtrl> {
         auto operator*() const { return value(); }
     };
 
-    RULE_OF_SIX_BOILERPLATE(SpinCtrl);
-
 private:
+    details::WidgetDetails<SpinCtrl, wxSpinCtrl> details_;
     std::optional<std::pair<int, int>> range_;
     std::optional<int> initial_;
 
-    auto createImpl(wxWindow* parent) -> wxWindow*
+    auto createImpl()
     {
-        auto min = range_ ? range_->first : 0;
-        auto max = range_ ? range_->second : 100;
-        auto initvalue = initial_.value_or(min);
-        return bindProxy(new underlying_t(parent, getIdentity(), wxEmptyString, getPos(), getSize(), getStyle(), min, max, initvalue));
+        return [&range = range_, &initial = initial_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto min = range ? range->first : 0;
+            auto max = range ? range->second : 100;
+            auto initvalue = initial.value_or(min);
+            auto* widget = new underlying_t(parent, id, wxEmptyString, pos, size, style, min, max, initvalue);
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(SpinCtrl)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(SpinCtrl);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(SpinCtrl);
 }
 
 #include "ZapMacros.hpp"

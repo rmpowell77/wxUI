@@ -32,8 +32,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_slider.html
-struct Slider : public details::WidgetDetails<Slider, wxSlider> {
-    using super = details::WidgetDetails<Slider, wxSlider>;
+struct Slider {
+    using underlying_t = wxSlider;
 
     explicit Slider(std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
         : Slider(wxID_ANY, range, initial)
@@ -41,23 +41,24 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
     }
 
     explicit Slider(wxWindowID identity, std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
-        : super(identity)
+        : details_(identity)
         , range_(std::move(range))
         , initial_(initial)
     {
     }
 
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> Slider&
     {
-        return super::bind(wxEVT_SLIDER, func);
+        details_.bind(wxEVT_SLIDER, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> Slider&&
     {
-        return std::move(*this).super::bind(wxEVT_SLIDER, func);
+        details_.bind(wxEVT_SLIDER, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -72,23 +73,28 @@ struct Slider : public details::WidgetDetails<Slider, wxSlider> {
 
         auto operator*() const { return value(); }
     };
-    RULE_OF_SIX_BOILERPLATE(Slider);
 
 private:
+    details::WidgetDetails<Slider, wxSlider> details_;
     std::optional<std::pair<int, int>> range_;
     std::optional<int> initial_;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto min = range_ ? range_->first : 0;
-        auto max = range_ ? range_->second : 100;
-        auto initvalue = initial_.value_or(min);
-        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), initvalue, min, max, getPos(), getSize(), getStyle()));
-        return widget;
+        return [&range = range_, &initial = initial_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto min = range ? range->first : 0;
+            auto max = range ? range->second : 100;
+            auto initvalue = initial.value_or(min);
+            auto* widget = new underlying_t(parent, id, initvalue, min, max, pos, size, style);
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(Slider)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(Slider);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(Slider);
 }
 
 #include "ZapMacros.hpp"

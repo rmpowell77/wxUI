@@ -31,8 +31,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_bitmap_button.html
-struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton> {
-    using super = details::WidgetDetails<BitmapButton, wxBitmapButton>;
+struct BitmapButton {
+    using underlying_t = wxBitmapButton;
 
     explicit BitmapButton(wxBitmap const& bitmap)
         : BitmapButton(wxID_ANY, bitmap)
@@ -40,7 +40,7 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
     }
 
     BitmapButton(wxWindowID identity, wxBitmap const& bitmap)
-        : super(identity)
+        : details_(identity)
         , bitmap_(bitmap)
     {
     }
@@ -57,38 +57,44 @@ struct BitmapButton : public details::WidgetDetails<BitmapButton, wxBitmapButton
         return std::move(*this);
     }
 
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> BitmapButton&
     {
-        return super::bind(wxEVT_BUTTON, func);
+        details_.bind(wxEVT_BUTTON, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> BitmapButton&&
     {
-        return std::move(*this).super::bind(wxEVT_BUTTON, func);
+        details_.bind(wxEVT_BUTTON, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
     };
-    RULE_OF_SIX_BOILERPLATE(BitmapButton);
 
 private:
+    details::WidgetDetails<BitmapButton, wxBitmapButton> details_;
     wxBitmap bitmap_;
     bool isDefault_ = false;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
-        if (isDefault_) {
-            widget->SetDefault();
-        }
-        return widget;
+        return [&bitmap = bitmap_, isDefault = isDefault_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto* widget = new underlying_t(parent, id, bitmap, pos, size, style);
+            if (isDefault) {
+                widget->SetDefault();
+            }
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(BitmapButton)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapButton);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapButton);
 }
 
 #include "ZapMacros.hpp"

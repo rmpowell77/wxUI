@@ -31,8 +31,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_static_bitmap.html
-struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
-    using super = details::WidgetDetails<Bitmap, wxStaticBitmap>;
+struct Bitmap {
+    using underlying_t = wxStaticBitmap;
 
     explicit Bitmap(wxBitmap const& bitmap)
         : Bitmap(wxID_ANY, bitmap)
@@ -40,25 +40,30 @@ struct Bitmap : public details::WidgetDetails<Bitmap, wxStaticBitmap> {
     }
 
     Bitmap(wxWindowID identity, wxBitmap const& bitmap)
-        : super(identity)
+        : details_(identity)
         , bitmap_(bitmap)
     {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
     };
-    RULE_OF_SIX_BOILERPLATE(Bitmap);
 
 private:
+    details::WidgetDetails<Bitmap, wxStaticBitmap> details_;
     wxBitmap bitmap_;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        return bindProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
+        return [&bitmap = bitmap_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            return new underlying_t(parent, id, bitmap, pos, size, style);
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(Bitmap)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(Bitmap);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(Bitmap);
 
 }
 

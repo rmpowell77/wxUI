@@ -31,9 +31,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_button.html
-struct Button : public details::WidgetDetails<Button, wxButton> {
-    using super = details::WidgetDetails<Button, wxButton>;
-    using details::WidgetDetails<Button, wxButton>::underlying_t;
+struct Button {
+    using underlying_t = wxButton;
 
     explicit Button(std::string text = "")
         : Button(wxID_ANY, std::move(text))
@@ -41,7 +40,7 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
     }
 
     explicit Button(wxWindowID identity, std::string text = "")
-        : super(identity)
+        : details_(identity)
         , text_(std::move(text))
     {
     }
@@ -58,38 +57,44 @@ struct Button : public details::WidgetDetails<Button, wxButton> {
         return std::move(*this);
     }
 
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> Button&
     {
-        return super::bind(wxEVT_BUTTON, func);
+        details_.bind(wxEVT_BUTTON, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> Button&&
     {
-        return std::move(*this).super::bind(wxEVT_BUTTON, func);
+        details_.bind(wxEVT_BUTTON, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
     };
-    RULE_OF_SIX_BOILERPLATE(Button);
 
 private:
+    details::WidgetDetails<Button, wxButton> details_;
     std::string text_;
     bool isDefault_ = false;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
-        if (isDefault_) {
-            widget->SetDefault();
-        }
-        return widget;
+        return [&text = text_, isDefault = isDefault_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto* widget = new underlying_t(parent, id, text, pos, size, style);
+            if (isDefault) {
+                widget->SetDefault();
+            }
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(Button)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(Button);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(Button);
 }
 
 #include "ZapMacros.hpp"

@@ -31,23 +31,29 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_static_line.html
-struct Line : public details::WidgetDetails<Line, wxStaticLine> {
-    using super = details::WidgetDetails<Line, wxStaticLine>;
+struct Line {
+    using underlying_t = wxStaticLine;
 
     explicit Line(wxWindowID identity = wxID_ANY)
-        : super(identity)
+        : details_(identity)
     {
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
     };
-    RULE_OF_SIX_BOILERPLATE(Line);
 
 private:
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    details::WidgetDetails<Line, wxStaticLine> details_;
+
+    auto createImpl()
     {
-        return bindProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), getStyle()));
+        return [](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            return new underlying_t(parent, id, pos, size, style);
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(Line)
 };
 
 inline auto HLine() -> Line
@@ -60,7 +66,7 @@ inline auto VLine() -> Line
     return Line().withFlags(wxSizerFlags {}.Border(wxALL, 2).Proportion(1).Expand()).withStyle(wxLI_VERTICAL);
 }
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(Line);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(Line);
 }
 
 #include "ZapMacros.hpp"

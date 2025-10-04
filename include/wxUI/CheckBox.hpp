@@ -32,8 +32,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_check_box.html
-struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
-    using super = details::WidgetDetails<CheckBox, wxCheckBox>;
+struct CheckBox {
+    using underlying_t = wxCheckBox;
 
     explicit CheckBox(std::string text = "")
         : CheckBox(wxID_ANY, std::move(text))
@@ -41,7 +41,7 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
     }
 
     explicit CheckBox(wxWindowID identity, std::string text = "")
-        : super(identity)
+        : details_(identity)
         , text_(std::move(text))
     {
     }
@@ -58,17 +58,18 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
         return std::move(*this);
     }
 
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> CheckBox&
     {
-        return super::bind(wxEVT_CHECKBOX, func);
+        details_.bind(wxEVT_CHECKBOX, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> CheckBox&&
     {
-        return std::move(*this).super::bind(wxEVT_CHECKBOX, func);
+        details_.bind(wxEVT_CHECKBOX, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -83,21 +84,26 @@ struct CheckBox : public details::WidgetDetails<CheckBox, wxCheckBox> {
 
         auto operator*() const { return value(); }
     };
-    RULE_OF_SIX_BOILERPLATE(CheckBox);
 
 private:
+    details::WidgetDetails<CheckBox, wxCheckBox> details_;
     std::string text_;
     bool value_ = false;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
-        widget->SetValue(value_);
-        return widget;
+        return [&text = text_, value = value_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto* widget = new underlying_t(parent, id, text, pos, size, style);
+            widget->SetValue(value);
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(CheckBox)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(CheckBox);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(CheckBox);
 }
 
 #include "ZapMacros.hpp"

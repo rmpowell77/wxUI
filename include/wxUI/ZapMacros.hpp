@@ -30,10 +30,26 @@ SOFTWARE.
 // ZapMacros.h should be the last line included in all Header files.
 // Due to the way we are using these header files, they should *not* use #pragma once
 
-#if defined(RULE_OF_SIX_BOILERPLATE)
-#undef RULE_OF_SIX_BOILERPLATE
+#if defined(WXUI_RULE_OF_SIX_BOILERPLATE)
+#undef WXUI_RULE_OF_SIX_BOILERPLATE
 #endif
 
-#if defined(WIDGET_STATIC_ASSERT_BOILERPLATE)
-#undef WIDGET_STATIC_ASSERT_BOILERPLATE
+#if defined(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE)
+#undef WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE
+#endif
+
+#if defined(WXUI_WIDGET_CREATE_BOILERPLATE)
+#undef WXUI_WIDGET_CREATE_BOILERPLATE
+#endif
+
+#if defined(WXUI_FORWARD_TO_DETAILS)
+#undef WXUI_FORWARD_TO_DETAILS
+#endif
+
+#if defined(WXUI_FORWARD_BIND_TO_DETAILS)
+#undef WXUI_FORWARD_BIND_TO_DETAILS
+#endif
+
+#if defined(WXUI_FORWARD_ALL_TO_DETAILS)
+#undef WXUI_FORWARD_ALL_TO_DETAILS
 #endif

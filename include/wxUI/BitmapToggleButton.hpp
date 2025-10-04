@@ -32,8 +32,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_bitmap_toggle_button.html
-struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton> {
-    using super = details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton>;
+struct BitmapToggleButton {
+    using underlying_t = wxBitmapToggleButton;
 
     explicit BitmapToggleButton(wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
         : BitmapToggleButton(wxID_ANY, bitmap, std::move(bitmapPressed))
@@ -41,23 +41,24 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
     }
 
     BitmapToggleButton(wxWindowID identity, wxBitmap const& bitmap, std::optional<wxBitmap> bitmapPressed = std::nullopt)
-        : super(identity)
+        : details_(identity)
         , bitmap_(bitmap)
         , bitmapPressed_(std::move(bitmapPressed))
     {
     }
 
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> BitmapToggleButton&
     {
-        return super::bind(wxEVT_TOGGLEBUTTON, func);
+        details_.bind(wxEVT_TOGGLEBUTTON, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> BitmapToggleButton&&
     {
-        return std::move(*this).super::bind(wxEVT_TOGGLEBUTTON, func);
+        details_.bind(wxEVT_TOGGLEBUTTON, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -72,23 +73,28 @@ struct BitmapToggleButton : public details::WidgetDetails<BitmapToggleButton, wx
 
         auto operator*() const { return value(); }
     };
-    RULE_OF_SIX_BOILERPLATE(BitmapToggleButton);
 
 private:
+    details::WidgetDetails<BitmapToggleButton, wxBitmapToggleButton> details_;
     wxBitmap bitmap_;
     std::optional<wxBitmap> bitmapPressed_;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), bitmap_, getPos(), getSize(), getStyle()));
-        if (bitmapPressed_) {
-            widget->SetBitmapPressed(*bitmapPressed_);
-        }
-        return widget;
+        return [&bitmap = bitmap_, &bitmapPressed = bitmapPressed_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto* widget = new underlying_t(parent, id, bitmap, pos, size, style);
+            if (bitmapPressed) {
+                widget->SetBitmapPressed(*bitmapPressed);
+            }
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(BitmapToggleButton)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapToggleButton);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapToggleButton);
 }
 
 #include "ZapMacros.hpp"
