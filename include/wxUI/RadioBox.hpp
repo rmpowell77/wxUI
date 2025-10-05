@@ -52,12 +52,12 @@ struct Foo {
 };
 
 // https://docs.wxwidgets.org/latest/classwx_radio_box.html
-struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
-    using super = details::WidgetDetails<RadioBox, wxRadioBox>;
-
+struct RadioBox {
     // clang-format off
     struct withChoices { };
     // clang-format on
+
+    using underlying_t = wxRadioBox;
 
     RadioBox([[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
         : RadioBox(wxID_ANY, "", unused, choices)
@@ -75,10 +75,11 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     }
 
     RadioBox(wxWindowID identity, std::string text, [[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
-        : super(identity, super::WithStyle { wxRA_SPECIFY_COLS })
+        : details_(identity)
         , text_(std::move(text))
         , choices_(details::Ranges::convertTo(choices))
     {
+        details_.setStyle(wxRA_SPECIFY_COLS);
     }
 
     explicit RadioBox([[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
@@ -97,10 +98,11 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
     }
 
     RadioBox(wxWindowID identity, std::string text, [[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
-        : super(identity, super::WithStyle { wxRA_SPECIFY_COLS })
+        : details_(identity)
         , text_(std::move(text))
         , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
+        details_.setStyle(wxRA_SPECIFY_COLS);
     }
 
     auto withSelection(int which) & -> RadioBox&
@@ -127,17 +129,18 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
         return std::move(*this);
     }
 
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> RadioBox&
     {
-        return super::bind(wxEVT_RADIOBOX, func);
+        details_.bind(wxEVT_RADIOBOX, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> RadioBox&&
     {
-        return std::move(*this).super::bind(wxEVT_RADIOBOX, func);
+        details_.bind(wxEVT_RADIOBOX, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -152,23 +155,28 @@ struct RadioBox : details::WidgetDetails<RadioBox, wxRadioBox> {
 
         auto operator*() const { return selection(); }
     };
-    RULE_OF_SIX_BOILERPLATE(RadioBox);
 
 private:
+    details::WidgetDetails<RadioBox, wxRadioBox> details_;
     std::string text_;
     std::vector<wxString> choices_;
     int majorDim_ {};
     int selection_ {};
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), majorDim_, getStyle()));
-        widget->SetSelection(selection_);
-        return widget;
+        return [&text = text_, &choices = choices_, majorDim = majorDim_, selection = selection_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto* widget = new underlying_t(parent, id, text, pos, size, static_cast<int>(choices.size()), choices.data(), majorDim, style);
+            widget->SetSelection(selection);
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(RadioBox)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(RadioBox);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(RadioBox);
 }
 
 #include "ZapMacros.hpp"

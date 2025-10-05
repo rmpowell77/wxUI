@@ -32,8 +32,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_gauge.html
-struct Gauge : public details::WidgetDetails<Gauge, wxGauge> {
-    using super = details::WidgetDetails<Gauge, wxGauge>;
+struct Gauge {
+    using underlying_t = wxGauge;
 
     // clang-format off
     struct withRange { };
@@ -51,9 +51,10 @@ struct Gauge : public details::WidgetDetails<Gauge, wxGauge> {
     }
 
     explicit Gauge([[maybe_unused]] withIdentity unused, wxWindowID identity, int range = 100)
-        : super(identity, super::WithStyle { wxGA_HORIZONTAL })
+        : details_(identity)
         , range_(range)
     {
+        details_.setStyle(wxGA_HORIZONTAL);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -77,18 +78,22 @@ struct Gauge : public details::WidgetDetails<Gauge, wxGauge> {
         auto operator*() const { return value(); }
     };
 
-    RULE_OF_SIX_BOILERPLATE(Gauge);
-
 private:
+    details::WidgetDetails<Gauge, wxGauge> details_;
     int range_;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        return bindProxy(new underlying_t(parent, getIdentity(), range_, getPos(), getSize(), getStyle()));
+        return [range = range_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            return new underlying_t(parent, id, range, pos, size, style);
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(Gauge)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(Gauge);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(Gauge);
 }
 
 #include "ZapMacros.hpp"

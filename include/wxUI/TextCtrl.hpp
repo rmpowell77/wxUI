@@ -32,8 +32,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_text_ctrl.html
-struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
-    using super = details::WidgetDetails<TextCtrl, wxTextCtrl>;
+struct TextCtrl {
+    using underlying_t = wxTextCtrl;
 
     explicit TextCtrl(std::string text = "")
         : TextCtrl(wxID_ANY, std::move(text))
@@ -41,23 +41,23 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
     }
 
     explicit TextCtrl(wxWindowID identity, std::string text = "")
-        : super(identity)
+        : details_(identity)
         , text_(std::move(text))
     {
     }
 
-    // Bind
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> TextCtrl&
     {
-        return super::bind(wxEVT_TEXT, func);
+        details_.bind(wxEVT_TEXT, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> TextCtrl&&
     {
-        return std::move(*this).super::bind(wxEVT_TEXT, func);
+        details_.bind(wxEVT_TEXT, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -73,18 +73,22 @@ struct TextCtrl : public details::WidgetDetails<TextCtrl, wxTextCtrl> {
         auto operator*() const { return label(); }
     };
 
-    RULE_OF_SIX_BOILERPLATE(TextCtrl);
-
 private:
+    details::WidgetDetails<TextCtrl, wxTextCtrl> details_;
     std::string text_;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        return bindProxy(new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle()));
+        return [&text = text_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            return new underlying_t(parent, id, text, pos, size, style);
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(TextCtrl)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(TextCtrl);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(TextCtrl);
 }
 
 #include "ZapMacros.hpp"

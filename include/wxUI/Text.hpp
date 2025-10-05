@@ -32,8 +32,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_text.html
-struct Text : public details::WidgetDetails<Text, wxStaticText> {
-    using super = details::WidgetDetails<Text, wxStaticText>;
+struct Text {
+    using underlying_t = wxStaticText;
 
     explicit Text(std::string text = "")
         : Text(wxID_ANY, std::move(text))
@@ -41,7 +41,7 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
     }
 
     explicit Text(wxWindowID identity, std::string text = "")
-        : super(identity)
+        : details_(identity)
         , text_(std::move(text))
     {
     }
@@ -71,23 +71,27 @@ struct Text : public details::WidgetDetails<Text, wxStaticText> {
         auto operator*() const { return label(); }
     };
 
-    RULE_OF_SIX_BOILERPLATE(Text);
-
 private:
+    details::WidgetDetails<Text, wxStaticText> details_;
     std::string text_;
     std::optional<int> wrap_;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto* widget = new underlying_t(parent, getIdentity(), text_, getPos(), getSize(), getStyle());
-        if (wrap_) {
-            widget->Wrap(*wrap_);
-        }
-        return bindProxy(widget);
+        return [&text = text_, &wrap = wrap_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto* widget = new underlying_t(parent, id, text, pos, size, style);
+            if (wrap) {
+                widget->Wrap(*wrap);
+            }
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(Text)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(Text);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(Text);
 }
 
 #include "ZapMacros.hpp"

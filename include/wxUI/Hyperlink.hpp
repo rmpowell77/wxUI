@@ -31,8 +31,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_hyperlink_ctrl.html
-struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
-    using super = details::WidgetDetails<Hyperlink, wxHyperlinkCtrl>;
+struct Hyperlink {
+    using underlying_t = wxHyperlinkCtrl;
 
     Hyperlink(std::string text, std::string url)
         : Hyperlink(wxID_ANY, std::move(text), std::move(url))
@@ -40,27 +40,33 @@ struct Hyperlink : public details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> {
     }
 
     Hyperlink(wxWindowID identity, std::string text, std::string url)
-        : super(identity, super::WithStyle { wxHL_DEFAULT_STYLE })
+        : details_(identity)
         , text_(std::move(text))
         , url_(std::move(url))
     {
+        details_.setStyle(wxHL_DEFAULT_STYLE);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
     };
-    RULE_OF_SIX_BOILERPLATE(Hyperlink);
 
 private:
+    details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> details_;
     std::string text_;
     std::string url_;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        return bindProxy(new underlying_t(parent, getIdentity(), text_, url_, getPos(), getSize(), getStyle()));
+        return [&text = text_, &url = url_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            return new underlying_t(parent, id, text, url, pos, size, style);
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(Hyperlink)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(Hyperlink);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(Hyperlink);
 }
 
 #include "ZapMacros.hpp"

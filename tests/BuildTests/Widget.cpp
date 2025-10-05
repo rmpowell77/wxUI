@@ -22,13 +22,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 // Generated with bash command
-// for i in *.cpp; do echo \#include \<wxUI\/Widget.hpp\> > Widget.cpp; for j in RULE_OF_SIX_BOILERPLATE WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WIDGET_STATIC_ASSERT_BOILERPLATE\) >> Widget.cpp; echo \#error Missed zapping WIDGET_STATIC_ASSERT_BOILERPLATE >> Widget.cpp; echo \#endif >> Widget.cpp; done; done
+// for i in *.cpp; do echo \#include \<wxUI\/Widget.hpp\> > Widget.cpp; for j in WXUI_RULE_OF_SIX_BOILERPLATE WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE\) >> Widget.cpp; echo \#error Missed zapping WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE >> Widget.cpp; echo \#endif >> Widget.cpp; done; done
 #include <wxUI/Widget.hpp>
 
-#if defined(RULE_OF_SIX_BOILERPLATE)
-#error Missed zapping RULE_OF_SIX_BOILERPLATE
+#if defined(WXUI_RULE_OF_SIX_BOILERPLATE)
+#error Missed zapping WXUI_RULE_OF_SIX_BOILERPLATE
 #endif
 
-#if defined(WIDGET_STATIC_ASSERT_BOILERPLATE)
-#error Missed zapping WIDGET_STATIC_ASSERT_BOILERPLATE
+#if defined(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE)
+#error Missed zapping WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE
+#endif
+
+#if defined(WXUI_WIDGET_CREATE_BOILERPLATE)
+#error Missed zapping WXUI_WIDGET_CREATE_BOILERPLATE
+#endif
+
+#if defined(WXUI_FORWARD_TO_DETAILS)
+#error Missed zapping WXUI_FORWARD_TO_DETAILS
+#endif
+
+#if defined(WXUI_FORWARD_BIND_TO_DETAILS)
+#error Missed zapping WXUI_FORWARD_BIND_TO_DETAILS
+#endif
+
+#if defined(WXUI_FORWARD_ALL_TO_DETAILS)
+#error Missed zapping WXUI_FORWARD_ALL_TO_DETAILS
 #endif

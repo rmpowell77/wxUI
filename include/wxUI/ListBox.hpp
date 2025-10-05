@@ -32,8 +32,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_list_box.html
-struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
-    using super = details::WidgetDetails<ListBox, wxListBox>;
+struct ListBox {
+    using underlying_t = wxListBox;
 
     ListBox(std::initializer_list<std::string> choices = {})
         : ListBox(wxID_ANY, choices)
@@ -41,7 +41,7 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
     }
 
     explicit ListBox(wxWindowID identity, std::initializer_list<std::string> choices = {})
-        : super(identity)
+        : details_(identity)
         , choices_(details::Ranges::convertTo(choices))
     {
     }
@@ -52,7 +52,7 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
     }
 
     ListBox(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
-        : super(identity)
+        : details_(identity)
         , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
@@ -105,29 +105,32 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
         return std::move(*this);
     }
 
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> ListBox&
     {
-        return super::bind(wxEVT_LISTBOX, func);
+        details_.bind(wxEVT_LISTBOX, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> ListBox&&
     {
-        return std::move(*this).super::bind(wxEVT_LISTBOX, func);
+        details_.bind(wxEVT_LISTBOX, func);
+        return std::move(*this);
     }
 
     template <typename Function>
     auto bindDClick(Function func) & -> ListBox&
     {
-        return super::bind(wxEVT_LISTBOX_DCLICK, func);
+        details_.bind(wxEVT_LISTBOX_DCLICK, func);
+        return *this;
     }
 
     template <typename Function>
     auto bindDClick(Function func) && -> ListBox&&
     {
-        return std::move(*this).super::bind(wxEVT_LISTBOX_DCLICK, func);
+        details_.bind(wxEVT_LISTBOX_DCLICK, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -164,27 +167,32 @@ struct ListBox : public details::WidgetDetails<ListBox, wxListBox> {
             return selection();
         }
     };
-    RULE_OF_SIX_BOILERPLATE(ListBox);
 
 private:
+    details::WidgetDetails<ListBox, wxListBox> details_;
     std::vector<wxString> choices_ {};
     std::vector<int> selection_;
     std::optional<int> ensureVisible_ {};
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
-        for (auto&& selection : selection_) {
-            widget->SetSelection(selection);
-        }
-        if (ensureVisible_) {
-            widget->EnsureVisible(*ensureVisible_);
-        }
-        return widget;
+        return [&choices = choices_, &selection = selection_, &ensureVisible = ensureVisible_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto* widget = new underlying_t(parent, id, pos, size, static_cast<int>(choices.size()), choices.data(), style);
+            for (auto&& selection : selection) {
+                widget->SetSelection(selection);
+            }
+            if (ensureVisible) {
+                widget->EnsureVisible(*ensureVisible);
+            }
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(ListBox)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(ListBox);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(ListBox);
 }
 
 #include "ZapMacros.hpp"

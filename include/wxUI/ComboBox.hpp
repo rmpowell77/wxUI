@@ -32,8 +32,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_combo_box.html
-struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
-    using super = details::WidgetDetails<ComboBox, wxComboBox>;
+struct ComboBox {
+    using underlying_t = wxComboBox;
 
     ComboBox(std::initializer_list<std::string> choices = {})
         : ComboBox(wxID_ANY, choices)
@@ -41,7 +41,7 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
     }
 
     explicit ComboBox(wxWindowID identity, std::initializer_list<std::string> choices = {})
-        : super(identity)
+        : details_(identity)
         , choices_(details::Ranges::convertTo(choices))
     {
     }
@@ -52,7 +52,7 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
     }
 
     ComboBox(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
-        : super(identity)
+        : details_(identity)
         , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
@@ -63,17 +63,18 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
         return *this;
     }
 
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> ComboBox&
     {
-        return super::bind(wxEVT_COMBOBOX, func);
+        details_.bind(wxEVT_COMBOBOX, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> ComboBox&&
     {
-        return std::move(*this).super::bind(wxEVT_COMBOBOX, func);
+        details_.bind(wxEVT_COMBOBOX, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -96,24 +97,29 @@ struct ComboBox : public details::WidgetDetails<ComboBox, wxComboBox> {
 
         auto operator*() const { return value(); }
     };
-    RULE_OF_SIX_BOILERPLATE(ComboBox);
 
 private:
+    details::WidgetDetails<ComboBox, wxComboBox> details_;
     std::vector<wxString> choices_;
     int selection_ = 0;
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto&& first = (choices_.size() > 0) ? wxString(choices_.at(0)) : wxString(wxEmptyString);
-        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), first, getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
-        if (!choices_.empty()) {
-            widget->SetSelection(selection_);
-        }
-        return widget;
+        return [&choices = choices_, selection = selection_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto&& first = (choices.size() > 0) ? wxString(choices.at(0)) : wxString(wxEmptyString);
+            auto* widget = new underlying_t(parent, id, first, pos, size, static_cast<int>(choices.size()), choices.data(), style);
+            if (!choices.empty()) {
+                widget->SetSelection(selection);
+            }
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(ComboBox)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(ComboBox);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(ComboBox);
 }
 
 #include "ZapMacros.hpp"

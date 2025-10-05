@@ -32,8 +32,8 @@ SOFTWARE.
 namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_choice.html
-struct Choice : public details::WidgetDetails<Choice, wxChoice> {
-    using super = details::WidgetDetails<Choice, wxChoice>;
+struct Choice {
+    using underlying_t = wxChoice;
 
     Choice(std::initializer_list<std::string> choices = {})
         : Choice(wxID_ANY, choices)
@@ -41,7 +41,7 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
     }
 
     explicit Choice(wxWindowID identity, std::initializer_list<std::string> choices = {})
-        : super(identity)
+        : details_(identity)
         , choices_(details::Ranges::convertTo(choices))
     {
     }
@@ -52,7 +52,7 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
     }
 
     Choice(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
-        : super(identity)
+        : details_(identity)
         , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
     {
     }
@@ -69,17 +69,18 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
         return std::move(*this);
     }
 
-    using super::bind;
     template <typename Function>
     auto bind(Function func) & -> Choice&
     {
-        return super::bind(wxEVT_CHOICE, func);
+        details_.bind(wxEVT_CHOICE, func);
+        return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> Choice&&
     {
-        return std::move(*this).super::bind(wxEVT_CHOICE, func);
+        details_.bind(wxEVT_CHOICE, func);
+        return std::move(*this);
     }
 
     struct Proxy : details::WidgetProxy<underlying_t> {
@@ -94,21 +95,26 @@ struct Choice : public details::WidgetDetails<Choice, wxChoice> {
 
         auto operator*() const { return selection(); }
     };
-    RULE_OF_SIX_BOILERPLATE(Choice);
 
 private:
+    details::WidgetDetails<Choice, wxChoice> details_;
     std::vector<wxString> choices_ {};
     int selection_ {};
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto* widget = bindProxy(new underlying_t(parent, getIdentity(), getPos(), getSize(), static_cast<int>(choices_.size()), choices_.data(), getStyle()));
-        widget->SetSelection(selection_);
-        return widget;
+        return [&choices = choices_, selection = selection_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto* widget = new underlying_t(parent, id, pos, size, static_cast<int>(choices.size()), choices.data(), style);
+            widget->SetSelection(selection);
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(Choice)
 };
 
-WIDGET_STATIC_ASSERT_BOILERPLATE(Choice);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(Choice);
 }
 
 #include "ZapMacros.hpp"

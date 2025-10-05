@@ -37,15 +37,14 @@ namespace wxUI {
 // unfortunately due to template types here, it is not easily possible to create a hierarchy of
 // a generic Splitter.  This may be able to be fixed with Deducing this...
 template <details::Createable W1, details::Createable W2>
-struct HSplitter : public details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWindow> {
-    using super = details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWindow>;
-    using underlying_t = typename details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWindow>::underlying_t;
-    using WithStyle = typename super::WithStyle;
+struct HSplitter {
+    using underlying_t = wxSplitterWindow;
 
     HSplitter(wxWindowID identity, std::pair<W1, W2> widgets)
-        : super(identity, WithStyle { wxSP_3D | wxSP_LIVE_UPDATE })
+        : details_(identity)
         , widgets_(std::move(widgets))
     {
+        details_.setStyle(wxSP_3D | wxSP_LIVE_UPDATE);
     }
 
     HSplitter(wxWindowID identity, W1 widget1, W2 widget2)
@@ -72,33 +71,36 @@ struct HSplitter : public details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWi
     struct Proxy : details::WidgetProxy<underlying_t> {
     };
 
-    RULE_OF_SIX_BOILERPLATE(HSplitter);
-
 private:
+    details::WidgetDetails<HSplitter<W1, W2>, wxSplitterWindow> details_;
     std::pair<W1, W2> widgets_;
     std::optional<double> stashGravity_ {};
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto* widget = super::bindProxy(new underlying_t(parent, super::getIdentity(), super::getPos(), super::getSize(), super::getStyle()));
-        widget->SplitHorizontally(std::get<0>(widgets_).create(widget), std::get<1>(widgets_).create(widget));
-        if (stashGravity_) {
-            widget->SetSashGravity(*stashGravity_);
-        }
-        return widget;
+        return [&widgets = widgets_, &stashGravity = stashGravity_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto* widget = new underlying_t(parent, id, pos, size, style);
+            widget->SplitHorizontally(std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
+            if (stashGravity) {
+                widget->SetSashGravity(*stashGravity);
+            }
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(HSplitter)
 };
 
 template <details::Createable W1, details::Createable W2>
-struct VSplitter : public details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWindow> {
-    using super = details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWindow>;
-    using underlying_t = typename details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWindow>::underlying_t;
-    using WithStyle = typename super::WithStyle;
+struct VSplitter {
+    using underlying_t = wxSplitterWindow;
 
     VSplitter(wxWindowID identity, std::pair<W1, W2> widgets)
-        : super(identity, WithStyle { wxSP_3D | wxSP_LIVE_UPDATE })
+        : details_(identity)
         , widgets_(std::move(widgets))
     {
+        details_.setStyle(wxSP_3D | wxSP_LIVE_UPDATE);
     }
 
     VSplitter(wxWindowID identity, W1 widget1, W2 widget2)
@@ -124,21 +126,26 @@ struct VSplitter : public details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWi
 
     struct Proxy : details::WidgetProxy<underlying_t> {
     };
-    RULE_OF_SIX_BOILERPLATE(VSplitter);
 
 private:
+    details::WidgetDetails<VSplitter<W1, W2>, wxSplitterWindow> details_;
     std::pair<W1, W2> widgets_;
     std::optional<double> stashGravity_ {};
 
-    auto createImpl(wxWindow* parent) -> wxWindow* override
+    auto createImpl()
     {
-        auto* widget = super::bindProxy(new underlying_t(parent, super::getIdentity(), super::getPos(), super::getSize(), super::getStyle()));
-        widget->SplitVertically(std::get<0>(widgets_).create(widget), std::get<1>(widgets_).create(widget));
-        if (stashGravity_) {
-            widget->SetSashGravity(*stashGravity_);
-        }
-        return widget;
+        return [&widgets = widgets_, &stashGravity = stashGravity_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+            auto* widget = new underlying_t(parent, id, pos, size, style);
+            widget->SplitVertically(std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
+            if (stashGravity) {
+                widget->SetSashGravity(*stashGravity);
+            }
+            return widget;
+        };
     }
+
+public:
+    WXUI_FORWARD_ALL_TO_DETAILS(VSplitter)
 };
 
 struct SplitterProxy : details::WidgetProxy<wxSplitterWindow> {
