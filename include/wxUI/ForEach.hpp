@@ -52,7 +52,8 @@ struct ForEach {
     {
     }
 
-    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
+    template <typename Parent, typename Sizer>
+    void createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         using RawArg = std::remove_cvref_t<std::ranges::range_value_t<Range>>;
         for (auto&& item : args_) {

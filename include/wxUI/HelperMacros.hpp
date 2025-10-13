@@ -54,8 +54,8 @@ SOFTWARE.
     {                                                                                                     \
         return details_.create(this->template createImpl<Provider>(), parent);                            \
     }                                                                                                     \
-    template <typename Provider = wxWindow>                                                               \
-    auto createAndAdd(Provider* parent, wxSizer* sizer, wxSizerFlags const& parentFlags) -> underlying_t* \
+    template <typename Provider = wxWindow, typename Sizer = wxSizer>                                     \
+    auto createAndAdd(Provider* parent, Sizer* sizer, wxSizerFlags const& parentFlags)                    \
     {                                                                                                     \
         return details_.createAndAdd(this->template createImpl<Provider>(), parent, sizer, parentFlags);  \
     }

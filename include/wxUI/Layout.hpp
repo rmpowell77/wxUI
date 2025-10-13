@@ -36,13 +36,14 @@ concept SizerItem = details::CreateAndAddable<T>
     || (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>);
 // clang-format on
 
-template <typename T>
-static inline auto createAndAddVisiter(T& arg, wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+template <typename T, typename Parent, typename Sizer>
+static inline auto createAndAddVisiter(T& arg, Parent* parent, Sizer* sizer, wxSizerFlags const& flags)
 {
     if constexpr (details::CreateAndAddable<T>) {
         arg.createAndAdd(parent, sizer, flags);
     } else {
-        sizer->Add(arg, flags);
+        using ::wxUI::customizations::SizerAddController;
+        SizerAddController(sizer, arg, flags);
     }
 }
 }
@@ -78,45 +79,46 @@ struct Sizer {
     {
     }
 
-    auto constructSizer(wxWindow* parent) const -> wxSizer*
+    template <typename Parent>
+    auto constructSizer(Parent* parent) const
     {
-        return caption ? new wxStaticBoxSizer(new wxStaticBox(parent, wxID_ANY, *caption), orientation) : new wxBoxSizer(orientation);
+        using ::wxUI::customizations::SizerCreate;
+        return SizerCreate(parent, caption, orientation);
     }
 
-    auto createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
+    template <typename Parent, typename Sizer>
+    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         auto sizer = constructSizer(parent);
         auto currentFlags = flags_.value_or(parentFlags);
         createAndAddWidgets(parent, sizer, currentFlags);
 
         // and now add our sizer to the parent
-        parentSizer->Add(sizer, currentFlags);
+        using ::wxUI::customizations::SizerAddController;
+        SizerAddController(parentSizer, sizer, currentFlags);
         return sizer;
     }
 
-    auto fitTo(wxWindow* parent) -> auto&
+    template <typename Parent>
+    auto fitTo(Parent* parent)
     {
-        fitToWithoutSizeHints(parent);
-        auto* sizer = parent->GetSizer();
-        sizer->SetSizeHints(parent);
-        return *this;
+        auto sizer = constructSizer(parent);
+        auto currentFlags = flags_.value_or(wxSizerFlags {});
+        createAndAddWidgets(parent, sizer, currentFlags);
+        using ::wxUI::customizations::ParentSetSizer;
+        ParentSetSizer(parent, sizer);
+        using ::wxUI::customizations::SizerSetSizeHints;
+        SizerSetSizeHints(sizer, parent);
     }
 
 private:
-    void createAndAddWidgets(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+    template <typename Parent, typename Sizer>
+    void createAndAddWidgets(Parent* parent, Sizer* sizer, wxSizerFlags const& flags)
     {
         std::apply([parent, sizer, flags](auto&&... tupleArg) {
             (details::createAndAddVisiter(tupleArg, parent, sizer, flags), ...);
         },
             items_);
-    }
-
-    auto fitToWithoutSizeHints(wxWindow* parent)
-    {
-        auto sizer = constructSizer(parent);
-        auto currentFlags = flags_.value_or(wxSizerFlags {});
-        createAndAddWidgets(parent, sizer, currentFlags);
-        parent->SetSizer(sizer);
     }
 
     std::optional<wxSizerFlags> flags_ {};
@@ -153,14 +155,17 @@ struct VSizer {
     {
     }
 
-    auto createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
+    template <typename Parent, typename Sizer>
+    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         return details_.createAndAdd(parent, parentSizer, parentFlags);
     }
 
-    auto fitTo(wxWindow* parent) -> auto&
+    template <typename Provider>
+    auto fitTo(Provider* parent) -> VSizer&
     {
-        return details_.fitTo(parent);
+        details_.fitTo(parent);
+        return *this;
     }
 
 private:
@@ -205,14 +210,18 @@ struct HSizer {
     {
     }
 
-    auto createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
+    template <typename Parent, typename Sizer>
+    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         return details_.createAndAdd(parent, parentSizer, parentFlags);
     }
 
-    auto fitTo(wxWindow* parent) -> auto&
+    // need rvalues versions of these.
+    template <typename Provider>
+    auto fitTo(Provider* parent) -> HSizer&
     {
-        return details_.fitTo(parent);
+        details_.fitTo(parent);
+        return *this;
     }
 
 private:
@@ -240,7 +249,8 @@ struct LayoutIf {
             items_ = std::forward_as_tuple(std::forward<UItems>(items)...);
         }
     }
-    auto createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
+    template <typename Parent, typename Sizer>
+    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         if (!items_) {
             return;
@@ -249,7 +259,8 @@ struct LayoutIf {
     }
 
 private:
-    void createAndAddWidgets(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& flags)
+    template <typename Parent, typename Sizer>
+    void createAndAddWidgets(Parent* parent, Sizer* sizer, wxSizerFlags const& flags)
     {
         std::apply([parent, sizer, flags](auto&&... tupleArg) {
             (details::createAndAddVisiter(tupleArg, parent, sizer, flags), ...);
