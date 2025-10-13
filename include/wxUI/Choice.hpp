@@ -101,11 +101,13 @@ private:
     std::vector<wxString> choices_ {};
     int selection_ {};
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [&choices = choices_, selection = selection_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
-            auto* widget = new underlying_t(parent, id, pos, size, static_cast<int>(choices.size()), choices.data(), style);
-            widget->SetSelection(selection);
+        return [&choices = choices_, selection = selection_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
+            auto* widget = customizations::ParentCreate<underlying_t>(parent, id, pos, size, static_cast<int>(choices.size()), choices.data(), style);
+            using ::wxUI::customizations::ControllerSetSelection;
+            ControllerSetSelection(widget, selection);
             return widget;
         };
     }

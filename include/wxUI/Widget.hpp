@@ -24,8 +24,11 @@ SOFTWARE.
 #pragma once
 
 #include "BindInfo.hpp"
+#include "Customizations.hpp"
 #include <optional>
 #include <stdexcept>
+#include <string>
+#include <type_traits>
 #include <wx/sizer.h>
 
 namespace wxUI::details {
@@ -126,7 +129,6 @@ private:
 template <typename ConcreteWidget, typename Underlying>
 struct WidgetDetails {
     using underlying_t = Underlying;
-    using Creator = std::function<Underlying*(wxWindow*, wxWindowID, wxPoint, wxSize, int64_t)>;
 
     explicit WidgetDetails(wxWindowID identity = wxID_ANY)
         : identity_(identity)
@@ -190,19 +192,24 @@ struct WidgetDetails {
 
     // create uses the stored Creator to construct the underlying widget,
     // then performs the same common post-processing that WidgetDetails did.
-    auto create(Creator creator, wxWindow* parent) -> Underlying*
+    template <typename CreatorFunction, typename Parent>
+    auto create(CreatorFunction creator, Parent* parent)
     {
         auto* widget = creator(parent, identity_, pos_, size_, style_);
         if (fontInfo_) {
-            widget->SetFont(wxFont(*fontInfo_));
+            using ::wxUI::customizations::ControllerSetFont;
+            ControllerSetFont(widget, wxFont(*fontInfo_));
         }
-        widget->Enable(enabled_);
-        widget = bindEvents(widget);
-        widget = bindProxy(widget);
+        using ::wxUI::customizations::ControllerSetEnabled;
+        ControllerSetEnabled(widget, enabled_);
+        bindEvents(widget);
+        bindProxy(widget);
+
         return widget;
     }
 
-    auto createAndAdd(Creator creator, wxWindow* parent, wxSizer* sizer, wxSizerFlags const& parentFlags) -> Underlying*
+    template <typename Creator, typename Parent>
+    auto createAndAdd(Creator creator, Parent* parent, wxSizer* sizer, wxSizerFlags const& parentFlags) -> Underlying*
     {
         auto* widget = create(creator, parent);
         sizer->Add(widget, flags_.value_or(parentFlags));
@@ -228,19 +235,23 @@ struct WidgetDetails {
         }
     }
 
-    auto bindProxy(Underlying* widget) -> Underlying*
+    template <typename Controller>
+    auto bindProxy(Controller* widget)
     {
         for (auto& proxyHandle : proxyHandles_) {
-            proxyHandle.setUnderlying(widget);
+            using ::wxUI::customizations::ControllerBindProxy;
+            ControllerBindProxy(widget, proxyHandle);
         }
         return widget;
     }
 
 private:
-    auto bindEvents(Underlying* widget) -> Underlying*
+    template <typename Controller>
+    auto bindEvents(Controller* widget)
     {
         for (auto& bounded : boundedFunctions_) {
-            bounded.bindTo(widget);
+            using ::wxUI::customizations::ControllerBindEvent;
+            ControllerBindEvent(widget, bounded);
         }
         return widget;
     }

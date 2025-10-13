@@ -29,11 +29,12 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Hyperlink;
+using namespace wxUITests;
 
 struct HyperlinkTestPolicy {
     using TypeUnderTest = wxUI::Hyperlink;
     static auto createUUT() { return TypeUnderTest { "Hello", "www.github.com" }; }
-    static auto testStyle() { return wxHL_CONTEXTMENU; }
+    static auto testStyle() { return wxHL_DEFAULT_STYLE; }
     static auto testPosition() { return wxPoint { 1, 2 }; }
     static auto testSize() { return wxSize { 10, 12 }; }
     static auto expectedStyle() { return testStyle(); }
@@ -46,53 +47,68 @@ TEST_CASE("Hyperlink")
 {
     SECTION("name.url")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("Hello" == window->GetLabel());
-        CHECK("www.github.com" == window->GetURL());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.name.url")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, "Hello", "www.github.com" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK("Hello" == window->GetLabel());
-        CHECK("www.github.com" == window->GetURL());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxHyperlinkCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("style")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK((window->GetWindowStyle() & wxHL_DEFAULT_STYLE) == wxHL_DEFAULT_STYLE);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("withStyle")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withoutStyle(wxHL_ALIGN_CENTRE).withStyle(wxHL_ALIGN_LEFT);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetWindowStyle() == (wxHL_CONTEXTMENU | wxNO_BORDER | wxHL_ALIGN_LEFT));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097155, text=\"Hello\", text2=\"www.github.com\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("pos")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxHyperlinkCtrl[id=-1, pos=(1,2), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("size")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetSize() == wxSize { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(1,2), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
+                  "SetEnabled:true",
+              });
     }
 
     COMMON_TESTS(HyperlinkTestPolicy)

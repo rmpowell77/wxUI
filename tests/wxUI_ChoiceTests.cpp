@@ -30,6 +30,7 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Choice;
+using namespace wxUITests;
 
 struct ChoiceTestPolicy {
     using TypeUnderTest = wxUI::Choice;
@@ -47,112 +48,147 @@ TEST_CASE("Choice")
 {
     SECTION("noargs")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(0 == window->GetCount());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("choice")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { "Hello", "Goodbye" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(0 == window->GetCount());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.choice")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("choice.ranges")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { std::vector<std::string> { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.choice.ranges")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, std::vector<std::string> { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("choice.ranges.1")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { std::views::iota(0, 2) | std::views::transform([](auto i) { return std::to_string(i); }) };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("0" == window->GetString(0));
-        CHECK("1" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"0\",\"1\",)]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("setSelection")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } }.withSelection(1);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(2 == window->GetCount());
-        CHECK(1 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "SetSelection:1",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("style")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withStyle(wxCB_SORT);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetWindowStyle() == wxCB_SORT);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=8, choices=()]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("pos")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=-1, pos=(1,2), size=(-1,-1), style=0, choices=()]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("size")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetSize() == wxSize { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(1,2), style=0, choices=()]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("AI")
+    {
+        TestProvider provider;
+        auto uut = wxUI::Choice { { "one", "two", "three" } }.withSelection(1).bind([] {});
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one\",\"two\",\"three\",)]",
+                  "SetSelection:1",
+                  "SetEnabled:true",
+                  "BindEvents:1",
+              });
     }
 
     COMMON_TESTS(ChoiceTestPolicy)

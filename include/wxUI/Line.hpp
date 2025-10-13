@@ -45,10 +45,11 @@ struct Line {
 private:
     details::WidgetDetails<Line, wxStaticLine> details_;
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
-            return new underlying_t(parent, id, pos, size, style);
+        return [](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
+            return customizations::ParentCreate<underlying_t>(parent, id, pos, size, style);
         };
     }
 

@@ -6,4 +6,5 @@ Other changes:
 
 * [#214](../../issues/214) There should probably be a way to check if a proxy is valid
 * [#217](../../issues/217) Switch from inheritance to composition
+* [#219](../../issues/219) We should have customization points for controllers to allow for testability
 

@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "TestCustomizations.hpp"
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/Button.hpp>
@@ -29,6 +30,7 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Button;
+using namespace wxUITests;
 
 struct ButtonTestPolicy {
     using TypeUnderTest = wxUI::Button;
@@ -46,60 +48,92 @@ TEST_CASE("Button")
 {
     SECTION("noargs")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("name")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { "Hello" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("Hello" == window->GetLabel());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.name")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, "Hello" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK("Hello" == window->GetLabel());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("style")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withStyle(wxBU_LEFT);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetWindowStyle() == wxBU_LEFT);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=64, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("pos")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxButton[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("size")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetSize() == wxSize { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("AI Gen")
+    {
+        TestProvider provider;
+        auto uut = wxUI::Button { "Hello" }.withStyle(wxBU_LEFT).withPosition({ 1, 2 }).withSize({ 10, 12 }).setDefault().bind([] {});
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxButton[id=-1, pos=(1,2), size=(10,12), style=64, text=\"Hello\"]",
+                  "SetDefault:-1",
+                  "SetEnabled:true",
+                  "BindEvents:1",
+              });
     }
 
     COMMON_TESTS(ButtonTestPolicy)

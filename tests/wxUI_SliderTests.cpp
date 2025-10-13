@@ -29,6 +29,7 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Slider;
+using namespace wxUITests;
 
 struct SliderTestPolicy {
     using TypeUnderTest = wxUI::Slider;
@@ -37,8 +38,8 @@ struct SliderTestPolicy {
     static auto testPosition() { return wxPoint { 14, 2 }; }
     static auto testSize() { return wxSize { 100, 40 }; }
     static auto expectedStyle() { return testStyle(); }
-    static auto expectedPosition() { return wxPoint { 18, 2 }; }
-    static auto expectedSize() { return wxSize { 85, 40 }; }
+    static auto expectedPosition() { return testPosition(); }
+    static auto expectedSize() { return testSize(); }
 };
 static auto createUUT() { return SliderTestPolicy::createUUT(); }
 
@@ -46,53 +47,80 @@ TEST_CASE("Slider")
 {
     SECTION("noargs")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetValue() == 0);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("range")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetValue() == 1);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("range.init")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetValue() == 3);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetValue() == 0);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.range")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetValue() == 1);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.range.init")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetValue() == 3);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("AI")
+    {
+        TestProvider provider;
+        auto uut = wxUI::Slider { { 10, 20 }, 12 }.bind([] {});
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=12, range=[10,20]]",
+                  "SetEnabled:true",
+                  "BindEvents:1",
+              });
     }
 
     COMMON_TESTS(SliderTestPolicy)

@@ -55,10 +55,11 @@ private:
     std::string text_;
     std::string url_;
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [&text = text_, &url = url_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
-            return new underlying_t(parent, id, text, url, pos, size, style);
+        return [&text = text_, &url = url_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
+            return customizations::ParentCreate<underlying_t>(parent, id, text, url, pos, size, style);
         };
     }
 

@@ -82,10 +82,11 @@ private:
     details::WidgetDetails<Gauge, wxGauge> details_;
     int range_;
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [range = range_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
-            return new underlying_t(parent, id, range, pos, size, style);
+        return [range = range_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
+            return customizations::ParentCreate<underlying_t>(parent, id, range, pos, size, style);
         };
     }
 

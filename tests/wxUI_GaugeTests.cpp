@@ -29,11 +29,12 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Gauge;
+using namespace wxUITests;
 
 struct GaugeTestPolicy {
     using TypeUnderTest = wxUI::Gauge;
     static auto createUUT() { return TypeUnderTest {}; }
-    static auto testStyle() { return wxGA_VERTICAL; }
+    static auto testStyle() { return wxGA_HORIZONTAL; }
     static auto testPosition() { return wxPoint { 1, 2 }; }
     static auto testSize() { return wxSize { 10, 12 }; }
     static auto expectedStyle() { return testStyle(); }
@@ -46,66 +47,79 @@ TEST_CASE("Gauge")
 {
     SECTION("noargs")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetRange() == 100);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=100]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("name")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { wxUI::Gauge::withRange {}, 200 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetRange() == 200);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=200]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { wxUI::Gauge::withIdentity {}, 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetRange() == 100);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxGauge[id=10000, pos=(-1,-1), size=(-1,-1), style=4, value=100]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.name")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { wxUI::Gauge::withIdentity {}, 10000, 200 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetRange() == 200);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxGauge[id=10000, pos=(-1,-1), size=(-1,-1), style=4, value=200]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("style")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = createUUT().setStyle(wxGA_HORIZONTAL);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetWindowStyle() == wxGA_HORIZONTAL);
+        TestProvider provider;
+        auto uut = createUUT().setStyle(wxGA_VERTICAL);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=8, value=100]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("pos")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetRange() == 100);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxGauge[id=-1, pos=(1,2), size=(-1,-1), style=4, value=100]",
+                  "SetEnabled:true",
+              });
     }
 
-    SECTION("proxy.bind")
+    SECTION("AI")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto proxy = TypeUnderTest::Proxy {};
-        auto uut = TypeUnderTest {}.withSize({ 1, 2 }).withProxy(proxy);
-        uut.create(&frame);
-        CHECK(static_cast<int>(*proxy) == 0);
-        *proxy = 30;
-        CHECK(static_cast<int>(*proxy) == 30);
-        CHECK(static_cast<int>(proxy.range()) == 100);
-        proxy.range() = 200;
-        CHECK(static_cast<int>(proxy.range()) == 200);
+        TestProvider provider;
+        auto uut = wxUI::Gauge { wxUI::Gauge::withRange {}, 250 };
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=250]",
+                  "SetEnabled:true",
+              });
     }
 
     COMMON_TESTS(GaugeTestPolicy)
