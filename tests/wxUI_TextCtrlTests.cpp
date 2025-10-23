@@ -29,6 +29,7 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::TextCtrl;
+using namespace wxUITests;
 
 struct TextCtrlTestPolicy {
     using TypeUnderTest = wxUI::TextCtrl;
@@ -44,69 +45,81 @@ static auto createUUT() { return TextCtrlTestPolicy::createUUT(); }
 
 TEST_CASE("TextCtrl")
 {
-    SECTION("noargs.1")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-    }
     SECTION("noargs")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("name")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { "Hello" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("Hello" == window->GetValue());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxTextCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.name")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, "Hello" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK("Hello" == window->GetValue());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxTextCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("style")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withStyle(wxTE_PROCESS_ENTER);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetWindowStyle() == (wxBORDER_SUNKEN | wxTE_PROCESS_ENTER));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=1024, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("pos")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxTextCtrl[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("size")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetSize() == wxSize { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxTextCtrl[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     COMMON_TESTS(TextCtrlTestPolicy)

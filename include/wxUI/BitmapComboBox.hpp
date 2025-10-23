@@ -127,16 +127,20 @@ private:
     std::vector<wxBitmap> bitmaps_;
     int selection_ = 0;
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [&choices = choices_, &bitmaps = bitmaps_, selection = selection_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+        return [&choices = choices_, &bitmaps = bitmaps_, selection = selection_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto&& first = (choices.size() > 0) ? wxString(choices.at(0)) : wxString(wxEmptyString);
-            auto* widget = new underlying_t(parent, id, first, pos, size, static_cast<int>(choices.size()), choices.data(), style);
+            auto* widget = customizations::ParentCreate<underlying_t>(parent, id, first, pos, size, static_cast<int>(choices.size()), choices.data(), style);
+
             for (auto i = 0lu; i < bitmaps.size(); ++i) {
-                widget->SetItemBitmap(i, bitmaps[i]);
+                using ::wxUI::customizations::ControllerSetItemBitmap;
+                ControllerSetItemBitmap(widget, i, bitmaps[i]);
             }
             if (!choices.empty()) {
-                widget->SetSelection(selection);
+                using ::wxUI::customizations::ControllerSetSelection;
+                ControllerSetSelection(widget, selection);
             }
             return widget;
         };

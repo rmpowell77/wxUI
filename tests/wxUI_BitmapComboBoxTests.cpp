@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "TestCustomizations.hpp"
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/BitmapComboBox.hpp>
@@ -29,6 +30,7 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::BitmapComboBox;
+using namespace wxUITests;
 
 struct BitmapComboBoxTestPolicy {
     using TypeUnderTest = wxUI::BitmapComboBox;
@@ -46,89 +48,141 @@ TEST_CASE("BitmapComboBox")
 {
     SECTION("bitmap")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
+                  "SetItemBitmap:0:(-1,-1)",
+                  "SetItemBitmap:1:(-1,-1)",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.bitmap")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
+                  "SetItemBitmap:0:(-1,-1)",
+                  "SetItemBitmap:1:(-1,-1)",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("size.bitmap")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
+                  "SetItemBitmap:0:(-1,-1)",
+                  "SetItemBitmap:1:(-1,-1)",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("size.id.bitmap")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
+                  "SetItemBitmap:0:(-1,-1)",
+                  "SetItemBitmap:1:(-1,-1)",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("bitmap.ranges")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { std::vector<std::tuple<std::string, wxBitmap>> { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
+                  "SetItemBitmap:0:(-1,-1)",
+                  "SetItemBitmap:1:(-1,-1)",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.bitmap.ranges")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, std::vector<std::tuple<std::string, wxBitmap>> { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
+                  "SetItemBitmap:0:(-1,-1)",
+                  "SetItemBitmap:1:(-1,-1)",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("pos")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxBitmapComboBox[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
+                  "SetItemBitmap:0:(-1,-1)",
+                  "SetItemBitmap:1:(-1,-1)",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("size")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetSize() == wxSize { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\", choices=(\"\",\"\",)]",
+                  "SetItemBitmap:0:(-1,-1)",
+                  "SetItemBitmap:1:(-1,-1)",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("setSelection")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, { { "Hello", wxBitmap {} }, { "Goodbye", wxBitmap {} } } }.withSize({ 1, 2 }).withSelection(1);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(2 == window->GetCount());
-        CHECK(1 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello\", choices=(\"Hello\",\"Goodbye\",)]",
+                  "SetItemBitmap:0:(-1,-1)",
+                  "SetItemBitmap:1:(-1,-1)",
+                  "SetSelection:1",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("Empty")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = wxUI::BitmapComboBox { {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
+                  "SetItemBitmap:0:(-1,-1)",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
     COMMON_TESTS(BitmapComboBoxTestPolicy)
 }

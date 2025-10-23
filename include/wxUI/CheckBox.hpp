@@ -90,11 +90,13 @@ private:
     std::string text_;
     bool value_ = false;
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [&text = text_, value = value_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
-            auto* widget = new underlying_t(parent, id, text, pos, size, style);
-            widget->SetValue(value);
+        return [&text = text_, value = value_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
+            auto* widget = customizations::ParentCreate<underlying_t>(parent, id, text, pos, size, style);
+            using ::wxUI::customizations::ControllerSetValue;
+            ControllerSetValue(widget, value);
             return widget;
         };
     }

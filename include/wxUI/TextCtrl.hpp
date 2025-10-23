@@ -77,10 +77,11 @@ private:
     details::WidgetDetails<TextCtrl, wxTextCtrl> details_;
     std::string text_;
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [&text = text_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
-            return new underlying_t(parent, id, text, pos, size, style);
+        return [&text = text_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
+            return customizations::ParentCreate<underlying_t>(parent, id, text, pos, size, style);
         };
     }
 

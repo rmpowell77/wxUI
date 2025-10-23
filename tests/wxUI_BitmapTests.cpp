@@ -29,6 +29,7 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Bitmap;
+using namespace wxUITests;
 
 struct BitmapTestPolicy {
     using TypeUnderTest = wxUI::Bitmap;
@@ -46,18 +47,24 @@ TEST_CASE("Bitmap")
 {
     SECTION("bitmap")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window != nullptr);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxStaticBitmap[id=-1, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.bitmap")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, wxBitmap {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxStaticBitmap[id=10000, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
+                  "SetEnabled:true",
+              });
     }
 
     COMMON_TESTS(BitmapTestPolicy)

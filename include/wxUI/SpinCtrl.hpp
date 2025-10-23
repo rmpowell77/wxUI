@@ -40,9 +40,25 @@ struct SpinCtrl {
     {
     }
 
+    // Convenience overload to allow brace-init like SpinCtrl{{0,10}, 3}
+    explicit SpinCtrl(std::pair<int, int> range, std::optional<int> initial = std::nullopt)
+        : details_(wxID_ANY)
+        , range_(range)
+        , initial_(initial)
+    {
+    }
+
     explicit SpinCtrl(wxWindowID identity, std::optional<std::pair<int, int>> range = std::nullopt, std::optional<int> initial = std::nullopt)
         : details_(identity)
         , range_(std::move(range))
+        , initial_(initial)
+    {
+    }
+
+    // Convenience overload with explicit identity
+    explicit SpinCtrl(wxWindowID identity, std::pair<int, int> range, std::optional<int> initial = std::nullopt)
+        : details_(identity)
+        , range_(range)
         , initial_(initial)
     {
     }
@@ -79,14 +95,14 @@ private:
     std::optional<std::pair<int, int>> range_;
     std::optional<int> initial_;
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [&range = range_, &initial = initial_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
+        return [&range = range_, &initial = initial_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto min = range ? range->first : 0;
             auto max = range ? range->second : 100;
             auto initvalue = initial.value_or(min);
-            auto* widget = new underlying_t(parent, id, wxEmptyString, pos, size, style, min, max, initvalue);
-            return widget;
+            return customizations::ParentCreate<underlying_t>(parent, id, wxEmptyString, pos, size, style, min, max, initvalue);
         };
     }
 

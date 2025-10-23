@@ -79,12 +79,14 @@ private:
     wxBitmap bitmap_;
     std::optional<wxBitmap> bitmapPressed_;
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [&bitmap = bitmap_, &bitmapPressed = bitmapPressed_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
-            auto* widget = new underlying_t(parent, id, bitmap, pos, size, style);
+        return [&bitmap = bitmap_, &bitmapPressed = bitmapPressed_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
+            auto* widget = customizations::ParentCreate<underlying_t>(parent, id, bitmap, pos, size, style);
             if (bitmapPressed) {
-                widget->SetBitmapPressed(*bitmapPressed);
+                using ::wxUI::customizations::ControllerSetBitmapPressed;
+                ControllerSetBitmapPressed(widget, *bitmapPressed);
             }
             return widget;
         };

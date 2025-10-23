@@ -29,6 +29,7 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::RadioBox;
+using namespace wxUITests;
 
 struct RadioBoxTestPolicy {
     using TypeUnderTest = wxUI::RadioBox;
@@ -46,130 +47,138 @@ TEST_CASE("RadioBox")
 {
     SECTION("choices")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("name.choice")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { "Greetings", TypeUnderTest::withChoices {}, { "Hello"s, "Goodbye"s } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("Greetings" == window->GetLabel());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.choices")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, { "Hello"s, "Goodbye"s } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.name.choice")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK("Greetings" == window->GetLabel());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("choices.ranges")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("name.choice.ranges")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { "Greetings", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello"s, "Goodbye"s } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("Greetings" == window->GetLabel());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.choices.ranges")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello"s, "Goodbye"s } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.name.choice.ranges")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK("Greetings" == window->GetLabel());
-        CHECK(2 == window->GetCount());
-        CHECK(0 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("style")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withStyle(wxRA_SPECIFY_COLS);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetWindowStyle() == (wxRA_SPECIFY_COLS | wxTAB_TRAVERSAL));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("pos")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxRadioBox[id=-1, pos=(1,2), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("size")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetSize() == wxSize { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(1,2), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
     }
 
     COMMON_TESTS(RadioBoxTestPolicy)

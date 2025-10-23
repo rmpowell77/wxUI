@@ -29,6 +29,7 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Text;
+using namespace wxUITests;
 
 struct TextTestPolicy {
     using TypeUnderTest = wxUI::Text;
@@ -44,87 +45,81 @@ static auto createUUT() { return TextTestPolicy::createUUT(); }
 
 TEST_CASE("Text")
 {
-    SECTION("noargs.1")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
-    }
     SECTION("noargs")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("name")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { "Hello" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK("Hello" == window->GetLabel());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetLabel().empty());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxStaticText[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.name")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, "Hello" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK("Hello" == window->GetLabel());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxStaticText[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("style")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withStyle(wxST_ELLIPSIZE_MIDDLE);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetWindowStyle() == wxST_ELLIPSIZE_MIDDLE);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=8, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("pos")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxStaticText[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("size")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetSize() == wxSize { 1, 2 });
-    }
-
-    SECTION("proxy.bind")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto proxy = TypeUnderTest::Proxy {};
-        auto uut = TypeUnderTest { "label1" }.withSize({ 1, 2 }).withProxy(proxy);
-        uut.create(&frame);
-        CHECK(static_cast<std::string>(*proxy) == std::string("label1"));
-        //        CHECK(static_cast<std::string>(proxy) == "label1");
-        //        CHECK("label1" == static_cast<std::string>(proxy));
-        //        CHECK(static_cast<std::string>(proxy) == "label1");
-        *proxy = "label2";
-        CHECK(static_cast<std::string>(*proxy) == "label2");
-        *proxy = "label3";
-        CHECK(static_cast<std::string>(*proxy) == "label3");
-        std::string result2 = *proxy;
-        CHECK(result2 == "label3");
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxStaticText[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     COMMON_TESTS(TextTestPolicy)

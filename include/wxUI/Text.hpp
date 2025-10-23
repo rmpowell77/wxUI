@@ -76,12 +76,15 @@ private:
     std::string text_;
     std::optional<int> wrap_;
 
+    // Templated createImpl to support test Providers
+    template <typename Parent>
     auto createImpl()
     {
-        return [&text = text_, &wrap = wrap_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
-            auto* widget = new underlying_t(parent, id, text, pos, size, style);
+        return [&text = text_, &wrap = wrap_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
+            auto* widget = customizations::ParentCreate<underlying_t>(parent, id, text, pos, size, style);
             if (wrap) {
-                widget->Wrap(*wrap);
+                using ::wxUI::customizations::ControllerWrap;
+                ControllerWrap(widget, *wrap);
             }
             return widget;
         };

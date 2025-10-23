@@ -52,10 +52,11 @@ private:
     details::WidgetDetails<Bitmap, wxStaticBitmap> details_;
     wxBitmap bitmap_;
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [&bitmap = bitmap_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
-            return new underlying_t(parent, id, bitmap, pos, size, style);
+        return [&bitmap = bitmap_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
+            return customizations::ParentCreate<underlying_t>(parent, id, bitmap, pos, size, style);
         };
     }
 

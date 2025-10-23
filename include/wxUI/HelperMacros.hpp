@@ -32,15 +32,15 @@ SOFTWARE.
 // clang-format off
 
 #if !defined(WXUI_RULE_OF_SIX_BOILERPLATE)
-#define WXUI_RULE_OF_SIX_BOILERPLATE(WIDGET)               \
-    WIDGET(WIDGET const&) = default;                  \
-    WIDGET(WIDGET&&) noexcept = default;              \
-    auto operator=(WIDGET const&)->WIDGET& = default; \
+#define WXUI_RULE_OF_SIX_BOILERPLATE(WIDGET)            \
+    WIDGET(WIDGET const&) = default;                    \
+    WIDGET(WIDGET&&) noexcept = default;                \
+    auto operator=(WIDGET const&) -> WIDGET& = default; \
     auto operator=(WIDGET&&) noexcept -> WIDGET& = default;
 #endif
 
 #if !defined(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE)
-#define WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(WIDGET)                 \
+#define WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(WIDGET)            \
     static_assert(details::CreateAndAddable<WIDGET>);            \
     static_assert(details::Createable<WIDGET>);                  \
     static_assert(std::is_nothrow_move_constructible_v<WIDGET>); \
@@ -48,14 +48,16 @@ SOFTWARE.
 #endif
 
 #if !defined(WXUI_WIDGET_CREATE_BOILERPLATE)
-#define WXUI_WIDGET_CREATE_BOILERPLATE                                                                         \
-    auto create(wxWindow* parent) -> underlying_t*                                                        \
+#define WXUI_WIDGET_CREATE_BOILERPLATE                                                                    \
+    template <typename Provider = wxWindow>                                                               \
+    auto create(Provider* parent)                                                                         \
     {                                                                                                     \
-        return details_.create(createImpl(), parent);                                                     \
+        return details_.create(this->template createImpl<Provider>(), parent);                            \
     }                                                                                                     \
-    auto createAndAdd(wxWindow* parent, wxSizer* sizer, wxSizerFlags const& parentFlags) -> underlying_t* \
+    template <typename Provider = wxWindow>                                                               \
+    auto createAndAdd(Provider* parent, wxSizer* sizer, wxSizerFlags const& parentFlags) -> underlying_t* \
     {                                                                                                     \
-        return details_.createAndAdd(createImpl(), parent, sizer, parentFlags);                           \
+        return details_.createAndAdd(this->template createImpl<Provider>(), parent, sizer, parentFlags);  \
     }
 #endif
 

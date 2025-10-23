@@ -174,15 +174,18 @@ private:
     std::vector<int> selection_;
     std::optional<int> ensureVisible_ {};
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [&choices = choices_, &selection = selection_, &ensureVisible = ensureVisible_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
-            auto* widget = new underlying_t(parent, id, pos, size, static_cast<int>(choices.size()), choices.data(), style);
+        return [&choices = choices_, &selection = selection_, &ensureVisible = ensureVisible_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
+            auto* widget = customizations::ParentCreate<underlying_t>(parent, id, pos, size, static_cast<int>(choices.size()), choices.data(), style);
             for (auto&& selection : selection) {
-                widget->SetSelection(selection);
+                using ::wxUI::customizations::ControllerSetSelection;
+                ControllerSetSelection(widget, selection);
             }
             if (ensureVisible) {
-                widget->EnsureVisible(*ensureVisible);
+                using ::wxUI::customizations::ControllerEnsureVisible;
+                ControllerEnsureVisible(widget, *ensureVisible);
             }
             return widget;
         };

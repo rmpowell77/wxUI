@@ -29,6 +29,7 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 using TypeUnderTest = wxUI::ListBox;
+using namespace wxUITests;
 
 struct ListBoxTestPolicy {
     using TypeUnderTest = wxUI::ListBox;
@@ -46,100 +47,104 @@ TEST_CASE("ListBox")
 {
     SECTION("noargs")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(0 == window->GetCount());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("ListBox")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { "Hello", "Goodbye" };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(2 == window->GetCount());
-        CHECK(wxNOT_FOUND == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(0 == window->GetCount());
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.ListBox")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(2 == window->GetCount());
-        CHECK(wxNOT_FOUND == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.ListBox.ranges")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, std::vector<std::string> { "Hello", "Goodbye" } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(2 == window->GetCount());
-        CHECK(wxNOT_FOUND == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("setSelection")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } }.withSelection(1);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(2 == window->GetCount());
-        CHECK(1 == window->GetSelection());
-        CHECK("Hello" == window->GetString(0));
-        CHECK("Goodbye" == window->GetString(1));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "SetSelection:1",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("setSelections")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::ListBox::Proxy listProxy {};
-        auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } }.withStyle(wxLB_MULTIPLE).withSelections({ 0, 1 }).withProxy(listProxy);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(2 == window->GetCount());
-        wxArrayInt selectedItems;
-        CHECK(2 == window->GetSelections(selectedItems));
-        CHECK(wxArrayInt { 0, 1 } == selectedItems);
-        CHECK(std::vector<int> { 0, 1 } == listProxy.selections().get());
-        listProxy.selections() = { 0 };
-        CHECK(1 == window->GetSelections(selectedItems));
-        CHECK(wxArrayInt { 0 } == selectedItems);
-        std::vector<int> data = listProxy.selections();
-        CHECK(std::vector<int> { 0 } == data);
+        TestProvider provider;
+        auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } }.withStyle(wxLB_MULTIPLE).withSelections({ 0, 1 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=64, choices=(\"Hello\",\"Goodbye\",)]",
+                  "SetSelection:0",
+                  "SetSelection:1",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("style")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withStyle(wxLB_MULTIPLE);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetWindowStyle() == (wxBORDER_SUNKEN | wxLB_MULTIPLE));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=64, choices=()]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("pos")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxListBox[id=-1, pos=(1,2), size=(-1,-1), style=0, choices=()]",
+                  "SetEnabled:true",
+              });
     }
 
     COMMON_TESTS(ListBoxTestPolicy)

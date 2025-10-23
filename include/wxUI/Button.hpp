@@ -79,12 +79,14 @@ private:
     std::string text_;
     bool isDefault_ = false;
 
+    template <typename Parent>
     auto createImpl()
     {
-        return [&text = text_, isDefault = isDefault_](wxWindow* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) -> underlying_t* {
-            auto* widget = new underlying_t(parent, id, text, pos, size, style);
+        return [&text = text_, isDefault = isDefault_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
+            auto* widget = customizations::ParentCreate<underlying_t>(parent, id, text, pos, size, style);
             if (isDefault) {
-                widget->SetDefault();
+                using ::wxUI::customizations::ControllerSetDefault;
+                ControllerSetDefault(widget);
             }
             return widget;
         };

@@ -21,7 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "TestCustomizations.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <regex>
 #include <wx/wx.h>
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
@@ -80,19 +82,48 @@ constexpr auto addWithFont(wxFontInfo const& value, W&& inUUT) -> W&&
     return std::forward<W>(inUUT).withFont(value);
 }
 
-constexpr auto checkWithStyle = [](auto style, auto* window) {
-    CHECK((window->GetWindowStyle() & style) == style);
-    return window;
+constexpr auto checkWithStyle = [](int expectedStyle, std::string desc) -> std::string {
+    // look for "style=<number>" and capture the integer
+    static const std::regex re(R"(style\s*=\s*(-?\d+))");
+    std::smatch m;
+    auto description = std::string { desc };
+    bool found = std::regex_search(description, m, re);
+    CHECK(found); // ensure the pattern exists
+    if (found) {
+        int parsed = std::stoi(m[1].str());
+        CHECK(parsed == expectedStyle);
+    }
+    return desc;
 };
 
-constexpr auto checkWithPosition = [](auto pos, auto* window) {
-    CHECK(window->GetPosition() == pos);
-    return window;
+constexpr auto checkWithPosition = [](wxPoint const& expectedPos, std::string desc) -> std::string {
+    // look for "pos=(x,y)" and capture the two integers
+    static const std::regex re(R"(pos\s*=\s*\(\s*(-?\d+)\s*,\s*(-?\d+)\s*\))");
+    std::smatch m;
+    bool found = std::regex_search(desc, m, re);
+    CHECK(found); // ensure the pattern exists
+    if (found) {
+        int parsedX = std::stoi(m[1].str());
+        int parsedY = std::stoi(m[2].str());
+        CHECK(parsedX == expectedPos.x);
+        CHECK(parsedY == expectedPos.y);
+    }
+    return desc;
 };
 
-constexpr auto checkWithSize = [](auto size, auto* window) {
-    CHECK(window->GetSize() == size);
-    return window;
+constexpr auto checkWithSize = [](wxSize const& expectedSize, std::string desc) -> std::string {
+    // look for "size=(x,y)" and capture the two integers
+    static const std::regex re(R"(size\s*=\s*\(\s*(-?\d+)\s*,\s*(-?\d+)\s*\))");
+    std::smatch m;
+    bool found = std::regex_search(desc, m, re);
+    CHECK(found); // ensure the pattern exists
+    if (found) {
+        int parsedX = std::stoi(m[1].str());
+        int parsedY = std::stoi(m[2].str());
+        CHECK(parsedX == expectedSize.GetWidth());
+        CHECK(parsedY == expectedSize.GetHeight());
+    }
+    return desc;
 };
 
 template <typename W>
@@ -129,8 +160,8 @@ auto checkAllBeforeCreate(W const& window, int64_t style, wxPoint pos, wxSize si
     return checkIdentity(wxID_ANY, checkStyle(style, checkPos(pos, checkSize(size, window))));
 }
 
-constexpr auto checkAll = [](auto* window, auto style, auto pos, auto size) {
-    return checkWithStyle(style, checkWithPosition(pos, checkWithSize(size, window)));
+constexpr auto checkAll = [](std::string_view description, auto style, auto pos, auto size) {
+    return checkWithStyle(style, checkWithPosition(pos, checkWithSize(size, std::string { description })));
 };
 
 // How do we test chaining?
@@ -145,42 +176,53 @@ auto DoChainingIterations()
     auto expectedPos = WHICH::expectedPosition();
     auto expectedSize = WHICH::expectedSize();
     auto flags = wxSizerFlags(1).Proportion(1).Expand().Border(wxALL, 5);
-    wxFrame frame { nullptr, wxID_ANY, "" };
     // decorate with one flow
     {
+        wxUITests::TestProvider provider;
         auto uut = addWithFlags(flags, addWithStyle(style, addWithPosition(pos, addWithSize(size, WHICH::createUUT()))));
         checkAllBeforeCreate(uut, style, pos, size);
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        uut.create(&provider);
+        checkAll(provider.dump().front(), expectedStyle, expectedPos, expectedSize);
     }
     // inverted the other way around.
     {
+        wxUITests::TestProvider provider;
         auto uut = addWithPosition(pos, addWithStyle(style, addWithSize(size, WHICH::createUUT())));
         checkAllBeforeCreate(uut, style, pos, size);
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        uut.create(&provider);
+        checkAll(provider.dump().front(), expectedStyle, expectedPos, expectedSize);
     }
     // Do height and width
     {
+        wxUITests::TestProvider provider;
         auto uut = addWithFlags(flags, addWithStyle(style, addWithPosition(pos, addWithHeight(size.GetHeight(), addWithWidth(size.GetWidth(), WHICH::createUUT())))));
         checkAllBeforeCreate(uut, style, pos, size);
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        uut.create(&provider);
+        checkAll(provider.dump().front(), expectedStyle, expectedPos, expectedSize);
     }
     // Expand out style
     {
+        wxUITests::TestProvider provider;
         auto uut = addWithFlags(flags, addWithStyle(style, addWithStyle(0, addWithPosition(pos, addWithHeight(size.GetHeight(), addWithWidth(size.GetWidth(), WHICH::createUUT()))))));
         checkAllBeforeCreate(uut, style, pos, size);
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        uut.create(&provider);
+        checkAll(provider.dump().front(), expectedStyle, expectedPos, expectedSize);
     }
     {
+        wxUITests::TestProvider provider;
         auto uut = addWithFlags(flags, addSetStyle(style, addWithStyle(0xFFFF, addWithPosition(pos, addWithHeight(size.GetHeight(), addWithWidth(size.GetWidth(), WHICH::createUUT()))))));
         checkAllBeforeCreate(uut, style, pos, size);
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        uut.create(&provider);
+        checkAll(provider.dump().front(), expectedStyle, expectedPos, expectedSize);
     }
     // specifically test with lvalue.
     {
+        wxUITests::TestProvider provider;
         auto unit = WHICH::createUUT();
         auto uut = addWithFlags(flags, addWithStyle(style, addWithPosition(pos, addWithSize(size, WHICH::createUUT()))));
         checkAllBeforeCreate(uut, style, pos, size);
-        checkAll(dynamic_cast<typename WHICH::TypeUnderTest::underlying_t*>(uut.create(&frame)), expectedStyle, expectedPos, expectedSize);
+        uut.create(&provider);
+        checkAll(provider.dump().front(), expectedStyle, expectedPos, expectedSize);
     }
 }
 

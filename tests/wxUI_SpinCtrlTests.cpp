@@ -29,6 +29,7 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::SpinCtrl;
+using namespace wxUITests;
 
 struct SpinCtrlTestPolicy {
     using TypeUnderTest = wxUI::SpinCtrl;
@@ -46,95 +47,114 @@ TEST_CASE("SpinCtrl")
 {
     SECTION("noargs")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT();
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetValue() == 0);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("range")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetValue() == 1);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("range.init")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetValue() == 3);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetValue() == 0);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.range")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 } };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetValue() == 1);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id.range.init")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 }, 3 };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-        CHECK(window->GetValue() == 3);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("style")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withStyle(wxTE_PROCESS_ENTER);
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetWindowStyle() == (wxTE_PROCESS_ENTER | wxTAB_TRAVERSAL | 0x200000));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=1024, value=0, range=[0,100]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("pos")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withPosition({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetPosition() == wxPoint { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSpinCtrl[id=-1, pos=(1,2), size=(-1,-1), style=0, value=0, range=[0,100]]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("size")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = createUUT().withSize({ 1, 2 });
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(window->GetSize() == wxSize { 1, 2 });
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(1,2), style=0, value=0, range=[0,100]]",
+                  "SetEnabled:true",
+              });
     }
 
-    SECTION("proxy")
+    SECTION("AI")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto proxy = TypeUnderTest::Proxy {};
-        auto uut = createUUT().withSize({ 1, 2 }).withProxy(proxy);
-        uut.create(&frame);
-
-        CHECK(*proxy == 0);
-        *proxy = 1;
-        CHECK(*proxy == 1);
-        *proxy = 2;
-        CHECK(*proxy == 2);
-        int result2 = *proxy;
-        CHECK(result2 == 2);
+        TestProvider provider;
+        auto uut = wxUI::SpinCtrl { { 0, 10 }, 3 }.bind([] {});
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[0,10]]",
+                  "SetEnabled:true",
+                  "BindEvents:1",
+              });
     }
-
     COMMON_TESTS(SpinCtrlTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

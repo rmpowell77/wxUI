@@ -30,11 +30,12 @@ SOFTWARE.
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::VSplitter<wxUI::TextCtrl, wxUI::TextCtrl>;
+using namespace wxUITests;
 
 struct VSplitterTestPolicy {
     using TypeUnderTest = wxUI::VSplitter<wxUI::TextCtrl, wxUI::TextCtrl>;
     static auto createUUT() { return TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} }; }
-    static auto testStyle() { return wxSP_LIVE_UPDATE; }
+    static auto testStyle() { return wxSP_3D | wxSP_LIVE_UPDATE; }
     static auto testPosition() { return wxPoint { 14, 2 }; }
     static auto testSize() { return wxSize { 100, 40 }; }
     static auto expectedStyle() { return testStyle(); }
@@ -46,32 +47,45 @@ TEST_CASE("VSplitter")
 {
     SECTION("noargs")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} };
-        [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
+                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SplitVertical:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("id")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { 10000, wxUI::TextCtrl {}, wxUI::TextCtrl {} };
-        auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
-        CHECK(10000 == window->GetId());
-    }
-
-    SECTION("proxy")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::SplitterProxy proxy;
-        auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} }.withProxy(proxy);
-        [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSplitterWindow[id=10000, pos=(-1,-1), size=(-1,-1), style=896]",
+                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SplitVertical:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SetEnabled:true",
+              });
     }
 
     SECTION("withGravity")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider provider;
         auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} }.withStashGravity(1.0);
-        [[maybe_unused]] auto* window = dynamic_cast<TypeUnderTest::underlying_t*>(uut.create(&frame));
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "controller:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
+                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SplitVertical:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+                  "SetSashGravity:1",
+                  "SetEnabled:true",
+              });
     }
 
     COMMON_TESTS(VSplitterTestPolicy)
