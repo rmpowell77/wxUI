@@ -74,34 +74,43 @@ struct Generic {
     {
     }
 
-    void bindProxy(Proxy* proxy)
+    template <typename Parent>
+    auto create(Parent* parent)
     {
-        proxy_ = proxy;
+        auto* window = std::visit(
+            details::overloaded {
+                [parent](CreateWindowFunction const& arg) {
+                    return arg(parent);
+                },
+                [](auto arg) {
+                    return arg;
+                },
+            },
+            child_);
+        bindProxy(window);
+        return window;
     }
 
-    auto create(wxWindow* parent) const -> Window*;
-    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const;
+    template <typename Parent>
+    auto createAndAdd(Parent* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
+    {
+        auto* window = create(parent);
+        parentSizer->Add(window, flags_.value_or(parentFlags));
+        return window;
+    }
 
     struct Proxy {
-        Proxy() = default;
-
-        auto operator=(Generic&& controller) -> Generic&&
+        Proxy()
+            : windower(std::make_shared<Window*>())
         {
-            return bind(std::forward<Generic>(controller));
-        }
-        template <typename Generic>
-        auto bind(Generic&& widget) -> Generic&&
-        {
-            widget.bindProxy(this);
-            return std::forward<Generic>(widget);
         }
 
         [[nodiscard]] auto window() const -> Window*
         {
-            if (windower == nullptr) {
+            if (!windower) {
                 throw std::runtime_error("Proxy class has not been attached");
             }
-            return windower;
+            return *windower;
         }
 
         auto operator->() const { return window(); }
@@ -109,43 +118,39 @@ struct Generic {
 
         void setUnderlying(Window* window)
         {
-            windower = window;
+            *windower = window;
         }
 
     private:
-        Window* windower {};
+        std::shared_ptr<Window*> windower {};
     };
 
+    auto withProxy(Proxy const& proxy) & -> Generic<Window>&
+    {
+        proxyHandles_.push_back(proxy);
+        return *this;
+    }
+
+    auto withProxy(Proxy const& proxy) && -> Generic<Window>&&
+    {
+        proxyHandles_.push_back(proxy);
+        return std::move(*this);
+    }
+
 private:
+    auto bindProxy(Window* widget)
+    {
+        for (auto& proxyHandle : proxyHandles_) {
+            using ::wxUI::customizations::ControllerBindProxy;
+            ControllerBindProxy(widget, proxyHandle);
+        }
+        return widget;
+    }
+
     std::optional<wxSizerFlags> flags_ {};
     std::variant<Window*, CreateWindowFunction> child_;
-    Proxy* proxy_ {};
+    std::vector<Proxy> proxyHandles_ {};
 };
-
-template <typename Window>
-inline auto Generic<Window>::create(wxWindow* parent) const -> Window*
-{
-    auto* window = std::visit(details::overloaded {
-                                  [parent](CreateWindowFunction const& arg) {
-                                      return arg(parent);
-                                  },
-                                  [](auto arg) {
-                                      return arg;
-                                  },
-                              },
-        child_);
-    if (proxy_) {
-        proxy_->setUnderlying(window);
-    }
-    return window;
-}
-
-template <typename Window>
-inline void Generic<Window>::createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
-{
-    auto* window = create(parent);
-    parentSizer->Add(window, flags_.value_or(parentFlags));
-}
 
 }
 
