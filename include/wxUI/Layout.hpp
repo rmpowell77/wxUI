@@ -24,15 +24,30 @@ SOFTWARE.
 #pragma once
 
 #include "Widget.hpp"
+#include "wxUITypes.hpp"
 #include <variant>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+
+// forward-declare Generic so we can detect it in traits without including its header
+namespace wxUI {
+template <typename Window>
+struct Generic;
+}
 
 namespace wxUI::details {
 
 // clang-format off
 template <typename T>
+struct is_Generic : std::false_type {};
+template <typename W>
+struct is_Generic<::wxUI::Generic<W>> : std::true_type {};
+template <typename T>
+inline constexpr bool is_Generic_v = is_Generic<T>::value;
+
+template <typename T>
 concept SizerItem = details::CreateAndAddable<T>
+    || is_Generic_v<T>
     || (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>);
 // clang-format on
 
@@ -41,9 +56,12 @@ static inline auto createAndAddVisiter(T& arg, Parent* parent, Sizer* sizer, wxS
 {
     if constexpr (details::CreateAndAddable<T>) {
         arg.createAndAdd(parent, sizer, flags);
+    } else if constexpr (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>) {
+        sizer->Add(arg, flags);
+    } else if constexpr (is_Generic_v<T>) {
+        sizer->Add(arg.create(), flags);
     } else {
-        using ::wxUI::customizations::SizerAddController;
-        SizerAddController(sizer, arg, flags);
+        static_assert(always_false_v<T>, "createAndAdd not available for this item with these Parent/Sizer types; provide a customization");
     }
 }
 }
@@ -94,8 +112,7 @@ struct Sizer {
         createAndAddWidgets(parent, sizer, currentFlags);
 
         // and now add our sizer to the parent
-        using ::wxUI::customizations::SizerAddController;
-        SizerAddController(parentSizer, sizer, currentFlags);
+        parentSizer->Add(sizer, currentFlags);
         return sizer;
     }
 
@@ -105,10 +122,8 @@ struct Sizer {
         auto sizer = constructSizer(parent);
         auto currentFlags = flags_.value_or(wxSizerFlags {});
         createAndAddWidgets(parent, sizer, currentFlags);
-        using ::wxUI::customizations::ParentSetSizer;
-        ParentSetSizer(parent, sizer);
-        using ::wxUI::customizations::SizerSetSizeHints;
-        SizerSetSizeHints(sizer, parent);
+        parent->SetSizer(sizer);
+        sizer->SetSizeHints(parent);
     }
 
 private:

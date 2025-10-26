@@ -32,25 +32,6 @@ SOFTWARE.
 
 namespace wxUI {
 
-struct Foo {
-    Foo()
-    {
-        std::cout << "Foo none\n";
-    }
-    Foo(std::initializer_list<std::string> initList)
-    {
-        std::cout << "Foo std::initializer_list<std::string>\n";
-        for (const auto& str : initList) {
-            std::cout << str << std::endl;
-        }
-    }
-    explicit Foo(char const* str)
-    {
-        std::cout << "Foo const char*\n";
-        std::cout << str << std::endl;
-    }
-};
-
 // https://docs.wxwidgets.org/latest/classwx_radio_box.html
 struct RadioBox {
     // clang-format off
@@ -168,8 +149,7 @@ private:
     {
         return [&text = text_, &choices = choices_, majorDim = majorDim_, selection = selection_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, text, pos, size, static_cast<int>(choices.size()), choices.data(), majorDim, style);
-            using ::wxUI::customizations::ControllerSetSelection;
-            ControllerSetSelection(widget, selection);
+            widget->SetSelection(selection);
             return widget;
         };
     }

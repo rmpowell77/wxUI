@@ -85,8 +85,7 @@ private:
         return [&bitmap = bitmap_, &bitmapPressed = bitmapPressed_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, bitmap, pos, size, style);
             if (bitmapPressed) {
-                using ::wxUI::customizations::ControllerSetBitmapPressed;
-                ControllerSetBitmapPressed(widget, *bitmapPressed);
+                widget->SetBitmapPressed(*bitmapPressed);
             }
             return widget;
         };

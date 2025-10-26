@@ -35,7 +35,7 @@ namespace wxUI {
 struct ListBox {
     using underlying_t = wxListBox;
 
-    ListBox(std::initializer_list<std::string> choices = {})
+    explicit ListBox(std::initializer_list<std::string> choices = {})
         : ListBox(wxID_ANY, choices)
     {
     }
@@ -180,12 +180,10 @@ private:
         return [&choices = choices_, &selection = selection_, &ensureVisible = ensureVisible_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, pos, size, static_cast<int>(choices.size()), choices.data(), style);
             for (auto&& selection : selection) {
-                using ::wxUI::customizations::ControllerSetSelection;
-                ControllerSetSelection(widget, selection);
+                widget->SetSelection(selection);
             }
             if (ensureVisible) {
-                using ::wxUI::customizations::ControllerEnsureVisible;
-                ControllerEnsureVisible(widget, *ensureVisible);
+                widget->EnsureVisible(*ensureVisible);
             }
             return widget;
         };

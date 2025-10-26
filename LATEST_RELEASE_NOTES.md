@@ -8,4 +8,5 @@ Other changes:
 * [#217](../../issues/217) Switch from inheritance to composition
 * [#219](../../issues/219) We should have customization points for controllers to allow for testability
 * [#223](../../issues/223) We should avoid the operator= for Proxy in Generic
+* [#224](../../issues/224) Remove function part of Generic
 

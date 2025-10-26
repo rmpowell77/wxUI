@@ -85,8 +85,7 @@ private:
         return [&text = text_, isDefault = isDefault_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, text, pos, size, style);
             if (isDefault) {
-                using ::wxUI::customizations::ControllerSetDefault;
-                ControllerSetDefault(widget);
+                widget->SetDefault();
             }
             return widget;
         };

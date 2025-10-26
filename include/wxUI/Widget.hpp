@@ -197,11 +197,9 @@ struct WidgetDetails {
     {
         auto* widget = creator(parent, identity_, pos_, size_, style_);
         if (fontInfo_) {
-            using ::wxUI::customizations::ControllerSetFont;
-            ControllerSetFont(widget, wxFont(*fontInfo_));
+            widget->SetFont(wxFont(*fontInfo_));
         }
-        using ::wxUI::customizations::ControllerSetEnabled;
-        ControllerSetEnabled(widget, enabled_);
+        widget->Enable(enabled_);
         bindEvents(widget);
         bindProxy(widget);
 
@@ -212,8 +210,7 @@ struct WidgetDetails {
     auto createAndAdd(Creator creator, Parent* parent, Sizer* sizer, wxSizerFlags const& parentFlags)
     {
         auto* widget = create(creator, parent);
-        using ::wxUI::customizations::SizerAddController;
-        SizerAddController(sizer, widget, flags_.value_or(parentFlags));
+        sizer->Add(widget, flags_.value_or(parentFlags));
         return widget;
     }
 

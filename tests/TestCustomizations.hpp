@@ -95,11 +95,15 @@ struct std::formatter<wxSizerFlags, char> {
 
 namespace wxUITests {
 
+struct TestProvider;
 struct TestSizer {
     bool top { false };
     std::optional<std::string> caption {};
     wxOrientation orientation {};
 
+    void SetSizeHints(TestProvider*);
+    void Add(TestProvider*, wxSizerFlags const& flags);
+    void Add(TestSizer*, wxSizerFlags const& flags);
     std::vector<std::string> log {};
 };
 
@@ -123,6 +127,50 @@ struct TestProvider {
 
     TestSizer* currentSizer {};
     void SetSizer(TestSizer* sizer) { currentSizer = sizer; }
+    void SetSashGravity(double gravity)
+    {
+        log.push_back(std::format("SetSashGravity:{}", gravity));
+    }
+    void SplitVertically(TestProvider* window1, TestProvider* window2);
+    void SplitHorizontally(TestProvider* window1, TestProvider* window2);
+    template <typename Bitmap>
+    void SetBitmapPressed(Bitmap const& bitmap)
+    {
+        log.push_back(std::format("SetBitmapPressed:{}", bitmap));
+    }
+    template <typename Bitmap>
+    void SetItemBitmap(unsigned int n, Bitmap const& bitmap)
+    {
+        log.push_back(std::format("SetItemBitmap:{}:{}", n, bitmap));
+    }
+    void SetSelection(int selection)
+    {
+        log.push_back(std::format("SetSelection:{}", selection));
+    }
+    void SetValue(bool value)
+    {
+        log.push_back(std::format("SetValue:{}", value));
+    }
+    void Wrap(bool value)
+    {
+        log.push_back(std::format("Wrap:{}", value));
+    }
+    void Enable(bool enabled)
+    {
+        log.push_back(std::format("SetEnabled:{}", enabled ? "true" : "false"));
+    }
+    void SetFont(wxFont const& font)
+    {
+        log.push_back(std::format("SetFont:{}", font.GetPointSize()));
+    }
+    void EnsureVisible(bool value)
+    {
+        log.push_back(std::format("EnsureVisible:{}", value));
+    }
+    void SetDefault()
+    {
+        log.push_back(std::format("SetDefault:{}", id));
+    }
 
     auto add(TestProvider controller) -> TestProvider*;
     auto add(TestSizer controller) -> TestSizer*;
@@ -204,6 +252,16 @@ inline auto TestProvider::add(TestSizer sizer) -> TestSizer*
     return &sizers.back();
 }
 
+inline void TestProvider::SplitVertically(TestProvider* window1, TestProvider* window2)
+{
+    log.push_back(std::format("SplitVertical:{}:{}", *window1, *window2));
+}
+
+inline void TestProvider::SplitHorizontally(TestProvider* window1, TestProvider* window2)
+{
+    log.push_back(std::format("SplitHorizontal:{}:{}", *window1, *window2));
+}
+
 inline auto TestProvider::dump() const -> std::vector<std::string>
 {
     auto result = std::vector<std::string> {};
@@ -219,6 +277,21 @@ inline auto TestProvider::dump() const -> std::vector<std::string>
         result.insert(result.end(), sizer.log.begin(), sizer.log.end());
     }
     return result;
+}
+
+inline void TestSizer::SetSizeHints(TestProvider* controller)
+{
+    log.push_back(std::format("SetSizeHints:{}", *controller));
+}
+
+inline void TestSizer::Add(TestProvider* controller, wxSizerFlags const& flags)
+{
+    log.push_back(std::format("Add:{}:flags:{}", *controller, flags));
+}
+
+inline void TestSizer::Add(TestSizer* sizer, wxSizerFlags const& flags)
+{
+    log.push_back(std::format("AddSizer:{}:flags:{}", *sizer, flags));
 }
 
 }
@@ -524,21 +597,6 @@ struct ParentCreateImpl<wxSplitterWindow, wxUITests::TestProvider> {
     }
 };
 
-inline void ControllerSetDefault(wxUITests::TestProvider* controller)
-{
-    controller->log.push_back(std::format("SetDefault:{}", controller->id));
-}
-
-inline void ControllerSetFont(wxUITests::TestProvider* controller, wxFont const& font)
-{
-    controller->log.push_back(std::format("SetFont:{}", font.GetPointSize()));
-}
-
-inline void ControllerSetEnabled(wxUITests::TestProvider* controller, bool enabled)
-{
-    controller->log.push_back(std::format("SetEnabled:{}", enabled ? "true" : "false"));
-}
-
 inline void ControllerBindEvent(wxUITests::TestProvider* controller, [[maybe_unused]] wxUI::details::BindInfo const& boundedFunction)
 {
     auto count = std::ranges::count_if(controller->log, [](auto const& e) { return e.starts_with("BindEvents:"); });
@@ -552,74 +610,12 @@ inline void ControllerBindProxy(wxUITests::TestProvider* controller, [[maybe_unu
     controller->log.push_back(std::format("BindProxy:{}", count + 1));
 }
 
-inline void ControllerSetSelection(wxUITests::TestProvider* controller, int selection)
-{
-    controller->log.push_back(std::format("SetSelection:{}", selection));
-}
-
-template <typename Bitmap>
-inline void ControllerSetItemBitmap(wxUITests::TestProvider* controller, unsigned int n, Bitmap const& bitmap)
-{
-    controller->log.push_back(std::format("SetItemBitmap:{}:{}", n, bitmap));
-}
-
-template <typename Bitmap>
-inline void ControllerSetBitmapPressed(wxUITests::TestProvider* controller, Bitmap const& bitmap)
-{
-    controller->log.push_back(std::format("SetBitmapPressed:{}", bitmap));
-}
-
-inline void ControllerSetValue(wxUITests::TestProvider* controller, bool value)
-{
-    controller->log.push_back(std::format("SetValue:{}", value));
-}
-
-inline void ControllerEnsureVisible(wxUITests::TestProvider* controller, bool value)
-{
-    controller->log.push_back(std::format("EnsureVisible:{}", value));
-}
-
-inline void ControllerWrap(wxUITests::TestProvider* controller, bool value)
-{
-    controller->log.push_back(std::format("Wrap:{}", value));
-}
-
-inline void ControllerSplitHorizontal(wxUITests::TestProvider* controller, wxUITests::TestProvider* window1, wxUITests::TestProvider* window2)
-{
-    controller->log.push_back(std::format("SplitHorizontal:{}:{}", *window1, *window2));
-}
-
-inline void ControllerSplitVertical(wxUITests::TestProvider* controller, wxUITests::TestProvider* window1, wxUITests::TestProvider* window2)
-{
-    controller->log.push_back(std::format("SplitVertical:{}:{}", *window1, *window2));
-}
-
-inline void ControllerSetSashGravity(wxUITests::TestProvider* controller, double gravity)
-{
-    controller->log.push_back(std::format("SetSashGravity:{}", gravity));
-}
-
 inline auto SizerCreate(wxUITests::TestProvider* provider, std::optional<std::string> caption, wxOrientation orientation) -> wxUITests::TestSizer*
 {
     return provider->add(wxUITests::TestSizer {
         .caption = caption,
         .orientation = orientation,
     });
-}
-
-inline void SizerSetSizeHints(wxUITests::TestSizer* sizer, wxUITests::TestProvider* parent)
-{
-    sizer->log.push_back(std::format("SetSizerHints:{}", *parent));
-}
-
-inline void SizerAddController(wxUITests::TestSizer* sizer, wxUITests::TestProvider* controller, wxSizerFlags const& flags)
-{
-    sizer->log.push_back(std::format("Add:{}:flags:{}", *controller, flags));
-}
-
-inline void SizerAddController(wxUITests::TestSizer* sizer, wxUITests::TestSizer* sizer2, wxSizerFlags const& flags)
-{
-    sizer->log.push_back(std::format("AddSizer:{}:flags:{}", *sizer2, flags));
 }
 
 }

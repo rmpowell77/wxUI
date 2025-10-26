@@ -85,8 +85,7 @@ private:
         return [&bitmap = bitmap_, isDefault = isDefault_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, bitmap, pos, size, style);
             if (isDefault) {
-                using ::wxUI::customizations::ControllerSetDefault;
-                ControllerSetDefault(widget);
+                widget->SetDefault();
             }
             return widget;
         };

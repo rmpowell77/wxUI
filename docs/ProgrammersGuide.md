@@ -214,22 +214,22 @@ wxUI::VSizer { "Current Frame" }.fitTo(this);
 
 #### Generic
 
-One special type of *Layout* is `Generic`.  There are cases where you have to construct a `wxWindow*` with a parent.  This is a case to use `Generic`:
+One special type of *Layout* is `Generic`.  There are cases where you have a `Window` object constructed by some other mechanism you need to insert in the Layout.  This is a case to use `Generic`:
 
 ```cpp
     VSizer {
         wxSizerFlags().Expand().Border(),
         Generic {
-            [](wxWindow* window) {
+            [window = this] {
                 return new wxButton(window, wxID_ANY, "Generic");
-            } },
+            }() },
     // ...
         CreateStdDialogButtonSizer(wxOK),
     }
         .fitTo(this);
 ```
 
-Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, or a closure or function that returns a `wxWindow*` when supplied with a `wxWindow*`, and it will be inserted into the *Layout*.
+Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, and it will be inserted into the *Layout*.
 
 #### Splitter
 

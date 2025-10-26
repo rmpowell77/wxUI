@@ -135,12 +135,10 @@ private:
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, first, pos, size, static_cast<int>(choices.size()), choices.data(), style);
 
             for (auto i = 0lu; i < bitmaps.size(); ++i) {
-                using ::wxUI::customizations::ControllerSetItemBitmap;
-                ControllerSetItemBitmap(widget, i, bitmaps[i]);
+                widget->SetItemBitmap(i, bitmaps[i]);
             }
             if (!choices.empty()) {
-                using ::wxUI::customizations::ControllerSetSelection;
-                ControllerSetSelection(widget, selection);
+                widget->SetSelection(selection);
             }
             return widget;
         };

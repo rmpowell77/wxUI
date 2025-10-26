@@ -83,8 +83,7 @@ private:
         return [&text = text_, &wrap = wrap_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, text, pos, size, style);
             if (wrap) {
-                using ::wxUI::customizations::ControllerWrap;
-                ControllerWrap(widget, *wrap);
+                widget->Wrap(*wrap);
             }
             return widget;
         };
