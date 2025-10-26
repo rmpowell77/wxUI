@@ -23,6 +23,9 @@ SOFTWARE.
 */
 #pragma once
 
+#include <wx/sizer.h>
+#include <wx/statbox.h>
+
 namespace wxUI::customizations {
 
 template <typename>
@@ -55,6 +58,21 @@ template <typename Underlying, typename Parent, typename... Args>
 inline auto ParentCreate(Parent* parent, Args&&... args)
 {
     return ParentCreateImpl<Underlying, Parent>::create(parent, std::forward<Args>(args)...);
+}
+
+// This doesn't need to be argument pack
+template <typename Parent>
+inline auto SizerCreate(Parent* parent, std::optional<std::string> caption, wxOrientation orientation) -> wxSizer*
+{
+    if constexpr (std::is_convertible_v<Parent*, wxWindow*>) {
+        return caption ? new wxStaticBoxSizer(new wxStaticBox(parent, wxID_ANY, *caption), orientation) : new wxBoxSizer(orientation);
+    } else {
+        // If Parent is not a wxWindow-derived type then this default
+        // implementation is not appropriate. Tests should provide a
+        // specialization of ParentCreateImpl for non-wx parents.
+        static_assert(std::is_convertible_v<Parent*, wxWindow*>, "CreateSizerImpl must be specialized for non-wx parents");
+        return nullptr; // unreachable, satisfies return type
+    }
 }
 
 //--- Customization points for controllers ---//
@@ -197,6 +215,35 @@ inline void ControllerSetSashGravity(Controller* controller, double gravity)
         controller->SetSashGravity(gravity);
     } else {
         static_assert(always_false_v<Controller>, "ControllerSetSashGravity: Provide a customization in namespace wxUI::customizations.");
+    }
+}
+template <typename Sizer, typename Controller>
+inline void SizerAddController(Sizer* sizer, Controller* controller, wxSizerFlags const& flags)
+{
+    if constexpr (requires(Sizer* s) { s->Add(controller, flags); }) {
+        sizer->Add(controller, flags);
+    } else {
+        static_assert(always_false_v<Controller>, "SizerAddController: not available for this Controller type. Provide a customization in namespace wxUI::customizations.");
+    }
+}
+
+template <typename Sizer, typename Parent>
+inline void SizerSetSizeHints(Sizer* sizer, Parent* parent)
+{
+    if constexpr (requires(Sizer* s) { s->SetSizeHints(parent); }) {
+        sizer->SetSizeHints(parent);
+    } else {
+        static_assert(always_false_v<Parent>, "SizerSetSizeHints: not available for this Controller type. Provide a customization in namespace wxUI::customizations.");
+    }
+}
+
+template <typename Parent, typename Sizer>
+inline void ParentSetSizer(Parent* parent, Sizer* sizer)
+{
+    if constexpr (requires(Parent* s) { s->SetSizer(sizer); }) {
+        parent->SetSizer(sizer);
+    } else {
+        static_assert(always_false_v<Parent>, "SizerSetSizer: Provide a customization in namespace wxUI::customizations.");
     }
 }
 // clang-format on

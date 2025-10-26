@@ -208,11 +208,12 @@ struct WidgetDetails {
         return widget;
     }
 
-    template <typename Creator, typename Parent>
-    auto createAndAdd(Creator creator, Parent* parent, wxSizer* sizer, wxSizerFlags const& parentFlags) -> Underlying*
+    template <typename Creator, typename Parent, typename Sizer>
+    auto createAndAdd(Creator creator, Parent* parent, Sizer* sizer, wxSizerFlags const& parentFlags)
     {
         auto* widget = create(creator, parent);
-        sizer->Add(widget, flags_.value_or(parentFlags));
+        using ::wxUI::customizations::SizerAddController;
+        SizerAddController(sizer, widget, flags_.value_or(parentFlags));
         return widget;
     }
 
