@@ -182,9 +182,9 @@ SplitterExample::SplitterExample(wxWindow* parent)
                 } },
         },
         VSplitter {
-            proxy = [](wxWindow* parent) {
+            Generic<wxButton> { [](wxWindow* parent) {
                 return new wxButton(parent, wxID_ANY, "Raw button");
-            },
+            } }.withProxy(proxy),
             TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
         },
         // snippet SplitterExample
@@ -199,8 +199,7 @@ GenericExample::GenericExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "SplitterExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
-    Generic<wxButton>::Proxy proxy1 {};
-    Generic<wxButton>::Proxy proxy2 {};
+    Generic<wxButton>::Proxy proxy {};
     // snippet GenericExample
     VSizer {
         wxSizerFlags().Expand().Border(),
@@ -209,20 +208,17 @@ GenericExample::GenericExample(wxWindow* parent)
                 return new wxButton(window, wxID_ANY, "Generic");
             } },
         // endsnippet GenericExample
-        proxy1 = Generic<wxButton> {
+        Generic<wxButton> {
             [](wxWindow* window) {
-                return new wxButton(window, wxID_ANY, "Raw 1");
-            } },
-        proxy2 = [](wxWindow* window) {
-            return new wxButton(window, wxID_ANY, "Raw 2");
-        },
+                return new wxButton(window, wxID_ANY, "Proxy");
+            } }
+            .withProxy(proxy),
         // snippet GenericExample
         CreateStdDialogButtonSizer(wxOK),
     }
         .fitTo(this);
     // endsnippet GenericExample
-    assert(proxy1->GetLabel() == "Raw 1");
-    assert(proxy2->GetLabel() == "Raw 2");
+    assert(proxy->GetLabel() == "Proxy");
 }
 
 ForEachExample::ForEachExample(wxWindow* parent)
