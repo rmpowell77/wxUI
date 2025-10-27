@@ -51,6 +51,7 @@ TEST_CASE("Gauge")
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=100]",
                   "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=100]",
                   "SetEnabled:true",
               });
@@ -62,6 +63,7 @@ TEST_CASE("Gauge")
         auto uut = TypeUnderTest { wxUI::Gauge::withRange {}, 200 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=200]",
                   "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=200]",
                   "SetEnabled:true",
               });
@@ -73,6 +75,7 @@ TEST_CASE("Gauge")
         auto uut = TypeUnderTest { wxUI::Gauge::withIdentity {}, 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxGauge[id=10000, pos=(-1,-1), size=(-1,-1), style=4, value=100]",
                   "controller:wxGauge[id=10000, pos=(-1,-1), size=(-1,-1), style=4, value=100]",
                   "SetEnabled:true",
               });
@@ -84,6 +87,7 @@ TEST_CASE("Gauge")
         auto uut = TypeUnderTest { wxUI::Gauge::withIdentity {}, 10000, 200 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxGauge[id=10000, pos=(-1,-1), size=(-1,-1), style=4, value=200]",
                   "controller:wxGauge[id=10000, pos=(-1,-1), size=(-1,-1), style=4, value=200]",
                   "SetEnabled:true",
               });
@@ -95,6 +99,7 @@ TEST_CASE("Gauge")
         auto uut = createUUT().setStyle(wxGA_VERTICAL);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=8, value=100]",
                   "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=8, value=100]",
                   "SetEnabled:true",
               });
@@ -106,6 +111,7 @@ TEST_CASE("Gauge")
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxGauge[id=-1, pos=(1,2), size=(-1,-1), style=4, value=100]",
                   "controller:wxGauge[id=-1, pos=(1,2), size=(-1,-1), style=4, value=100]",
                   "SetEnabled:true",
               });
@@ -117,6 +123,7 @@ TEST_CASE("Gauge")
         auto uut = wxUI::Gauge { wxUI::Gauge::withRange {}, 250 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=250]",
                   "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=250]",
                   "SetEnabled:true",
               });

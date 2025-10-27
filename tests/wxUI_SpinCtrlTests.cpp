@@ -51,6 +51,7 @@ TEST_CASE("SpinCtrl")
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
                   "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
                   "SetEnabled:true",
               });
@@ -62,6 +63,7 @@ TEST_CASE("SpinCtrl")
         auto uut = TypeUnderTest { std::pair { 1, 5 } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
                   "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
                   "SetEnabled:true",
               });
@@ -73,6 +75,7 @@ TEST_CASE("SpinCtrl")
         auto uut = TypeUnderTest { std::pair { 1, 5 }, 3 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
                   "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
                   "SetEnabled:true",
               });
@@ -84,6 +87,7 @@ TEST_CASE("SpinCtrl")
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
                   "controller:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
                   "SetEnabled:true",
               });
@@ -95,6 +99,7 @@ TEST_CASE("SpinCtrl")
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
                   "controller:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
                   "SetEnabled:true",
               });
@@ -106,6 +111,7 @@ TEST_CASE("SpinCtrl")
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 }, 3 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
                   "controller:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
                   "SetEnabled:true",
               });
@@ -117,6 +123,7 @@ TEST_CASE("SpinCtrl")
         auto uut = createUUT().withStyle(wxTE_PROCESS_ENTER);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=1024, value=0, range=[0,100]]",
                   "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=1024, value=0, range=[0,100]]",
                   "SetEnabled:true",
               });
@@ -128,6 +135,7 @@ TEST_CASE("SpinCtrl")
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSpinCtrl[id=-1, pos=(1,2), size=(-1,-1), style=0, value=0, range=[0,100]]",
                   "controller:wxSpinCtrl[id=-1, pos=(1,2), size=(-1,-1), style=0, value=0, range=[0,100]]",
                   "SetEnabled:true",
               });
@@ -139,6 +147,7 @@ TEST_CASE("SpinCtrl")
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(1,2), style=0, value=0, range=[0,100]]",
                   "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(1,2), style=0, value=0, range=[0,100]]",
                   "SetEnabled:true",
               });
@@ -150,6 +159,7 @@ TEST_CASE("SpinCtrl")
         auto uut = wxUI::SpinCtrl { { 0, 10 }, 3 }.bind([] {});
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[0,10]]",
                   "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[0,10]]",
                   "SetEnabled:true",
                   "BindEvents:1",

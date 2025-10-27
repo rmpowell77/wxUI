@@ -51,6 +51,7 @@ TEST_CASE("Hyperlink")
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
                   "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
                   "SetEnabled:true",
               });
@@ -62,6 +63,7 @@ TEST_CASE("Hyperlink")
         auto uut = TypeUnderTest { 10000, "Hello", "www.github.com" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxHyperlinkCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
                   "controller:wxHyperlinkCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
                   "SetEnabled:true",
               });
@@ -73,6 +75,7 @@ TEST_CASE("Hyperlink")
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
                   "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
                   "SetEnabled:true",
               });
@@ -84,6 +87,7 @@ TEST_CASE("Hyperlink")
         auto uut = createUUT().withoutStyle(wxHL_ALIGN_CENTRE).withStyle(wxHL_ALIGN_LEFT);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097155, text=\"Hello\", text2=\"www.github.com\"]",
                   "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097155, text=\"Hello\", text2=\"www.github.com\"]",
                   "SetEnabled:true",
               });
@@ -95,6 +99,7 @@ TEST_CASE("Hyperlink")
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxHyperlinkCtrl[id=-1, pos=(1,2), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
                   "controller:wxHyperlinkCtrl[id=-1, pos=(1,2), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
                   "SetEnabled:true",
               });
@@ -106,6 +111,7 @@ TEST_CASE("Hyperlink")
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(1,2), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
                   "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(1,2), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
                   "SetEnabled:true",
               });

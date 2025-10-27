@@ -52,13 +52,13 @@ constexpr bool is_noarg_callable()
 // BindInfo uses type erase to allow any binding for any Event type.
 struct BindInfo {
 
-    void bindTo([[maybe_unused]] wxWindow* widget) const
+    void bindTo(wxWindow* widget) const
     {
         info_->bindTo(widget);
     }
 
     template <typename Event, typename Function>
-    BindInfo([[maybe_unused]] Event event, [[maybe_unused]] Function function)
+    BindInfo(Event event, Function function)
         : info_(std::make_unique<BindInfoDetails<Event, Function>>(event, function))
     {
     }

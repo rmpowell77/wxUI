@@ -28,6 +28,7 @@ SOFTWARE.
 #include <optional>
 #include <ostream>
 #include <string>
+#include <variant>
 #include <vector>
 #include <wx/bmpbuttn.h>
 #include <wx/bmpcbox.h>
@@ -37,6 +38,7 @@ SOFTWARE.
 #include <wx/gauge.h>
 #include <wx/hyperlink.h>
 #include <wx/listbox.h>
+#include <wx/menu.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/slider.h>
@@ -93,6 +95,68 @@ struct std::formatter<wxSizerFlags, char> {
     }
 };
 
+template <>
+struct std::formatter<wxMenuItem, char> {
+    constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+    auto format(wxMenuItem const& menu, std::format_context& ctx) const
+    {
+        // Determine kind via a small helper function
+        auto menuKindToString = [](int kind) -> std::string {
+            switch (kind) {
+            case wxITEM_SEPARATOR:
+                return "separator";
+            case wxITEM_CHECK:
+                return "check";
+            case wxITEM_RADIO:
+                return "radio";
+            case wxITEM_NORMAL:
+                return "normal";
+            default:
+                return std::format("kind({})", static_cast<int>(kind));
+            }
+        };
+        std::string kindStr = menuKindToString(menu.GetKind());
+
+        // Submenu overrides kind description for clarity
+        if (menu.GetSubMenu() != nullptr) {
+            kindStr = "submenu";
+        }
+
+        auto id = menu.GetId();
+        auto label = menu.GetItemLabelText().ToStdString();
+        auto help = menu.GetHelp().ToStdString();
+
+        return std::format_to(ctx.out(), "(menuItem:id={},kind={},label=\"{}\",help=\"{}\")", id, kindStr, label, help);
+    }
+};
+
+template <>
+struct std::formatter<wxMenu, char> {
+    constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+    auto format(wxMenu const& menu, std::format_context& ctx) const
+    {
+        std::format_to(ctx.out(), "[title:{}:[", menu.GetTitle().ToStdString());
+        auto& items = menu.GetMenuItems();
+        for (auto& item : items) {
+            std::format_to(ctx.out(), "{},", *item);
+        }
+        return std::format_to(ctx.out(), "]");
+    }
+};
+
+template <>
+struct std::formatter<wxMenuBar, char> {
+    constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+    auto format(wxMenuBar const& bar, std::format_context& ctx) const
+    {
+        std::format_to(ctx.out(), "[");
+        for (auto i = 0UL; i < bar.GetMenuCount(); ++i) {
+            std::format_to(ctx.out(), "{},", *(bar.GetMenu(i)));
+        }
+        return std::format_to(ctx.out(), "]");
+    }
+};
+
 namespace wxUITests {
 
 struct TestProvider;
@@ -122,10 +186,12 @@ struct TestProvider {
     std::optional<int> majorDim {};
 
     std::vector<std::string> log {};
+    std::vector<std::string> menuDetails {};
     std::list<TestProvider> providers {};
     std::list<TestSizer> sizers {};
 
     TestSizer* currentSizer {};
+    TestProvider* currentMenu {};
     void SetSizer(TestSizer* sizer) { currentSizer = sizer; }
     void SetSashGravity(double gravity)
     {
@@ -265,8 +331,14 @@ inline void TestProvider::SplitHorizontally(TestProvider* window1, TestProvider*
 inline auto TestProvider::dump() const -> std::vector<std::string>
 {
     auto result = std::vector<std::string> {};
+    for (auto entry : log) {
+        result.push_back(std::format("{}", entry));
+    }
     if (currentSizer) {
         result.push_back(std::format("topsizer:{}", *currentSizer));
+    }
+    for (auto menuDetail : menuDetails) {
+        result.push_back(std::format("menu:{}", menuDetail));
     }
     for (auto controller : providers) {
         result.push_back(std::format("controller:{}", controller));
@@ -616,6 +688,18 @@ inline auto SizerCreate(wxUITests::TestProvider* provider, std::optional<std::st
         .caption = caption,
         .orientation = orientation,
     });
+}
+
+inline void MenuSetMenuBar(wxUITests::TestProvider* parent, wxMenuBar* menuBar)
+{
+    // Represent the menu-bar as a child provider so tests can inspect it
+    parent->menuDetails.push_back(std::format("MenuBar:{}", *menuBar));
+}
+
+inline void MenuBindToFrame(wxUITests::TestProvider& frame, int identity, [[maybe_unused]] std::variant<std::function<void(wxCommandEvent&)>, std::function<void()>> const& function)
+{
+    auto count = std::ranges::count_if(frame.log, [identity](auto const& e) { return e.starts_with(std::format("BindMenu:{}", identity)); });
+    frame.log.push_back(std::format("BindMenu:{}:{}", identity, count + 1));
 }
 
 }

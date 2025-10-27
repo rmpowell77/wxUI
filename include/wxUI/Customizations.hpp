@@ -23,6 +23,11 @@ SOFTWARE.
 */
 #pragma once
 
+#include <functional>
+#include <optional>
+#include <variant>
+#include <wx/frame.h>
+#include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
@@ -78,8 +83,8 @@ inline auto SizerCreate(Parent* parent, std::optional<std::string> caption, wxOr
 //--- Customization points for controllers ---//
 // clang-format off
 
-template <typename Controller>
-inline void ControllerBindEvent(Controller* controller, details::BindInfo const& boundedFunction)
+template <typename Controller, typename BoundFunction>
+inline void ControllerBindEvent(Controller* controller, BoundFunction const& boundedFunction)
 {
     if constexpr (std::is_convertible_v<Controller*, wxWindow*>) {
         boundedFunction.bindTo(controller);
@@ -95,6 +100,46 @@ inline void ControllerBindProxy(Controller* controller, Proxy& proxyHandle)
         proxyHandle.setUnderlying(controller);
     } else {
         static_assert(always_false_v<Proxy>, "ControllerBindProxy: Provide a customization in namespace wxUI::customizations.");
+    }
+}
+
+template <typename Frame>
+void MenuSetMenuBar(Frame* frame, ::wxMenuBar* menuBar) {
+    if constexpr (std::is_convertible_v<Frame*, wxFrame*>) {
+        static_cast<wxFrame*>(frame)->SetMenuBar(menuBar);
+    } else {
+        static_assert(::wxUI::customizations::always_false_v<Frame>, "Provide MenuSetMenuBar customization for this Frame type");
+    }
+}
+
+template <class... Ts>
+struct overloaded : Ts... {
+    using Ts::operator()...;
+};
+template <class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
+
+
+template <typename Frame>
+void MenuBindToFrame(Frame& frame, int identity, std::variant<std::function<void(wxCommandEvent&)>, std::function<void()>> const& function)
+{
+    using ::wxUI::customizations::always_false_v;
+    // Delegate to customization point if provided. If not, and Frame
+    // is convertible to wxFrame*, provide the default behaviour.
+    if constexpr (std::is_convertible_v<Frame*, wxFrame*>) {
+        std::visit(
+            overloaded {
+                [&frame, identity](std::function<void(wxCommandEvent&)> funct) {
+                    frame.Bind(wxEVT_MENU, funct, identity);
+                },
+                [&frame, identity](std::function<void()> funct) {
+                    frame.Bind(
+                        wxEVT_MENU, [funct](wxCommandEvent&) { funct(); }, identity);
+                },
+            },
+            function);
+    } else {
+        static_assert(always_false_v<Frame>, "Provide MenuBindToFrame customization for this Frame type");
     }
 }
 

@@ -52,6 +52,7 @@ TEST_CASE("Button")
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "SetEnabled:true",
               });
@@ -63,6 +64,7 @@ TEST_CASE("Button")
         auto uut = TypeUnderTest { "Hello" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "SetEnabled:true",
               });
@@ -74,6 +76,7 @@ TEST_CASE("Button")
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "controller:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "SetEnabled:true",
               });
@@ -85,6 +88,7 @@ TEST_CASE("Button")
         auto uut = TypeUnderTest { 10000, "Hello" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "controller:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "SetEnabled:true",
               });
@@ -96,6 +100,7 @@ TEST_CASE("Button")
         auto uut = createUUT().withStyle(wxBU_LEFT);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=64, text=\"\"]",
                   "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=64, text=\"\"]",
                   "SetEnabled:true",
               });
@@ -107,6 +112,7 @@ TEST_CASE("Button")
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
                   "controller:wxButton[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
                   "SetEnabled:true",
               });
@@ -118,6 +124,7 @@ TEST_CASE("Button")
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
                   "controller:wxButton[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
                   "SetEnabled:true",
               });
@@ -129,6 +136,7 @@ TEST_CASE("Button")
         auto uut = wxUI::Button { "Hello" }.withStyle(wxBU_LEFT).withPosition({ 1, 2 }).withSize({ 10, 12 }).setDefault().bind([] {});
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=-1, pos=(1,2), size=(10,12), style=64, text=\"Hello\"]",
                   "controller:wxButton[id=-1, pos=(1,2), size=(10,12), style=64, text=\"Hello\"]",
                   "SetDefault:-1",
                   "SetEnabled:true",

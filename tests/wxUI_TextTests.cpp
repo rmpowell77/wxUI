@@ -51,6 +51,7 @@ TEST_CASE("Text")
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "controller:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "SetEnabled:true",
               });
@@ -62,6 +63,7 @@ TEST_CASE("Text")
         auto uut = TypeUnderTest { "Hello" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "controller:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "SetEnabled:true",
               });
@@ -73,6 +75,7 @@ TEST_CASE("Text")
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxStaticText[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "controller:wxStaticText[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "SetEnabled:true",
               });
@@ -84,6 +87,7 @@ TEST_CASE("Text")
         auto uut = TypeUnderTest { 10000, "Hello" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxStaticText[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "controller:wxStaticText[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "SetEnabled:true",
               });
@@ -95,6 +99,7 @@ TEST_CASE("Text")
         auto uut = createUUT().withStyle(wxST_ELLIPSIZE_MIDDLE);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=8, text=\"\"]",
                   "controller:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=8, text=\"\"]",
                   "SetEnabled:true",
               });
@@ -106,6 +111,7 @@ TEST_CASE("Text")
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxStaticText[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
                   "controller:wxStaticText[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
                   "SetEnabled:true",
               });
@@ -117,6 +123,7 @@ TEST_CASE("Text")
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxStaticText[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
                   "controller:wxStaticText[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
                   "SetEnabled:true",
               });

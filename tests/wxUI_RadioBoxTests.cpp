@@ -51,6 +51,7 @@ TEST_CASE("RadioBox")
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -64,6 +65,7 @@ TEST_CASE("RadioBox")
         auto uut = TypeUnderTest { "Greetings", TypeUnderTest::withChoices {}, { "Hello"s, "Goodbye"s } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -77,6 +79,7 @@ TEST_CASE("RadioBox")
         auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, { "Hello"s, "Goodbye"s } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -89,6 +92,7 @@ TEST_CASE("RadioBox")
         auto uut = TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, { "Hello", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -101,6 +105,7 @@ TEST_CASE("RadioBox")
         auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -114,6 +119,7 @@ TEST_CASE("RadioBox")
         auto uut = TypeUnderTest { "Greetings", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello"s, "Goodbye"s } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -127,6 +133,7 @@ TEST_CASE("RadioBox")
         auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello"s, "Goodbye"s } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -139,6 +146,7 @@ TEST_CASE("RadioBox")
         auto uut = TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -151,6 +159,7 @@ TEST_CASE("RadioBox")
         auto uut = createUUT().withStyle(wxRA_SPECIFY_COLS);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -163,6 +172,7 @@ TEST_CASE("RadioBox")
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=-1, pos=(1,2), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "controller:wxRadioBox[id=-1, pos=(1,2), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -175,6 +185,7 @@ TEST_CASE("RadioBox")
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(1,2), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(1,2), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",

@@ -72,7 +72,7 @@ struct Generic {
     // failures in mixed test/real contexts while preserving expected
     // behavior when the customization exists.
     template <typename Parent, typename Sizer>
-    auto createAndAdd([[maybe_unused]] Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
+    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         auto* window = create(parent);
         // clang-format off
