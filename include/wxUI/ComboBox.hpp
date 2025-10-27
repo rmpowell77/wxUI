@@ -35,7 +35,7 @@ namespace wxUI {
 struct ComboBox {
     using underlying_t = wxComboBox;
 
-    ComboBox(std::initializer_list<std::string> choices = {})
+    explicit ComboBox(std::initializer_list<std::string> choices = {})
         : ComboBox(wxID_ANY, choices)
     {
     }
@@ -110,8 +110,7 @@ private:
             auto&& first = (choices.size() > 0) ? wxString(choices.at(0)) : wxString(wxEmptyString);
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, first, pos, size, static_cast<int>(choices.size()), choices.data(), style);
             if (!choices.empty()) {
-                using ::wxUI::customizations::ControllerSetSelection;
-                ControllerSetSelection(widget, selection);
+                widget->SetSelection(selection);
             }
             return widget;
         };

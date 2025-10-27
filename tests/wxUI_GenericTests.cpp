@@ -21,87 +21,69 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "TestCustomizations.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wx/button.h>
 #include <wxUI/Generic.hpp>
+#include <wxUI/Layout.hpp>
 
 #include <wx/wx.h>
+
+using namespace wxUITests;
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 
 TEST_CASE("Generic")
 {
+    TestProvider provider;
+    auto* button = wxUI::customizations::ParentCreate<wxButton>(&provider, wxID_ANY, std::string { "Generic" }, wxDefaultPosition, wxDefaultSize, int64_t {});
+    using Type = std::remove_pointer_t<decltype(button)>;
     SECTION("flags.window.generic")
     {
-        // using type = wxWindow;
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto* button = new wxButton(&frame, wxID_ANY, "Generic");
-        auto uut = wxUI::Generic { wxSizerFlags(1), button };
-        [[maybe_unused]] wxWindow* window = uut.create(&frame);
+        wxUI::VSizer { wxUI::Generic { wxSizerFlags(1), button } }.fitTo(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "topsizer:Sizer[orientation=wxVERTICAL]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "sizer:Sizer[orientation=wxVERTICAL]",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]:flags:(1,0x0,0)",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+              });
     }
 
     SECTION("window.generic")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto* button = new wxButton(&frame, wxID_ANY, "Generic");
-        auto uut = wxUI::Generic { button };
-        [[maybe_unused]] wxWindow* window = uut.create(&frame);
-    }
-
-    SECTION("flags.func.generic")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = wxUI::Generic { wxSizerFlags(1), [](wxWindow* parent) {
-                                      return new wxButton(parent, wxID_ANY, "Generic");
-                                  } };
-        [[maybe_unused]] wxWindow* window = uut.create(&frame);
-    }
-
-    SECTION("func.generic")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = wxUI::Generic { [](wxWindow* parent) {
-            return new wxButton(parent, wxID_ANY, "Generic");
-        } };
-        [[maybe_unused]] wxWindow* window = uut.create(&frame);
+        wxUI::VSizer { wxUI::Generic { button } }.fitTo(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "topsizer:Sizer[orientation=wxVERTICAL]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "sizer:Sizer[orientation=wxVERTICAL]",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]:flags:(0,0x0,0)",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+              });
     }
 
     SECTION("flags.window")
     {
-        using Type = wxButton;
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto* button = new wxButton(&frame, wxID_ANY, "Generic");
-        auto uut = wxUI::Generic<Type> { wxSizerFlags(1), button };
-        [[maybe_unused]] Type* window = uut.create(&frame);
+        wxUI::VSizer { wxUI::Generic<Type> { wxSizerFlags(1), button } }.fitTo(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "topsizer:Sizer[orientation=wxVERTICAL]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "sizer:Sizer[orientation=wxVERTICAL]",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]:flags:(1,0x0,0)",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+              });
     }
 
     SECTION("window")
     {
-        using Type = wxButton;
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto* button = new wxButton(&frame, wxID_ANY, "Generic");
-        auto uut = wxUI::Generic<Type> { button };
-        [[maybe_unused]] Type* window = uut.create(&frame);
-    }
-
-    SECTION("flags.func")
-    {
-        using Type = wxButton;
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = wxUI::Generic<Type> { wxSizerFlags(1), [](wxWindow* parent) {
-                                            return new wxButton(parent, wxID_ANY, "Generic");
-                                        } };
-        [[maybe_unused]] Type* window = uut.create(&frame);
-    }
-
-    SECTION("func")
-    {
-        using Type = wxButton;
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        auto uut = wxUI::Generic<Type> { [](wxWindow* parent) {
-            return new wxButton(parent, wxID_ANY, "Generic");
-        } };
-        [[maybe_unused]] Type* window = uut.create(&frame);
+        wxUI::VSizer { wxUI::Generic<Type> { button } }.fitTo(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "topsizer:Sizer[orientation=wxVERTICAL]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "sizer:Sizer[orientation=wxVERTICAL]",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]:flags:(0,0x0,0)",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+              });
     }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

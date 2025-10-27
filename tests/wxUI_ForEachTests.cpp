@@ -47,7 +47,7 @@ TEST_CASE("ForEach")
         "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]:flags:(0,0x0,0)",
         "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"B\"]:flags:(0,0x0,0)",
         "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"C\"]:flags:(0,0x0,0)",
-        "SetSizerHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseHForEach = std::vector<std::string> {
         "topsizer:Sizer[orientation=wxHORIZONTAL]",
@@ -61,7 +61,7 @@ TEST_CASE("ForEach")
         "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]:flags:(0,0x0,0)",
         "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"B\"]:flags:(0,0x0,0)",
         "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"C\"]:flags:(0,0x0,0)",
-        "SetSizerHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseVForEachWithID = std::vector<std::string> {
         "topsizer:Sizer[orientation=wxVERTICAL]",
@@ -75,7 +75,7 @@ TEST_CASE("ForEach")
         "Add:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]:flags:(0,0x0,0)",
         "Add:wxButton[id=5100, pos=(-1,-1), size=(-1,-1), style=0, text=\"B\"]:flags:(0,0x0,0)",
         "Add:wxButton[id=5102, pos=(-1,-1), size=(-1,-1), style=0, text=\"C\"]:flags:(0,0x0,0)",
-        "SetSizerHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseHForEachWithID = std::vector<std::string> {
         "topsizer:Sizer[orientation=wxHORIZONTAL]",
@@ -89,7 +89,7 @@ TEST_CASE("ForEach")
         "Add:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]:flags:(0,0x0,0)",
         "Add:wxButton[id=5100, pos=(-1,-1), size=(-1,-1), style=0, text=\"B\"]:flags:(0,0x0,0)",
         "Add:wxButton[id=5102, pos=(-1,-1), size=(-1,-1), style=0, text=\"C\"]:flags:(0,0x0,0)",
-        "SetSizerHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseVForEachFiltered = std::vector<std::string> {
         "topsizer:Sizer[orientation=wxVERTICAL]",
@@ -97,7 +97,7 @@ TEST_CASE("ForEach")
         "SetEnabled:true",
         "sizer:Sizer[orientation=wxVERTICAL]",
         "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]:flags:(0,0x0,0)",
-        "SetSizerHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseHForEachFiltered = std::vector<std::string> {
         "topsizer:Sizer[orientation=wxHORIZONTAL]",
@@ -105,7 +105,7 @@ TEST_CASE("ForEach")
         "SetEnabled:true",
         "sizer:Sizer[orientation=wxHORIZONTAL]",
         "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]:flags:(0,0x0,0)",
-        "SetSizerHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseVForEachFilteredWithID = std::vector<std::string> {
         "topsizer:Sizer[orientation=wxVERTICAL]",
@@ -113,7 +113,7 @@ TEST_CASE("ForEach")
         "SetEnabled:true",
         "sizer:Sizer[orientation=wxVERTICAL]",
         "Add:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]:flags:(0,0x0,0)",
-        "SetSizerHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseHForEachFilteredWithID = std::vector<std::string> {
         "topsizer:Sizer[orientation=wxHORIZONTAL]",
@@ -121,7 +121,7 @@ TEST_CASE("ForEach")
         "SetEnabled:true",
         "sizer:Sizer[orientation=wxHORIZONTAL]",
         "Add:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]:flags:(0,0x0,0)",
-        "SetSizerHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     SECTION("ForEach.Vector.T.xV")
     {

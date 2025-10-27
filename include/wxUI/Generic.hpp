@@ -25,20 +25,11 @@ SOFTWARE.
 
 #include "Widget.hpp"
 #include <stdexcept>
+#include <type_traits>
 #include <variant>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-
-namespace wxUI::details {
-template <typename T>
-// clang-format off
-// Concept for a function takes a wxWindow* and returns something convertible to wxWindow*
-concept CreateableWindowFunction = requires(T function, wxWindow* window) {
-    { function(window) } -> std::convertible_to<wxWindow*>;
-};
-// clang-format on
-
-}
+#include <wx/wx.h>
 
 namespace wxUI {
 
@@ -46,8 +37,6 @@ namespace wxUI {
 // object into a sizing hierachy.
 template <typename Window = wxWindow>
 struct Generic {
-    using CreateWindowFunction = std::function<Window*(wxWindow*)>;
-
     struct Proxy;
 
     explicit Generic(Window* window)
@@ -61,41 +50,36 @@ struct Generic {
     {
     }
 
-    template <details::CreateableWindowFunction Function>
-    Generic(Function&& windowFunction)
-        : child_(std::forward<Function>(windowFunction))
+    auto create()
     {
-    }
-
-    template <details::CreateableWindowFunction Function>
-    Generic(wxSizerFlags const& flags, Function&& windowFunction)
-        : flags_(flags)
-        , child_(std::forward<Function>(windowFunction))
-    {
+        bindProxy(child_);
+        return child_;
     }
 
     template <typename Parent>
-    auto create(Parent* parent)
+    auto create([[maybe_unused]] Parent* parent)
     {
-        auto* window = std::visit(
-            details::overloaded {
-                [parent](CreateWindowFunction const& arg) {
-                    return arg(parent);
-                },
-                [](auto arg) {
-                    return arg;
-                },
-            },
-            child_);
-        bindProxy(window);
-        return window;
+        return create();
     }
 
-    template <typename Parent>
-    auto createAndAdd(Parent* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
+    // Provide a createAndAdd template so Generic is treated like other
+    // CreateAndAddable items by the layout machinery. We keep the
+    // implementation conservative: it calls create() (which for Generic
+    // simply returns the underlying pointer) and then only attempts to
+    // add the created window to the sizer if the customization
+    // SizerAddController(sizer, window, flags) is well-formed for the
+    // given Sizer/Window types. This avoids hard template-deduction
+    // failures in mixed test/real contexts while preserving expected
+    // behavior when the customization exists.
+    template <typename Parent, typename Sizer>
+    auto createAndAdd([[maybe_unused]] Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         auto* window = create(parent);
-        parentSizer->Add(window, flags_.value_or(parentFlags));
+        // clang-format off
+        if constexpr (requires(Sizer* s, Window* w, wxSizerFlags f) { s->Add(w, f); }) {
+            // clang-format on
+            parentSizer->Add(window, flags_.value_or(parentFlags));
+        }
         return window;
     }
 
@@ -148,10 +132,9 @@ private:
     }
 
     std::optional<wxSizerFlags> flags_ {};
-    std::variant<Window*, CreateWindowFunction> child_;
+    Window* child_ {};
     std::vector<Proxy> proxyHandles_ {};
 };
-
 }
 
 #include "ZapMacros.hpp"

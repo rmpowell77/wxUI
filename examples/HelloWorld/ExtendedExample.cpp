@@ -177,14 +177,15 @@ SplitterExample::SplitterExample(wxWindow* parent)
         VSplitter {
             TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
             Generic {
-                [](wxWindow* parent) {
+                [parent = this] {
                     return new wxButton(parent, wxID_ANY, "Raw button");
-                } },
+                }() },
         },
         VSplitter {
-            Generic<wxButton> { [](wxWindow* parent) {
+            Generic<wxButton> { [parent = this] {
                 return new wxButton(parent, wxID_ANY, "Raw button");
-            } }.withProxy(proxy),
+            }() }
+                .withProxy(proxy),
             TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
         },
         // snippet SplitterExample
@@ -204,14 +205,14 @@ GenericExample::GenericExample(wxWindow* parent)
     VSizer {
         wxSizerFlags().Expand().Border(),
         Generic {
-            [](wxWindow* window) {
+            [window = this] {
                 return new wxButton(window, wxID_ANY, "Generic");
-            } },
+            }() },
         // endsnippet GenericExample
         Generic<wxButton> {
-            [](wxWindow* window) {
+            [window = this] {
                 return new wxButton(window, wxID_ANY, "Proxy");
-            } }
+            }() }
             .withProxy(proxy),
         // snippet GenericExample
         CreateStdDialogButtonSizer(wxOK),

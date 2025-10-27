@@ -36,9 +36,6 @@ namespace wxUI {
 
 namespace details {
 
-    template <class>
-    inline constexpr bool always_false_v = false;
-
     // clang-format off
     template <typename T>
     concept MenuBarItem = requires(T widget, wxFrame frame, wxMenuBar menu, int identity)

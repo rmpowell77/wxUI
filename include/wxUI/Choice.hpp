@@ -35,7 +35,7 @@ namespace wxUI {
 struct Choice {
     using underlying_t = wxChoice;
 
-    Choice(std::initializer_list<std::string> choices = {})
+    explicit Choice(std::initializer_list<std::string> choices = {})
         : Choice(wxID_ANY, choices)
     {
     }
@@ -106,8 +106,7 @@ private:
     {
         return [&choices = choices_, selection = selection_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, pos, size, static_cast<int>(choices.size()), choices.data(), style);
-            using ::wxUI::customizations::ControllerSetSelection;
-            ControllerSetSelection(widget, selection);
+            widget->SetSelection(selection);
             return widget;
         };
     }

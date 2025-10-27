@@ -45,6 +45,8 @@ struct invoke_apply_result<F, std::tuple<Args1...>, std::enable_if_t<std::is_inv
 template <typename F, typename... Args>
 using invoke_apply_result_t = typename invoke_apply_result<F, Args...>::type;
 
+template <class>
+inline constexpr bool always_false_v = false;
 // clang-format on
 
 }

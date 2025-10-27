@@ -81,11 +81,9 @@ private:
     {
         return [&widgets = widgets_, &stashGravity = stashGravity_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, pos, size, style);
-            using ::wxUI::customizations::ControllerSplitHorizontal;
-            ControllerSplitHorizontal(widget, std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
+            widget->SplitHorizontally(std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
             if (stashGravity) {
-                using ::wxUI::customizations::ControllerSetSashGravity;
-                ControllerSetSashGravity(widget, *stashGravity);
+                widget->SetSashGravity(*stashGravity);
             }
             return widget;
         };
@@ -140,11 +138,9 @@ private:
     {
         return [&widgets = widgets_, &stashGravity = stashGravity_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, pos, size, style);
-            using ::wxUI::customizations::ControllerSplitVertical;
-            ControllerSplitVertical(widget, std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
+            widget->SplitVertically(std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
             if (stashGravity) {
-                using ::wxUI::customizations::ControllerSetSashGravity;
-                ControllerSetSashGravity(widget, *stashGravity);
+                widget->SetSashGravity(*stashGravity);
             }
             return widget;
         };
