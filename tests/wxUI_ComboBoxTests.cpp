@@ -51,6 +51,7 @@ TEST_CASE("ComboBox")
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
                   "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -63,6 +64,7 @@ TEST_CASE("ComboBox")
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=()]",
                   "controller:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=()]",
                   "SetEnabled:true",
               });
@@ -74,6 +76,7 @@ TEST_CASE("ComboBox")
         auto uut = TypeUnderTest { 10000, { std::string {} } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
                   "controller:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -86,6 +89,7 @@ TEST_CASE("ComboBox")
         auto uut = TypeUnderTest { std::vector<std::string> { std::string {} } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
                   "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -98,6 +102,7 @@ TEST_CASE("ComboBox")
         auto uut = TypeUnderTest { 10000, std::vector<std::string> { std::string {} } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
                   "controller:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -110,6 +115,7 @@ TEST_CASE("ComboBox")
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxComboBox[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
                   "controller:wxComboBox[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -122,6 +128,7 @@ TEST_CASE("ComboBox")
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\", choices=(\"\",)]",
                   "controller:wxComboBox[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\", choices=(\"\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -134,6 +141,7 @@ TEST_CASE("ComboBox")
         auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } }.withSize({ 1, 2 }).withSelection(1);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello\", choices=(\"Hello\",\"Goodbye\",)]",
                   "controller:wxComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello\", choices=(\"Hello\",\"Goodbye\",)]",
                   "SetSelection:1",
                   "SetEnabled:true",
@@ -146,6 +154,7 @@ TEST_CASE("ComboBox")
         auto uut = wxUI::ComboBox { { "one", "two", "three" } }.withSelection(2).bind([] {});
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one\", choices=(\"one\",\"two\",\"three\",)]",
                   "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one\", choices=(\"one\",\"two\",\"three\",)]",
                   "SetSelection:2",
                   "SetEnabled:true",

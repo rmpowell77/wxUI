@@ -36,6 +36,10 @@ using namespace wxUITests;
 TEST_CASE("ForEach")
 {
     auto kCaseVForEach = std::vector<std::string> {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"B\"]",
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"C\"]",
         "topsizer:Sizer[orientation=wxVERTICAL]",
         "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "SetEnabled:true",
@@ -50,6 +54,10 @@ TEST_CASE("ForEach")
         "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseHForEach = std::vector<std::string> {
+        "Create:Sizer[orientation=wxHORIZONTAL]",
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"B\"]",
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"C\"]",
         "topsizer:Sizer[orientation=wxHORIZONTAL]",
         "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "SetEnabled:true",
@@ -64,6 +72,10 @@ TEST_CASE("ForEach")
         "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseVForEachWithID = std::vector<std::string> {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
+        "Create:wxButton[id=5100, pos=(-1,-1), size=(-1,-1), style=0, text=\"B\"]",
+        "Create:wxButton[id=5102, pos=(-1,-1), size=(-1,-1), style=0, text=\"C\"]",
         "topsizer:Sizer[orientation=wxVERTICAL]",
         "controller:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "SetEnabled:true",
@@ -78,6 +90,10 @@ TEST_CASE("ForEach")
         "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseHForEachWithID = std::vector<std::string> {
+        "Create:Sizer[orientation=wxHORIZONTAL]",
+        "Create:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
+        "Create:wxButton[id=5100, pos=(-1,-1), size=(-1,-1), style=0, text=\"B\"]",
+        "Create:wxButton[id=5102, pos=(-1,-1), size=(-1,-1), style=0, text=\"C\"]",
         "topsizer:Sizer[orientation=wxHORIZONTAL]",
         "controller:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "SetEnabled:true",
@@ -92,6 +108,8 @@ TEST_CASE("ForEach")
         "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseVForEachFiltered = std::vector<std::string> {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "topsizer:Sizer[orientation=wxVERTICAL]",
         "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "SetEnabled:true",
@@ -100,6 +118,8 @@ TEST_CASE("ForEach")
         "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseHForEachFiltered = std::vector<std::string> {
+        "Create:Sizer[orientation=wxHORIZONTAL]",
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "topsizer:Sizer[orientation=wxHORIZONTAL]",
         "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "SetEnabled:true",
@@ -108,6 +128,8 @@ TEST_CASE("ForEach")
         "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseVForEachFilteredWithID = std::vector<std::string> {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "topsizer:Sizer[orientation=wxVERTICAL]",
         "controller:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "SetEnabled:true",
@@ -116,6 +138,8 @@ TEST_CASE("ForEach")
         "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
     };
     auto kCaseHForEachFilteredWithID = std::vector<std::string> {
+        "Create:Sizer[orientation=wxHORIZONTAL]",
+        "Create:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "topsizer:Sizer[orientation=wxHORIZONTAL]",
         "controller:wxButton[id=5101, pos=(-1,-1), size=(-1,-1), style=0, text=\"A\"]",
         "SetEnabled:true",

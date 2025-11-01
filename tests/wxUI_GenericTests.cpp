@@ -42,6 +42,8 @@ TEST_CASE("Generic")
     {
         wxUI::VSizer { wxUI::Generic { wxSizerFlags(1), button } }.fitTo(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "Create:Sizer[orientation=wxVERTICAL]",
                   "topsizer:Sizer[orientation=wxVERTICAL]",
                   "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
                   "sizer:Sizer[orientation=wxVERTICAL]",
@@ -54,6 +56,8 @@ TEST_CASE("Generic")
     {
         wxUI::VSizer { wxUI::Generic { button } }.fitTo(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "Create:Sizer[orientation=wxVERTICAL]",
                   "topsizer:Sizer[orientation=wxVERTICAL]",
                   "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
                   "sizer:Sizer[orientation=wxVERTICAL]",
@@ -66,6 +70,8 @@ TEST_CASE("Generic")
     {
         wxUI::VSizer { wxUI::Generic<Type> { wxSizerFlags(1), button } }.fitTo(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "Create:Sizer[orientation=wxVERTICAL]",
                   "topsizer:Sizer[orientation=wxVERTICAL]",
                   "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
                   "sizer:Sizer[orientation=wxVERTICAL]",
@@ -78,6 +84,8 @@ TEST_CASE("Generic")
     {
         wxUI::VSizer { wxUI::Generic<Type> { button } }.fitTo(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "Create:Sizer[orientation=wxVERTICAL]",
                   "topsizer:Sizer[orientation=wxVERTICAL]",
                   "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
                   "sizer:Sizer[orientation=wxVERTICAL]",

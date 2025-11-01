@@ -51,6 +51,7 @@ TEST_CASE("VSplitter")
         auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
                   "controller:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
                   "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
@@ -65,6 +66,7 @@ TEST_CASE("VSplitter")
         auto uut = TypeUnderTest { 10000, wxUI::TextCtrl {}, wxUI::TextCtrl {} };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSplitterWindow[id=10000, pos=(-1,-1), size=(-1,-1), style=896]",
                   "controller:wxSplitterWindow[id=10000, pos=(-1,-1), size=(-1,-1), style=896]",
                   "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
@@ -79,6 +81,7 @@ TEST_CASE("VSplitter")
         auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} }.withStashGravity(1.0);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
                   "controller:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
                   "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",

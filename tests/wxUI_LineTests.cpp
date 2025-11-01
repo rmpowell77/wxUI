@@ -51,6 +51,7 @@ TEST_CASE("Line")
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxStaticLine[id=-1, pos=(-1,-1), size=(-1,-1), style=0]",
                   "controller:wxStaticLine[id=-1, pos=(-1,-1), size=(-1,-1), style=0]",
                   "SetEnabled:true",
               });
@@ -62,6 +63,7 @@ TEST_CASE("Line")
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxStaticLine[id=10000, pos=(-1,-1), size=(-1,-1), style=0]",
                   "controller:wxStaticLine[id=10000, pos=(-1,-1), size=(-1,-1), style=0]",
                   "SetEnabled:true",
               });

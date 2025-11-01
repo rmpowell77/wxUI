@@ -51,6 +51,7 @@ TEST_CASE("Slider")
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
                   "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
                   "SetEnabled:true",
               });
@@ -62,6 +63,7 @@ TEST_CASE("Slider")
         auto uut = TypeUnderTest { std::pair { 1, 5 } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
                   "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
                   "SetEnabled:true",
               });
@@ -73,6 +75,7 @@ TEST_CASE("Slider")
         auto uut = TypeUnderTest { std::pair { 1, 5 }, 3 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
                   "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
                   "SetEnabled:true",
               });
@@ -84,6 +87,7 @@ TEST_CASE("Slider")
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
                   "controller:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
                   "SetEnabled:true",
               });
@@ -95,6 +99,7 @@ TEST_CASE("Slider")
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
                   "controller:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
                   "SetEnabled:true",
               });
@@ -106,6 +111,7 @@ TEST_CASE("Slider")
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 }, 3 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
                   "controller:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
                   "SetEnabled:true",
               });
@@ -117,6 +123,7 @@ TEST_CASE("Slider")
         auto uut = wxUI::Slider { { 10, 20 }, 12 }.bind([] {});
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=12, range=[10,20]]",
                   "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=12, range=[10,20]]",
                   "SetEnabled:true",
                   "BindEvents:1",

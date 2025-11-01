@@ -229,15 +229,14 @@ auto DoChainingIterations()
 template <typename WHICH>
 auto DoProxyTests()
 {
-    wxFrame frame { nullptr, wxID_ANY, "" };
+    wxUITests::TestProvider provider;
     auto proxy = typename WHICH::TypeUnderTest::Proxy {};
     CHECK(proxy.control() == nullptr);
     CHECK(!proxy.control());
     auto uut = WHICH::createUUT().withProxy(proxy);
-    uut.create(&frame);
+    uut.create(&provider);
 
-    CHECK(proxy.control() != nullptr);
-    CHECK(proxy.control());
+    CHECK(provider.dump().back() == "BindProxy:1");
 }
 
 #define COMMON_TESTS(WHICH)            \

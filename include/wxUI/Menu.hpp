@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
+#include "Customizations.hpp"
 #include "wxUITypes.hpp"
 #include <functional>
 #include <memory>
@@ -32,117 +33,97 @@ SOFTWARE.
 #include <wx/frame.h>
 #include <wx/menu.h>
 
+namespace wxUI::details {
+
+// clang-format off
+template <typename T>
+concept MenuBarItem = requires(T widget, wxFrame frame, wxMenuBar menu, int identity)
+{
+    widget.createAndAdd(frame, menu, identity);
+};
+
+template <typename T>
+concept MenuItem = requires(T widget, wxFrame frame, wxMenu menu, int identity)
+{
+    widget.createAndAdd(frame, menu, identity);
+};
+// clang-format on
+
+template <typename F, typename Arg>
+concept MenuForEachFunction = MenuItem<typename invoke_apply_result<F, Arg>::type>;
+
+// We provide a way to bind either a function that takes in a commandEvent
+// not to a frame at a specific id
+using function_t = std::variant<std::function<void(wxCommandEvent&)>, std::function<void()>>;
+
+// This is for "type erasure": we support several modes of creating a menu,
+// these are the details on how it is added.
+// We support
+// ID -> IDMenuDetails_t with defaults
+// ID, name -> IDMenuDetails_t with defaults
+// ID, name, help -> IDMenuDetails_t
+// ID, function -> IDMenuDetailsWFunc_t with defaults
+// ID, name, function -> IDMenuDetailsWFunc_t with defaults
+// ID, name, help, function -> IDMenuDetailsWFunc_t
+// name, function -> NamedMenuDetails_t with defaults
+// name, help, function -> NamedMenuDetails_t with defaults
+using IDMenuDetails_t = std::tuple<wxStandardID, std::string, std::string>;
+using IDMenuDetailsWFunc_t = std::tuple<wxStandardID, std::string, std::string, function_t>;
+using NamedMenuDetails_t = std::tuple<std::string, std::string, function_t>;
+using MenuDetails = std::variant<IDMenuDetails_t, IDMenuDetailsWFunc_t, NamedMenuDetails_t>;
+
+// If the details are named, we use and increment the identity supplied.
+// The way to add is passed by the caller.  And
+template <typename Frame, typename AppendFunction>
+inline void createAndAdd(Frame& frame, MenuDetails const& item, int& identity, AppendFunction appendFunction)
+{
+    using ::wxUI::customizations::MenuBindToFrame;
+    std::visit([&frame, &identity, appendFunction](auto const& item) {
+        using T = std::decay_t<decltype(item)>;
+        if constexpr (std::is_same_v<T, IDMenuDetails_t>) {
+            appendFunction(std::get<0>(item), std::get<1>(item), std::get<2>(item));
+        } else if constexpr (std::is_same_v<T, IDMenuDetailsWFunc_t>) {
+            appendFunction(std::get<0>(item), std::get<1>(item), std::get<2>(item));
+            MenuBindToFrame(frame, std::get<0>(item), std::get<3>(item));
+        } else if constexpr (std::is_same_v<T, NamedMenuDetails_t>) {
+            appendFunction(identity, std::get<0>(item), std::get<1>(item));
+            MenuBindToFrame(frame, identity, std::get<2>(item));
+            identity += 1;
+        } else {
+            static_assert(always_false_v<T>, "non-exhaustive visitor!");
+        }
+    },
+        item);
+}
+
+template <typename Underlying>
+struct MenuProxy {
+    MenuProxy()
+        : controller(std::make_shared<Underlying*>())
+    {
+    }
+
+    [[nodiscard]] auto control() const -> Underlying*
+    {
+        if (!controller) {
+            throw std::runtime_error("Proxy class has not been attached");
+        }
+        return *controller;
+    }
+
+    void setUnderlying(Underlying* control)
+    {
+        *controller = control;
+    }
+
+    auto operator->() const { return control(); }
+
+private:
+    std::shared_ptr<Underlying*> controller {};
+};
+}
+
 namespace wxUI {
-
-namespace details {
-
-    // clang-format off
-    template <typename T>
-    concept MenuBarItem = requires(T widget, wxFrame frame, wxMenuBar menu, int identity)
-    {
-        widget.createAndAdd(frame, menu, identity);
-    };
-
-    template <typename T>
-    concept MenuItem = requires(T widget, wxFrame frame, wxMenu menu, int identity)
-    {
-        widget.createAndAdd(frame, menu, identity);
-    };
-    // clang-format on
-
-    template <typename F, typename Arg>
-    concept MenuForEachFunction = MenuItem<typename invoke_apply_result<F, Arg>::type>;
-
-}
-namespace details {
-
-    // We provide a way to bind either a function that takes in a commandEvent
-    // not to a frame at a specific id
-    using functionWithCmd_t = std::function<void(wxCommandEvent&)>;
-    using functionWOCmd_t = std::function<void()>;
-    using function_t = std::variant<functionWithCmd_t, functionWOCmd_t>;
-
-    inline void bindToFrame(wxFrame& frame, int identity, function_t const& function)
-    {
-        std::visit([&frame, identity](auto const& funct) {
-            using T = std::decay_t<decltype(funct)>;
-            if constexpr (std::is_same_v<T, functionWithCmd_t>) {
-                frame.Bind(wxEVT_MENU, funct, identity);
-            } else if constexpr (std::is_same_v<T, functionWOCmd_t>) {
-                frame.Bind(
-                    wxEVT_MENU, [funct](wxCommandEvent&) { funct(); }, identity);
-            } else {
-                static_assert(always_false_v<T>, "non-exhaustive visitor!");
-            }
-        },
-            function);
-    }
-
-    // This is for "type erasure": we support several modes of creating a menu,
-    // these are the details on how it is added.
-    // We support
-    // ID -> IDMenuDetails_t with defaults
-    // ID, name -> IDMenuDetails_t with defaults
-    // ID, name, help -> IDMenuDetails_t
-    // ID, function -> IDMenuDetailsWFunc_t with defaults
-    // ID, name, function -> IDMenuDetailsWFunc_t with defaults
-    // ID, name, help, function -> IDMenuDetailsWFunc_t
-    // name, function -> NamedMenuDetails_t with defaults
-    // name, help, function -> NamedMenuDetails_t with defaults
-    using IDMenuDetails_t = std::tuple<wxStandardID, std::string, std::string>;
-    using IDMenuDetailsWFunc_t = std::tuple<wxStandardID, std::string, std::string, function_t>;
-    using NamedMenuDetails_t = std::tuple<std::string, std::string, function_t>;
-    using MenuDetails = std::variant<IDMenuDetails_t, IDMenuDetailsWFunc_t, NamedMenuDetails_t>;
-
-    // If the details are named, we use and increment the identity supplied.
-    // The way to add is passed by the caller.  And
-    template <typename AppendFunction>
-    inline void createAndAdd(wxFrame& frame, MenuDetails const& item, int& identity, AppendFunction appendFunction)
-    {
-        std::visit([&frame, &identity, appendFunction](auto const& item) {
-            using T = std::decay_t<decltype(item)>;
-            if constexpr (std::is_same_v<T, IDMenuDetails_t>) {
-                appendFunction(std::get<0>(item), std::get<1>(item), std::get<2>(item));
-            } else if constexpr (std::is_same_v<T, IDMenuDetailsWFunc_t>) {
-                appendFunction(std::get<0>(item), std::get<1>(item), std::get<2>(item));
-                bindToFrame(frame, std::get<0>(item), std::get<3>(item));
-            } else if constexpr (std::is_same_v<T, NamedMenuDetails_t>) {
-                appendFunction(identity, std::get<0>(item), std::get<1>(item));
-                bindToFrame(frame, identity, std::get<2>(item));
-                identity += 1;
-            } else {
-                static_assert(always_false_v<T>, "non-exhaustive visitor!");
-            }
-        },
-            item);
-    }
-
-    template <typename Underlying>
-    struct MenuProxy {
-        MenuProxy()
-            : controller(std::make_shared<Underlying*>())
-        {
-        }
-
-        [[nodiscard]] auto control() const -> Underlying*
-        {
-            if (!controller) {
-                throw std::runtime_error("Proxy class has not been attached");
-            }
-            return *controller;
-        }
-
-        void setUnderlying(Underlying* control)
-        {
-            *controller = control;
-        }
-
-        auto operator->() const { return control(); }
-
-    private:
-        std::shared_ptr<Underlying*> controller {};
-    };
-}
 
 using MenuProxy = details::MenuProxy<wxMenu>;
 using MenuBarProxy = details::MenuProxy<wxMenuBar>;
@@ -191,7 +172,8 @@ struct Item {
         return std::move(*this);
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity)
+    template <typename Frame>
+    void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
     {
         details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& helpString) {
             auto* menuItem = menu.Append(identity, item, helpString);
@@ -249,7 +231,8 @@ struct CheckItem {
         return std::move(*this);
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity)
+    template <typename Frame>
+    void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
     {
         details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& helpString) {
             auto* menuItem = menu.AppendCheckItem(identity, item, helpString);
@@ -307,7 +290,8 @@ struct RadioItem {
         return std::move(*this);
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity)
+    template <typename Frame>
+    void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
     {
         details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& helpString) {
             auto* menuItem = menu.AppendRadioItem(identity, item, helpString);
@@ -323,7 +307,8 @@ private:
 };
 
 struct Separator {
-    static void createAndAdd([[maybe_unused]] wxFrame& frame, wxMenu& menu, [[maybe_unused]] int& identity)
+    template <typename Frame>
+    static void createAndAdd([[maybe_unused]] Frame& frame, wxMenu& menu, [[maybe_unused]] int& identity)
     {
         menu.AppendSeparator();
     }
@@ -340,7 +325,8 @@ struct MenuForEach {
     {
     }
 
-    void createAndAdd([[maybe_unused]] wxFrame& frame, [[maybe_unused]] wxMenu& menu, [[maybe_unused]] int& identity)
+    template <typename Frame>
+    void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
     {
         using RawArg = std::remove_cvref_t<std::ranges::range_value_t<Range>>;
         for (auto&& item : args_) {
@@ -383,7 +369,8 @@ struct Menu {
         return std::move(*this);
     }
 
-    void createAndAdd(wxFrame& frame, wxMenuBar& menuBar, int& identity)
+    template <typename Frame>
+    void createAndAdd(Frame& frame, wxMenuBar& menuBar, int& identity)
     {
         auto menu = std::make_unique<wxMenu>();
         std::apply([&frame, menu = menu.get(), &identity](auto&&... tupleArg) {
@@ -396,7 +383,8 @@ struct Menu {
         menuBar.Append(menu.release(), name);
     }
 
-    void createAndAdd(wxFrame& frame, wxMenu& menu, int& identity)
+    template <typename Frame>
+    void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
     {
         auto subMenu = std::make_unique<wxMenu>();
         std::apply([&frame, subMenu = subMenu.get(), &identity](auto&&... tupleArg) {
@@ -438,7 +426,8 @@ struct MenuBar {
         return std::move(*this);
     }
 
-    auto fitTo(wxFrame* frame) -> auto&
+    template <typename Frame>
+    auto fitTo(Frame* frame) -> auto&
     {
         auto numbering = int(wxID_AUTO_LOWEST);
         auto menuBar = std::make_unique<wxMenuBar>();
@@ -449,7 +438,8 @@ struct MenuBar {
         for (auto& proxyHandle : proxyHandles_) {
             proxyHandle.setUnderlying(menuBar.get());
         }
-        frame->SetMenuBar(menuBar.release());
+        using ::wxUI::customizations::MenuSetMenuBar;
+        MenuSetMenuBar(frame, menuBar.release());
         return *this;
     }
 

@@ -21,73 +21,63 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "TestCustomizations.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/Menu.hpp>
 
 #include <wx/wx.h>
 
+using namespace wxUITests;
+
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
-constexpr auto CheckMenuBar0 = [](wxFrame const& frame, size_t menusCount, auto menuName, size_t menuCount) {
-    CHECK(menusCount == frame.GetMenuBar()->GetMenuCount());
-    if (menusCount < 1) {
-        return;
-    }
-    auto* menu_uut = frame.GetMenuBar()->GetMenu(0);
-    CHECK(menuName == menu_uut->GetTitle());
-    CHECK(menuCount == menu_uut->GetMenuItemCount());
-};
-
-constexpr auto CheckMenu0 = [](wxFrame const& frame, auto menuID, auto menuName, auto menuHelp, auto menuType) {
-    auto* menu_uut = frame.GetMenuBar()->GetMenu(0);
-    auto* menu_item_uut = menu_uut->FindItemByPosition(0);
-    CHECK(menuID == menu_item_uut->GetId());
-    CHECK(menuName == menu_item_uut->GetItemLabel());
-    CHECK(menuHelp == menu_item_uut->GetHelp());
-    CHECK(menuType == menu_item_uut->GetKind());
-};
-
 template <typename MenuType>
 struct MenuTypeLookup;
 
 template <>
 struct MenuTypeLookup<wxUI::Item> {
     static constexpr auto itemKind = wxITEM_NORMAL;
+    static constexpr auto name = "normal";
 };
 
 template <>
 struct MenuTypeLookup<wxUI::CheckItem> {
     static constexpr auto itemKind = wxITEM_CHECK;
+    static constexpr auto name = "check";
 };
 
 template <>
 struct MenuTypeLookup<wxUI::RadioItem> {
     static constexpr auto itemKind = wxITEM_RADIO;
+    static constexpr auto name = "radio";
 };
 
 template <typename MenuType>
 auto RunMenuTest_id()
 {
-    wxFrame frame { nullptr, wxID_ANY, "" };
+    TestProvider frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT } }
     };
     menu.fitTo(&frame);
-    CheckMenuBar0(frame, 1, "Menu1", 1);
-    CheckMenu0(frame, wxID_EXIT, "&Quit", "Quit this program", MenuTypeLookup<MenuType> {}.itemKind);
+    CHECK(frame.dump() == std::vector<std::string> {
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind={},label=\"Quit\",help=\"Quit this program\"),],]", MenuTypeLookup<MenuType>::name),
+          });
 }
 
 template <typename MenuType, typename Function>
 auto RunMenuTest_id_func(Function function)
 {
-    wxFrame frame { nullptr, wxID_ANY, "" };
+    TestProvider frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, function } }
     };
     menu.fitTo(&frame);
-    CheckMenuBar0(frame, 1, "Menu1", 1);
-    CheckMenu0(frame, wxID_EXIT, "&Quit", "Quit this program", MenuTypeLookup<MenuType> {}.itemKind);
+    CHECK(frame.dump() == std::vector<std::string> {
+              "BindMenu:5006:1",
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind={},label=\"Quit\",help=\"Quit this program\"),],]", MenuTypeLookup<MenuType>::name),
+          });
 }
 
 template <typename MenuType>
@@ -105,27 +95,30 @@ auto RunMenuTest_id_func2()
 template <typename MenuType>
 auto RunMenuTest_id_name()
 {
-    wxFrame frame { nullptr, wxID_ANY, "" };
+    TestProvider frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1" } }
     };
     menu.fitTo(&frame);
-    CheckMenuBar0(frame, 1, "Menu1", 1);
-    CheckMenu0(frame, wxID_EXIT, "Item1", "Quit this program", MenuTypeLookup<MenuType> {}.itemKind);
+    CHECK(frame.dump() == std::vector<std::string> {
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind={},label=\"Item1\",help=\"Quit this program\"),],]", MenuTypeLookup<MenuType>::name),
+          });
 }
 
 template <typename MenuType, typename Function>
 auto RunMenuTest_id_name_func(Function function)
 {
-    wxFrame frame { nullptr, wxID_ANY, "" };
+    TestProvider frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1", function } }
     };
     menu.fitTo(&frame);
-    CheckMenuBar0(frame, 1, "Menu1", 1);
-    CheckMenu0(frame, wxID_EXIT, "Item1", "Quit this program", MenuTypeLookup<MenuType> {}.itemKind);
+    CHECK(frame.dump() == std::vector<std::string> {
+              "BindMenu:5006:1",
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind={},label=\"Item1\",help=\"Quit this program\"),],]", MenuTypeLookup<MenuType>::name),
+          });
 }
 
 template <typename MenuType>
@@ -143,27 +136,31 @@ auto RunMenuTest_id_name_func2()
 template <typename MenuType>
 auto RunMenuTest_id_name_help()
 {
-    wxFrame frame { nullptr, wxID_ANY, "" };
+    TestProvider frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1", "Help1" } }
     };
     menu.fitTo(&frame);
-    CheckMenuBar0(frame, 1, "Menu1", 1);
-    CheckMenu0(frame, wxID_EXIT, "Item1", "Help1", MenuTypeLookup<MenuType> {}.itemKind);
+    CHECK(frame.dump() == std::vector<std::string> {
+              "BindMenu:5006:1",
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind={},label=\"Item1\",help=\"Quit this program\"),],]", MenuTypeLookup<MenuType>::name),
+          });
 }
 
 template <typename MenuType, typename Function>
 auto RunMenuTest_id_name_help_func(Function function)
 {
-    wxFrame frame { nullptr, wxID_ANY, "" };
+    TestProvider frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1", "Help1", function } }
     };
     menu.fitTo(&frame);
-    CheckMenuBar0(frame, 1, "Menu1", 1);
-    CheckMenu0(frame, wxID_EXIT, "Item1", "Help1", MenuTypeLookup<MenuType> {}.itemKind);
+    CHECK(frame.dump() == std::vector<std::string> {
+              "BindMenu:5006:1",
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind={},label=\"Item1\",help=\"Help1\"),],]", MenuTypeLookup<MenuType>::name),
+          });
 }
 
 template <typename MenuType>
@@ -181,14 +178,16 @@ auto RunMenuTest_id_name_help_func2()
 template <typename MenuType, typename Function>
 auto RunMenuTest_name_func(Function function)
 {
-    wxFrame frame { nullptr, wxID_ANY, "" };
+    TestProvider frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { "Item1", function } }
     };
     menu.fitTo(&frame);
-    CheckMenuBar0(frame, 1, "Menu1", 1);
-    CheckMenu0(frame, wxID_AUTO_LOWEST, "Item1", "", MenuTypeLookup<MenuType> {}.itemKind);
+    CHECK(frame.dump() == std::vector<std::string> {
+              "BindMenu:-1000000:1",
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=-1000000,kind={},label=\"Item1\",help=\"\"),],]", MenuTypeLookup<MenuType>::name),
+          });
 }
 
 template <typename MenuType>
@@ -206,14 +205,16 @@ auto RunMenuTest_name_func2()
 template <typename MenuType, typename Function>
 auto RunMenuTest_name_help_func(Function function)
 {
-    wxFrame frame { nullptr, wxID_ANY, "" };
+    TestProvider frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { "Item1", "Help1", function } }
     };
     menu.fitTo(&frame);
-    CheckMenuBar0(frame, 1, "Menu1", 1);
-    CheckMenu0(frame, wxID_AUTO_LOWEST, "Item1", "Help1", MenuTypeLookup<MenuType> {}.itemKind);
+    CHECK(frame.dump() == std::vector<std::string> {
+              "BindMenu:-1000000:1",
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=-1000000,kind={},label=\"Item1\",help=\"Help1\"),],]", MenuTypeLookup<MenuType>::name),
+          });
 }
 
 template <typename MenuType>
@@ -232,35 +233,21 @@ TEST_CASE("Menu")
 {
     SECTION("emptyMenuBar1")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider frame;
         wxUI::MenuBar menu {};
         menu.fitTo(&frame);
-        CheckMenuBar0(frame, 0, "", 0);
-    }
-
-    SECTION("emptyMenuBar2")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::MenuBar menu {};
-        menu.fitTo(&frame);
-        CheckMenuBar0(frame, 0, "", 0);
+        CHECK(frame.dump() == std::vector<std::string> {
+                  "menu:MenuBar:[]",
+              });
     }
     SECTION("menu.empty")
     {
-        wxFrame frame { nullptr, wxID_ANY, "" };
+        TestProvider frame;
         wxUI::MenuBar menu { wxUI::Menu { "Menu1" } };
         menu.fitTo(&frame);
-        CheckMenuBar0(frame, 1, "Menu1", 0);
-    }
-
-    SECTION("menu.empty2")
-    {
-        wxFrame frame { nullptr, wxID_ANY, "" };
-        wxUI::MenuBar menu { wxUI::Menu {
-            "Menu1",
-        } };
-        menu.fitTo(&frame);
-        CheckMenuBar0(frame, 1, "Menu1", 0);
+        CHECK(frame.dump() == std::vector<std::string> {
+                  "menu:MenuBar:[[title:Menu1:[],]",
+              });
     }
 
     SECTION("menu.item.id")
@@ -310,17 +297,17 @@ TEST_CASE("Menu")
 
     SECTION("menu.item.id.name")
     {
-        // RunMenuTest_id_name<wxUI::Item>();
+        RunMenuTest_id_name<wxUI::Item>();
     }
 
     SECTION("menu.checkitem.id.name")
     {
-        // RunMenuTest_id_name<wxUI::CheckItem>();
+        RunMenuTest_id_name<wxUI::CheckItem>();
     }
 
     SECTION("menu.radioitem.id.name")
     {
-        // RunMenuTest_id_name<wxUI::RadioItem>();
+        RunMenuTest_id_name<wxUI::RadioItem>();
     }
 
     SECTION("menu.item.id.name.funct1")

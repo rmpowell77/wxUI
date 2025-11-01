@@ -52,6 +52,7 @@ TEST_CASE("Choice")
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
                   "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -64,6 +65,7 @@ TEST_CASE("Choice")
         auto uut = TypeUnderTest { "Hello", "Goodbye" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
                   "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -76,6 +78,7 @@ TEST_CASE("Choice")
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
                   "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -88,6 +91,7 @@ TEST_CASE("Choice")
         auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
                   "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -100,6 +104,7 @@ TEST_CASE("Choice")
         auto uut = TypeUnderTest { std::vector<std::string> { "Hello", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
                   "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -112,6 +117,7 @@ TEST_CASE("Choice")
         auto uut = TypeUnderTest { 10000, std::vector<std::string> { "Hello", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
                   "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -124,6 +130,7 @@ TEST_CASE("Choice")
         auto uut = TypeUnderTest { std::views::iota(0, 2) | std::views::transform([](auto i) { return std::to_string(i); }) };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"0\",\"1\",)]",
                   "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"0\",\"1\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -136,6 +143,7 @@ TEST_CASE("Choice")
         auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } }.withSelection(1);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
                   "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
                   "SetSelection:1",
                   "SetEnabled:true",
@@ -148,6 +156,7 @@ TEST_CASE("Choice")
         auto uut = createUUT().withStyle(wxCB_SORT);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=8, choices=()]",
                   "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=8, choices=()]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -160,6 +169,7 @@ TEST_CASE("Choice")
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=-1, pos=(1,2), size=(-1,-1), style=0, choices=()]",
                   "controller:wxChoice[id=-1, pos=(1,2), size=(-1,-1), style=0, choices=()]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -172,6 +182,7 @@ TEST_CASE("Choice")
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(1,2), style=0, choices=()]",
                   "controller:wxChoice[id=-1, pos=(-1,-1), size=(1,2), style=0, choices=()]",
                   "SetSelection:0",
                   "SetEnabled:true",
@@ -184,6 +195,7 @@ TEST_CASE("Choice")
         auto uut = wxUI::Choice { { "one", "two", "three" } }.withSelection(1).bind([] {});
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one\",\"two\",\"three\",)]",
                   "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one\",\"two\",\"three\",)]",
                   "SetSelection:1",
                   "SetEnabled:true",
