@@ -10,7 +10,9 @@ cmake_minimum_required(VERSION 3.23)
 include(FetchContent)
 
 if (WXUI_WITH_TESTS OR WXUI_WITH_EXAMPLES)
-  # Have wxWidgets build as static libraries
+  find_package(wxWidgets CONFIG)
+  if(NOT ${wxWidgets_FOUND})
+    # Have wxWidgets build as static libraries
     # FetchContent is used to download the wxWidgets library
     # Have wxWidgets build as static libraries
     set(wxBUILD_SHARED OFF)
@@ -23,6 +25,7 @@ if (WXUI_WITH_TESTS OR WXUI_WITH_EXAMPLES)
       GIT_TAG 8aef5f40b93958719771331ca03866b7b6fff6bf # v3.2.8
     )
     FetchContent_MakeAvailable(wxWidgets)
+  endif()
 endif()
 
 
