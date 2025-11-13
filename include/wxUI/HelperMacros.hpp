@@ -112,7 +112,7 @@ SOFTWARE.
     WXUI_FORWARD_TO_DETAILS(ControllerType, withoutStyle, int64_t, style)                                \
     WXUI_FORWARD_TO_DETAILS(ControllerType, withFont, wxFontInfo const&, fontInfo)                       \
     WXUI_FORWARD_TO_DETAILS(ControllerType, setEnabled, bool, enabled)                                   \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, withProxy, details::WidgetProxy<underlying_t> const&, proxy) \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, withProxy, details::Proxy<underlying_t> const&, proxy)       \
     [[nodiscard]] auto getIdentity() const { return details_.getIdentity(); }                            \
     [[nodiscard]] auto getPos() const { return details_.getPos(); }                                      \
     [[nodiscard]] auto getSize() const { return details_.getSize(); }                                    \

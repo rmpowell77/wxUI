@@ -23,51 +23,37 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.hpp"
-#include <wx/hyperlink.h>
+#include <memory>
+#include <stdexcept>
 
-#include "HelperMacros.hpp"
+namespace wxUI::details {
 
-namespace wxUI {
-
-// https://docs.wxwidgets.org/latest/classwx_hyperlink_ctrl.html
-struct Hyperlink {
-    using underlying_t = wxHyperlinkCtrl;
-
-    Hyperlink(std::string text, std::string url)
-        : Hyperlink(wxID_ANY, std::move(text), std::move(url))
+template <typename Underlying>
+struct Proxy {
+    Proxy()
+        : controller(std::make_shared<Underlying*>())
     {
     }
 
-    Hyperlink(wxWindowID identity, std::string text, std::string url)
-        : details_(identity)
-        , text_(std::move(text))
-        , url_(std::move(url))
+    [[nodiscard]] auto control() const -> Underlying*
     {
-        details_.setStyle(wxHL_DEFAULT_STYLE);
+        if (!controller) {
+            throw std::runtime_error("Proxy class has not been attached");
+        }
+        return *controller;
     }
 
-    struct Proxy : details::Proxy<underlying_t> {
-    };
+    void setUnderlying(Underlying* control)
+    {
+        *controller = control;
+    }
+
+    auto operator->() const { return control(); }
+
+    explicit operator bool() const noexcept { return controller != nullptr; }
 
 private:
-    details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> details_;
-    std::string text_;
-    std::string url_;
-
-    template <typename Parent>
-    auto createImpl()
-    {
-        return [&text = text_, &url = url_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
-            return customizations::ParentCreate<underlying_t>(parent, id, text, url, pos, size, style);
-        };
-    }
-
-public:
-    WXUI_FORWARD_ALL_TO_DETAILS(Hyperlink)
+    std::shared_ptr<Underlying*> controller {};
 };
 
-WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(Hyperlink);
 }
-
-#include "ZapMacros.hpp"

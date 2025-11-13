@@ -67,6 +67,9 @@ static inline auto createAndAddVisiter(T& arg, Parent* parent, Sizer* sizer, wxS
 }
 
 namespace wxUI {
+
+using SizerProxy = details::Proxy<wxSizer>;
+
 template <wxOrientation orientation, details::SizerItem... Items>
 struct Sizer {
     template <details::SizerItem... UItems>
@@ -97,21 +100,23 @@ struct Sizer {
     {
     }
 
-    template <typename Parent>
-    auto constructSizer(Parent* parent) const
+    auto withProxy(SizerProxy const& proxy) & -> Sizer&
     {
-        using ::wxUI::customizations::SizerCreate;
-        return SizerCreate(parent, caption, orientation);
+        proxyHandles_.push_back(proxy);
+        return *this;
+    }
+
+    auto withProxy(SizerProxy const& proxy) && -> Sizer&&
+    {
+        proxyHandles_.push_back(proxy);
+        return std::move(*this);
     }
 
     template <typename Parent, typename Sizer>
     auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
     {
-        auto sizer = constructSizer(parent);
         auto currentFlags = flags_.value_or(parentFlags);
-        createAndAddWidgets(parent, sizer, currentFlags);
-
-        // and now add our sizer to the parent
+        auto* sizer = createAndAddWidgets(parent, currentFlags);
         parentSizer->Add(sizer, currentFlags);
         return sizer;
     }
@@ -119,26 +124,45 @@ struct Sizer {
     template <typename Parent>
     auto fitTo(Parent* parent)
     {
-        auto sizer = constructSizer(parent);
-        auto currentFlags = flags_.value_or(wxSizerFlags {});
-        createAndAddWidgets(parent, sizer, currentFlags);
+        auto* sizer = createAndAddWidgets(parent, flags_.value_or(wxSizerFlags {}));
         parent->SetSizer(sizer);
         sizer->SetSizeHints(parent);
     }
 
 private:
-    template <typename Parent, typename Sizer>
-    void createAndAddWidgets(Parent* parent, Sizer* sizer, wxSizerFlags const& flags)
+    template <typename Parent>
+    auto constructSizer(Parent* parent) const
     {
+        using ::wxUI::customizations::SizerCreate;
+        return SizerCreate(parent, caption, orientation);
+    }
+
+    template <typename Parent>
+    auto createAndAddWidgets(Parent* parent, wxSizerFlags const& flags)
+    {
+        auto sizer = constructSizer(parent);
+
         std::apply([parent, sizer, flags](auto&&... tupleArg) {
             (details::createAndAddVisiter(tupleArg, parent, sizer, flags), ...);
         },
             items_);
+        return bindProxy(sizer);
+    }
+
+    template <typename Sizer>
+    auto bindProxy(Sizer* sizer)
+    {
+        for (auto& proxyHandle : proxyHandles_) {
+            using ::wxUI::customizations::SizerBindProxy;
+            SizerBindProxy(sizer, proxyHandle);
+        }
+        return sizer;
     }
 
     std::optional<wxSizerFlags> flags_ {};
     std::tuple<Items...> items_ {};
     std::optional<std::string> caption {};
+    std::vector<SizerProxy> proxyHandles_;
 };
 }
 

@@ -57,7 +57,7 @@ struct Gauge {
         details_.setStyle(wxGA_HORIZONTAL);
     }
 
-    struct Proxy : details::WidgetProxy<underlying_t> {
+    struct Proxy : details::Proxy<underlying_t> {
         [[nodiscard]] auto value() const
         {
             auto* controller = control();

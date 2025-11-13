@@ -39,7 +39,7 @@ struct Line {
     {
     }
 
-    struct Proxy : details::WidgetProxy<underlying_t> {
+    struct Proxy : details::Proxy<underlying_t> {
     };
 
 private:

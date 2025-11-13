@@ -68,7 +68,7 @@ struct HSplitter {
         return *this;
     }
 
-    struct Proxy : details::WidgetProxy<underlying_t> {
+    struct Proxy : details::Proxy<underlying_t> {
     };
 
 private:
@@ -125,7 +125,7 @@ struct VSplitter {
         return *this;
     }
 
-    struct Proxy : details::WidgetProxy<underlying_t> {
+    struct Proxy : details::Proxy<underlying_t> {
     };
 
 private:
@@ -150,7 +150,7 @@ public:
     WXUI_FORWARD_ALL_TO_DETAILS(VSplitter)
 };
 
-struct SplitterProxy : details::WidgetProxy<wxSplitterWindow> {
+struct SplitterProxy : details::Proxy<wxSplitterWindow> {
 };
 
 }

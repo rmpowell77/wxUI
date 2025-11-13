@@ -61,7 +61,7 @@ struct BitmapToggleButton {
         return std::move(*this);
     }
 
-    struct Proxy : details::WidgetProxy<underlying_t> {
+    struct Proxy : details::Proxy<underlying_t> {
         [[nodiscard]] auto value() const
         {
             auto* controller = control();
