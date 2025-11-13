@@ -57,7 +57,7 @@ SOFTWARE.
 namespace wxUI::details {
 struct BindInfo;
 template <typename T>
-struct WidgetProxy;
+struct Proxy;
 }
 
 // helpful formatters
@@ -680,6 +680,13 @@ inline void ControllerBindProxy(wxUITests::TestProvider* controller, [[maybe_unu
 {
     auto count = std::ranges::count_if(controller->log, [](auto const& e) { return e.starts_with("BindProxy:"); });
     controller->log.push_back(std::format("BindProxy:{}", count + 1));
+}
+
+template <typename Proxy>
+inline void SizerBindProxy(wxUITests::TestSizer* controller, [[maybe_unused]] Proxy& proxyHandle)
+{
+    auto count = std::ranges::count_if(controller->log, [](auto const& e) { return e.starts_with("SizerBindProxy:"); });
+    controller->log.push_back(std::format("SizerBindProxy:{}", count + 1));
 }
 
 inline auto SizerCreate(wxUITests::TestProvider* provider, std::optional<std::string> caption, wxOrientation orientation) -> wxUITests::TestSizer*

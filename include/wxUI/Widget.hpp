@@ -25,6 +25,7 @@ SOFTWARE.
 
 #include "BindInfo.hpp"
 #include "Customizations.hpp"
+#include "Proxy.hpp"
 #include <optional>
 #include <stdexcept>
 #include <string>
@@ -85,34 +86,6 @@ inline auto ToVector(Range&& range) -> std::vector<T>
 }
 
 // clang-format on
-
-template <typename Underlying>
-struct WidgetProxy {
-    WidgetProxy()
-        : controller(std::make_shared<Underlying*>())
-    {
-    }
-
-    [[nodiscard]] auto control() const -> Underlying*
-    {
-        if (!controller) {
-            throw std::runtime_error("Proxy class has not been attached");
-        }
-        return *controller;
-    }
-
-    void setUnderlying(Underlying* control)
-    {
-        *controller = control;
-    }
-
-    auto operator->() const { return control(); }
-
-    explicit operator bool() const noexcept { return controller != nullptr; }
-
-private:
-    std::shared_ptr<Underlying*> controller {};
-};
 
 // The WidgetDetails holds the common details across many controllers.
 // The "recipe" for constructing a controller is pretty straight forward:
@@ -178,7 +151,7 @@ struct WidgetDetails {
         enabled_ = enabled;
     }
 
-    auto withProxy(WidgetProxy<Underlying> const& proxy)
+    auto withProxy(Proxy<Underlying> const& proxy)
     {
         proxyHandles_.push_back(proxy);
     }
@@ -254,7 +227,7 @@ private:
     int64_t style_ {};
     bool enabled_ = true;
     std::optional<wxFontInfo> fontInfo_ {};
-    std::vector<details::WidgetProxy<Underlying>> proxyHandles_ {};
+    std::vector<details::Proxy<Underlying>> proxyHandles_ {};
     std::vector<BindInfo> boundedFunctions_;
 };
 
