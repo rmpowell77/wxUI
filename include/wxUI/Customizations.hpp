@@ -103,6 +103,16 @@ inline void ControllerBindProxy(Controller* controller, Proxy& proxyHandle)
     }
 }
 
+template <typename Sizer, typename Proxy>
+inline void SizerBindProxy(Sizer* sizer, Proxy& proxyHandle)
+{
+    if constexpr (requires(Proxy proxy, Sizer* c) { proxy.setUnderlying(c); }) {
+        proxyHandle.setUnderlying(sizer);
+    } else {
+        static_assert(always_false_v<Proxy>, "LayoutBindProxy: Provide a customization in namespace wxUI::customizations.");
+    }
+}
+
 template <typename Frame>
 void MenuSetMenuBar(Frame* frame, ::wxMenuBar* menuBar) {
     if constexpr (std::is_convertible_v<Frame*, wxFrame*>) {

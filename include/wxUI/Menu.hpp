@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include "Customizations.hpp"
+#include "Proxy.hpp"
 #include "wxUITypes.hpp"
 #include <functional>
 #include <memory>
@@ -95,39 +96,13 @@ inline void createAndAdd(Frame& frame, MenuDetails const& item, int& identity, A
     },
         item);
 }
-
-template <typename Underlying>
-struct MenuProxy {
-    MenuProxy()
-        : controller(std::make_shared<Underlying*>())
-    {
-    }
-
-    [[nodiscard]] auto control() const -> Underlying*
-    {
-        if (!controller) {
-            throw std::runtime_error("Proxy class has not been attached");
-        }
-        return *controller;
-    }
-
-    void setUnderlying(Underlying* control)
-    {
-        *controller = control;
-    }
-
-    auto operator->() const { return control(); }
-
-private:
-    std::shared_ptr<Underlying*> controller {};
-};
 }
 
 namespace wxUI {
 
-using MenuProxy = details::MenuProxy<wxMenu>;
-using MenuBarProxy = details::MenuProxy<wxMenuBar>;
-using MenuItemProxy = details::MenuProxy<wxMenuItem>;
+using MenuProxy = details::Proxy<wxMenu>;
+using MenuBarProxy = details::Proxy<wxMenuBar>;
+using MenuItemProxy = details::Proxy<wxMenuItem>;
 
 struct Item {
     explicit Item(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
