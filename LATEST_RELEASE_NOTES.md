@@ -1,4 +1,4 @@
-# wxUI release notes for v0.2.3
+# wxUI release notes for v0.3.0
 
 Bugs addressed in this release:
 
@@ -10,4 +10,5 @@ Other changes:
 * [#223](../../issues/223) We should avoid the operator= for Proxy in Generic
 * [#224](../../issues/224) Remove function part of Generic
 * [#230](../../issues/230) Make proxy more generic
+* [#235](../../issues/235) Increment the minimum support for wxUI to be c++23
 
