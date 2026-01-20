@@ -31,29 +31,29 @@ namespace wxUI::details {
 template <typename Underlying>
 struct Proxy {
     Proxy()
-        : controller(std::make_shared<Underlying*>())
+        : controller_(std::make_shared<Underlying*>())
     {
     }
 
     [[nodiscard]] auto control() const -> Underlying*
     {
-        if (!controller) {
+        if (!controller_) {
             throw std::runtime_error("Proxy class has not been attached");
         }
-        return *controller;
+        return *controller_;
     }
 
     void setUnderlying(Underlying* control)
     {
-        *controller = control;
+        *controller_ = control;
     }
 
     auto operator->() const { return control(); }
 
-    explicit operator bool() const noexcept { return controller != nullptr; }
+    explicit operator bool() const noexcept { return controller_ != nullptr; }
 
 private:
-    std::shared_ptr<Underlying*> controller {};
+    std::shared_ptr<Underlying*> controller_ {};
 };
 
 }
