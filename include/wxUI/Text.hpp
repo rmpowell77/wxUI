@@ -35,12 +35,12 @@ namespace wxUI {
 struct Text {
     using underlying_t = wxStaticText;
 
-    explicit Text(std::string text = "")
+    explicit Text(wxString text = {})
         : Text(wxID_ANY, std::move(text))
     {
     }
 
-    explicit Text(wxWindowID identity, std::string text = "")
+    explicit Text(wxWindowID identity, wxString text = {})
         : details_(identity)
         , text_(std::move(text))
     {
@@ -63,8 +63,8 @@ struct Text {
         {
             auto* controller = control();
             return details::GetterSetter {
-                [controller] { return static_cast<std::string>(controller->GetLabel()); },
-                [controller](std::string label) { controller->SetLabel(label); }
+                [controller] { return controller->GetLabel(); },
+                [controller](wxString label) { controller->SetLabel(label); }
             };
         }
 
@@ -73,7 +73,7 @@ struct Text {
 
 private:
     details::WidgetDetails<Text, wxStaticText> details_;
-    std::string text_;
+    wxString text_;
     std::optional<int> wrap_;
 
     // Templated createImpl to support test Providers

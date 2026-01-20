@@ -35,12 +35,12 @@ namespace wxUI {
 struct TextCtrl {
     using underlying_t = wxTextCtrl;
 
-    explicit TextCtrl(std::string text = "")
+    explicit TextCtrl(wxString text = {})
         : TextCtrl(wxID_ANY, std::move(text))
     {
     }
 
-    explicit TextCtrl(wxWindowID identity, std::string text = "")
+    explicit TextCtrl(wxWindowID identity, wxString text = {})
         : details_(identity)
         , text_(std::move(text))
     {
@@ -65,8 +65,8 @@ struct TextCtrl {
         {
             auto* controller = control();
             return details::GetterSetter {
-                [controller] { return static_cast<std::string>(controller->GetValue()); },
-                [controller](std::string label) { controller->SetValue(label); }
+                [controller] { return controller->GetValue(); },
+                [controller](wxString label) { controller->SetValue(label); }
             };
         }
 
@@ -75,7 +75,7 @@ struct TextCtrl {
 
 private:
     details::WidgetDetails<TextCtrl, wxTextCtrl> details_;
-    std::string text_;
+    wxString text_;
 
     template <typename Parent>
     auto createImpl()

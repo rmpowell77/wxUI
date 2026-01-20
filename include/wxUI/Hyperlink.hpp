@@ -34,12 +34,12 @@ namespace wxUI {
 struct Hyperlink {
     using underlying_t = wxHyperlinkCtrl;
 
-    Hyperlink(std::string text, std::string url)
+    Hyperlink(wxString text, wxString url)
         : Hyperlink(wxID_ANY, std::move(text), std::move(url))
     {
     }
 
-    Hyperlink(wxWindowID identity, std::string text, std::string url)
+    Hyperlink(wxWindowID identity, wxString text, wxString url)
         : details_(identity)
         , text_(std::move(text))
         , url_(std::move(url))
@@ -52,8 +52,8 @@ struct Hyperlink {
 
 private:
     details::WidgetDetails<Hyperlink, wxHyperlinkCtrl> details_;
-    std::string text_;
-    std::string url_;
+    wxString text_;
+    wxString url_;
 
     template <typename Parent>
     auto createImpl()

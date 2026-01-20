@@ -34,12 +34,12 @@ namespace wxUI {
 struct Button {
     using underlying_t = wxButton;
 
-    explicit Button(std::string text = "")
+    explicit Button(wxString text = {})
         : Button(wxID_ANY, std::move(text))
     {
     }
 
-    explicit Button(wxWindowID identity, std::string text = "")
+    explicit Button(wxWindowID identity, wxString text = {})
         : details_(identity)
         , text_(std::move(text))
     {
@@ -76,7 +76,7 @@ struct Button {
 
 private:
     details::WidgetDetails<Button, wxButton> details_;
-    std::string text_;
+    wxString text_;
     bool isDefault_ = false;
 
     template <typename Parent>

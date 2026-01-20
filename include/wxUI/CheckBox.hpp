@@ -35,12 +35,12 @@ namespace wxUI {
 struct CheckBox {
     using underlying_t = wxCheckBox;
 
-    explicit CheckBox(std::string text = "")
+    explicit CheckBox(wxString text = {})
         : CheckBox(wxID_ANY, std::move(text))
     {
     }
 
-    explicit CheckBox(wxWindowID identity, std::string text = "")
+    explicit CheckBox(wxWindowID identity, wxString text = {})
         : details_(identity)
         , text_(std::move(text))
     {
@@ -87,7 +87,7 @@ struct CheckBox {
 
 private:
     details::WidgetDetails<CheckBox, wxCheckBox> details_;
-    std::string text_;
+    wxString text_;
     bool value_ = false;
 
     template <typename Parent>
