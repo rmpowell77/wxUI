@@ -86,14 +86,14 @@ struct Sizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit Sizer(std::string caption, UItems&&... items)
+    explicit Sizer(wxString caption, UItems&&... items)
         : items_(std::forward_as_tuple(std::forward<UItems>(items)...))
         , caption(std::move(caption))
     {
     }
 
     template <details::SizerItem... UItems>
-    Sizer(std::string caption, wxSizerFlags const& flags, UItems&&... items)
+    Sizer(wxString caption, wxSizerFlags const& flags, UItems&&... items)
         : flags_(flags)
         , items_(std::forward_as_tuple(std::forward<UItems>(items)...))
         , caption(std::move(caption))
@@ -161,7 +161,7 @@ private:
 
     std::optional<wxSizerFlags> flags_ {};
     std::tuple<Items...> items_ {};
-    std::optional<std::string> caption {};
+    std::optional<wxString> caption {};
     std::vector<SizerProxy> proxyHandles_;
 };
 }
@@ -177,7 +177,7 @@ struct VSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit VSizer(std::string caption, UItems&&... items)
+    explicit VSizer(wxString caption, UItems&&... items)
         : details_(std::move(caption), std::forward<UItems>(items)...)
     {
     }
@@ -189,7 +189,7 @@ struct VSizer {
     }
 
     template <details::SizerItem... UItems>
-    VSizer(std::string caption, wxSizerFlags const& flags, UItems&&... items)
+    VSizer(wxString caption, wxSizerFlags const& flags, UItems&&... items)
         : details_(std::move(caption), flags, std::forward<UItems>(items)...)
     {
     }
@@ -215,13 +215,13 @@ template <details::SizerItem... UItems>
 VSizer(UItems&&... items) -> VSizer<UItems...>;
 
 template <details::SizerItem... UItems>
-VSizer(std::string caption, UItems&&... items) -> VSizer<UItems...>;
+VSizer(wxString caption, UItems&&... items) -> VSizer<UItems...>;
 
 template <details::SizerItem... UItems>
 VSizer(wxSizerFlags const& flags, UItems&&... items) -> VSizer<UItems...>;
 
 template <details::SizerItem... UItems>
-VSizer(std::string caption, wxSizerFlags const& flags, UItems&&... items) -> VSizer<UItems...>;
+VSizer(wxString caption, wxSizerFlags const& flags, UItems&&... items) -> VSizer<UItems...>;
 
 template <details::SizerItem... Items>
 struct HSizer {
@@ -232,7 +232,7 @@ struct HSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit HSizer(std::string caption, UItems&&... items)
+    explicit HSizer(wxString caption, UItems&&... items)
         : details_(std::move(caption), std::forward<UItems>(items)...)
     {
     }
@@ -244,7 +244,7 @@ struct HSizer {
     }
 
     template <details::SizerItem... UItems>
-    HSizer(std::string caption, wxSizerFlags const& flags, UItems&&... items)
+    HSizer(wxString caption, wxSizerFlags const& flags, UItems&&... items)
         : details_(std::move(caption), flags, std::forward<UItems>(items)...)
     {
     }
