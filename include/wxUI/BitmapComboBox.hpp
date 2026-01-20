@@ -131,7 +131,7 @@ private:
     auto createImpl()
     {
         return [&choices = choices_, &bitmaps = bitmaps_, selection = selection_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
-            auto&& first = (choices.size() > 0) ? choices.at(0) : wxEmptyString;
+            auto&& first = (choices.size() > 0) ? wxString(choices.at(0)) : wxString(wxEmptyString);
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, first, pos, size, static_cast<int>(choices.size()), choices.data(), style);
 
             for (auto i = 0lu; i < bitmaps.size(); ++i) {
