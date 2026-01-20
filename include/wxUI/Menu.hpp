@@ -68,9 +68,9 @@ using function_t = std::variant<std::function<void(wxCommandEvent&)>, std::funct
 // ID, name, help, function -> IDMenuDetailsWFunc_t
 // name, function -> NamedMenuDetails_t with defaults
 // name, help, function -> NamedMenuDetails_t with defaults
-using IDMenuDetails_t = std::tuple<wxStandardID, std::string, std::string>;
-using IDMenuDetailsWFunc_t = std::tuple<wxStandardID, std::string, std::string, function_t>;
-using NamedMenuDetails_t = std::tuple<std::string, std::string, function_t>;
+using IDMenuDetails_t = std::tuple<wxStandardID, wxString, wxString>;
+using IDMenuDetailsWFunc_t = std::tuple<wxStandardID, wxString, wxString, function_t>;
+using NamedMenuDetails_t = std::tuple<wxString, wxString, function_t>;
 using MenuDetails = std::variant<IDMenuDetails_t, IDMenuDetailsWFunc_t, NamedMenuDetails_t>;
 
 // If the details are named, we use and increment the identity supplied.
@@ -105,7 +105,7 @@ using MenuBarProxy = details::Proxy<wxMenuBar>;
 using MenuItemProxy = details::Proxy<wxMenuItem>;
 
 struct Item {
-    explicit Item(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
+    explicit Item(wxStandardID identity, wxString const& name = "", wxString const& helpString = "")
         : menuDetails_(details::IDMenuDetails_t { identity, name, helpString })
     {
     }
@@ -115,22 +115,22 @@ struct Item {
     {
     }
 
-    Item(wxStandardID identity, std::string const& name, details::function_t function)
+    Item(wxStandardID identity, wxString const& name, details::function_t function)
         : Item(identity, name, "", std::move(function))
     {
     }
 
-    Item(wxStandardID identity, std::string const& name, std::string const& helpString, details::function_t function)
+    Item(wxStandardID identity, wxString const& name, wxString const& helpString, details::function_t function)
         : menuDetails_(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
     {
     }
 
-    Item(std::string const& name, details::function_t function)
+    Item(wxString const& name, details::function_t function)
         : Item(name, "", std::move(function))
     {
     }
 
-    Item(std::string const& name, std::string const& help, details::function_t function)
+    Item(wxString const& name, wxString const& help, details::function_t function)
         : menuDetails_(details::NamedMenuDetails_t(name, help, std::move(function)))
     {
     }
@@ -164,7 +164,7 @@ private:
 };
 
 struct CheckItem {
-    explicit CheckItem(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
+    explicit CheckItem(wxStandardID identity, wxString const& name = "", wxString const& helpString = "")
         : menuDetails_(details::IDMenuDetails_t { identity, name, helpString })
     {
     }
@@ -174,22 +174,22 @@ struct CheckItem {
     {
     }
 
-    CheckItem(wxStandardID identity, std::string const& name, details::function_t function)
+    CheckItem(wxStandardID identity, wxString const& name, details::function_t function)
         : CheckItem(identity, name, "", std::move(function))
     {
     }
 
-    CheckItem(wxStandardID identity, std::string const& name, std::string const& helpString, details::function_t function)
+    CheckItem(wxStandardID identity, wxString const& name, wxString const& helpString, details::function_t function)
         : menuDetails_(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
     {
     }
 
-    CheckItem(std::string const& name, details::function_t function)
+    CheckItem(wxString const& name, details::function_t function)
         : CheckItem(name, "", std::move(function))
     {
     }
 
-    CheckItem(std::string const& name, std::string const& help, details::function_t function)
+    CheckItem(wxString const& name, wxString const& help, details::function_t function)
         : menuDetails_(details::NamedMenuDetails_t(name, help, std::move(function)))
     {
     }
@@ -223,7 +223,7 @@ private:
 };
 
 struct RadioItem {
-    explicit RadioItem(wxStandardID identity, std::string const& name = "", std::string const& helpString = "")
+    explicit RadioItem(wxStandardID identity, wxString const& name = "", wxString const& helpString = "")
         : menuDetails_(details::IDMenuDetails_t { identity, name, helpString })
     {
     }
@@ -233,22 +233,22 @@ struct RadioItem {
     {
     }
 
-    RadioItem(wxStandardID identity, std::string const& name, details::function_t function)
+    RadioItem(wxStandardID identity, wxString const& name, details::function_t function)
         : RadioItem(identity, name, "", std::move(function))
     {
     }
 
-    RadioItem(wxStandardID identity, std::string const& name, std::string const& helpString, details::function_t function)
+    RadioItem(wxStandardID identity, wxString const& name, wxString const& helpString, details::function_t function)
         : menuDetails_(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
     {
     }
 
-    RadioItem(std::string const& name, details::function_t function)
+    RadioItem(wxString const& name, details::function_t function)
         : RadioItem(name, "", std::move(function))
     {
     }
 
-    RadioItem(std::string const& name, std::string const& help, details::function_t function)
+    RadioItem(wxString const& name, wxString const& help, details::function_t function)
         : menuDetails_(details::NamedMenuDetails_t(name, help, std::move(function)))
     {
     }
@@ -321,12 +321,12 @@ private:
 // a submenu constructs menu to give to a menubar
 template <details::MenuItem... M>
 struct Menu {
-    explicit Menu(std::string name, M const&... items)
+    explicit Menu(wxString name, M const&... items)
         : Menu(std::move(name), std::make_tuple(items...))
     {
     }
 
-    Menu(std::string name, std::tuple<M...> const& items)
+    Menu(wxString name, std::tuple<M...> const& items)
         : name(std::move(name))
         , items(items)
     {
@@ -373,7 +373,7 @@ struct Menu {
     }
 
 private:
-    std::string name;
+    wxString name;
     std::tuple<M...> items;
     std::vector<MenuProxy> proxyHandles_;
 };

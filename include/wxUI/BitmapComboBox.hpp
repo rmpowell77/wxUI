@@ -105,8 +105,8 @@ struct BitmapComboBox {
         {
             auto* controller = control();
             return details::GetterSetter {
-                [controller] { return static_cast<std::string>(controller->GetValue()); },
-                [controller](std::string value) { controller->SetValue(value); }
+                [controller] { return controller->GetValue(); },
+                [controller](wxString value) { controller->SetValue(value); }
             };
         }
         [[nodiscard]] auto selection() const
@@ -131,7 +131,7 @@ private:
     auto createImpl()
     {
         return [&choices = choices_, &bitmaps = bitmaps_, selection = selection_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
-            auto&& first = (choices.size() > 0) ? wxString(choices.at(0)) : wxString(wxEmptyString);
+            auto&& first = (choices.size() > 0) ? choices.at(0) : wxEmptyString;
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, first, pos, size, static_cast<int>(choices.size()), choices.data(), style);
 
             for (auto i = 0lu; i < bitmaps.size(); ++i) {

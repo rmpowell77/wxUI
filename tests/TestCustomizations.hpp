@@ -162,7 +162,7 @@ namespace wxUITests {
 struct TestProvider;
 struct TestSizer {
     bool top { false };
-    std::optional<std::string> caption {};
+    std::optional<wxString> caption {};
     wxOrientation orientation {};
 
     void SetSizeHints(TestProvider*);
@@ -689,7 +689,7 @@ inline void SizerBindProxy(wxUITests::TestSizer* controller, [[maybe_unused]] Pr
     controller->log.push_back(std::format("SizerBindProxy:{}", count + 1));
 }
 
-inline auto SizerCreate(wxUITests::TestProvider* provider, std::optional<std::string> caption, wxOrientation orientation) -> wxUITests::TestSizer*
+inline auto SizerCreate(wxUITests::TestProvider* provider, std::optional<wxString> caption, wxOrientation orientation) -> wxUITests::TestSizer*
 {
     return provider->add(wxUITests::TestSizer {
         .caption = caption,

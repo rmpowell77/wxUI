@@ -67,7 +67,7 @@ inline auto ParentCreate(Parent* parent, Args&&... args)
 
 // This doesn't need to be argument pack
 template <typename Parent>
-inline auto SizerCreate(Parent* parent, std::optional<std::string> caption, wxOrientation orientation) -> wxSizer*
+inline auto SizerCreate(Parent* parent, std::optional<wxString> caption, wxOrientation orientation) -> wxSizer*
 {
     if constexpr (std::is_convertible_v<Parent*, wxWindow*>) {
         return caption ? new wxStaticBoxSizer(new wxStaticBox(parent, wxID_ANY, *caption), orientation) : new wxBoxSizer(orientation);
