@@ -62,7 +62,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         HSizer {
             Button { "ReduceText" }
                 .bind([this]() {
-                    auto str = static_cast<wxString>(*textProxy);
+                    std::string str = static_cast<wxString>(*textProxy);
                     if (str.size()) {
                         str.pop_back();
                     }
@@ -138,10 +138,10 @@ MultibindExample::MultibindExample(wxWindow* parent)
                 .withWidth(200)
                 .withStyle(wxTE_PROCESS_ENTER)
                 .bind([timesTyped]() {
-                    *timesTyped = std::to_string(stoi(*timesTyped) + 1);
+                    *timesTyped = std::to_string(std::stoi(wxString(*timesTyped).utf8_string()) + 1);
                 })
                 .bind(wxEVT_TEXT_ENTER, [timesEntered]() {
-                    *timesEntered = std::to_string(stoi(*timesEntered) + 1);
+                    *timesEntered = std::to_string(std::stoi(wxString(*timesEntered).utf8_string()) + 1);
                 }),
         },
         HSizer {
