@@ -312,6 +312,102 @@ private:
 
 template <details::SizerItem... Item>
 LayoutIf(bool, Item... item) -> LayoutIf<Item...>;
+
+template <details::SizerItem Item>
+struct BookItem {
+    template <details::SizerItem Item>
+    explicit BookItem(wxString const& title, bool select, Item &&item)
+        : title_(std::move(title))
+        , item_(std::forward<Item>(item))
+        , select_(select)
+    {
+    }
+
+    template <details::SizerItem Item>
+    explicit BookItem(wxString const& title, Item &&item)
+        : BookItem(title, false, std::forward<Item>(item))
+    {
+    }
+
+    template <typename Parent, typename Sizer>
+    auto createAndAdd(Parent* parent, [[maybe_unused]] Sizer* parentSizer, [[maybe_unused]] wxSizerFlags const& parentFlags)
+    {
+        auto page = new wxWindow(parent, wxID_ANY);
+        auto sizer = new wxBoxSizer(wxVERTICAL);
+        auto flags = wxSizerFlags{ 1 }.Expand();
+
+        details::createAndAddVisitor(item_, page, sizer, flags);
+
+        page->SetSizerAndFit(sizer);
+
+        parent->AddPage(page, title_, select_);
+    }
+
+private:
+    wxString title_ {};
+    Item item_;
+    bool select_ {};
+};
+
+template <details::SizerItem Item>
+BookItem(wxString const& caption, Item&& item) -> BookItem<Item>;
+
+template <details::SizerItem Item>
+BookItem(wxString const& caption, bool select, Item&& item) -> BookItem<Item>;
+
+template <typename Book, details::SizerItem... Items>
+struct BookCtrl {
+    template <details::SizerItem... UItems>
+    explicit BookCtrl(UItems&&... items)
+        : items_(std::forward_as_tuple(std::forward<UItems>(items)...))
+    {
+    }
+
+    template <details::SizerItem... UItems>
+    explicit BookCtrl(wxSizerFlags const& flags, UItems&&... items)
+        : flags_(flags)
+        , items_(std::forward_as_tuple(std::forward<UItems>(items)...))
+    {
+    }
+
+    template <typename Parent, typename Sizer>
+    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
+    {
+        auto currentFlags = flags_.value_or(parentFlags);
+        auto* book = createAndAddPages(parent, currentFlags);
+        parentSizer->Add(book, currentFlags);
+        return book;
+    }
+
+private:
+    template <typename Parent>
+    auto constructBook(Parent* parent) const
+    {
+        return new Book(parent);
+    }
+
+    template <typename Parent>
+    auto createAndAddPages(Parent* parent, wxSizerFlags const& flags)
+    {
+        auto* book = constructBook(parent);
+
+        std::apply([book, sizer, flags](auto&&... tupleArg) {
+            (details::createAndAddVisiter(tupleArg, book, sizer, flags), ...);
+        },
+            items_);
+
+        return book;
+    }
+
+    std::optional<wxSizerFlags> flags_ {};
+    std::optional<std::tuple<Items...>> items_ {};
+};
+
+template <typename Book, details::SizerItem... Items>
+BookCtrl(Items... item) -> BookCtrl<Book, Items...>;
+
+template <details::SizerItem... Items>
+using Notebook = BookCtrl<wxNotebook, Items...>;
 }
 
 #include "ZapMacros.hpp"
