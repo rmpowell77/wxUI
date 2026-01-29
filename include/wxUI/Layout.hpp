@@ -28,6 +28,7 @@ SOFTWARE.
 #include <variant>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wx/notebook.h>
 
 // forward-declare Generic so we can detect it in traits without including its header
 namespace wxUI {
