@@ -31,7 +31,6 @@ SOFTWARE.
 #include <string>
 #include <type_traits>
 #include <wx/sizer.h>
-#include <wx/bookctrl.h>
 
 namespace wxUI::details {
 
@@ -47,19 +46,10 @@ concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* s
 };
 
 template <typename T>
-concept CreateAndAddableToWindow = requires(T widget, wxWindow* window, wxSizer* sizer)
+concept CreateAndAddable = requires(T widget, wxWindow* window, wxSizer* sizer)
 {
     widget.createAndAdd(window, sizer, wxSizerFlags {});
 };
-
-template <typename T>
-concept CreateAndAddableToBook = requires(T widget, wxBookCtrlBase* book, wxSizer* sizer)
-{
-    widget.createAndAdd(book, sizer, wxSizerFlags {});
-};
-
-template <typename T>
-concept CreateAndAddable = CreateAndAddableToWindow<T> || CreateAndAddableToBook<T>;
 
 template <typename T>
 concept Createable = requires(T widget, wxWindow* window)
