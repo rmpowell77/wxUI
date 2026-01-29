@@ -56,7 +56,7 @@ template <typename T>
 concept CreateAndAddableToBook = requires(T widget, wxBookCtrlBase* book, wxSizer* sizer)
 {
     widget.createAndAdd(book, sizer, wxSizerFlags {});
-}
+};
 
 template <typename T>
 concept CreateAndAddable = CreateAndAddableToWindow<T> || CreateAndAddableToBook<T>;
