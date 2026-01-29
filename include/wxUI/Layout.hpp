@@ -397,7 +397,7 @@ private:
         auto* book = constructBook(parent);
 
         std::apply([book, flags](auto&&... tupleArg) {
-            (details::createAndAddVisiter(tupleArg, book, static_cast<wxBoxSizer*>(nullptr), flags), ...);
+            (details::createAndAddVisiter(tupleArg, book, static_cast<wxSizer*>(nullptr), flags), ...);
         },
             items_);
 
