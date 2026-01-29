@@ -344,7 +344,7 @@ struct BookItem {
         if constexpr (requires(Parent p) { p.AddPage(page, title_, select_); }) {
             parent->AddPage(page, title_, select_);
         } else {
-            static_assert(false, "Cannot add book item to normal window, use a parent that uses wxBookCtrlBase");
+            throw std::runtime_error("Cannot add book item to normal window, use a parent that uses wxBookCtrlBase");
         }
     }
 
