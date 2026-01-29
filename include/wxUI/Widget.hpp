@@ -31,6 +31,7 @@ SOFTWARE.
 #include <string>
 #include <type_traits>
 #include <wx/sizer.h>
+#include <wx/bookctrl.h>
 
 namespace wxUI::details {
 
