@@ -392,8 +392,8 @@ private:
     {
         auto* book = constructBook(parent);
 
-        std::apply([book, sizer, flags](auto&&... tupleArg) {
-            (details::createAndAddVisiter(tupleArg, book, sizer, flags), ...);
+        std::apply([book, flags](auto&&... tupleArg) {
+            (details::createAndAddVisiter(tupleArg, book, nullptr, flags), ...);
         },
             items_);
 
