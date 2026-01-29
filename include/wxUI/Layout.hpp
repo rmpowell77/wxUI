@@ -405,7 +405,7 @@ private:
     }
 
     std::optional<wxSizerFlags> flags_ {};
-    std::optional<std::tuple<Items...>> items_ {};
+    std::tuple<Items...> items_ {};
 };
 
 template <typename Book, details::SizerItem... Items>
