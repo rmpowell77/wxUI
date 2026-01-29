@@ -337,7 +337,7 @@ struct BookItem {
         auto sizer = new wxBoxSizer(wxVERTICAL);
         auto flags = wxSizerFlags{ 1 }.Expand();
 
-        details::createAndAddVisitor(item_, page, sizer, flags);
+        details::createAndAddVisiter(item_, page, sizer, flags);
 
         page->SetSizerAndFit(sizer);
 
