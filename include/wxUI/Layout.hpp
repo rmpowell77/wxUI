@@ -384,7 +384,7 @@ private:
     template <typename Parent>
     auto constructBook(Parent* parent) const
     {
-        return new Book(parent);
+        return new Book(parent, wxID_ANY);
     }
 
     template <typename Parent>
