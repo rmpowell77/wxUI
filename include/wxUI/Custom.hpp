@@ -41,6 +41,9 @@ concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* s
 
 template <CreateAndAddFunction Function>
 struct Custom {
+    using Result = decltype(std::declval<Function>()(static_cast<wxWindow *>(nullptr), static_cast<wxSizer *>(nullptr), wxSizerFlags{}));
+    using Window = std::conditional_t<std::same_as<Result, void>, wxWindow *, std::remove_pointer_t<Result>>;
+
     Custom(wxSizerFlags const& flags, Function const& function)
         : flags_(flags)
         , function_(function)
@@ -52,14 +55,70 @@ struct Custom {
     {
     }
 
-    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
+    auto createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
     {
-        function_(parent, parentSizer, flags_.value_or(parentFlags));
+        if constexpr (std::same_as<Result, void>) {
+            return function_(parent, parentSizer, flags_.value_or(parentFlags));
+        } else {
+            auto child = function_(parent, parentSizer, flags_.value_or(parentFlags));
+
+            bindProxy(child);
+
+            return child;
+        }
+    }
+
+    struct Proxy {
+        Proxy()
+            : windower(std::make_shared<Window*>())
+        {
+        }
+
+        [[nodiscard]] auto window() const -> Window*
+        {
+            if (!windower) {
+                throw std::runtime_error("Proxy class has not been attached");
+            }
+            return *windower;
+        }
+
+        auto operator->() const { return window(); }
+        auto operator*() const { return window(); }
+
+        void setUnderlying(Window* window)
+        {
+            *windower = window;
+        }
+
+    private:
+        std::shared_ptr<Window*> windower {};
+    };
+
+    auto withProxy(Proxy const& proxy) & -> Custom<Function>&
+    {
+        proxyHandles_.push_back(proxy);
+        return *this;
+    }
+
+    auto withProxy(Proxy const& proxy) && -> Custom<Function>&&
+    {
+        proxyHandles_.push_back(proxy);
+        return std::move(*this);
     }
 
 private:
+    auto bindProxy(Window* widget)
+    {
+        for (auto& proxyHandle : proxyHandles_) {
+            using ::wxUI::customizations::ControllerBindProxy;
+            ControllerBindProxy(widget, proxyHandle);
+        }
+        return widget;
+    }
+
     std::optional<wxSizerFlags> flags_;
     Function function_;
+    std::vector<Proxy> proxyHandles_ {};
 };
 
 }
