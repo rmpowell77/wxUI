@@ -361,7 +361,10 @@ private:
 };
 
 template <typename SizerType, details::SizerItem... Items>
-GSizer(Items... item) -> GSizer<SizerType, Items...>;
+GSizer(int cols, Items... item) -> GSizer<SizerType, Items...>;
+
+template <typename SizerType, details::SizerItem... Items>
+GSizer(int cols, wxSizerFlags const &flags, Items... item) -> GSizer<SizerType, Items...>;
 
 template <details::SizerItem... Items>
 using GridSizer = GSizer<wxGridSizer, Items...>;
