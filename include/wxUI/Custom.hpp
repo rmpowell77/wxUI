@@ -55,7 +55,7 @@ struct Custom {
     {
     }
 
-    auto createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
+    auto createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         if constexpr (std::same_as<Result, void>) {
             return function_(parent, parentSizer, flags_.value_or(parentFlags));
