@@ -280,6 +280,95 @@ HSizer(wxSizerFlags const& flags, UItems&&... items) -> HSizer<UItems...>;
 template <details::SizerItem... UItems>
 HSizer(wxString const& caption, wxSizerFlags const& flags, UItems&&... items) -> HSizer<UItems...>;
 
+template <typename SizerType, details::SizerItem... Items>
+struct GSizer {
+    template <details::SizerItem... UItems>
+    explicit GSizer(int cols, UItems&&... items)
+        : cols_(cols)
+        , items_(std::forward_as_tuple(std::forward<UItems>(items)...))
+    {
+    }
+
+    template <details::SizerItem... UItems>
+    explicit GSizer(int cols, wxSizerFlags const& flags, UItems&&... items)
+        : cols_(cols)
+        , flags_(flags)
+        , items_(std::forward_as_tuple(std::forward<UItems>(items)...))
+    {
+    }
+
+    auto withProxy(SizerProxy const& proxy) & -> GSizer&
+    {
+        proxyHandles_.push_back(proxy);
+        return *this;
+    }
+
+    auto withProxy(SizerProxy const& proxy) && -> GSizer&&
+    {
+        proxyHandles_.push_back(proxy);
+        return std::move(*this);
+    }
+
+    template <typename Parent, typename Sizer>
+    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
+    {
+        auto currentFlags = flags_.value_or(parentFlags);
+        auto* sizer = createAndAddWidgets(parent, currentFlags);
+        parentSizer->Add(sizer, currentFlags);
+        return sizer;
+    }
+
+    template <typename Parent>
+    auto fitTo(Parent* parent)
+    {
+        auto* sizer = createAndAddWidgets(parent, flags_.value_or(wxSizerFlags {}));
+        parent->SetSizer(sizer);
+        sizer->SetSizeHints(parent);
+    }
+
+private:
+    auto constructSizer() const
+    {
+        return new SizerType(cols_);
+    }
+
+    template <typename Parent>
+    auto createAndAddWidgets(Parent* parent, wxSizerFlags const& flags)
+    {
+        auto sizer = constructSizer();
+
+        std::apply([parent, sizer, flags](auto&&... tupleArg) {
+            (details::createAndAddVisiter(tupleArg, parent, sizer, flags), ...);
+        },
+            items_);
+        return bindProxy(sizer);
+    }
+
+    template <typename Sizer>
+    auto bindProxy(Sizer* sizer)
+    {
+        for (auto& proxyHandle : proxyHandles_) {
+            using ::wxUI::customizations::SizerBindProxy;
+            SizerBindProxy(sizer, proxyHandle);
+        }
+        return sizer;
+    }
+
+    int cols_ {};
+    std::optional<wxSizerFlags> flags_ {};
+    std::tuple<Items...> items_ {};
+    std::vector<SizerProxy> proxyHandles_;
+};
+
+template <typename SizerType, details::SizerItem... Items>
+GSizer(Items... item) -> GSizer<SizerType, Items...>;
+
+template <details::SizerItem... Items>
+using GridSizer = GSizer<wxGridSizer, Items...>;
+
+template <details::SizerItem... Items>
+using FlexGridSizer = GSizer<wxFlexGridSizer, Items...>;
+
 template <details::SizerItem... Items>
 struct LayoutIf {
     template <details::SizerItem... UItems>
