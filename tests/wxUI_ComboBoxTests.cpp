@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -138,11 +138,11 @@ TEST_CASE("ComboBox")
     SECTION("setSelection")
     {
         TestProvider provider;
-        auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } }.withSize({ 1, 2 }).withSelection(1);
+        auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withSize({ 1, 2 }).withSelection(1);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello\", choices=(\"Hello\",\"Goodbye\",)]",
-                  "controller:wxComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello\", choices=(\"Hello\",\"Goodbye\",)]",
+                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",)]",
+                  "controller:wxComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",)]",
                   "SetSelection:1",
                   "SetEnabled:true",
               });
@@ -151,11 +151,11 @@ TEST_CASE("ComboBox")
     SECTION("AI")
     {
         TestProvider provider;
-        auto uut = wxUI::ComboBox { { "one", "two", "three" } }.withSelection(2).bind([] {});
+        auto uut = wxUI::ComboBox { { "one 🐨", "two", "three" } }.withSelection(2).bind([] {});
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one\", choices=(\"one\",\"two\",\"three\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one\", choices=(\"one\",\"two\",\"three\",)]",
+                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",\"three\",)]",
+                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",\"three\",)]",
                   "SetSelection:2",
                   "SetEnabled:true",
                   "BindEvents:1",

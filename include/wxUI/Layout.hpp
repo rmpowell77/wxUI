@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -86,14 +86,29 @@ struct Sizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit Sizer(std::string caption, UItems&&... items)
+    explicit Sizer(std::string_view caption, UItems&&... items)
+        : items_(std::forward_as_tuple(std::forward<UItems>(items)...))
+        , caption(wxString::FromUTF8(caption.data(), caption.size()))
+    {
+    }
+
+    template <details::SizerItem... UItems>
+    explicit Sizer([[maybe_unused]] wxUI_String tag, wxString caption, UItems&&... items)
         : items_(std::forward_as_tuple(std::forward<UItems>(items)...))
         , caption(std::move(caption))
     {
     }
 
     template <details::SizerItem... UItems>
-    Sizer(std::string caption, wxSizerFlags const& flags, UItems&&... items)
+    Sizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
+        : flags_(flags)
+        , items_(std::forward_as_tuple(std::forward<UItems>(items)...))
+        , caption(wxString::FromUTF8(caption.data(), caption.size()))
+    {
+    }
+
+    template <details::SizerItem... UItems>
+    Sizer([[maybe_unused]] wxUI_String tag, wxString caption, wxSizerFlags const& flags, UItems&&... items)
         : flags_(flags)
         , items_(std::forward_as_tuple(std::forward<UItems>(items)...))
         , caption(std::move(caption))
@@ -161,7 +176,7 @@ private:
 
     std::optional<wxSizerFlags> flags_ {};
     std::tuple<Items...> items_ {};
-    std::optional<std::string> caption {};
+    std::optional<wxString> caption {};
     std::vector<SizerProxy> proxyHandles_;
 };
 }
@@ -177,8 +192,14 @@ struct VSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit VSizer(std::string caption, UItems&&... items)
-        : details_(std::move(caption), std::forward<UItems>(items)...)
+    explicit VSizer(std::string_view caption, UItems&&... items)
+        : details_(wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), std::forward<UItems>(items)...)
+    {
+    }
+
+    template <details::SizerItem... UItems>
+    explicit VSizer([[maybe_unused]] wxUI_String tag, wxString caption, UItems&&... items)
+        : details_(wxUI_String {}, std::move(caption), std::forward<UItems>(items)...)
     {
     }
 
@@ -189,8 +210,14 @@ struct VSizer {
     }
 
     template <details::SizerItem... UItems>
-    VSizer(std::string caption, wxSizerFlags const& flags, UItems&&... items)
-        : details_(std::move(caption), flags, std::forward<UItems>(items)...)
+    VSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
+        : details_(wxString::FromUTF8(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
+    {
+    }
+
+    template <details::SizerItem... UItems>
+    VSizer([[maybe_unused]] wxUI_String tag, wxString caption, wxSizerFlags const& flags, UItems&&... items)
+        : details_(wxUI_String {}, std::move(caption), flags, std::forward<UItems>(items)...)
     {
     }
 
@@ -232,8 +259,14 @@ struct HSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit HSizer(std::string caption, UItems&&... items)
-        : details_(std::move(caption), std::forward<UItems>(items)...)
+    explicit HSizer(std::string_view caption, UItems&&... items)
+        : details_(wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), std::forward<UItems>(items)...)
+    {
+    }
+
+    template <details::SizerItem... UItems>
+    explicit HSizer([[maybe_unused]] wxUI_String tag, wxString caption, UItems&&... items)
+        : details_(wxUI_String {}, std::move(caption), std::forward<UItems>(items)...)
     {
     }
 
@@ -244,8 +277,14 @@ struct HSizer {
     }
 
     template <details::SizerItem... UItems>
-    HSizer(std::string caption, wxSizerFlags const& flags, UItems&&... items)
-        : details_(std::move(caption), flags, std::forward<UItems>(items)...)
+    HSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
+        : details_(wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
+    {
+    }
+
+    template <details::SizerItem... UItems>
+    HSizer([[maybe_unused]] wxUI_String tag, wxString caption, wxSizerFlags const& flags, UItems&&... items)
+        : details_(wxUI_String {}, std::move(caption), flags, std::forward<UItems>(items)...)
     {
     }
 

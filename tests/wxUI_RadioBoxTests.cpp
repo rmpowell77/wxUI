@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -62,11 +62,11 @@ TEST_CASE("RadioBox")
     {
         TestProvider provider;
         using namespace std::literals;
-        auto uut = TypeUnderTest { "Greetings", TypeUnderTest::withChoices {}, { "Hello"s, "Goodbye"s } };
+        auto uut = TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
               });
@@ -76,11 +76,11 @@ TEST_CASE("RadioBox")
     {
         TestProvider provider;
         using namespace std::literals;
-        auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, { "Hello"s, "Goodbye"s } };
+        auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
               });
@@ -89,11 +89,11 @@ TEST_CASE("RadioBox")
     SECTION("id.name.choice")
     {
         TestProvider provider;
-        auto uut = TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, { "Hello", "Goodbye" } };
+        auto uut = TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
               });
@@ -102,11 +102,11 @@ TEST_CASE("RadioBox")
     SECTION("choices.ranges")
     {
         TestProvider provider;
-        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello", "Goodbye" } };
+        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
               });
@@ -116,11 +116,11 @@ TEST_CASE("RadioBox")
     {
         TestProvider provider;
         using namespace std::literals;
-        auto uut = TypeUnderTest { "Greetings", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello"s, "Goodbye"s } };
+        auto uut = TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
               });
@@ -130,11 +130,11 @@ TEST_CASE("RadioBox")
     {
         TestProvider provider;
         using namespace std::literals;
-        auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello"s, "Goodbye"s } };
+        auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
               });
@@ -143,11 +143,11 @@ TEST_CASE("RadioBox")
     SECTION("id.name.choice.ranges")
     {
         TestProvider provider;
-        auto uut = TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello", "Goodbye" } };
+        auto uut = TypeUnderTest { 10000, "Greetings 🐨", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
+                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
                   "SetSelection:0",
                   "SetEnabled:true",
               });

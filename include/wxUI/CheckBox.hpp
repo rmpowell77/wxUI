@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -35,12 +35,22 @@ namespace wxUI {
 struct CheckBox {
     using underlying_t = wxCheckBox;
 
-    explicit CheckBox(std::string text = "")
-        : CheckBox(wxID_ANY, std::move(text))
+    explicit CheckBox(std::string_view text = "")
+        : CheckBox(wxID_ANY, text)
     {
     }
 
-    explicit CheckBox(wxWindowID identity, std::string text = "")
+    explicit CheckBox(wxWindowID identity, std::string_view text = "")
+        : CheckBox(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()))
+    {
+    }
+
+    explicit CheckBox(wxUI_String tag, wxString text)
+        : CheckBox(wxID_ANY, tag, std::move(text))
+    {
+    }
+
+    explicit CheckBox(wxWindowID identity, [[maybe_unused]] wxUI_String tag, wxString text)
         : details_(identity)
         , text_(std::move(text))
     {
@@ -87,7 +97,7 @@ struct CheckBox {
 
 private:
     details::WidgetDetails<CheckBox, wxCheckBox> details_;
-    std::string text_;
+    wxString text_;
     bool value_ = false;
 
     template <typename Parent>

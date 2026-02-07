@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ SOFTWARE.
 
 #include "GetterSetter.hpp"
 #include "Widget.hpp"
+#include <wx/string.h>
 #include <wx/textctrl.h>
 
 #include "HelperMacros.hpp"
@@ -35,12 +36,22 @@ namespace wxUI {
 struct TextCtrl {
     using underlying_t = wxTextCtrl;
 
-    explicit TextCtrl(std::string text = "")
-        : TextCtrl(wxID_ANY, std::move(text))
+    explicit TextCtrl(std::string_view text = "")
+        : TextCtrl(wxID_ANY, text)
     {
     }
 
-    explicit TextCtrl(wxWindowID identity, std::string text = "")
+    explicit TextCtrl(wxWindowID identity, std::string_view text = "")
+        : TextCtrl(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()))
+    {
+    }
+
+    explicit TextCtrl(wxUI_String tag, wxString text)
+        : TextCtrl(wxID_ANY, tag, std::move(text))
+    {
+    }
+
+    explicit TextCtrl(wxWindowID identity, [[maybe_unused]] wxUI_String tag, wxString text)
         : details_(identity)
         , text_(std::move(text))
     {
@@ -65,8 +76,8 @@ struct TextCtrl {
         {
             auto* controller = control();
             return details::GetterSetter {
-                [controller] { return static_cast<std::string>(controller->GetValue()); },
-                [controller](std::string label) { controller->SetValue(label); }
+                [controller] { return controller->GetValue().utf8_string(); },
+                [controller](std::string const& label) { controller->SetValue(wxString::FromUTF8(label)); }
             };
         }
 
@@ -75,7 +86,7 @@ struct TextCtrl {
 
 private:
     details::WidgetDetails<TextCtrl, wxTextCtrl> details_;
-    std::string text_;
+    wxString text_;
 
     template <typename Parent>
     auto createImpl()

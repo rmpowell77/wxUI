@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@ namespace wxUI {
 struct ComboBox {
     using underlying_t = wxComboBox;
 
-    explicit ComboBox(std::initializer_list<std::string> choices = {})
+    ComboBox(std::initializer_list<std::string> choices = {})
         : ComboBox(wxID_ANY, choices)
     {
     }
@@ -82,8 +82,8 @@ struct ComboBox {
         {
             auto* controller = control();
             return details::GetterSetter {
-                [controller] { return static_cast<std::string>(controller->GetValue()); },
-                [controller](std::string value) { controller->SetValue(value); }
+                [controller] { return controller->GetValue().utf8_string(); },
+                [controller](std::string const& value) { controller->SetValue(wxString::FromUTF8(value)); }
             };
         }
         [[nodiscard]] auto selection() const

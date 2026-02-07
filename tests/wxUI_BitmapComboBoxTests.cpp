@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -169,11 +169,11 @@ TEST_CASE("BitmapComboBox")
     SECTION("setSelection")
     {
         TestProvider provider;
-        auto uut = TypeUnderTest { 10000, { { "Hello", wxBitmap {} }, { "Goodbye", wxBitmap {} } } }.withSize({ 1, 2 }).withSelection(1);
+        auto uut = TypeUnderTest { 10000, { { "Hello 🐨", wxBitmap {} }, { "Goodbye", wxBitmap {} } } }.withSize({ 1, 2 }).withSelection(1);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello\", choices=(\"Hello\",\"Goodbye\",)]",
-                  "controller:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello\", choices=(\"Hello\",\"Goodbye\",)]",
+                  "Create:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",)]",
+                  "controller:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",)]",
                   "SetItemBitmap:0:(-1,-1)",
                   "SetItemBitmap:1:(-1,-1)",
                   "SetSelection:1",
