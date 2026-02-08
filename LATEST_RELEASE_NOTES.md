@@ -11,5 +11,6 @@ Other changes:
 * [#224](../../issues/224) Remove function part of Generic
 * [#230](../../issues/230) Make proxy more generic
 * [#235](../../issues/235) Increment the minimum support for wxUI to be c++23
+* [#236](../../issues/236) We should have sizer have a .withFlags()
 * [#241](../../issues/241) Proper Unicode support is missing
 
