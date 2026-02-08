@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,10 +24,12 @@ SOFTWARE.
 #include "TestCustomizations.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/Menu.hpp>
+#include <wxUI/wxUITypes.hpp>
 
 #include <wx/wx.h>
 
 using namespace wxUITests;
+using namespace wxUI;
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 template <typename MenuType>
@@ -229,6 +231,64 @@ auto RunMenuTest_name_help_func2()
     RunMenuTest_name_help_func<MenuType>([](wxCommandEvent&) {});
 }
 
+template <typename MenuType>
+auto RunMenuTest_id_name_tag()
+{
+    TestProvider frame;
+    wxString item_label { "Item1" };
+    wxUI::MenuBar menu {
+        wxUI::Menu {
+            "Menu1", MenuType { wxID_EXIT, wxUI_String {}, item_label } }
+    };
+    menu.fitTo(&frame);
+    CHECK(frame.dump() == std::vector<std::string> {
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind={},label=\"Item1\",help=\"Quit this program\"),],]", MenuTypeLookup<MenuType>::name),
+          });
+}
+
+template <typename MenuType, typename Function>
+auto RunMenuTest_id_name_tag_func(Function function)
+{
+    TestProvider frame;
+    wxString item_label { "Item1" };
+    wxUI::MenuBar menu {
+        wxUI::Menu {
+            "Menu1", MenuType { wxID_EXIT, wxUI_String {}, item_label, function } }
+    };
+    menu.fitTo(&frame);
+    CHECK(frame.dump() == std::vector<std::string> {
+              "BindMenu:5006:1",
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind={},label=\"Item1\",help=\"Quit this program\"),],]", MenuTypeLookup<MenuType>::name),
+          });
+}
+
+template <typename MenuType>
+auto RunMenuTest_id_name_tag_func1()
+{
+    RunMenuTest_id_name_tag_func<MenuType>([]() {});
+}
+
+template <typename MenuType>
+auto RunMenuTest_id_name_tag_func2()
+{
+    RunMenuTest_id_name_tag_func<MenuType>([](wxCommandEvent&) {});
+}
+
+template <typename MenuType>
+auto RunMenuTest_menu_name_tag()
+{
+    TestProvider frame;
+    wxString menu_label { "Menu1" };
+    wxUI::MenuBar menu {
+        wxUI::Menu {
+            wxUI_String {}, menu_label, MenuType { wxID_EXIT } }
+    };
+    menu.fitTo(&frame);
+    CHECK(frame.dump() == std::vector<std::string> {
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind={},label=\"Quit\",help=\"Quit this program\"),],]", MenuTypeLookup<MenuType>::name),
+          });
+}
+
 TEST_CASE("Menu")
 {
     SECTION("emptyMenuBar1")
@@ -308,6 +368,51 @@ TEST_CASE("Menu")
     SECTION("menu.radioitem.id.name")
     {
         RunMenuTest_id_name<wxUI::RadioItem>();
+    }
+
+    SECTION("menu.item.id.name_tag")
+    {
+        RunMenuTest_id_name_tag<wxUI::Item>();
+    }
+
+    SECTION("menu.checkitem.id.name_tag")
+    {
+        RunMenuTest_id_name_tag<wxUI::CheckItem>();
+    }
+
+    SECTION("menu.radioitem.id.name_tag")
+    {
+        RunMenuTest_id_name_tag<wxUI::RadioItem>();
+    }
+
+    SECTION("menu.item.id.name_tag.funct1")
+    {
+        RunMenuTest_id_name_tag_func1<wxUI::Item>();
+    }
+
+    SECTION("menu.checkitem.id.name_tag.funct1")
+    {
+        RunMenuTest_id_name_tag_func1<wxUI::CheckItem>();
+    }
+
+    SECTION("menu.radioitem.id.name_tag.funct1")
+    {
+        RunMenuTest_id_name_tag_func1<wxUI::RadioItem>();
+    }
+
+    SECTION("menu.item.id.name_tag.funct2")
+    {
+        RunMenuTest_id_name_tag_func2<wxUI::Item>();
+    }
+
+    SECTION("menu.checkitem.id.name_tag.funct2")
+    {
+        RunMenuTest_id_name_tag_func2<wxUI::CheckItem>();
+    }
+
+    SECTION("menu.radioitem.id.name_tag.funct2")
+    {
+        RunMenuTest_id_name_tag_func2<wxUI::RadioItem>();
     }
 
     SECTION("menu.item.id.name.funct1")
@@ -428,6 +533,21 @@ TEST_CASE("Menu")
     SECTION("menu.radioitem.name.help.funct2")
     {
         RunMenuTest_name_help_func2<wxUI::RadioItem>();
+    }
+
+    SECTION("menu.item.menu.name_tag")
+    {
+        RunMenuTest_menu_name_tag<wxUI::Item>();
+    }
+
+    SECTION("menu.checkitem.menu.name_tag")
+    {
+        RunMenuTest_menu_name_tag<wxUI::CheckItem>();
+    }
+
+    SECTION("menu.radioitem.menu.name_tag")
+    {
+        RunMenuTest_menu_name_tag<wxUI::RadioItem>();
     }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

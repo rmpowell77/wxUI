@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -105,33 +105,58 @@ using MenuBarProxy = details::Proxy<wxMenuBar>;
 using MenuItemProxy = details::Proxy<wxMenuItem>;
 
 struct Item {
-    explicit Item(wxStandardID identity, wxString const& name = "", wxString const& helpString = "")
-        : menuDetails_(details::IDMenuDetails_t { identity, name, helpString })
-    {
-    }
-
     Item(wxStandardID identity, details::function_t function)
         : Item(identity, "", "", std::move(function))
     {
     }
 
-    Item(wxStandardID identity, wxString const& name, details::function_t function)
+    explicit Item(wxStandardID identity, std::string_view name = "", std::string_view help = "")
+        : Item(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()))
+    {
+    }
+
+    Item(wxStandardID identity, std::string_view name, details::function_t function)
         : Item(identity, name, "", std::move(function))
     {
     }
 
-    Item(wxStandardID identity, wxString const& name, wxString const& helpString, details::function_t function)
-        : menuDetails_(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
+    Item(wxStandardID identity, std::string_view name, std::string_view help, details::function_t function)
+        : Item(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
     {
     }
 
-    Item(wxString const& name, details::function_t function)
+    Item(std::string_view name, details::function_t function)
         : Item(name, "", std::move(function))
     {
     }
 
-    Item(wxString const& name, wxString const& help, details::function_t function)
-        : menuDetails_(details::NamedMenuDetails_t(name, help, std::move(function)))
+    Item(std::string_view name, std::string_view help, details::function_t function)
+        : Item(wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
+    {
+    }
+
+    Item(wxStandardID identity, wxUI_String, wxString name = wxEmptyString, wxString help = wxEmptyString)
+        : menuDetails_(details::IDMenuDetails_t { identity, std::move(name), std::move(help) })
+    {
+    }
+
+    Item(wxStandardID identity, wxUI_String tag, wxString name, details::function_t function)
+        : Item(identity, tag, std::move(name), wxEmptyString, std::move(function))
+    {
+    }
+
+    Item(wxStandardID identity, wxUI_String, wxString name, wxString help, details::function_t function)
+        : menuDetails_(details::IDMenuDetailsWFunc_t(identity, std::move(name), std::move(help), std::move(function)))
+    {
+    }
+
+    Item(wxUI_String tag, wxString name, details::function_t function)
+        : Item(tag, std::move(name), wxEmptyString, std::move(function))
+    {
+    }
+
+    Item(wxUI_String, wxString name, wxString help, details::function_t function)
+        : menuDetails_(details::NamedMenuDetails_t(std::move(name), std::move(help), std::move(function)))
     {
     }
 
@@ -150,8 +175,8 @@ struct Item {
     template <typename Frame>
     void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
     {
-        details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& helpString) {
-            auto* menuItem = menu.Append(identity, item, helpString);
+        details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& help) {
+            auto* menuItem = menu.Append(identity, item, help);
             for (auto& proxyHandle : proxyHandles_) {
                 proxyHandle.setUnderlying(menuItem);
             }
@@ -164,33 +189,58 @@ private:
 };
 
 struct CheckItem {
-    explicit CheckItem(wxStandardID identity, wxString const& name = "", wxString const& helpString = "")
-        : menuDetails_(details::IDMenuDetails_t { identity, name, helpString })
-    {
-    }
-
     CheckItem(wxStandardID identity, details::function_t function)
         : CheckItem(identity, "", "", std::move(function))
     {
     }
 
-    CheckItem(wxStandardID identity, wxString const& name, details::function_t function)
+    explicit CheckItem(wxStandardID identity, std::string_view name = "", std::string_view help = "")
+        : CheckItem(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()))
+    {
+    }
+
+    CheckItem(wxStandardID identity, std::string_view name, details::function_t function)
         : CheckItem(identity, name, "", std::move(function))
     {
     }
 
-    CheckItem(wxStandardID identity, wxString const& name, wxString const& helpString, details::function_t function)
-        : menuDetails_(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
+    CheckItem(wxStandardID identity, std::string_view name, std::string_view help, details::function_t function)
+        : CheckItem(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
     {
     }
 
-    CheckItem(wxString const& name, details::function_t function)
+    CheckItem(std::string_view name, details::function_t function)
         : CheckItem(name, "", std::move(function))
     {
     }
 
-    CheckItem(wxString const& name, wxString const& help, details::function_t function)
-        : menuDetails_(details::NamedMenuDetails_t(name, help, std::move(function)))
+    CheckItem(std::string_view name, std::string_view help, details::function_t function)
+        : CheckItem(wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
+    {
+    }
+
+    explicit CheckItem(wxStandardID identity, wxUI_String, wxString name = wxEmptyString, wxString help = wxEmptyString)
+        : menuDetails_(details::IDMenuDetails_t { identity, std::move(name), std::move(help) })
+    {
+    }
+
+    CheckItem(wxStandardID identity, wxUI_String tag, wxString name, details::function_t function)
+        : CheckItem(identity, tag, std::move(name), wxEmptyString, std::move(function))
+    {
+    }
+
+    CheckItem(wxStandardID identity, wxUI_String, wxString name, wxString help, details::function_t function)
+        : menuDetails_(details::IDMenuDetailsWFunc_t(identity, std::move(name), std::move(help), std::move(function)))
+    {
+    }
+
+    CheckItem(wxUI_String tag, wxString name, details::function_t function)
+        : CheckItem(tag, std::move(name), wxEmptyString, std::move(function))
+    {
+    }
+
+    CheckItem(wxUI_String, wxString name, wxString help, details::function_t function)
+        : menuDetails_(details::NamedMenuDetails_t(std::move(name), std::move(help), std::move(function)))
     {
     }
 
@@ -209,8 +259,8 @@ struct CheckItem {
     template <typename Frame>
     void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
     {
-        details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& helpString) {
-            auto* menuItem = menu.AppendCheckItem(identity, item, helpString);
+        details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& help) {
+            auto* menuItem = menu.AppendCheckItem(identity, item, help);
             for (auto& proxyHandle : proxyHandles_) {
                 proxyHandle.setUnderlying(menuItem);
             }
@@ -223,33 +273,58 @@ private:
 };
 
 struct RadioItem {
-    explicit RadioItem(wxStandardID identity, wxString const& name = "", wxString const& helpString = "")
-        : menuDetails_(details::IDMenuDetails_t { identity, name, helpString })
-    {
-    }
-
     RadioItem(wxStandardID identity, details::function_t function)
         : RadioItem(identity, "", "", std::move(function))
     {
     }
 
-    RadioItem(wxStandardID identity, wxString const& name, details::function_t function)
+    explicit RadioItem(wxStandardID identity, std::string_view name = "", std::string_view help = "")
+        : RadioItem(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()))
+    {
+    }
+
+    RadioItem(wxStandardID identity, std::string_view name, details::function_t function)
         : RadioItem(identity, name, "", std::move(function))
     {
     }
 
-    RadioItem(wxStandardID identity, wxString const& name, wxString const& helpString, details::function_t function)
-        : menuDetails_(details::IDMenuDetailsWFunc_t(identity, name, helpString, std::move(function)))
+    RadioItem(wxStandardID identity, std::string_view name, std::string_view help, details::function_t function)
+        : RadioItem(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
     {
     }
 
-    RadioItem(wxString const& name, details::function_t function)
+    RadioItem(std::string_view name, details::function_t function)
         : RadioItem(name, "", std::move(function))
     {
     }
 
-    RadioItem(wxString const& name, wxString const& help, details::function_t function)
-        : menuDetails_(details::NamedMenuDetails_t(name, help, std::move(function)))
+    RadioItem(std::string_view name, std::string_view help, details::function_t function)
+        : RadioItem(wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
+    {
+    }
+
+    RadioItem(wxStandardID identity, wxUI_String, wxString name = wxEmptyString, wxString help = wxEmptyString)
+        : menuDetails_(details::IDMenuDetails_t { identity, std::move(name), std::move(help) })
+    {
+    }
+
+    RadioItem(wxStandardID identity, wxUI_String tag, wxString name, details::function_t function)
+        : RadioItem(identity, tag, std::move(name), wxEmptyString, std::move(function))
+    {
+    }
+
+    RadioItem(wxStandardID identity, wxUI_String, wxString name, wxString help, details::function_t function)
+        : menuDetails_(details::IDMenuDetailsWFunc_t(identity, std::move(name), std::move(help), std::move(function)))
+    {
+    }
+
+    RadioItem(wxUI_String tag, wxString name, details::function_t function)
+        : RadioItem(tag, std::move(name), wxEmptyString, std::move(function))
+    {
+    }
+
+    RadioItem(wxUI_String, wxString name, wxString help, details::function_t function)
+        : menuDetails_(details::NamedMenuDetails_t(std::move(name), std::move(help), std::move(function)))
     {
     }
 
@@ -268,8 +343,8 @@ struct RadioItem {
     template <typename Frame>
     void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
     {
-        details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& helpString) {
-            auto* menuItem = menu.AppendRadioItem(identity, item, helpString);
+        details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& help) {
+            auto* menuItem = menu.AppendRadioItem(identity, item, help);
             for (auto& proxyHandle : proxyHandles_) {
                 proxyHandle.setUnderlying(menuItem);
             }
@@ -283,7 +358,7 @@ private:
 
 struct Separator {
     template <typename Frame>
-    static void createAndAdd([[maybe_unused]] Frame& frame, wxMenu& menu, [[maybe_unused]] int& identity)
+    static void createAndAdd(Frame&, wxMenu& menu, int&)
     {
         menu.AppendSeparator();
     }
@@ -321,12 +396,22 @@ private:
 // a submenu constructs menu to give to a menubar
 template <details::MenuItem... M>
 struct Menu {
-    explicit Menu(wxString name, M const&... items)
-        : Menu(std::move(name), std::make_tuple(items...))
+    explicit Menu(std::string_view name, M const&... items)
+        : Menu(name, std::make_tuple(items...))
     {
     }
 
-    Menu(wxString name, std::tuple<M...> const& items)
+    explicit Menu(std::string_view name, std::tuple<M...> const& items)
+        : Menu(wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), items)
+    {
+    }
+
+    Menu(wxUI_String tag, wxString name, M const&... items)
+        : Menu(tag, std::move(name), std::make_tuple(items...))
+    {
+    }
+
+    Menu(wxUI_String, wxString name, std::tuple<M...> const& items)
         : name(std::move(name))
         , items(items)
     {

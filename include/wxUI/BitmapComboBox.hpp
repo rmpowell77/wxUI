@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@ struct BitmapComboBox {
             std::vector<wxString> result;
             result.reserve(bitmapChoices.size());
             for (auto&& [first, _] : bitmapChoices) {
-                result.push_back(first);
+                result.push_back(wxString::FromUTF8(first));
             }
             return result;
         }())
@@ -105,8 +105,8 @@ struct BitmapComboBox {
         {
             auto* controller = control();
             return details::GetterSetter {
-                [controller] { return controller->GetValue(); },
-                [controller](wxString value) { controller->SetValue(value); }
+                [controller] { return controller->GetValue().utf8_string(); },
+                [controller](std::string const& value) { controller->SetValue(wxString::FromUTF8(value)); }
             };
         }
         [[nodiscard]] auto selection() const

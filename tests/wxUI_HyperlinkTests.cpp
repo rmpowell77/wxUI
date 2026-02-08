@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,14 @@ SOFTWARE.
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/Hyperlink.hpp>
+#include <wxUI/wxUITypes.hpp>
 
 #include <wx/wx.h>
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Hyperlink;
 using namespace wxUITests;
+using namespace wxUI;
 
 struct HyperlinkTestPolicy {
     using TypeUnderTest = wxUI::Hyperlink;
@@ -49,6 +51,32 @@ TEST_CASE("Hyperlink")
     {
         TestProvider provider;
         auto uut = createUUT();
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
+                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("name.url_unicode")
+    {
+        TestProvider provider;
+        auto uut = TypeUnderTest { "🐨", "https://example.com" };
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"🐨\", text2=\"https://example.com\"]",
+                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"🐨\", text2=\"https://example.com\"]",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("name.url_tag")
+    {
+        TestProvider provider;
+        wxString wx_text { "Hello" };
+        wxString wx_url { "www.github.com" };
+        auto uut = TypeUnderTest { wxUI_String {}, wx_text, wx_url };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",

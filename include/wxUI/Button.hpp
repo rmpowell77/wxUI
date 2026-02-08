@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,12 +34,22 @@ namespace wxUI {
 struct Button {
     using underlying_t = wxButton;
 
-    explicit Button(wxString text = {})
-        : Button(wxID_ANY, std::move(text))
+    explicit Button(std::string_view text = "")
+        : Button(wxID_ANY, text)
     {
     }
 
-    explicit Button(wxWindowID identity, wxString text = {})
+    explicit Button(wxWindowID identity, std::string_view text = "")
+        : Button(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()))
+    {
+    }
+
+    explicit Button(wxUI_String tag, wxString text)
+        : Button(wxID_ANY, tag, std::move(text))
+    {
+    }
+
+    explicit Button(wxWindowID identity, wxUI_String, wxString text)
         : details_(identity)
         , text_(std::move(text))
     {

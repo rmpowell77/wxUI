@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -62,11 +62,11 @@ TEST_CASE("Choice")
     SECTION("choice")
     {
         TestProvider provider;
-        auto uut = TypeUnderTest { "Hello", "Goodbye" };
+        auto uut = TypeUnderTest { "Hello 🐨", "Goodbye" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
-                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
+                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
               });
@@ -88,11 +88,11 @@ TEST_CASE("Choice")
     SECTION("id.choice")
     {
         TestProvider provider;
-        auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } };
+        auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
-                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
+                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
               });
@@ -101,11 +101,11 @@ TEST_CASE("Choice")
     SECTION("choice.ranges")
     {
         TestProvider provider;
-        auto uut = TypeUnderTest { std::vector<std::string> { "Hello", "Goodbye" } };
+        auto uut = TypeUnderTest { std::vector<std::string> { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
-                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
+                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
               });
@@ -114,11 +114,11 @@ TEST_CASE("Choice")
     SECTION("id.choice.ranges")
     {
         TestProvider provider;
-        auto uut = TypeUnderTest { 10000, std::vector<std::string> { "Hello", "Goodbye" } };
+        auto uut = TypeUnderTest { 10000, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
-                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
+                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
                   "SetSelection:0",
                   "SetEnabled:true",
               });
@@ -140,11 +140,11 @@ TEST_CASE("Choice")
     SECTION("setSelection")
     {
         TestProvider provider;
-        auto uut = TypeUnderTest { 10000, { "Hello", "Goodbye" } }.withSelection(1);
+        auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withSelection(1);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
-                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello\",\"Goodbye\",)]",
+                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
+                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
                   "SetSelection:1",
                   "SetEnabled:true",
               });
@@ -192,11 +192,11 @@ TEST_CASE("Choice")
     SECTION("AI")
     {
         TestProvider provider;
-        auto uut = wxUI::Choice { { "one", "two", "three" } }.withSelection(1).bind([] {});
+        auto uut = wxUI::Choice { { "one 🐨", "two", "three" } }.withSelection(1).bind([] {});
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one\",\"two\",\"three\",)]",
-                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one\",\"two\",\"three\",)]",
+                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",\"three\",)]",
+                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",\"three\",)]",
                   "SetSelection:1",
                   "SetEnabled:true",
                   "BindEvents:1",

@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,14 @@ SOFTWARE.
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/Text.hpp>
+#include <wxUI/wxUITypes.hpp>
 
 #include <wx/wx.h>
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::Text;
 using namespace wxUITests;
+using namespace wxUI;
 
 struct TextTestPolicy {
     using TypeUnderTest = wxUI::Text;
@@ -61,6 +63,31 @@ TEST_CASE("Text")
     {
         TestProvider provider;
         auto uut = TypeUnderTest { "Hello" };
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "controller:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("name_unicode")
+    {
+        TestProvider provider;
+        auto uut = TypeUnderTest { "🐨" };
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"🐨\"]",
+                  "controller:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"🐨\"]",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("name_tag")
+    {
+        TestProvider provider;
+        wxString wx_label { "Hello" };
+        auto uut = TypeUnderTest { wxUI_String {}, wx_label };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxStaticText[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
