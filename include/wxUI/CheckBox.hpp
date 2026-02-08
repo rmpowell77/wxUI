@@ -50,7 +50,7 @@ struct CheckBox {
     {
     }
 
-    explicit CheckBox(wxWindowID identity, [[maybe_unused]] wxUI_String tag, wxString text)
+    explicit CheckBox(wxWindowID identity, wxUI_String, wxString text)
         : details_(identity)
         , text_(std::move(text))
     {

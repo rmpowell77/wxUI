@@ -135,7 +135,7 @@ struct Item {
     {
     }
 
-    Item(wxStandardID identity, [[maybe_unused]] wxUI_String tag, wxString name = wxEmptyString, wxString help = wxEmptyString)
+    Item(wxStandardID identity, wxUI_String, wxString name = wxEmptyString, wxString help = wxEmptyString)
         : menuDetails_(details::IDMenuDetails_t { identity, std::move(name), std::move(help) })
     {
     }
@@ -145,7 +145,7 @@ struct Item {
     {
     }
 
-    Item(wxStandardID identity, [[maybe_unused]] wxUI_String tag, wxString name, wxString help, details::function_t function)
+    Item(wxStandardID identity, wxUI_String, wxString name, wxString help, details::function_t function)
         : menuDetails_(details::IDMenuDetailsWFunc_t(identity, std::move(name), std::move(help), std::move(function)))
     {
     }
@@ -155,7 +155,7 @@ struct Item {
     {
     }
 
-    Item([[maybe_unused]] wxUI_String tag, wxString name, wxString help, details::function_t function)
+    Item(wxUI_String, wxString name, wxString help, details::function_t function)
         : menuDetails_(details::NamedMenuDetails_t(std::move(name), std::move(help), std::move(function)))
     {
     }
@@ -219,7 +219,7 @@ struct CheckItem {
     {
     }
 
-    explicit CheckItem(wxStandardID identity, [[maybe_unused]] wxUI_String tag, wxString name = wxEmptyString, wxString help = wxEmptyString)
+    explicit CheckItem(wxStandardID identity, wxUI_String, wxString name = wxEmptyString, wxString help = wxEmptyString)
         : menuDetails_(details::IDMenuDetails_t { identity, std::move(name), std::move(help) })
     {
     }
@@ -229,7 +229,7 @@ struct CheckItem {
     {
     }
 
-    CheckItem(wxStandardID identity, [[maybe_unused]] wxUI_String tag, wxString name, wxString help, details::function_t function)
+    CheckItem(wxStandardID identity, wxUI_String, wxString name, wxString help, details::function_t function)
         : menuDetails_(details::IDMenuDetailsWFunc_t(identity, std::move(name), std::move(help), std::move(function)))
     {
     }
@@ -239,7 +239,7 @@ struct CheckItem {
     {
     }
 
-    CheckItem([[maybe_unused]] wxUI_String tag, wxString name, wxString help, details::function_t function)
+    CheckItem(wxUI_String, wxString name, wxString help, details::function_t function)
         : menuDetails_(details::NamedMenuDetails_t(std::move(name), std::move(help), std::move(function)))
     {
     }
@@ -303,7 +303,7 @@ struct RadioItem {
     {
     }
 
-    RadioItem(wxStandardID identity, [[maybe_unused]] wxUI_String tag, wxString name = wxEmptyString, wxString help = wxEmptyString)
+    RadioItem(wxStandardID identity, wxUI_String, wxString name = wxEmptyString, wxString help = wxEmptyString)
         : menuDetails_(details::IDMenuDetails_t { identity, std::move(name), std::move(help) })
     {
     }
@@ -313,7 +313,7 @@ struct RadioItem {
     {
     }
 
-    RadioItem(wxStandardID identity, [[maybe_unused]] wxUI_String tag, wxString name, wxString help, details::function_t function)
+    RadioItem(wxStandardID identity, wxUI_String, wxString name, wxString help, details::function_t function)
         : menuDetails_(details::IDMenuDetailsWFunc_t(identity, std::move(name), std::move(help), std::move(function)))
     {
     }
@@ -323,7 +323,7 @@ struct RadioItem {
     {
     }
 
-    RadioItem([[maybe_unused]] wxUI_String tag, wxString name, wxString help, details::function_t function)
+    RadioItem(wxUI_String, wxString name, wxString help, details::function_t function)
         : menuDetails_(details::NamedMenuDetails_t(std::move(name), std::move(help), std::move(function)))
     {
     }
@@ -358,7 +358,7 @@ private:
 
 struct Separator {
     template <typename Frame>
-    static void createAndAdd([[maybe_unused]] Frame& frame, wxMenu& menu, [[maybe_unused]] int& identity)
+    static void createAndAdd(Frame&, wxMenu& menu, int&)
     {
         menu.AppendSeparator();
     }
@@ -411,7 +411,7 @@ struct Menu {
     {
     }
 
-    Menu([[maybe_unused]] wxUI_String tag, wxString name, std::tuple<M...> const& items)
+    Menu(wxUI_String, wxString name, std::tuple<M...> const& items)
         : name(std::move(name))
         , items(items)
     {

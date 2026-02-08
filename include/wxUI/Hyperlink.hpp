@@ -50,7 +50,7 @@ struct Hyperlink {
     {
     }
 
-    Hyperlink(wxWindowID identity, [[maybe_unused]] wxUI_String tag, wxString text, wxString url)
+    Hyperlink(wxWindowID identity, wxUI_String, wxString text, wxString url)
         : details_(identity)
         , text_(std::move(text))
         , url_(std::move(url))

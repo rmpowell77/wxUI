@@ -45,12 +45,12 @@ struct Gauge {
     {
     }
 
-    explicit Gauge([[maybe_unused]] withRange unused, int range)
+    explicit Gauge(withRange, int range)
         : Gauge(withIdentity {}, wxID_ANY, range)
     {
     }
 
-    explicit Gauge([[maybe_unused]] withIdentity unused, wxWindowID identity, int range = 100)
+    explicit Gauge(withIdentity, wxWindowID identity, int range = 100)
         : details_(identity)
         , range_(range)
     {

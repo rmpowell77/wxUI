@@ -57,7 +57,7 @@ struct Generic {
     }
 
     template <typename Parent>
-    auto create([[maybe_unused]] Parent* parent)
+    auto create(Parent*)
     {
         return create();
     }

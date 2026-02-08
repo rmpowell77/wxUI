@@ -51,7 +51,7 @@ struct TextCtrl {
     {
     }
 
-    explicit TextCtrl(wxWindowID identity, [[maybe_unused]] wxUI_String tag, wxString text)
+    explicit TextCtrl(wxWindowID identity, wxUI_String, wxString text)
         : details_(identity)
         , text_(std::move(text))
     {

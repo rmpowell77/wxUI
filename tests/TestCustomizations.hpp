@@ -611,7 +611,7 @@ struct ParentCreateImpl<wxSlider, wxUITests::TestProvider> {
 
 template <>
 struct ParentCreateImpl<wxSpinCtrl, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, [[maybe_unused]] wxString const& text, wxPoint pos, wxSize size, int64_t style, int min, int max, int value)
+    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxString const&, wxPoint pos, wxSize size, int64_t style, int min, int max, int value)
     {
         return parent->add({
             .type = "wxSpinCtrl",
@@ -669,21 +669,21 @@ struct ParentCreateImpl<wxSplitterWindow, wxUITests::TestProvider> {
     }
 };
 
-inline void ControllerBindEvent(wxUITests::TestProvider* controller, [[maybe_unused]] wxUI::details::BindInfo const& boundedFunction)
+inline void ControllerBindEvent(wxUITests::TestProvider* controller, wxUI::details::BindInfo const&)
 {
     auto count = std::ranges::count_if(controller->log, [](auto const& e) { return e.starts_with("BindEvents:"); });
     controller->log.push_back(std::format("BindEvents:{}", count + 1));
 }
 
 template <typename Proxy>
-inline void ControllerBindProxy(wxUITests::TestProvider* controller, [[maybe_unused]] Proxy& proxyHandle)
+inline void ControllerBindProxy(wxUITests::TestProvider* controller, Proxy&)
 {
     auto count = std::ranges::count_if(controller->log, [](auto const& e) { return e.starts_with("BindProxy:"); });
     controller->log.push_back(std::format("BindProxy:{}", count + 1));
 }
 
 template <typename Proxy>
-inline void SizerBindProxy(wxUITests::TestSizer* controller, [[maybe_unused]] Proxy& proxyHandle)
+inline void SizerBindProxy(wxUITests::TestSizer* controller, Proxy&)
 {
     auto count = std::ranges::count_if(controller->log, [](auto const& e) { return e.starts_with("SizerBindProxy:"); });
     controller->log.push_back(std::format("SizerBindProxy:{}", count + 1));
@@ -703,7 +703,7 @@ inline void MenuSetMenuBar(wxUITests::TestProvider* parent, wxMenuBar* menuBar)
     parent->menuDetails.push_back(std::format("MenuBar:{}", *menuBar));
 }
 
-inline void MenuBindToFrame(wxUITests::TestProvider& frame, int identity, [[maybe_unused]] std::variant<std::function<void(wxCommandEvent&)>, std::function<void()>> const& function)
+inline void MenuBindToFrame(wxUITests::TestProvider& frame, int identity, std::variant<std::function<void(wxCommandEvent&)>, std::function<void()>> const&)
 {
     auto count = std::ranges::count_if(frame.log, [identity](auto const& e) { return e.starts_with(std::format("BindMenu:{}", identity)); });
     frame.log.push_back(std::format("BindMenu:{}:{}", identity, count + 1));

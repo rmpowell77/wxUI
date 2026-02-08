@@ -60,7 +60,7 @@ struct RadioBox {
     {
     }
 
-    RadioBox(wxWindowID identity, [[maybe_unused]] wxUI_String tag, wxString text, [[maybe_unused]] withChoices unused, std::initializer_list<std::string> choices)
+    RadioBox(wxWindowID identity, wxUI_String, wxString text, withChoices, std::initializer_list<std::string> choices)
         : details_(identity)
         , text_(std::move(text))
         , choices_(details::Ranges::convertTo(choices))
@@ -88,7 +88,7 @@ struct RadioBox {
     {
     }
 
-    RadioBox(wxWindowID identity, [[maybe_unused]] wxUI_String tag, wxString text, [[maybe_unused]] withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
+    RadioBox(wxWindowID identity, wxUI_String, wxString text, withChoices, details::Ranges::input_range_of<wxString> auto&& choices)
         : details_(identity)
         , text_(std::move(text))
         , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
