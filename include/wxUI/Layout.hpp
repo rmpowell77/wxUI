@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
+#include "HelperMacros.hpp"
 #include "Widget.hpp"
 #include "wxUITypes.hpp"
 #include <variant>
@@ -114,6 +115,18 @@ struct Sizer {
         , items_(std::forward_as_tuple(std::forward<UItems>(items)...))
         , caption(std::move(caption))
     {
+    }
+
+    auto withFlags(wxSizerFlags flags) & -> Sizer&
+    {
+        flags_ = flags;
+        return *this;
+    }
+
+    auto withFlags(wxSizerFlags flags) && -> Sizer&&
+    {
+        flags_ = flags;
+        return std::move(*this);
     }
 
     auto withProxy(SizerProxy const& proxy) & -> Sizer&
@@ -235,6 +248,8 @@ struct VSizer {
         return *this;
     }
 
+    WXUI_FORWARD_TO_DETAILS(VSizer<Items...>, withFlags, wxSizerFlags, flags)
+
 private:
     Sizer<wxVERTICAL, Items...> details_;
 };
@@ -308,6 +323,8 @@ struct HSizer {
         details_.fitTo(parent);
         return *this;
     }
+
+    WXUI_FORWARD_TO_DETAILS(HSizer<Items...>, withFlags, wxSizerFlags, flags)
 
 private:
     Sizer<wxHORIZONTAL, Items...> details_;
