@@ -47,7 +47,7 @@ TEST_CASE("HSplitter")
 {
     SECTION("noargs")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -62,7 +62,7 @@ TEST_CASE("HSplitter")
 
     SECTION("id")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, wxUI::TextCtrl {}, wxUI::TextCtrl {} };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -77,7 +77,7 @@ TEST_CASE("HSplitter")
 
     SECTION("withGravity")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} }.withStashGravity(1.0);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

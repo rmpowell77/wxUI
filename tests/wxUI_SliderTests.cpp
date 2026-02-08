@@ -47,7 +47,7 @@ TEST_CASE("Slider")
 {
     SECTION("noargs")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -59,7 +59,7 @@ TEST_CASE("Slider")
 
     SECTION("range")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { std::pair { 1, 5 } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -71,7 +71,7 @@ TEST_CASE("Slider")
 
     SECTION("range.init")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { std::pair { 1, 5 }, 3 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -83,7 +83,7 @@ TEST_CASE("Slider")
 
     SECTION("id")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -95,7 +95,7 @@ TEST_CASE("Slider")
 
     SECTION("id.range")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -107,7 +107,7 @@ TEST_CASE("Slider")
 
     SECTION("id.range.init")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 }, 3 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -119,7 +119,7 @@ TEST_CASE("Slider")
 
     SECTION("AI")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = wxUI::Slider { { 10, 20 }, 12 }.bind([] {});
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

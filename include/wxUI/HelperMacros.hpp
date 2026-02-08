@@ -49,15 +49,15 @@ SOFTWARE.
 
 #if !defined(WXUI_WIDGET_CREATE_BOILERPLATE)
 #define WXUI_WIDGET_CREATE_BOILERPLATE                                                                    \
-    template <typename Provider = wxWindow>                                                               \
-    auto create(Provider* parent)                                                                         \
+    template <typename Parent = wxWindow>                                                               \
+    auto create(Parent* parent)                                                                         \
     {                                                                                                     \
-        return details_.create(this->template createImpl<Provider>(), parent);                            \
+        return details_.create(this->template createImpl<Parent>(), parent);                            \
     }                                                                                                     \
-    template <typename Provider = wxWindow, typename Sizer = wxSizer>                                     \
-    auto createAndAdd(Provider* parent, Sizer* sizer, wxSizerFlags const& parentFlags)                    \
+    template <typename Parent = wxWindow, typename Sizer = wxSizer>                                     \
+    auto createAndAdd(Parent* parent, Sizer* sizer, wxSizerFlags const& parentFlags)                    \
     {                                                                                                     \
-        return details_.createAndAdd(this->template createImpl<Provider>(), parent, sizer, parentFlags);  \
+        return details_.createAndAdd(this->template createImpl<Parent>(), parent, sizer, parentFlags);  \
     }
 #endif
 

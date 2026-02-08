@@ -35,7 +35,7 @@ using namespace wxUITests;
 
 TEST_CASE("Generic")
 {
-    TestProvider provider;
+    TestParent provider;
     auto* button = wxUI::customizations::ParentCreate<wxButton>(&provider, wxID_ANY, std::string { "Generic" }, wxDefaultPosition, wxDefaultSize, int64_t {});
     using Type = std::remove_pointer_t<decltype(button)>;
     SECTION("flags.window.generic")

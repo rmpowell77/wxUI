@@ -47,7 +47,7 @@ TEST_CASE("ComboBox")
 {
     SECTION("noargs")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -60,7 +60,7 @@ TEST_CASE("ComboBox")
 
     SECTION("id")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -72,7 +72,7 @@ TEST_CASE("ComboBox")
 
     SECTION("id.choice")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, { std::string {} } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -85,7 +85,7 @@ TEST_CASE("ComboBox")
 
     SECTION("choice.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { std::vector<std::string> { std::string {} } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -98,7 +98,7 @@ TEST_CASE("ComboBox")
 
     SECTION("id.choice.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, std::vector<std::string> { std::string {} } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -111,7 +111,7 @@ TEST_CASE("ComboBox")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -124,7 +124,7 @@ TEST_CASE("ComboBox")
 
     SECTION("size")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -137,7 +137,7 @@ TEST_CASE("ComboBox")
 
     SECTION("setSelection")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withSize({ 1, 2 }).withSelection(1);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -150,7 +150,7 @@ TEST_CASE("ComboBox")
 
     SECTION("AI")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = wxUI::ComboBox { { "one 🐨", "two", "three" } }.withSelection(2).bind([] {});
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

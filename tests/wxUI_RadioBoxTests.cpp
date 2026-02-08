@@ -47,7 +47,7 @@ TEST_CASE("RadioBox")
 {
     SECTION("choices")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -60,7 +60,7 @@ TEST_CASE("RadioBox")
 
     SECTION("name.choice")
     {
-        TestProvider provider;
+        TestParent provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
@@ -74,7 +74,7 @@ TEST_CASE("RadioBox")
 
     SECTION("id.choices")
     {
-        TestProvider provider;
+        TestParent provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
@@ -88,7 +88,7 @@ TEST_CASE("RadioBox")
 
     SECTION("id.name.choice")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -101,7 +101,7 @@ TEST_CASE("RadioBox")
 
     SECTION("choices.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -114,7 +114,7 @@ TEST_CASE("RadioBox")
 
     SECTION("name.choice.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
@@ -128,7 +128,7 @@ TEST_CASE("RadioBox")
 
     SECTION("id.choices.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
@@ -142,7 +142,7 @@ TEST_CASE("RadioBox")
 
     SECTION("id.name.choice.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, "Greetings 🐨", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -155,7 +155,7 @@ TEST_CASE("RadioBox")
 
     SECTION("style")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withStyle(wxRA_SPECIFY_COLS);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -168,7 +168,7 @@ TEST_CASE("RadioBox")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -181,7 +181,7 @@ TEST_CASE("RadioBox")
 
     SECTION("size")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

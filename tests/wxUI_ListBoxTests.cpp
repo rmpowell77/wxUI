@@ -47,7 +47,7 @@ TEST_CASE("ListBox")
 {
     SECTION("noargs")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -59,7 +59,7 @@ TEST_CASE("ListBox")
 
     SECTION("ListBox")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { "Hello 🐨", "Goodbye" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -71,7 +71,7 @@ TEST_CASE("ListBox")
 
     SECTION("id")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -83,7 +83,7 @@ TEST_CASE("ListBox")
 
     SECTION("id.ListBox")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -95,7 +95,7 @@ TEST_CASE("ListBox")
 
     SECTION("id.ListBox.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -107,7 +107,7 @@ TEST_CASE("ListBox")
 
     SECTION("setSelection")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withSelection(1);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -120,7 +120,7 @@ TEST_CASE("ListBox")
 
     SECTION("setSelections")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withStyle(wxLB_MULTIPLE).withSelections({ 0, 1 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -134,7 +134,7 @@ TEST_CASE("ListBox")
 
     SECTION("style")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withStyle(wxLB_MULTIPLE);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -146,7 +146,7 @@ TEST_CASE("ListBox")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

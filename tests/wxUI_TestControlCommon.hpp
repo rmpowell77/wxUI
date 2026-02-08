@@ -178,7 +178,7 @@ auto DoChainingIterations()
     auto flags = wxSizerFlags(1).Proportion(1).Expand().Border(wxALL, 5);
     // decorate with one flow
     {
-        wxUITests::TestProvider provider;
+        wxUITests::TestParent provider;
         auto uut = addWithFlags(flags, addWithStyle(style, addWithPosition(pos, addWithSize(size, WHICH::createUUT()))));
         checkAllBeforeCreate(uut, style, pos, size);
         uut.create(&provider);
@@ -186,7 +186,7 @@ auto DoChainingIterations()
     }
     // inverted the other way around.
     {
-        wxUITests::TestProvider provider;
+        wxUITests::TestParent provider;
         auto uut = addWithPosition(pos, addWithStyle(style, addWithSize(size, WHICH::createUUT())));
         checkAllBeforeCreate(uut, style, pos, size);
         uut.create(&provider);
@@ -194,7 +194,7 @@ auto DoChainingIterations()
     }
     // Do height and width
     {
-        wxUITests::TestProvider provider;
+        wxUITests::TestParent provider;
         auto uut = addWithFlags(flags, addWithStyle(style, addWithPosition(pos, addWithHeight(size.GetHeight(), addWithWidth(size.GetWidth(), WHICH::createUUT())))));
         checkAllBeforeCreate(uut, style, pos, size);
         uut.create(&provider);
@@ -202,14 +202,14 @@ auto DoChainingIterations()
     }
     // Expand out style
     {
-        wxUITests::TestProvider provider;
+        wxUITests::TestParent provider;
         auto uut = addWithFlags(flags, addWithStyle(style, addWithStyle(0, addWithPosition(pos, addWithHeight(size.GetHeight(), addWithWidth(size.GetWidth(), WHICH::createUUT()))))));
         checkAllBeforeCreate(uut, style, pos, size);
         uut.create(&provider);
         checkAll(provider.dump().front(), expectedStyle, expectedPos, expectedSize);
     }
     {
-        wxUITests::TestProvider provider;
+        wxUITests::TestParent provider;
         auto uut = addWithFlags(flags, addSetStyle(style, addWithStyle(0xFFFF, addWithPosition(pos, addWithHeight(size.GetHeight(), addWithWidth(size.GetWidth(), WHICH::createUUT()))))));
         checkAllBeforeCreate(uut, style, pos, size);
         uut.create(&provider);
@@ -217,7 +217,7 @@ auto DoChainingIterations()
     }
     // specifically test with lvalue.
     {
-        wxUITests::TestProvider provider;
+        wxUITests::TestParent provider;
         auto unit = WHICH::createUUT();
         auto uut = addWithFlags(flags, addWithStyle(style, addWithPosition(pos, addWithSize(size, WHICH::createUUT()))));
         checkAllBeforeCreate(uut, style, pos, size);
@@ -229,7 +229,7 @@ auto DoChainingIterations()
 template <typename WHICH>
 auto DoProxyTests()
 {
-    wxUITests::TestProvider provider;
+    wxUITests::TestParent provider;
     auto proxy = typename WHICH::TypeUnderTest::Proxy {};
     CHECK(proxy.control() == nullptr);
     CHECK(!proxy.control());
