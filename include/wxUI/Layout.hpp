@@ -461,7 +461,7 @@ LayoutIf(bool, Item... item) -> LayoutIf<Item...>;
 template <details::SizerItem Item>
 struct BookItem {
     template <details::SizerItem Item>
-    explicit BookItem(wxString const& title, bool select, Item &&item)
+    explicit BookItem(wxUI_String, wxString const& title, bool select, Item &&item)
         : title_(std::move(title))
         , item_(std::forward<Item>(item))
         , select_(select)
@@ -469,7 +469,19 @@ struct BookItem {
     }
 
     template <details::SizerItem Item>
-    explicit BookItem(wxString const& title, Item &&item)
+    explicit BookItem(wxUI_String, wxString const& title, Item &&item)
+        : BookItem(wxUI_String {}, title, false, std::forward<Item>(item))
+    {
+    }
+
+    template <details::SizerItem Item>
+    explicit BookItem(std::string_view title, bool select, Item &&item)
+        : BookItem(wxUI_String {}, wxString::FromUTF8(title.data(), title.size()), select, std::forward<Item>(item))
+    {
+    }
+
+    template <details::SizerItem Item>
+    explicit BookItem(std::string_view title, Item &&item)
         : BookItem(title, false, std::forward<Item>(item))
     {
     }
@@ -499,10 +511,16 @@ private:
 };
 
 template <details::SizerItem Item>
-BookItem(wxString const& caption, Item&& item) -> BookItem<Item>;
+BookItem(std::string_view caption, Item&& item) -> BookItem<Item>;
 
 template <details::SizerItem Item>
-BookItem(wxString const& caption, bool select, Item&& item) -> BookItem<Item>;
+BookItem(std::string_view caption, bool select, Item&& item) -> BookItem<Item>;
+
+template <details::SizerItem Item>
+BookItem(wxUI_String, wxString const& caption, Item&& item) -> BookItem<Item>;
+
+template <details::SizerItem Item>
+BookItem(wxUI_String, wxString const& caption, bool select, Item&& item) -> BookItem<Item>;
 
 template <typename Book, details::SizerItem... Items>
 struct BookCtrl {
