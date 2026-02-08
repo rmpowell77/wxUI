@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,10 +27,12 @@ SOFTWARE.
 #include <wxUI/Button.hpp>
 #include <wxUI/Layout.hpp>
 #include <wxUI/Menu.hpp>
+#include <wxUI/wxUITypes.hpp>
 
 #include <wx/wx.h>
 
 using namespace wxUITests;
+using namespace wxUI;
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 TEST_CASE("Size")
@@ -72,6 +74,18 @@ TEST_CASE("Size")
                   "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
               });
     }
+    SECTION("vSizer.named.empty_tag")
+    {
+        TestProvider frame;
+        wxString caption { "Test1" };
+        wxUI::VSizer { wxUI_String {}, caption }.fitTo(&frame);
+        CHECK(frame.dump() == std::vector<std::string> {
+                  "Create:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
+                  "topsizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
+                  "sizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+              });
+    }
     SECTION("hSizer.empty")
     {
         TestProvider frame;
@@ -87,6 +101,18 @@ TEST_CASE("Size")
     {
         TestProvider frame;
         wxUI::HSizer { "Test2" }.fitTo(&frame);
+        CHECK(frame.dump() == std::vector<std::string> {
+                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
+                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
+                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+              });
+    }
+    SECTION("hSizer.named.empty_tag")
+    {
+        TestProvider frame;
+        wxString caption { "Test2" };
+        wxUI::HSizer { wxUI_String {}, caption }.fitTo(&frame);
         CHECK(frame.dump() == std::vector<std::string> {
                   "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
                   "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",

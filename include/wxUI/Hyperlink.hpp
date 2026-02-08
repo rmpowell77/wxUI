@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,12 +34,23 @@ namespace wxUI {
 struct Hyperlink {
     using underlying_t = wxHyperlinkCtrl;
 
-    Hyperlink(wxString text, wxString url)
-        : Hyperlink(wxID_ANY, std::move(text), std::move(url))
+    // Default constructor taking std::string_view (UTF-8 encoded)
+    Hyperlink(std::string_view text, std::string_view url)
+        : Hyperlink(wxID_ANY, text, url)
     {
     }
 
-    Hyperlink(wxWindowID identity, wxString text, wxString url)
+    Hyperlink(wxWindowID identity, std::string_view text, std::string_view url)
+        : Hyperlink(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()), wxString::FromUTF8(url.data(), url.size()))
+    {
+    }
+
+    Hyperlink(wxUI_String tag, wxString text, wxString url)
+        : Hyperlink(wxID_ANY, tag, std::move(text), std::move(url))
+    {
+    }
+
+    Hyperlink(wxWindowID identity, wxUI_String, wxString text, wxString url)
         : details_(identity)
         , text_(std::move(text))
         , url_(std::move(url))

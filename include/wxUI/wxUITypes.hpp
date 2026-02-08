@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,15 @@ SOFTWARE.
 #include <tuple>
 #include <type_traits>
 
+namespace wxUI {
+// Tag struct for explicit wxString constructor usage
+// Users must write: Text(wxUI_String{}, myWxString)
+// This makes UTF-8 handling explicit and avoids ambiguity with string literals
+struct wxUI_String { };
+}
+
 namespace wxUI::details {
+
 // clang-format off
 // Big help to Dennis Kormalev (https://www.linkedin.com/in/dkormalev/) for the example at:
 // https://godbolt.org/z/sv5seP79q

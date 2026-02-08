@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -69,4 +69,9 @@ public:
 class LayoutIfExample : public wxDialog {
 public:
     explicit LayoutIfExample(wxWindow* parent);
+};
+
+class UnicodeExample : public wxDialog {
+public:
+    explicit UnicodeExample(wxWindow* parent);
 };

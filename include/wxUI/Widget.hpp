@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +26,13 @@ SOFTWARE.
 #include "BindInfo.hpp"
 #include "Customizations.hpp"
 #include "Proxy.hpp"
+#include "wxUITypes.hpp"
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <wx/sizer.h>
+#include <wx/string.h>
 
 namespace wxUI::details {
 
@@ -66,7 +68,13 @@ template <ConvertTowxString T>
 inline auto convertTo(std::initializer_list<T> choices) -> std::vector<wxString>
 {
     std::vector<wxString> result;
-    std::ranges::copy(choices, std::back_inserter(result));
+    if constexpr (std::is_same_v<T, std::string>) {
+        for (auto const& choice : choices) {
+            result.push_back(wxString::FromUTF8(choice));
+        }
+    } else {
+        std::ranges::copy(choices, std::back_inserter(result));
+    }
     return result;
 }
 
@@ -80,7 +88,13 @@ template <typename T, std::ranges::range Range>
 inline auto ToVector(Range&& range) -> std::vector<T>
 {
     auto result = std::vector<T>{};
-    std::ranges::copy(std::forward<Range>(range), std::back_inserter(result));
+    if constexpr (std::is_same_v<std::ranges::range_value_t<Range>, std::string>) {
+        std::ranges::transform(std::forward<Range>(range), std::back_inserter(result), [](auto const& choice) {
+            return wxString::FromUTF8(choice);
+        });
+    } else {
+        std::ranges::copy(std::forward<Range>(range), std::back_inserter(result));
+    }
     return result;
 }
 }
