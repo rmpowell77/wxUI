@@ -157,6 +157,20 @@ TEST_CASE("Size")
                   "sizer:Sizer[orientation=wxHORIZONTAL]",
               });
     }
+    SECTION("vSizer.hSizer.empty.flags")
+    {
+        TestProvider frame;
+        wxUI::VSizer { wxUI::HSizer {} }.withFlags(wxSizerFlags(1)).fitTo(&frame);
+        CHECK(frame.dump() == std::vector<std::string> {
+                  "Create:Sizer[orientation=wxVERTICAL]",
+                  "Create:Sizer[orientation=wxHORIZONTAL]",
+                  "topsizer:Sizer[orientation=wxVERTICAL]",
+                  "sizer:Sizer[orientation=wxVERTICAL]",
+                  "AddSizer:Sizer[orientation=wxHORIZONTAL]:flags:(1,0x0,0)",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+                  "sizer:Sizer[orientation=wxHORIZONTAL]",
+              });
+    }
     SECTION("vSizer.hSizer.named.empty")
     {
         TestProvider frame;
@@ -239,6 +253,20 @@ TEST_CASE("Size")
                   "topsizer:Sizer[orientation=wxHORIZONTAL]",
                   "sizer:Sizer[orientation=wxHORIZONTAL]",
                   "AddSizer:Sizer[orientation=wxVERTICAL]:flags:(0,0x0,0)",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+                  "sizer:Sizer[orientation=wxVERTICAL]",
+              });
+    }
+    SECTION("hSizer.vSizer.empty.flags")
+    {
+        TestProvider frame;
+        wxUI::HSizer { wxUI::VSizer {} }.withFlags(wxSizerFlags(1)).fitTo(&frame);
+        CHECK(frame.dump() == std::vector<std::string> {
+                  "Create:Sizer[orientation=wxHORIZONTAL]",
+                  "Create:Sizer[orientation=wxVERTICAL]",
+                  "topsizer:Sizer[orientation=wxHORIZONTAL]",
+                  "sizer:Sizer[orientation=wxHORIZONTAL]",
+                  "AddSizer:Sizer[orientation=wxVERTICAL]:flags:(1,0x0,0)",
                   "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
                   "sizer:Sizer[orientation=wxVERTICAL]",
               });
