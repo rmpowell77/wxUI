@@ -243,13 +243,19 @@ template <details::SizerItem... UItems>
 VSizer(UItems&&... items) -> VSizer<UItems...>;
 
 template <details::SizerItem... UItems>
-VSizer(wxString caption, UItems&&... items) -> VSizer<UItems...>;
+VSizer(std::string_view caption, UItems&&... items) -> VSizer<UItems...>;
+
+template <details::SizerItem... UItems>
+VSizer(wxUI_String, wxString caption, UItems&&... items) -> VSizer<UItems...>;
 
 template <details::SizerItem... UItems>
 VSizer(wxSizerFlags const& flags, UItems&&... items) -> VSizer<UItems...>;
 
 template <details::SizerItem... UItems>
-VSizer(wxString caption, wxSizerFlags const& flags, UItems&&... items) -> VSizer<UItems...>;
+VSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items) -> VSizer<UItems...>;
+
+template <details::SizerItem... UItems>
+VSizer(wxUI_String, wxString caption, wxSizerFlags const& flags, UItems&&... items) -> VSizer<UItems...>;
 
 template <details::SizerItem... Items>
 struct HSizer {
@@ -311,13 +317,19 @@ template <details::SizerItem... UItems>
 HSizer(UItems&&... items) -> HSizer<UItems...>;
 
 template <details::SizerItem... UItems>
-HSizer(wxString const& caption, UItems&&... items) -> HSizer<UItems...>;
+HSizer(std::string_view caption, UItems&&... items) -> HSizer<UItems...>;
+
+template <details::SizerItem... UItems>
+HSizer(wxUI_String, wxString caption, UItems&&... items) -> HSizer<UItems...>;
 
 template <details::SizerItem... UItems>
 HSizer(wxSizerFlags const& flags, UItems&&... items) -> HSizer<UItems...>;
 
 template <details::SizerItem... UItems>
-HSizer(wxString const& caption, wxSizerFlags const& flags, UItems&&... items) -> HSizer<UItems...>;
+HSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items) -> HSizer<UItems...>;
+
+template <details::SizerItem... UItems>
+HSizer(wxUI_String, wxString caption, wxSizerFlags const& flags, UItems&&... items) -> HSizer<UItems...>;
 
 template <typename SizerType, details::SizerItem... Items>
 struct GSizer {
