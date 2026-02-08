@@ -62,15 +62,6 @@ struct Generic {
         return create();
     }
 
-    // Provide a createAndAdd template so Generic is treated like other
-    // CreateAndAddable items by the layout machinery. We keep the
-    // implementation conservative: it calls create() (which for Generic
-    // simply returns the underlying pointer) and then only attempts to
-    // add the created window to the sizer if the customization
-    // SizerAddController(sizer, window, flags) is well-formed for the
-    // given Sizer/Window types. This avoids hard template-deduction
-    // failures in mixed test/real contexts while preserving expected
-    // behavior when the customization exists.
     template <typename Parent, typename Sizer>
     auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
     {
