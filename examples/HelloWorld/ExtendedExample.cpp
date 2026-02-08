@@ -62,7 +62,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
         HSizer {
             Button { "ReduceText" }
                 .bind([this]() {
-                    std::string str = static_cast<wxString>(*textProxy);
+                    auto str = static_cast<std::string>(*textProxy);
                     if (str.size()) {
                         str.pop_back();
                     }
@@ -138,10 +138,10 @@ MultibindExample::MultibindExample(wxWindow* parent)
                 .withWidth(200)
                 .withStyle(wxTE_PROCESS_ENTER)
                 .bind([timesTyped]() {
-                    *timesTyped = std::to_string(std::stoi(wxString(*timesTyped).utf8_string()) + 1);
+                    *timesTyped = std::to_string(stoi(*timesTyped) + 1);
                 })
                 .bind(wxEVT_TEXT_ENTER, [timesEntered]() {
-                    *timesEntered = std::to_string(std::stoi(wxString(*timesEntered).utf8_string()) + 1);
+                    *timesEntered = std::to_string(stoi(*timesEntered) + 1);
                 }),
         },
         HSizer {
@@ -169,7 +169,7 @@ SplitterExample::SplitterExample(wxWindow* parent)
                 TextCtrl { "This is Right Top.\n" }.withProxy(rightUpper).withStyle(wxTE_MULTILINE).withSize(wxSize(200, 100)),
                 Button { "Incr" }
                     .bind([this]() {
-                        auto original = wxString { *rightUpper } + "\nThis is Right Top.\n";
+                        auto original = std::string { *rightUpper } + "\nThis is Right Top.\n";
                         *rightUpper = original;
                     }),
             } },
@@ -193,7 +193,7 @@ SplitterExample::SplitterExample(wxWindow* parent)
     }
         .fitTo(this);
     // endsnippet SplitterExample
-    *rightUpper = proxy->GetLabel();
+    *rightUpper = std::string{ proxy->GetLabel() };
 }
 
 GenericExample::GenericExample(wxWindow* parent)

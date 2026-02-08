@@ -162,7 +162,7 @@ namespace wxUITests {
 struct TestProvider;
 struct TestSizer {
     bool top { false };
-    std::optional<wxString> caption {};
+    std::optional<std::string> caption {};
     wxOrientation orientation {};
 
     void SetSizeHints(TestProvider*);
@@ -297,7 +297,7 @@ struct std::formatter<wxUITests::TestSizer, char> {
             : std::format("{}", static_cast<int>(c.orientation));
         std::format_to(ctx.out(), "{}Sizer[orientation={}", c.top ? "Top" : "", orientationStr);
         if (c.caption.has_value()) {
-            std::format_to(ctx.out(), ", caption=\"{}\"", std::string(*c.caption));
+            std::format_to(ctx.out(), ", caption=\"{}\"", *c.caption);
         }
         return std::format_to(ctx.out(), "]");
     }
