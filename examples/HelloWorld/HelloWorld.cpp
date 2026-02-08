@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -168,6 +168,9 @@ HelloWorldFrame::HelloWorldFrame()
                         } },
             wxUI::Item { "&LayoutIf...", [this] {
                             LayoutIfExample { this }.ShowModal();
+                        } },
+            wxUI::Item { "&UnicodeExample...", [this] {
+                            UnicodeExample { this }.ShowModal();
                         } },
             // snippet wxUIMenuExample1
             wxUI::Item { "&Example Item...", [] {

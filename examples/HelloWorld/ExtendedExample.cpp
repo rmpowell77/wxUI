@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -436,4 +436,21 @@ LayoutIfExample::LayoutIfExample(wxWindow* parent)
         VSizer { "Layout Disabled", MakeLayout(false) },
     }
         .fitTo(this);
+}
+
+UnicodeExample::UnicodeExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "LayoutIf",
+        wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    // snippet UnicodeExample
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        // These are equivalent - both strings are UTF-8, and convert to wxString internally
+        Text { "Hello 🐨" },
+        Text { wxUI_String {}, wxString::FromUTF8("Hello 🐨") },
+    }
+        .fitTo(this);
+    // endsnippet UnicodeExample
 }

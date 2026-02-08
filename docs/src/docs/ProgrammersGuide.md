@@ -3,6 +3,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
 
 ## Table of Contents
 - [Overview](#overview)
+- [String Encoding and UTF-8](#string-encoding-and-utf-8)
 - [Menu](#menu)
   - [Menu Proxy](#menu-proxy)
   - [Menu ForEach](#menu-foreach)
@@ -23,6 +24,25 @@ C++ header-only library to make declarative UIs for wxWidgets.
 This overview provides an overview of `wxUI`, but is not intended to be a tutorial on `wxWidgets`.  We assume the reader has working knowledge of `wxWidgets`.  Great documentation and guides are available at [https://www.wxwidgets.org](https://www.wxwidgets.org).
 
 In `wxUI`, you use `wxUI::Menu` to declare the layout of your menu items and the "actions" they call.  Similarly, you use `wxUI::Sizer` to declare the layout of *Controllers* for your application.
+
+## String Encoding and UTF-8
+
+`wxUI` uses `wxString` as the internal representation for all string data. This provides proper Unicode support and compatibility with the underlying wxWidgets library.
+
+When supplying string values to `wxUI` controllers and menu items, you can provide either `std::string` or `wxString`. All `std::string` inputs are **assumed to be UTF-8 encoded**. If your strings use a different encoding, you should convert them to UTF-8 before passing them to wxUI, or create `wxString` objects directly using the appropriate wxWidgets conversion methods.
+
+To help disambiguate between `std::string` and `wxString`, the tag `wxUI_String` is required as an argument. 
+
+### UTF-8 Assumption
+
+- **User Responsibility**: If you pass a `std::string` to wxUI, you are asserting that it is UTF-8 encoded.  This includes char literals implicitly converted to `std::string`.
+- **Internal Conversion**: wxUI automatically converts `std::string` to `wxString` using `wxString::FromUTF8()`.
+- **Proxy Accessors**: When retrieving string values via Proxy accessors (such as `TextCtrl::Proxy::label()`), `wxString` values are converted back to `std::string` using `wxString::utf8_string()`, which produces UTF-8 encoded output.
+
+Example:
+```cpp
+{{{ examples/HelloWorld/ExtendedExample.cpp UnicodeExample "    // ..." }}}
+```
 
 ### Menu
 

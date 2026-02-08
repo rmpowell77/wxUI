@@ -6,11 +6,13 @@ Checks: >
     concurrency-*,
     cppcoreguidelines-*,
     hicpp-*,
+    -hicpp-named-parameter,
     misc-*,
     modernize-*,
     performance-*,
     portability-*,
     readability-*,
+    -readability-named-parameter,
 
 WarningsAsErrors: "*"
 

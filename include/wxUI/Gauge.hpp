@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2025 Richard Powell
+Copyright (c) 2022-2026 Richard Powell
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,12 +45,12 @@ struct Gauge {
     {
     }
 
-    explicit Gauge([[maybe_unused]] withRange unused, int range)
+    explicit Gauge(withRange, int range)
         : Gauge(withIdentity {}, wxID_ANY, range)
     {
     }
 
-    explicit Gauge([[maybe_unused]] withIdentity unused, wxWindowID identity, int range = 100)
+    explicit Gauge(withIdentity, wxWindowID identity, int range = 100)
         : details_(identity)
         , range_(range)
     {
