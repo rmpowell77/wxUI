@@ -49,7 +49,7 @@ TEST_CASE("CheckBox")
 {
     SECTION("noargs")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -62,7 +62,7 @@ TEST_CASE("CheckBox")
 
     SECTION("name")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { "Hello" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -75,7 +75,7 @@ TEST_CASE("CheckBox")
 
     SECTION("name_unicode")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { "🐨" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -88,7 +88,7 @@ TEST_CASE("CheckBox")
 
     SECTION("name_tag")
     {
-        TestProvider provider;
+        TestParent provider;
         wxString wx_label { "Hello" };
         auto uut = TypeUnderTest { wxUI_String {}, wx_label };
         uut.create(&provider);
@@ -102,7 +102,7 @@ TEST_CASE("CheckBox")
 
     SECTION("id")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -115,7 +115,7 @@ TEST_CASE("CheckBox")
 
     SECTION("id.name")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, "Hello" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -128,7 +128,7 @@ TEST_CASE("CheckBox")
 
     SECTION("style")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withStyle(wxCHK_3STATE);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -141,7 +141,7 @@ TEST_CASE("CheckBox")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -154,7 +154,7 @@ TEST_CASE("CheckBox")
 
     SECTION("size")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
