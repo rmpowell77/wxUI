@@ -27,6 +27,7 @@ SOFTWARE.
 #include "ExtendedExample.hpp"
 // snippet Example headers to include
 #include <numeric>
+#include <wx/app.h>
 #include <wx/wx.h>
 #include <wxUI/wxUI.hpp>
 // endsnippet Example
@@ -200,8 +201,8 @@ HelloWorldFrame::HelloWorldFrame()
 // snippet withwxWidgets : How you build with wxWidgets
 ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExampleDialogWidgets",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     // Create the controls.
     auto* text = new wxStaticText(this, wxID_ANY, "Example of Text in wxWidgets");
@@ -308,8 +309,8 @@ ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
 // snippet withwxUI Dialog example
 ExampleDialog::ExampleDialog(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExampleDialog",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
 
