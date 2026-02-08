@@ -428,17 +428,29 @@ private:
     std::vector<SizerProxy> proxyHandles_;
 };
 
-template <typename SizerType, details::SizerItem... Items>
-GSizer(int cols, Items... item) -> GSizer<SizerType, Items...>;
-
-template <typename SizerType, details::SizerItem... Items>
-GSizer(int cols, wxSizerFlags const &flags, Items... item) -> GSizer<SizerType, Items...>;
+template <details::SizerItem... Items>
+struct GridSizer : GSizer<wxGridSizer, Items...> {
+    using Base = GSizer<wxGridSizer, Items...>;
+    using Base::Base; // inherit constructors
+};
 
 template <details::SizerItem... Items>
-using GridSizer = GSizer<wxGridSizer, Items...>;
+GridSizer(int cols, Items... item) -> GridSizer<Items...>;
 
 template <details::SizerItem... Items>
-using FlexGridSizer = GSizer<wxFlexGridSizer, Items...>;
+GridSizer(int cols, wxSizerFlags const &flags, Items... item) -> GridSizer<Items...>;
+
+template <details::SizerItem... Items>
+struct FlexGridSizer : GSizer<wxFlexGridSizer, Items...> {
+    using Base = GSizer<wxFlexGridSizer, Items...>;
+    using Base::Base; // inherit constructors
+};
+
+template <details::SizerItem... Items>
+FlexGridSizer(int cols, Items... item) -> FlexGridSizer<Items...>;
+
+template <details::SizerItem... Items>
+FlexGridSizer(int cols, wxSizerFlags const &flags, Items... item) -> FlexGridSizer<Items...>;
 
 template <details::SizerItem... Items>
 struct LayoutIf {
@@ -587,11 +599,17 @@ private:
     std::tuple<Items...> items_ {};
 };
 
-template <typename Book, details::SizerItem... Items>
-BookCtrl(Items... item) -> BookCtrl<Book, Items...>;
+template <details::SizerItem... Items>
+struct Notebook : BookCtrl<wxNotebook, Items...> {
+    using Base = BookCtrl<wxNotebook, Items...>;
+    using Base::Base; // inherit constructors
+};
 
 template <details::SizerItem... Items>
-using Notebook = BookCtrl<wxNotebook, Items...>;
+Notebook(Items... items) -> Notebook<Items...>;
+
+template <details::SizerItem... Items>
+Notebook(wxSizerFlags const& flags, Items... items) -> Notebook<Items...>;
 }
 
 #include "ZapMacros.hpp"
