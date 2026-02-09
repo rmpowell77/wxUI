@@ -225,7 +225,7 @@ struct VSizer {
 
     template <details::SizerItem... UItems>
     VSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
-        : details_(wxString::FromUTF8(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
+        : details_(wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
     {
     }
 
