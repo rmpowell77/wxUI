@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include <format>
+#include <list>
 #include <memory>
 #include <optional>
 #include <ostream>
@@ -692,7 +693,7 @@ inline void SizerBindProxy(wxUITests::TestSizer* controller, Proxy&)
 inline auto SizerCreate(wxUITests::TestParent* parent, std::optional<wxString> caption, wxOrientation orientation) -> wxUITests::TestSizer*
 {
     return parent->add(wxUITests::TestSizer {
-        .caption = caption,
+        .caption = caption.has_value() ? std::optional { caption->utf8_string() } : std::nullopt,
         .orientation = orientation,
     });
 }
