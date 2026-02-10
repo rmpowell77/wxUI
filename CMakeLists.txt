@@ -8,6 +8,7 @@ message(FATAL_ERROR "In-source build detected!")
 endif()
 
 include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 include(${PROJECT_SOURCE_DIR}/cmake/compiler.cmake)
 
 
@@ -60,10 +61,52 @@ add_library(
   include/wxUI/ZapMacros.hpp
 )
 
+add_library(wxUI::wxUI ALIAS wxUI)
+
 target_include_directories(
   wxUI
   INTERFACE
-  include
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+#============================================================================
+# Install + package config
+#============================================================================
+install(
+  TARGETS wxUI
+  EXPORT wxUITargets
+)
+
+install(
+  DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(
+  EXPORT wxUITargets
+  FILE wxUITargets.cmake
+  NAMESPACE wxUI::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/wxUI
+)
+
+configure_package_config_file(
+  ${PROJECT_SOURCE_DIR}/cmake/wxUIConfig.cmake.in
+  ${PROJECT_BINARY_DIR}/wxUIConfig.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/wxUI
+)
+
+write_basic_package_version_file(
+  ${PROJECT_BINARY_DIR}/wxUIConfigVersion.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+
+install(
+  FILES
+    ${PROJECT_BINARY_DIR}/wxUIConfig.cmake
+    ${PROJECT_BINARY_DIR}/wxUIConfigVersion.cmake
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/wxUI
 )
 
 #============================================================================
