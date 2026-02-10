@@ -39,6 +39,6 @@ target_link_libraries(
   PRIVATE
   Catch2::Catch2WithMain
   wx::core
-  wxUI
+  wxUI::wxUI
 )
 

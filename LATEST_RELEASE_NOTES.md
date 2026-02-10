@@ -4,5 +4,5 @@ Bugs addressed in this release:
 
 Other changes:
 
-* [#244](../../issues/244) Lean into vcpkg to speed up builds
+* [#23](../../issues/23) Add a cmake alias
 
