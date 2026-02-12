@@ -193,7 +193,7 @@ SplitterExample::SplitterExample(wxWindow* parent)
     }
         .fitTo(this);
     // endsnippet SplitterExample
-    *rightUpper = std::string{ proxy->GetLabel() };
+    *rightUpper = std::string { proxy->GetLabel() };
 }
 
 GenericExample::GenericExample(wxWindow* parent)
@@ -467,10 +467,10 @@ NotebookExample::NotebookExample(wxWindow* parent)
         Notebook {
             BookItem { "Item 1", VSizer { Text { "Generic sizer" } } },
             BookItem { "Item 2", HSizer { Text { "Generic sizer" } } },
-            LayoutIf{
+            LayoutIf {
                 true,
-                BookItem { "Optional Item", VSizer { Text { "Generic sizer" } } }
-            }
+                BookItem { "Optional Item", VSizer { Text { "Generic sizer" } } },
+            },
         }
     }
         .fitTo(this);

@@ -31,7 +31,6 @@ SOFTWARE.
 #include <wx/statbox.h>
 #include <wx/notebook.h>
 
-
 // forward-declare Generic so we can detect it in traits without including its header
 namespace wxUI {
 template <typename Window>
@@ -457,7 +456,7 @@ template <details::SizerItem... Items>
 struct LayoutIf {
     template <details::SizerItem... UItems>
     explicit LayoutIf(bool enabled, UItems&&... items)
-        : items_{ std::forward_as_tuple(std::forward<UItems>(items)...) }
+        : items_(std::forward_as_tuple(std::forward<UItems>(items)...))
     {
         if (!enabled) {
             items_.reset();
@@ -521,7 +520,7 @@ struct BookItem {
     {
         auto page = new wxWindow(parent, wxID_ANY);
         auto sizer = new wxBoxSizer(wxVERTICAL);
-        auto flags = wxSizerFlags{ 1 }.Expand();
+        auto flags = wxSizerFlags { 1 }.Expand();
 
         details::createAndAddVisiter(item_, page, sizer, flags);
 
