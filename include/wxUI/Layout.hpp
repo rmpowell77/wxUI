@@ -31,6 +31,7 @@ SOFTWARE.
 #include <wx/statbox.h>
 #include <wx/notebook.h>
 
+
 // forward-declare Generic so we can detect it in traits without including its header
 namespace wxUI {
 template <typename Window>
@@ -438,7 +439,7 @@ template <details::SizerItem... Items>
 GridSizer(int cols, Items... item) -> GridSizer<Items...>;
 
 template <details::SizerItem... Items>
-GridSizer(int cols, wxSizerFlags const &flags, Items... item) -> GridSizer<Items...>;
+GridSizer(int cols, wxSizerFlags const& flags, Items... item) -> GridSizer<Items...>;
 
 template <details::SizerItem... Items>
 struct FlexGridSizer : GSizer<wxFlexGridSizer, Items...> {
@@ -450,7 +451,7 @@ template <details::SizerItem... Items>
 FlexGridSizer(int cols, Items... item) -> FlexGridSizer<Items...>;
 
 template <details::SizerItem... Items>
-FlexGridSizer(int cols, wxSizerFlags const &flags, Items... item) -> FlexGridSizer<Items...>;
+FlexGridSizer(int cols, wxSizerFlags const& flags, Items... item) -> FlexGridSizer<Items...>;
 
 template <details::SizerItem... Items>
 struct LayoutIf {
@@ -490,7 +491,7 @@ LayoutIf(bool, Item... item) -> LayoutIf<Item...>;
 template <details::SizerItem Item>
 struct BookItem {
     template <details::SizerItem UItem>
-    explicit BookItem(wxUI_String, wxString const& title, bool select, UItem &&item)
+    explicit BookItem(wxUI_String, wxString const& title, bool select, UItem&& item)
         : title_(std::move(title))
         , item_(std::forward<UItem>(item))
         , select_(select)
@@ -498,19 +499,19 @@ struct BookItem {
     }
 
     template <details::SizerItem UItem>
-    explicit BookItem(wxUI_String, wxString const& title, UItem &&item)
+    explicit BookItem(wxUI_String, wxString const& title, UItem&& item)
         : BookItem(wxUI_String {}, title, false, std::forward<UItem>(item))
     {
     }
 
     template <details::SizerItem UItem>
-    explicit BookItem(std::string_view title, bool select, UItem &&item)
+    explicit BookItem(std::string_view title, bool select, UItem&& item)
         : BookItem(wxUI_String {}, wxString::FromUTF8(title.data(), title.size()), select, std::forward<UItem>(item))
     {
     }
 
     template <details::SizerItem UItem>
-    explicit BookItem(std::string_view title, UItem &&item)
+    explicit BookItem(std::string_view title, UItem&& item)
         : BookItem(title, false, std::forward<UItem>(item))
     {
     }

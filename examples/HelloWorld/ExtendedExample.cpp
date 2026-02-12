@@ -464,12 +464,12 @@ NotebookExample::NotebookExample(wxWindow* parent)
     // snippet NotebookExample
     VSizer {
         wxSizerFlags().Expand().Border(),
-        Notebook{
-            BookItem{ "Item 1", VSizer{ Text{ "Generic sizer" } } },
-            BookItem{ "Item 2", HSizer{ Text{ "Generic sizer" } } },
+        Notebook {
+            BookItem { "Item 1", VSizer { Text { "Generic sizer" } } },
+            BookItem { "Item 2", HSizer { Text { "Generic sizer" } } },
             LayoutIf{
                 true,
-                BookItem{ "Optional Item", VSizer{ Text{ "Generic sizer" } } }
+                BookItem { "Optional Item", VSizer { Text { "Generic sizer" } } }
             }
         }
     }
