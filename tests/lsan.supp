@@ -1,0 +1,22 @@
+# LeakSanitizer suppressions for wxUI tests
+# See https://github.com/google/sanitizers/wiki/AddressSanitizerLeakSanitizer
+#
+# To use this suppression file when running tests locally:
+#   export LSAN_OPTIONS=suppressions=$PWD/tests/lsan.supp
+#   ctest --test-dir build/<your-build-dir> --output-on-failure
+#
+# Or in one line:
+#   LSAN_OPTIONS=suppressions=$PWD/tests/lsan.supp ctest --test-dir build/<your-build-dir>
+#
+# This file is automatically used by the CI workflow.
+
+# GTK3 accessibility bridge initialization leaks
+# These are well-known false positives in GTK3's atk-bridge that don't get
+# cleaned up on shutdown. They occur during gtk_init and are not actual leaks
+# from application code.
+leak:atk_bridge_adaptor_init
+leak:_gtk_accessibility_init
+
+# Additional GTK internal leaks during initialization
+leak:gtk_init_check
+leak:gdk_display_manager_open_display

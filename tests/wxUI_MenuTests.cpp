@@ -187,8 +187,8 @@ auto RunMenuTest_name_func(Function function)
     };
     menu.fitTo(&frame);
     CHECK(frame.dump() == std::vector<std::string> {
-              "BindMenu:-1000000:1",
-              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=-1000000,kind={},label=\"Item1\",help=\"\"),],]", MenuTypeLookup<MenuType>::name),
+              std::format("BindMenu:{}:1", static_cast<int>(wxID_AUTO_LOWEST)),
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id={},kind={},label=\"Item1\",help=\"\"),],]", static_cast<int>(wxID_AUTO_LOWEST), MenuTypeLookup<MenuType>::name),
           });
 }
 
@@ -214,8 +214,8 @@ auto RunMenuTest_name_help_func(Function function)
     };
     menu.fitTo(&frame);
     CHECK(frame.dump() == std::vector<std::string> {
-              "BindMenu:-1000000:1",
-              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=-1000000,kind={},label=\"Item1\",help=\"Help1\"),],]", MenuTypeLookup<MenuType>::name),
+              std::format("BindMenu:{}:1", static_cast<int>(wxID_AUTO_LOWEST)),
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id={},kind={},label=\"Item1\",help=\"Help1\"),],]", static_cast<int>(wxID_AUTO_LOWEST), MenuTypeLookup<MenuType>::name),
           });
 }
 
