@@ -75,3 +75,8 @@ class UnicodeExample : public wxDialog {
 public:
     explicit UnicodeExample(wxWindow* parent);
 };
+
+class NotebookExample : public wxDialog {
+public:
+    explicit NotebookExample(wxWindow* parent);
+};
