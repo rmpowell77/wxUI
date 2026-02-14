@@ -14,6 +14,7 @@ Other changes:
 * [#42](../../issues/42) Why does clang-format not like concepts?
 * [#81](../../issues/81) need wxNotebook
 * [#233](../../issues/233) We should figure out the best long term header layout
+* [#245](../../issues/245) Enable windows and linux testing
 * [#254](../../issues/254) Generic is too generic. Split into Wrapper and Factory
 * [#256](../../issues/256) Proxy should follow controller_ convention
 * [#263](../../issues/263) Will Factory with move-only lambda work?

@@ -149,8 +149,8 @@ jobs:
 
     - name: Installing Dependencies (Linux)
       if: matrix.config.os == 'ubuntu-latest'
-      run: sudo apt-get update && sudo apt-get install build-essential libltdl-dev libgtk-3-dev freeglut3-dev autoconf autoconf-archive automake libtool; gcc -v
-
+      run: sudo apt-get update && sudo apt-get install build-essential libltdl-dev libgtk-3-dev freeglut3-dev autoconf autoconf-archive automake libtool xvfb; gcc -v
+     
     - name: Configure CMake (Windows)
       if: matrix.config.os == 'windows-latest'
       # Use vcpkg toolchain file with static triplet; force static runtime for wxUI too
@@ -204,12 +204,28 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
 
     - name: Run tests
-      if: matrix.config.os == 'macos-latest'
-      run: ctest --test-dir ${{github.workspace}}/build -C ${{matrix.build_type}}--output-on-failure
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          xvfb-run -a ctest --test-dir "${{github.workspace}}/build" -C ${{matrix.build_type}} --output-on-failure
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+          cd "${{github.workspace}}/build" && ctest -C ${{matrix.build_type}} --output-on-failure --timeout 30
+        else
+          ctest --test-dir "${{github.workspace}}/build" -C ${{matrix.build_type}} --output-on-failure
+        fi
+      shell: bash
+      env:
+        LSAN_OPTIONS: suppressions=${{github.workspace}}/tests/lsan.supp
 
     - name: Output Test Log on Failure
       if: failure()
-      run: cat ${{ github.workspace }}/build/Testing/Temporary/LastTest.log
+      run: |
+        if [ -f "${{ github.workspace }}/build/Testing/Temporary/LastTest.log" ]; then
+          cat "${{ github.workspace }}/build/Testing/Temporary/LastTest.log"
+        else
+          echo "Test log file not found"
+          ls -la "${{ github.workspace }}/build/Testing/Temporary/" 2>/dev/null || echo "Testing directory not found"
+        fi
+      shell: bash
 
   summary:
     name: CI Summary
