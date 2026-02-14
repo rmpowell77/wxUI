@@ -207,7 +207,6 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
 
     - name: Run tests
-      if: matrix.config.os == 'macos-latest'
       run: ctest --test-dir ${{github.workspace}}/build -C ${{matrix.build_type}}--output-on-failure
 
     - name: Output Test Log on Failure
