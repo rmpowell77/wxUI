@@ -43,8 +43,8 @@ add_library(
   include/wxUI/ComboBox.hpp
   include/wxUI/Custom.hpp
   include/wxUI/ForEach.hpp
+  include/wxUI/Factory.hpp
   include/wxUI/Gauge.hpp
-  include/wxUI/Generic.hpp
   include/wxUI/GetterSetter.hpp
   include/wxUI/HelperMacros.hpp
   include/wxUI/Hyperlink.hpp
@@ -58,6 +58,7 @@ add_library(
   include/wxUI/Text.hpp
   include/wxUI/TextCtrl.hpp
   include/wxUI/Widget.hpp
+  include/wxUI/Wrapper.hpp
   include/wxUI/ZapMacros.hpp
 )
 

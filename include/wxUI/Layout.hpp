@@ -30,25 +30,25 @@ SOFTWARE.
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 
-// forward-declare Generic so we can detect it in traits without including its header
+// forward-declare Wrapper so we can detect it in traits without including its header
 namespace wxUI {
 template <typename Window>
-struct Generic;
+struct Wrapper;
 }
 
 namespace wxUI::details {
 
 // clang-format off
 template <typename T>
-struct is_Generic : std::false_type {};
+struct is_Wrapper : std::false_type {};
 template <typename W>
-struct is_Generic<::wxUI::Generic<W>> : std::true_type {};
+struct is_Wrapper<::wxUI::Wrapper<W>> : std::true_type {};
 template <typename T>
-inline constexpr bool is_Generic_v = is_Generic<T>::value;
+inline constexpr bool is_Wrapper_v = is_Wrapper<T>::value;
 
 template <typename T>
 concept SizerItem = details::CreateAndAddable<T>
-    || is_Generic_v<T>
+    || is_Wrapper_v<T>
     || (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>);
 // clang-format on
 
@@ -59,7 +59,7 @@ static inline auto createAndAddVisiter(T& arg, Parent* parent, Sizer* sizer, wxS
         arg.createAndAdd(parent, sizer, flags);
     } else if constexpr (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>) {
         sizer->Add(arg, flags);
-    } else if constexpr (is_Generic_v<T>) {
+    } else if constexpr (is_Wrapper_v<T>) {
         sizer->Add(arg.create(), flags);
     } else {
         static_assert(always_false_v<T>, "createAndAdd not available for this item with these Parent/Sizer types; provide a customization");

@@ -157,8 +157,11 @@ HelloWorldFrame::HelloWorldFrame()
             wxUI::Item { "&SplitterExample...", [this] {
                             SplitterExample { this }.ShowModal();
                         } },
-            wxUI::Item { "&GenericExample...", [this] {
-                            GenericExample { this }.ShowModal();
+            wxUI::Item { "&WrapperExample...", [this] {
+                            WrapperExample { this }.ShowModal();
+                        } },
+            wxUI::Item { "&FactoryExample...", [this] {
+                            FactoryExample { this }.ShowModal();
                         } },
             wxUI::Item { "&ForEachExample...", [this] {
                             ForEachExample { this }.ShowModal();

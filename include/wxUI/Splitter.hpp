@@ -23,7 +23,6 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Generic.hpp"
 #include "Widget.hpp"
 #include <wx/button.h>
 #include <wx/splitter.h>
