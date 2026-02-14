@@ -47,7 +47,7 @@ TEST_CASE("SpinCtrl")
 {
     SECTION("noargs")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -59,7 +59,7 @@ TEST_CASE("SpinCtrl")
 
     SECTION("range")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { std::pair { 1, 5 } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -71,7 +71,7 @@ TEST_CASE("SpinCtrl")
 
     SECTION("range.init")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { std::pair { 1, 5 }, 3 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -83,7 +83,7 @@ TEST_CASE("SpinCtrl")
 
     SECTION("id")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -95,7 +95,7 @@ TEST_CASE("SpinCtrl")
 
     SECTION("id.range")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -107,7 +107,7 @@ TEST_CASE("SpinCtrl")
 
     SECTION("id.range.init")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, std::pair { 1, 5 }, 3 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -119,7 +119,7 @@ TEST_CASE("SpinCtrl")
 
     SECTION("style")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withStyle(wxTE_PROCESS_ENTER);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -131,7 +131,7 @@ TEST_CASE("SpinCtrl")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -143,7 +143,7 @@ TEST_CASE("SpinCtrl")
 
     SECTION("size")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -155,7 +155,7 @@ TEST_CASE("SpinCtrl")
 
     SECTION("AI")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = wxUI::SpinCtrl { { 0, 10 }, 3 }.bind([] {});
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

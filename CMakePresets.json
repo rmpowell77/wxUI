@@ -1,0 +1,89 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "windows-base",
+            "description": "Base Windows configuration",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "architecture": {
+                "value": "x64",
+                "strategy": "set"
+            },
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
+            "name": "windows-release",
+            "displayName": "Windows - Release",
+            "inherits": "windows-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "windows-debug",
+            "displayName": "Windows - Debug",
+            "inherits": "windows-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "mac-base",
+            "description": "Base Mac configuration",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_MAKE_PROGRAM": "/opt/homebrew/bin/ninja"
+            }
+        },
+        {
+            "name": "mac-release",
+            "displayName": "Mac - Release",
+            "inherits": "mac-base",
+            "binaryDir": "${sourceDir}/build/mac-release",
+            "environment": {
+                "VCPKG_TARGET_TRIPLET": "arm64-osx"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "mac-debug",
+            "displayName": "Mac - Debug",
+            "inherits": "mac-base",
+            "binaryDir": "${sourceDir}/build/mac-debug",
+            "environment": {
+                "VCPKG_TARGET_TRIPLET": "arm64-osx-debug"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "windows-release",
+            "configurePreset": "windows-release"
+        },
+        {
+            "name": "windows-debug",
+            "configurePreset": "windows-debug"
+        },
+        {
+            "name": "mac-release",
+            "configurePreset": "mac-release"
+        },
+        {
+            "name": "mac-debug",
+            "configurePreset": "mac-debug"
+        }
+    ]
+}

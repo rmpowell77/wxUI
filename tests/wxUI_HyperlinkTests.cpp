@@ -49,7 +49,7 @@ TEST_CASE("Hyperlink")
 {
     SECTION("name.url")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -61,7 +61,7 @@ TEST_CASE("Hyperlink")
 
     SECTION("name.url_unicode")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { "🐨", "https://example.com" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -73,7 +73,7 @@ TEST_CASE("Hyperlink")
 
     SECTION("name.url_tag")
     {
-        TestProvider provider;
+        TestParent provider;
         wxString wx_text { "Hello" };
         wxString wx_url { "www.github.com" };
         auto uut = TypeUnderTest { wxUI_String {}, wx_text, wx_url };
@@ -87,7 +87,7 @@ TEST_CASE("Hyperlink")
 
     SECTION("id.name.url")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, "Hello", "www.github.com" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -99,7 +99,7 @@ TEST_CASE("Hyperlink")
 
     SECTION("style")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -111,7 +111,7 @@ TEST_CASE("Hyperlink")
 
     SECTION("withStyle")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withoutStyle(wxHL_ALIGN_CENTRE).withStyle(wxHL_ALIGN_LEFT);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -123,7 +123,7 @@ TEST_CASE("Hyperlink")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -135,7 +135,7 @@ TEST_CASE("Hyperlink")
 
     SECTION("size")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

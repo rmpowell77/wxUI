@@ -26,7 +26,7 @@ wxUI_SetupCompilerForTarget(wxUI_HelloWorld)
 
 target_link_libraries(wxUI_HelloWorld 
   wx::core
-  wxUI
+  wxUI::wxUI
 )
 
 

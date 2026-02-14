@@ -241,8 +241,8 @@ struct VSizer {
         return details_.createAndAdd(parent, parentSizer, parentFlags);
     }
 
-    template <typename Provider>
-    auto fitTo(Provider* parent) -> VSizer&
+    template <typename Parent>
+    auto fitTo(Parent* parent) -> VSizer&
     {
         details_.fitTo(parent);
         return *this;
@@ -317,8 +317,8 @@ struct HSizer {
     }
 
     // need rvalues versions of these.
-    template <typename Provider>
-    auto fitTo(Provider* parent) -> HSizer&
+    template <typename Parent>
+    auto fitTo(Parent* parent) -> HSizer&
     {
         details_.fitTo(parent);
         return *this;

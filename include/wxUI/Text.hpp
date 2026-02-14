@@ -87,7 +87,7 @@ private:
     wxString text_;
     std::optional<int> wrap_;
 
-    // Templated createImpl to support test Providers
+    // Templated createImpl to support test Parents
     template <typename Parent>
     auto createImpl()
     {

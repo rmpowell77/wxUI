@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
 
-FetchContent_Declare(
-  Catch2
-  GIT_REPOSITORY https://github.com/catchorg/Catch2
-  GIT_TAG        2b60af89e23d28eefc081bc930831ee9d45ea58b # v3.8.1
-)
-FetchContent_MakeAvailable(Catch2)
+find_package(Catch2 CONFIG REQUIRED)
 
 add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_BitmapTests.cpp
@@ -44,6 +39,6 @@ target_link_libraries(
   PRIVATE
   Catch2::Catch2WithMain
   wx::core
-  wxUI
+  wxUI::wxUI
 )
 

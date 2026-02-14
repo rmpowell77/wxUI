@@ -1,13 +1,59 @@
 # wxUI
 C++ header-only library to make declarative UIs for wxWidgets.
 
-## Quick Start
-
 ```cpp
 {{{ examples/HelloWorld/HelloWorld.cpp Example "" }}}
 ```
 <img src="docs/images/ExampleDialog.png"/>
 
+## Quick Start
+
+### Installing
+
+**Option 1: FetchContent (recommended for most projects)**
+
+```cmake
+include(FetchContent)
+
+FetchContent_Declare(
+	wxUI
+	GIT_REPOSITORY https://github.com/rmpowell77/wxUI.git
+	GIT_TAG        <tag-or-commit>
+)
+FetchContent_MakeAvailable(wxUI)
+```
+
+**Option 2: Build/install locally, then `find_package`**
+
+```bash
+cmake -S . -B build
+cmake --build build
+cmake --install build --prefix <install-prefix>
+```
+
+Then in your project:
+
+```cmake
+find_package(wxUI REQUIRED)
+```
+
+### Including
+
+**CMake**
+
+```cmake
+target_link_libraries(your_target
+	PRIVATE
+	wx::core
+	wxUI::wxUI
+)
+```
+
+**C++**
+
+```cpp
+#include <wxUI/wxUI.hpp>
+```
 
 
 ## Motivation

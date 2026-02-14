@@ -1,0 +1,13 @@
+{
+    "name": "wxui",
+    "version": "0.3.0",
+    "dependencies": [
+        {
+            "name": "wxwidgets"
+        },
+        {
+            "name": "catch2"
+        }
+    ],
+    "builtin-baseline": "365f6444ab40ee87c73c947b475b3a267b3cb77c"
+}
