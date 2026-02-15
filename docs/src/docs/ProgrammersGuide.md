@@ -8,10 +8,11 @@ C++ header-only library to make declarative UIs for wxWidgets.
   - [Menu Proxy](#menu-proxy)
   - [Menu ForEach](#menu-foreach)
 - [Layout](#layout)
-  - [Generic](#generic)
-  - [Splitter](#splitter)
   - [LayoutIf](#layoutif)
   - [ForEach](#foreach)
+  - [Splitter](#splitter)
+  - [Wrapper](#wrapper)
+  - [Factory](#factory)
 - [Controllers](#controllers)
   - [Bind](#bind)
   - [Proxy](#proxy)
@@ -136,25 +137,6 @@ is equivalent to:
 wxUI::VSizer { "Current Frame" }.fitTo(this);
 ```
 
-
-#### Generic
-
-One special type of *Layout* is `Generic`.  There are cases where you have a `Window` object constructed by some other mechanism you need to insert in the Layout.  This is a case to use `Generic`:
-
-```cpp
-{{{ examples/HelloWorld/ExtendedExample.cpp GenericExample "    // ..." }}}
-```
-
-Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, and it will be inserted into the *Layout*.
-
-#### Splitter
-
-`HSplitter` and `VSplitter` are special types of *Layout* objects that take in two *Controllers*.
-
-```cpp
-{{{ examples/HelloWorld/ExtendedExample.cpp SplitterExample "    // ..." }}}
-```
-
 #### LayoutIf
 
 `LayoutIf` is useful for when parts of a Layout are not needed depending on runtime logic.  `LayoutIf` takes a boolean which determines if a set of "Items" should be created or not.
@@ -162,7 +144,6 @@ Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, and
 ```
 {{{ examples/HelloWorld/ExtendedExample.cpp LayoutIfExample "    // ..." }}}
 ```
-
 
 #### ForEach
 
@@ -183,6 +164,41 @@ Often times you would be laying out a set of buttons in a horizontal sizer.  The
 ```
 {{{ examples/HelloWorld/ExtendedExample.cpp HForEach "    // ..." }}}
 ```
+
+#### Splitter
+
+`HSplitter` and `VSplitter` are special types of *Layout* objects that take in two *Controllers*.
+
+```cpp
+{{{ examples/HelloWorld/ExtendedExample.cpp SplitterExample "    // ..." }}}
+```
+
+Note: Because the Splitter requires both parts to be children of the Splitter itself, you cannot use `Wrapper` as a *Controller*.  This will not compile:
+
+```cpp
+{{{ examples/HelloWorld/ExtendedExample.cpp SplitterCompileFail "    // ..." }}}
+```
+
+
+#### Wrapper
+
+There are cases where you have a `Window` object constructed by some other mechanism you need to insert in the *Layout*.  This is a case to use `Wrapper`:
+
+```cpp
+{{{ examples/HelloWorld/ExtendedExample.cpp WrapperExample "    // ..." }}}
+```
+
+Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, and it will be inserted into the *Layout*.
+
+#### Factory
+
+One special case is when a *Controller* needs the parent `Window` to be constructed.  This is a case to use `Factory`:
+
+```cpp
+{{{ examples/HelloWorld/ExtendedExample.cpp FactoryExample "    // ..." }}}
+```
+
+Essentially, you supply a closure or function that returns something convertable to `wxWindow*` when supplied with a `wxWindow*`, and it will be inserted into the *Layout*.
 
 
 ### Controllers

@@ -24,8 +24,8 @@ SOFTWARE.
 #include "TestCustomizations.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wx/button.h>
-#include <wxUI/Generic.hpp>
 #include <wxUI/Layout.hpp>
+#include <wxUI/Wrapper.hpp>
 
 #include <wx/wx.h>
 
@@ -33,63 +33,63 @@ using namespace wxUITests;
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 
-TEST_CASE("Generic")
+TEST_CASE("Wrapper")
 {
     TestParent provider;
-    auto* button = wxUI::customizations::ParentCreate<wxButton>(&provider, wxID_ANY, std::string { "Generic" }, wxDefaultPosition, wxDefaultSize, int64_t {});
+    auto* button = wxUI::customizations::ParentCreate<wxButton>(&provider, wxID_ANY, std::string { "Wrapper" }, wxDefaultPosition, wxDefaultSize, int64_t {});
     using Type = std::remove_pointer_t<decltype(button)>;
-    SECTION("flags.window.generic")
+    SECTION("flags.window.Wrapper")
     {
-        wxUI::VSizer { wxUI::Generic { wxSizerFlags(1), button } }.fitTo(&provider);
+        wxUI::VSizer { wxUI::Wrapper { wxSizerFlags(1), button } }.fitTo(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]",
                   "Create:Sizer[orientation=wxVERTICAL]",
                   "topsizer:Sizer[orientation=wxVERTICAL]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]",
                   "sizer:Sizer[orientation=wxVERTICAL]",
-                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]:flags:(1,0x0,0)",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]:flags:(1,0x0,0)",
                   "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
               });
     }
 
-    SECTION("window.generic")
+    SECTION("window.Wrapper")
     {
-        wxUI::VSizer { wxUI::Generic { button } }.fitTo(&provider);
+        wxUI::VSizer { wxUI::Wrapper { button } }.fitTo(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]",
                   "Create:Sizer[orientation=wxVERTICAL]",
                   "topsizer:Sizer[orientation=wxVERTICAL]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]",
                   "sizer:Sizer[orientation=wxVERTICAL]",
-                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]:flags:(0,0x0,0)",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]:flags:(0,0x0,0)",
                   "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
               });
     }
 
     SECTION("flags.window")
     {
-        wxUI::VSizer { wxUI::Generic<Type> { wxSizerFlags(1), button } }.fitTo(&provider);
+        wxUI::VSizer { wxUI::Wrapper<Type> { wxSizerFlags(1), button } }.fitTo(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]",
                   "Create:Sizer[orientation=wxVERTICAL]",
                   "topsizer:Sizer[orientation=wxVERTICAL]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]",
                   "sizer:Sizer[orientation=wxVERTICAL]",
-                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]:flags:(1,0x0,0)",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]:flags:(1,0x0,0)",
                   "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
               });
     }
 
     SECTION("window")
     {
-        wxUI::VSizer { wxUI::Generic<Type> { button } }.fitTo(&provider);
+        wxUI::VSizer { wxUI::Wrapper<Type> { button } }.fitTo(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]",
                   "Create:Sizer[orientation=wxVERTICAL]",
                   "topsizer:Sizer[orientation=wxVERTICAL]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]",
                   "sizer:Sizer[orientation=wxVERTICAL]",
-                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Generic\"]:flags:(0,0x0,0)",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Wrapper\"]:flags:(0,0x0,0)",
                   "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
               });
     }

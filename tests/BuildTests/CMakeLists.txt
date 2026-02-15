@@ -11,9 +11,9 @@ target_sources(wxUI_Tests PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/Choice.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ComboBox.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Custom.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Factory.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ForEach.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Gauge.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/Generic.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/GetterSetter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/HelperMacros.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Hyperlink.cpp
@@ -27,6 +27,7 @@ target_sources(wxUI_Tests PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/Splitter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Text.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/TextCtrl.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Wrapper.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Widget.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ZapMacros.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI.cpp

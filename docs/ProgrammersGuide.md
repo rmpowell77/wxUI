@@ -8,10 +8,11 @@ C++ header-only library to make declarative UIs for wxWidgets.
   - [Menu Proxy](#menu-proxy)
   - [Menu ForEach](#menu-foreach)
 - [Layout](#layout)
-  - [Generic](#generic)
-  - [Splitter](#splitter)
   - [LayoutIf](#layoutif)
   - [ForEach](#foreach)
+  - [Splitter](#splitter)
+  - [Wrapper](#wrapper)
+  - [Factory](#factory)
 - [Controllers](#controllers)
   - [Bind](#bind)
   - [Proxy](#proxy)
@@ -139,8 +140,11 @@ Items { "Name", "Help", Handler }
             wxUI::Item { "&SplitterExample...", [this] {
                             SplitterExample { this }.ShowModal();
                         } },
-            wxUI::Item { "&GenericExample...", [this] {
-                            GenericExample { this }.ShowModal();
+            wxUI::Item { "&WrapperExample...", [this] {
+                            WrapperExample { this }.ShowModal();
+                        } },
+            wxUI::Item { "&FactoryExample...", [this] {
+                            FactoryExample { this }.ShowModal();
                         } },
             wxUI::Item { "&ForEachExample...", [this] {
                             ForEachExample { this }.ShowModal();
@@ -240,51 +244,6 @@ is equivalent to:
 wxUI::VSizer { "Current Frame" }.fitTo(this);
 ```
 
-
-#### Generic
-
-One special type of *Layout* is `Generic`.  There are cases where you have a `Window` object constructed by some other mechanism you need to insert in the Layout.  This is a case to use `Generic`:
-
-```cpp
-    VSizer {
-        wxSizerFlags().Expand().Border(),
-        Generic {
-            [window = this] {
-                return new wxButton(window, wxID_ANY, "Generic");
-            }() },
-    // ...
-        CreateStdDialogButtonSizer(wxOK),
-    }
-        .fitTo(this);
-```
-
-Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, and it will be inserted into the *Layout*.
-
-#### Splitter
-
-`HSplitter` and `VSplitter` are special types of *Layout* objects that take in two *Controllers*.
-
-```cpp
-    VSizer {
-        wxSizerFlags().Expand().Border(),
-        VSplitter {
-            TextCtrl { "This is Left Side.\n" }
-                .withStyle(wxTE_MULTILINE)
-                .withSize(wxSize(200, 100)),
-            HSplitter {
-                TextCtrl { "This is Right Top.\n" }.withProxy(rightUpper).withStyle(wxTE_MULTILINE).withSize(wxSize(200, 100)),
-                Button { "Incr" }
-                    .bind([this]() {
-                        auto original = std::string { *rightUpper } + "\nThis is Right Top.\n";
-                        *rightUpper = original;
-                    }),
-            } },
-    // ...
-        CreateStdDialogButtonSizer(wxOK),
-    }
-        .fitTo(this);
-```
-
 #### LayoutIf
 
 `LayoutIf` is useful for when parts of a Layout are not needed depending on runtime logic.  `LayoutIf` takes a boolean which determines if a set of "Items" should be created or not.
@@ -295,7 +254,6 @@ Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, and
             BitmapButton { wxArtProvider::GetBitmap(wxART_MINUS) },
         },
 ```
-
 
 #### ForEach
 
@@ -330,6 +288,85 @@ Often times you would be laying out a set of buttons in a horizontal sizer.  The
                 return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
             }),
 ```
+
+#### Splitter
+
+`HSplitter` and `VSplitter` are special types of *Layout* objects that take in two *Controllers*.
+
+```cpp
+    VSizer
+    {
+        wxSizerFlags().Expand().Border(),
+            VSplitter {
+                TextCtrl { "This is Left Side.\n" }
+                    .withStyle(wxTE_MULTILINE)
+                    .withSize(wxSize(200, 100)),
+                HSplitter {
+                    TextCtrl { "This is Right Top.\n" }.withProxy(rightUpper).withStyle(wxTE_MULTILINE).withSize(wxSize(200, 100)),
+                    Button { "Incr" }
+                        .bind([this]() {
+                            auto original = std::string { *rightUpper } + "\nThis is Right Top.\n";
+                            *rightUpper = original;
+                        }),
+                }
+            },
+    // ...
+            CreateStdDialogButtonSizer(wxOK),
+    }
+    .fitTo(this);
+```
+
+Note: Because the Splitter requires both parts to be children of the Splitter itself, you cannot use `Wrapper` as a *Controller*.  This will not compile:
+
+```cpp
+        // This is not supported because the splitter needs to have the controls created with wxSplitterWindow as parent.
+        VSplitter {
+            TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
+            Wrapper {
+                [parent = this] {
+                    return new wxButton(parent, wxID_ANY, "Raw button");
+                }() },
+        },
+```
+
+
+#### Wrapper
+
+There are cases where you have a `Window` object constructed by some other mechanism you need to insert in the *Layout*.  This is a case to use `Wrapper`:
+
+```cpp
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        Wrapper {
+            [window = this] {
+                return new wxButton(window, wxID_ANY, "Wrapper");
+            }() },
+    // ...
+        CreateStdDialogButtonSizer(wxOK),
+    }
+        .fitTo(this);
+```
+
+Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, and it will be inserted into the *Layout*.
+
+#### Factory
+
+One special case is when a *Controller* needs the parent `Window` to be constructed.  This is a case to use `Factory`:
+
+```cpp
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        Factory {
+            [](wxWindow* window) {
+                return new wxButton(window, wxID_ANY, "Factory");
+            } },
+    // ...
+        CreateStdDialogButtonSizer(wxOK),
+    }
+        .fitTo(this);
+```
+
+Essentially, you supply a closure or function that returns something convertable to `wxWindow*` when supplied with a `wxWindow*`, and it will be inserted into the *Layout*.
 
 
 ### Controllers
