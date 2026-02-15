@@ -30,11 +30,19 @@ SOFTWARE.
 #include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wx/wrapsizer.h>
 
 namespace wxUI::customizations {
 
 template <typename>
 inline constexpr bool always_false_v = false;
+
+template <class... Ts>
+struct overloaded : Ts... {
+    using Ts::operator()...;
+};
+template <class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
 
 // Customization points for creating underlying widgets via different
 // "parents". By default this will construct the real wxWidgets object
@@ -65,12 +73,43 @@ inline auto ParentCreate(Parent* parent, Args&&... args)
     return ParentCreateImpl<Underlying, Parent>::create(parent, std::forward<Args>(args)...);
 }
 
-// This doesn't need to be argument pack
+struct BoxSizerInfo {
+    std::optional<wxString> caption {};
+    wxOrientation orientation {};
+};
+
+struct WrapSizerInfo {
+    wxOrientation orientation {};
+};
+
+struct GridSizerInfo {
+    int cols {};
+};
+
+struct FlexGridSizerInfo {
+    int cols {};
+};
+
+using SizerInfo = std::variant<BoxSizerInfo, WrapSizerInfo, GridSizerInfo, FlexGridSizerInfo>;
+
 template <typename Parent>
-inline auto SizerCreate(Parent* parent, std::optional<wxString> caption, wxOrientation orientation) -> wxSizer*
+inline auto SizerCreate(Parent* parent, SizerInfo const& info) -> wxSizer*
 {
     if constexpr (std::is_convertible_v<Parent*, wxWindow*>) {
-        return caption ? new wxStaticBoxSizer(new wxStaticBox(parent, wxID_ANY, *caption), orientation) : new wxBoxSizer(orientation);
+        return std::visit(overloaded {
+                              [parent](BoxSizerInfo const& info) -> wxSizer* {
+                                  return info.caption ? new wxStaticBoxSizer(new wxStaticBox(parent, wxID_ANY, *info.caption), info.orientation) : new wxBoxSizer(info.orientation);
+                              },
+                              [](WrapSizerInfo const& info) -> wxSizer* {
+                                  return new wxWrapSizer(info.orientation);
+                              },
+                              [](GridSizerInfo const& info) -> wxSizer* {
+                                  return new wxGridSizer(info.cols);
+                              },
+                              [](FlexGridSizerInfo const& info) -> wxSizer* {
+                                  return new wxFlexGridSizer(info.cols);
+                              } },
+            info);
     } else {
         // If Parent is not a wxWindow-derived type then this default
         // implementation is not appropriate. Tests should provide a
@@ -121,13 +160,6 @@ void MenuSetMenuBar(Frame* frame, ::wxMenuBar* menuBar)
         static_assert(::wxUI::customizations::always_false_v<Frame>, "Provide MenuSetMenuBar customization for this Frame type");
     }
 }
-
-template <class... Ts>
-struct overloaded : Ts... {
-    using Ts::operator()...;
-};
-template <class... Ts>
-overloaded(Ts...) -> overloaded<Ts...>;
 
 template <typename Frame>
 void MenuBindToFrame(Frame& frame, int identity, std::variant<std::function<void(wxCommandEvent&)>, std::function<void()>> const& function)

@@ -50,6 +50,7 @@ SOFTWARE.
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/tglbtn.h>
+#include <wxUI/Customizations.hpp>
 
 // Forward declarations to avoid including Widget.hpp here. We want the
 // test-parent customization overloads to be visible to translation
@@ -160,11 +161,19 @@ struct std::formatter<wxMenuBar, char> {
 
 namespace wxUITests {
 
+enum class SizerType {
+    Box,
+    WrapBox,
+    Grid,
+    FlexGrid,
+};
 struct TestParent;
 struct TestSizer {
     bool top { false };
+    SizerType type { SizerType::Box };
     std::optional<std::string> caption {};
     wxOrientation orientation {};
+    std::optional<int> cols {};
 
     void SetSizeHints(TestParent*);
     void Add(TestParent*, wxSizerFlags const& flags);
@@ -296,7 +305,21 @@ struct std::formatter<wxUITests::TestSizer, char> {
             : c.orientation == wxVERTICAL
             ? std::string("wxVERTICAL")
             : std::format("{}", static_cast<int>(c.orientation));
-        std::format_to(ctx.out(), "{}Sizer[orientation={}", c.top ? "Top" : "", orientationStr);
+        switch (c.type) {
+        case wxUITests::SizerType::Box:
+            std::format_to(ctx.out(), "{}Sizer[orientation={}", c.top ? "Top" : "", orientationStr);
+            break;
+        case wxUITests::SizerType::WrapBox:
+            std::format_to(ctx.out(), "{}WrapSizer[orientation={}", c.top ? "Top" : "", orientationStr);
+            break;
+        case wxUITests::SizerType::Grid:
+            std::format_to(ctx.out(), "{}GridSizer[cols={}", c.top ? "Top" : "", *c.cols);
+            orientationStr = "Grid";
+            break;
+        case wxUITests::SizerType::FlexGrid:
+            std::format_to(ctx.out(), "{}FlexGridSizer[cols={}", c.top ? "Top" : "", *c.cols);
+            break;
+        }
         if (c.caption.has_value()) {
             std::format_to(ctx.out(), ", caption=\"{}\"", *c.caption);
         }
@@ -690,12 +713,36 @@ inline void SizerBindProxy(wxUITests::TestSizer* controller, Proxy&)
     controller->log.push_back(std::format("SizerBindProxy:{}", count + 1));
 }
 
-inline auto SizerCreate(wxUITests::TestParent* parent, std::optional<wxString> caption, wxOrientation orientation) -> wxUITests::TestSizer*
+inline auto SizerCreate(wxUITests::TestParent* parent, SizerInfo const& info) -> wxUITests::TestSizer*
 {
-    return parent->add(wxUITests::TestSizer {
-        .caption = caption.has_value() ? std::optional { caption->utf8_string() } : std::nullopt,
-        .orientation = orientation,
-    });
+    return std::visit(overloaded {
+                          [parent](BoxSizerInfo const& info) -> wxUITests::TestSizer* {
+                              return parent->add(wxUITests::TestSizer {
+                                  .type = wxUITests::SizerType::Box,
+                                  .caption = info.caption.has_value() ? std::optional { info.caption->utf8_string() } : std::nullopt,
+                                  .orientation = info.orientation,
+                              });
+                          },
+                          [parent](WrapSizerInfo const& info) -> wxUITests::TestSizer* {
+                              return parent->add(wxUITests::TestSizer {
+                                  .type = wxUITests::SizerType::WrapBox,
+                                  .orientation = info.orientation,
+                              });
+                          },
+                          [parent](GridSizerInfo const& info) -> wxUITests::TestSizer* {
+                              return parent->add(wxUITests::TestSizer {
+                                  .type = wxUITests::SizerType::Grid,
+                                  .cols = info.cols,
+                              });
+                          },
+                          [parent](FlexGridSizerInfo const& info) -> wxUITests::TestSizer* {
+                              return parent->add(wxUITests::TestSizer {
+                                  .type = wxUITests::SizerType::FlexGrid,
+                                  .cols = info.cols,
+                              });
+                          } },
+
+        info);
 }
 
 inline void MenuSetMenuBar(wxUITests::TestParent* parent, wxMenuBar* menuBar)
@@ -709,5 +756,4 @@ inline void MenuBindToFrame(wxUITests::TestParent& frame, int identity, std::var
     auto count = std::ranges::count_if(frame.log, [identity](auto const& e) { return e.starts_with(std::format("BindMenu:{}", identity)); });
     frame.log.push_back(std::format("BindMenu:{}:{}", identity, count + 1));
 }
-
 }

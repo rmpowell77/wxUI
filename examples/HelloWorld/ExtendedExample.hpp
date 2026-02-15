@@ -74,6 +74,21 @@ public:
     explicit LayoutIfExample(wxWindow* parent);
 };
 
+class WrapSizerExample : public wxDialog {
+public:
+    explicit WrapSizerExample(wxWindow* parent);
+};
+
+class GridSizerExample : public wxDialog {
+public:
+    explicit GridSizerExample(wxWindow* parent);
+};
+
+class FlexGridSizerExample : public wxDialog {
+public:
+    explicit FlexGridSizerExample(wxWindow* parent);
+};
+
 class UnicodeExample : public wxDialog {
 public:
     explicit UnicodeExample(wxWindow* parent);
