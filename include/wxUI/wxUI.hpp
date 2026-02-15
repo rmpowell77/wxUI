@@ -41,6 +41,7 @@
 #include <wxUI/Gauge.hpp>
 #include <wxUI/Hyperlink.hpp>
 #include <wxUI/Layout.hpp>
+#include <wxUI/LayoutIf.hpp>
 #include <wxUI/Line.hpp>
 #include <wxUI/ListBox.hpp>
 #include <wxUI/Menu.hpp>

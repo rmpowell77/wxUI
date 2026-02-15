@@ -346,40 +346,6 @@ HSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items) -
 
 template <details::SizerItem... UItems>
 HSizer(wxUI_String, wxString const& caption, wxSizerFlags const& flags, UItems&&... items) -> HSizer<UItems...>;
-
-template <details::SizerItem... Items>
-struct LayoutIf {
-    template <details::SizerItem... UItems>
-    explicit LayoutIf(bool enabled, UItems&&... items)
-    {
-        if (enabled) {
-            items_ = std::forward_as_tuple(std::forward<UItems>(items)...);
-        }
-    }
-    template <typename Parent, typename Sizer>
-    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
-    {
-        if (!items_) {
-            return;
-        }
-        createAndAddWidgets(parent, parentSizer, parentFlags);
-    }
-
-private:
-    template <typename Parent, typename Sizer>
-    void createAndAddWidgets(Parent* parent, Sizer* sizer, wxSizerFlags const& flags)
-    {
-        std::apply([parent, sizer, flags](auto&&... tupleArg) {
-            (details::createAndAddVisiter(tupleArg, parent, sizer, flags), ...);
-        },
-            *items_);
-    }
-
-    std::optional<std::tuple<Items...>> items_ {};
-};
-
-template <details::SizerItem... Item>
-LayoutIf(bool, Item... item) -> LayoutIf<Item...>;
 }
 
 #include "ZapMacros.hpp"

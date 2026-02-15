@@ -17,6 +17,7 @@ target_sources(wxUI_Tests PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/GetterSetter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/HelperMacros.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Hyperlink.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/LayoutIf.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Layout.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Line.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ListBox.cpp
