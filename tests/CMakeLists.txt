@@ -18,6 +18,7 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_HSplitterTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_HyperlinkTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LayoutTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LayoutIfTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LineTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ListBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_MenuTests.cpp
