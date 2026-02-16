@@ -146,13 +146,6 @@ jobs:
     - name: Installing Dependencies (Linux)
       if: matrix.config.os == 'ubuntu-latest'
       run: sudo apt-get update && sudo apt-get install build-essential libltdl-dev libgtk-3-dev freeglut3-dev autoconf autoconf-archive automake libtool; gcc -v
-     
-    - name: Updating to gcc 14 (Linux)
-      if: matrix.config.os == 'ubuntu-latest'
-      run: |
-        sudo apt install gcc-14 g++-14
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100 --slave /usr/bin/g++ g++ /usr/bin/g++-14 --slave /usr/bin/gcov gcov /usr/bin/gcov-14
-        sudo update-alternatives --set gcc /usr/bin/gcc-14
 
     - name: Configure CMake (Windows)
       if: matrix.config.os == 'windows-latest'

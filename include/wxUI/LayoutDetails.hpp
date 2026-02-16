@@ -156,6 +156,12 @@ private:
 };
 
 struct withWrap { };
+// Suppress GCC 14 false positive about uninitialized std::optional<wxString> in destructor
+// do this if changing the compiler didn't help
+// #if defined(__GNUC__) && !defined(__clang__)
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+// #endif
 template <details::SizerItem... Items>
 struct BoxSizer {
     template <details::SizerItem... UItems>
@@ -254,5 +260,8 @@ private:
     bool wrap_ = false;
     std::optional<wxString> caption_ = std::nullopt;
 };
+// #if defined(__GNUC__) && !defined(__clang__)
+// #pragma GCC diagnostic pop
+// #endif
 
 }
