@@ -83,7 +83,11 @@ struct std::formatter<wxBitmap, char> {
     constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
     auto format(wxBitmap const& bitmap, std::format_context& ctx) const
     {
-        return std::format_to(ctx.out(), "{}", bitmap.GetSize());
+        if (bitmap.IsOk()) {
+            return std::format_to(ctx.out(), "{}", bitmap.GetSize());
+        } else {
+            return std::format_to(ctx.out(), "(-1,-1)");
+        }
     }
 };
 

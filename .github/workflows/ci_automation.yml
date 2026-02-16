@@ -145,7 +145,7 @@ jobs:
 
     - name: Installing Dependencies (Linux)
       if: matrix.config.os == 'ubuntu-latest'
-      run: sudo apt-get update && sudo apt-get install build-essential libltdl-dev libgtk-3-dev freeglut3-dev autoconf autoconf-archive automake libtool; gcc -v
+      run: sudo apt-get update && sudo apt-get install build-essential libltdl-dev libgtk-3-dev freeglut3-dev autoconf autoconf-archive automake libtool xvfb; gcc -v
      
     - name: Updating to gcc 14 (Linux)
       if: matrix.config.os == 'ubuntu-latest'
@@ -207,8 +207,13 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
 
     - name: Run tests
-      if: matrix.config.os == 'macos-latest'
-      run: ctest --test-dir ${{github.workspace}}/build -C ${{matrix.build_type}}--output-on-failure
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          xvfb-run -a ctest --test-dir ${{github.workspace}}/build -C ${{matrix.build_type}} --output-on-failure
+        else
+          ctest --test-dir ${{github.workspace}}/build -C ${{matrix.build_type}} --output-on-failure
+        fi
+      shell: bash
 
     - name: Output Test Log on Failure
       if: failure()
