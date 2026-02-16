@@ -29,13 +29,11 @@ SOFTWARE.
 // ZapMacros.h should be the last line included in all Header files.
 // Due to the way we are using these header files, they should *not* use #pragma once
 
-// clang-format off
-
 #if !defined(WXUI_RULE_OF_SIX_BOILERPLATE)
-#define WXUI_RULE_OF_SIX_BOILERPLATE(WIDGET)            \
-    WIDGET(WIDGET const&) = default;                    \
-    WIDGET(WIDGET&&) noexcept = default;                \
-    auto operator=(WIDGET const&) -> WIDGET& = default; \
+#define WXUI_RULE_OF_SIX_BOILERPLATE(WIDGET)          \
+    WIDGET(WIDGET const&) = default;                  \
+    WIDGET(WIDGET&&) noexcept = default;              \
+    auto operator=(WIDGET const&)->WIDGET& = default; \
     auto operator=(WIDGET&&) noexcept -> WIDGET& = default;
 #endif
 
@@ -48,16 +46,16 @@ SOFTWARE.
 #endif
 
 #if !defined(WXUI_WIDGET_CREATE_BOILERPLATE)
-#define WXUI_WIDGET_CREATE_BOILERPLATE                                                                    \
-    template <typename Parent = wxWindow>                                                               \
-    auto create(Parent* parent)                                                                         \
-    {                                                                                                     \
-        return details_.create(this->template createImpl<Parent>(), parent);                            \
-    }                                                                                                     \
-    template <typename Parent = wxWindow, typename Sizer = wxSizer>                                     \
-    auto createAndAdd(Parent* parent, Sizer* sizer, wxSizerFlags const& parentFlags)                    \
-    {                                                                                                     \
-        return details_.createAndAdd(this->template createImpl<Parent>(), parent, sizer, parentFlags);  \
+#define WXUI_WIDGET_CREATE_BOILERPLATE                                                                 \
+    template <typename Parent = wxWindow>                                                              \
+    auto create(Parent* parent)                                                                        \
+    {                                                                                                  \
+        return details_.create(this->template createImpl<Parent>(), parent);                           \
+    }                                                                                                  \
+    template <typename Parent = wxWindow, typename Sizer = wxSizer>                                    \
+    auto createAndAdd(Parent* parent, Sizer* sizer, wxSizerFlags const& parentFlags)                   \
+    {                                                                                                  \
+        return details_.createAndAdd(this->template createImpl<Parent>(), parent, sizer, parentFlags); \
     }
 #endif
 
@@ -68,12 +66,12 @@ SOFTWARE.
 // and return the appropriate `C&` or `C&&`.
 #if !defined(WXUI_FORWARD_TO_DETAILS)
 #define WXUI_FORWARD_TO_DETAILS(ControllerType, MethodName, ArgType, ArgName) \
-    auto MethodName(ArgType ArgName)& -> ControllerType&                      \
+    auto MethodName(ArgType ArgName) & -> ControllerType&                     \
     {                                                                         \
         details_.MethodName(ArgName);                                         \
         return *this;                                                         \
     }                                                                         \
-    auto MethodName(ArgType ArgName)&& -> ControllerType&&                    \
+    auto MethodName(ArgType ArgName) && -> ControllerType&&                   \
     {                                                                         \
         details_.MethodName(ArgName);                                         \
         return std::move(*this);                                              \
@@ -82,41 +80,39 @@ SOFTWARE.
 
 // Forward the two-argument bind(event, handler) templates to details_.
 #if !defined(WXUI_FORWARD_BIND_TO_DETAILS)
-#define WXUI_FORWARD_BIND_TO_DETAILS(ControllerType)                            \
-    template <typename Event, typename Function>                                \
-    auto bind(wxEventTypeTag<Event> event, Function func)& -> ControllerType&   \
-    {                                                                           \
-        details_.bind(event, func);                                             \
-        return *this;                                                           \
-    }                                                                           \
-    template <typename Event, typename Function>                                \
-    auto bind(wxEventTypeTag<Event> event, Function func)&& -> ControllerType&& \
-    {                                                                           \
-        details_.bind(event, func);                                             \
-        return std::move(*this);                                                \
+#define WXUI_FORWARD_BIND_TO_DETAILS(ControllerType)                             \
+    template <typename Event, typename Function>                                 \
+    auto bind(wxEventTypeTag<Event> event, Function func) & -> ControllerType&   \
+    {                                                                            \
+        details_.bind(event, func);                                              \
+        return *this;                                                            \
+    }                                                                            \
+    template <typename Event, typename Function>                                 \
+    auto bind(wxEventTypeTag<Event> event, Function func) && -> ControllerType&& \
+    {                                                                            \
+        details_.bind(event, func);                                              \
+        return std::move(*this);                                                 \
     }
 #endif
 
 #if !defined(WXUI_FORWARD_ALL_TO_DETAILS)
-#define WXUI_FORWARD_ALL_TO_DETAILS(ControllerType)                                                      \
-    WXUI_RULE_OF_SIX_BOILERPLATE(ControllerType)                                                         \
-    WXUI_WIDGET_CREATE_BOILERPLATE                                                                       \
-    WXUI_FORWARD_BIND_TO_DETAILS(ControllerType)                                                         \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, withFlags, wxSizerFlags, flags)                              \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, withPosition, wxPoint, pos)                                  \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, withSize, wxSize, size)                                      \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, withWidth, int, size)                                        \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, withHeight, int, size)                                       \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, setStyle, int64_t, style)                                    \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, withStyle, int64_t, style)                                   \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, withoutStyle, int64_t, style)                                \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, withFont, wxFontInfo const&, fontInfo)                       \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, setEnabled, bool, enabled)                                   \
-    WXUI_FORWARD_TO_DETAILS(ControllerType, withProxy, details::Proxy<underlying_t> const&, proxy)       \
-    [[nodiscard]] auto getIdentity() const { return details_.getIdentity(); }                            \
-    [[nodiscard]] auto getPos() const { return details_.getPos(); }                                      \
-    [[nodiscard]] auto getSize() const { return details_.getSize(); }                                    \
+#define WXUI_FORWARD_ALL_TO_DETAILS(ControllerType)                                                \
+    WXUI_RULE_OF_SIX_BOILERPLATE(ControllerType)                                                   \
+    WXUI_WIDGET_CREATE_BOILERPLATE                                                                 \
+    WXUI_FORWARD_BIND_TO_DETAILS(ControllerType)                                                   \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, withFlags, wxSizerFlags, flags)                        \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, withPosition, wxPoint, pos)                            \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, withSize, wxSize, size)                                \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, withWidth, int, size)                                  \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, withHeight, int, size)                                 \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, setStyle, int64_t, style)                              \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, withStyle, int64_t, style)                             \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, withoutStyle, int64_t, style)                          \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, withFont, wxFontInfo const&, fontInfo)                 \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, setEnabled, bool, enabled)                             \
+    WXUI_FORWARD_TO_DETAILS(ControllerType, withProxy, details::Proxy<underlying_t> const&, proxy) \
+    [[nodiscard]] auto getIdentity() const { return details_.getIdentity(); }                      \
+    [[nodiscard]] auto getPos() const { return details_.getPos(); }                                \
+    [[nodiscard]] auto getSize() const { return details_.getSize(); }                              \
     [[nodiscard]] auto getStyle() const { return details_.getStyle(); }
 #endif
-
-// clang-format on

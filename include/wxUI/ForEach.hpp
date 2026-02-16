@@ -33,11 +33,9 @@ concept ForEachFunction = CreateAndAddable<typename invoke_apply_result<F, Arg>:
 
 namespace wxUI {
 
-// clang-format off
 template <std::ranges::input_range Range, typename Function>
 requires(details::ForEachFunction<Function, std::ranges::range_value_t<Range>>)
 struct ForEach {
-    // clang-format on
 
     ForEach(Range&& args, Function&& createFunction)
         : args_(std::forward<Range>(args))

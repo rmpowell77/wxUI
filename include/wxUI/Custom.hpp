@@ -29,15 +29,12 @@ namespace wxUI {
 
 // A Custom Controller can only be created with something that supports the CreateAndAdd function.
 
-// clang-format off
 // snippet requires
 template <typename T>
-concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer)
-{
+concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer) {
     function(window, sizer, wxSizerFlags {});
 };
 // endsnippet requires
-// clang-format on
 
 template <CreateAndAddFunction Function>
 struct Custom {

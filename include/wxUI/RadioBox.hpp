@@ -34,9 +34,7 @@ namespace wxUI {
 
 // https://docs.wxwidgets.org/latest/classwx_radio_box.html
 struct RadioBox {
-    // clang-format off
     struct withChoices { };
-    // clang-format on
 
     using underlying_t = wxRadioBox;
 

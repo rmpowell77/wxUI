@@ -38,11 +38,10 @@ struct Wrapper;
 
 namespace wxUI::details {
 
-// clang-format off
 template <typename T>
-struct is_Wrapper : std::false_type {};
+struct is_Wrapper : std::false_type { };
 template <typename W>
-struct is_Wrapper<::wxUI::Wrapper<W>> : std::true_type {};
+struct is_Wrapper<::wxUI::Wrapper<W>> : std::true_type { };
 template <typename T>
 inline constexpr bool is_Wrapper_v = is_Wrapper<T>::value;
 
@@ -50,7 +49,6 @@ template <typename T>
 concept SizerItem = details::CreateAndAddable<T>
     || is_Wrapper_v<T>
     || (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>);
-// clang-format on
 
 template <typename T, typename Parent, typename Sizer>
 static inline auto createAndAddVisiter(T& arg, Parent* parent, Sizer* sizer, wxSizerFlags const& flags)

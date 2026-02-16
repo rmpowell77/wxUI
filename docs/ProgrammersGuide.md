@@ -482,8 +482,7 @@ From time to time you may need to do some complicated custom wxWidget "controlle
 
 ```cpp
 template <typename T>
-concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer)
-{
+concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer) {
     function(window, sizer, wxSizerFlags {});
 };
 ```

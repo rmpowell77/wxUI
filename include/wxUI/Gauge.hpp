@@ -35,10 +35,8 @@ namespace wxUI {
 struct Gauge {
     using underlying_t = wxGauge;
 
-    // clang-format off
     struct withRange { };
     struct withIdentity { };
-    // clang-format on
 
     explicit Gauge()
         : Gauge(withIdentity {}, wxID_ANY, 100)

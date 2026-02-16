@@ -35,7 +35,6 @@ struct wxUI_String { };
 
 namespace wxUI::details {
 
-// clang-format off
 // Big help to Dennis Kormalev (https://www.linkedin.com/in/dkormalev/) for the example at:
 // https://godbolt.org/z/sv5seP79q
 template <typename, typename, typename = void>
@@ -55,6 +54,5 @@ using invoke_apply_result_t = typename invoke_apply_result<F, Args...>::type;
 
 template <class>
 inline constexpr bool always_false_v = false;
-// clang-format on
 
 }
