@@ -36,30 +36,27 @@ SOFTWARE.
 
 namespace wxUI::details {
 
-// clang-format off
-
 // A CreateAndAdd function takes a Window, Sizer, and Size flags
 // It is expected that the function does something meaningful, such as
 // create a wxWindow object and insert it into the sizer
 template <typename T>
-concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer)
-{
+concept CreateAndAddFunction = requires(T function, wxWindow* window, wxSizer* sizer) {
     function(window, sizer, wxSizerFlags {});
 };
 
 template <typename T>
-concept CreateAndAddable = requires(T widget, wxWindow* window, wxSizer* sizer)
-{
+concept CreateAndAddable = requires(T widget, wxWindow* window, wxSizer* sizer) {
     widget.createAndAdd(window, sizer, wxSizerFlags {});
 };
 
 template <typename T>
-concept Createable = requires(T widget, wxWindow* window)
-{
+concept Createable = requires(T widget, wxWindow* window) {
     widget.create(window);
 };
 
-namespace Ranges {
+}
+
+namespace wxUI::details::Ranges {
 
 template <typename T>
 concept ConvertTowxString = std::is_convertible_v<T, wxString>;
@@ -78,16 +75,15 @@ inline auto convertTo(std::initializer_list<T> choices) -> std::vector<wxString>
     return result;
 }
 
-
 template <typename R, typename T>
 concept input_range_of = std::ranges::input_range<R> && std::convertible_to<std::ranges::range_value_t<R>, T>;
 
 // This is due to missing support for ranges::to()
 template <typename T, std::ranges::range Range>
-    requires std::convertible_to<std::ranges::range_value_t<Range>, T>
+requires std::convertible_to<std::ranges::range_value_t<Range>, T>
 inline auto ToVector(Range&& range) -> std::vector<T>
 {
-    auto result = std::vector<T>{};
+    auto result = std::vector<T> {};
     if constexpr (std::is_same_v<std::ranges::range_value_t<Range>, std::string>) {
         std::ranges::transform(std::forward<Range>(range), std::back_inserter(result), [](auto const& choice) {
             return wxString::FromUTF8(choice);
@@ -97,10 +93,9 @@ inline auto ToVector(Range&& range) -> std::vector<T>
     }
     return result;
 }
-}
+} // namespace wxUI::details::Ranges
 
-// clang-format on
-
+namespace wxUI::details {
 // The WidgetDetails holds the common details across many controllers.
 // The "recipe" for constructing a controller is pretty straight forward:
 // 1. give a name.
@@ -165,7 +160,7 @@ struct WidgetDetails {
         enabled_ = enabled;
     }
 
-    auto withProxy(Proxy<Underlying> const& proxy)
+    auto withProxy(wxUI::details::Proxy<Underlying> const& proxy)
     {
         proxyHandles_.push_back(proxy);
     }
@@ -244,5 +239,4 @@ private:
     std::vector<details::Proxy<Underlying>> proxyHandles_ {};
     std::vector<BindInfo> boundedFunctions_;
 };
-
 }

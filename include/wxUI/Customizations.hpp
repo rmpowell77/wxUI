@@ -81,7 +81,6 @@ inline auto SizerCreate(Parent* parent, std::optional<wxString> caption, wxOrien
 }
 
 //--- Customization points for controllers ---//
-// clang-format off
 
 template <typename Controller, typename BoundFunction>
 inline void ControllerBindEvent(Controller* controller, BoundFunction const& boundedFunction)
@@ -114,7 +113,8 @@ inline void SizerBindProxy(Sizer* sizer, Proxy& proxyHandle)
 }
 
 template <typename Frame>
-void MenuSetMenuBar(Frame* frame, ::wxMenuBar* menuBar) {
+void MenuSetMenuBar(Frame* frame, ::wxMenuBar* menuBar)
+{
     if constexpr (std::is_convertible_v<Frame*, wxFrame*>) {
         static_cast<wxFrame*>(frame)->SetMenuBar(menuBar);
     } else {
@@ -128,7 +128,6 @@ struct overloaded : Ts... {
 };
 template <class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
-
 
 template <typename Frame>
 void MenuBindToFrame(Frame& frame, int identity, std::variant<std::function<void(wxCommandEvent&)>, std::function<void()>> const& function)
@@ -152,7 +151,5 @@ void MenuBindToFrame(Frame& frame, int identity, std::variant<std::function<void
         static_assert(always_false_v<Frame>, "Provide MenuBindToFrame customization for this Frame type");
     }
 }
-
-// clang-format on
 
 }

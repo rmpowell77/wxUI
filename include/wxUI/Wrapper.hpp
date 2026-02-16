@@ -59,9 +59,7 @@ struct Wrapper {
     auto createAndAdd([[maybe_unused]] Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         auto* window = create();
-        // clang-format off
         if constexpr (requires(Sizer* sizer, Window* window, wxSizerFlags flags) { sizer->Add(window, flags); }) {
-            // clang-format on
             parentSizer->Add(window, flags_.value_or(parentFlags));
         }
         return window;
