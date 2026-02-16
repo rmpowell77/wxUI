@@ -23,10 +23,11 @@ SOFTWARE.
 */
 #pragma once
 
-#include "BindInfo.hpp"
-#include "Customizations.hpp"
-#include "Proxy.hpp"
-#include "wxUITypes.hpp"
+#include <wxUI/Customizations.hpp>
+#include <wxUI/Proxy.hpp>
+#include <wxUI/detail/BindInfo.hpp>
+#include <wxUI/wxUITypes.hpp>
+
 #include <optional>
 #include <stdexcept>
 #include <string>

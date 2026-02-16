@@ -23,10 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
-#include "LayoutDetails.hpp"
 #include <variant>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wxUI/Widget.hpp>
+#include <wxUI/detail/HelperMacros.hpp>
+#include <wxUI/detail/LayoutDetails.hpp>
+#include <wxUI/wxUITypes.hpp>
 
 namespace wxUI {
 
@@ -354,4 +357,4 @@ FlexGridSizer(int, wxSizerFlags const& flags, UItems&&... items) -> FlexGridSize
 
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

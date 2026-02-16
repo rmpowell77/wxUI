@@ -23,7 +23,7 @@ SOFTWARE.
 */
 // Generated with bash command
 // for i in *.cpp; do echo \#include \<wxUI\/BindInfo.hpp\> > Widget.cpp; for j in WXUI_RULE_OF_SIX_BOILERPLATE WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE\) >> Widget.cpp; echo \#error Missed zapping WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE >> Widget.cpp; echo \#endif >> Widget.cpp; done; done
-#include <wxUI/BindInfo.hpp>
+#include <wxUI/detail/BindInfo.hpp>
 
 #if defined(WXUI_RULE_OF_SIX_BOILERPLATE)
 #error Missed zapping WXUI_RULE_OF_SIX_BOILERPLATE

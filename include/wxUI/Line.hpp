@@ -23,10 +23,10 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.hpp"
 #include <wx/statline.h>
+#include <wxUI/Widget.hpp>
 
-#include "HelperMacros.hpp"
+#include <wxUI/detail/HelperMacros.hpp>
 
 namespace wxUI {
 
@@ -70,4 +70,4 @@ inline auto VLine() -> Line
 WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(Line);
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

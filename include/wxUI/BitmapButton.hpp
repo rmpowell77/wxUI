@@ -23,10 +23,10 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.hpp"
 #include <wx/bmpbuttn.h>
+#include <wxUI/Widget.hpp>
 
-#include "HelperMacros.hpp"
+#include <wxUI/detail/HelperMacros.hpp>
 
 namespace wxUI {
 
@@ -98,4 +98,4 @@ public:
 WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(BitmapButton);
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

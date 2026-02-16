@@ -23,43 +23,52 @@ SOFTWARE.
 */
 #pragma once
 
-#include <wxUI/Layout.hpp>
+// Forward declarations for commonly-used wxUI types
+// This header can be included to avoid circular dependencies
 
 namespace wxUI {
 
-template <details::SizerItem... Items>
-struct LayoutIf {
-    template <details::SizerItem... UItems>
-    explicit LayoutIf(bool enabled, UItems&&... items)
-    {
-        if (enabled) {
-            items_ = std::forward_as_tuple(std::forward<UItems>(items)...);
-        }
-    }
-    template <typename Parent, typename Sizer>
-    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
-    {
-        if (!items_) {
-            return;
-        }
-        createAndAddWidgets(parent, parentSizer, parentFlags);
-    }
+// Tag struct for explicit wxString constructor usage
+struct wxUI_String;
 
-private:
-    template <typename Parent, typename Sizer>
-    void createAndAddWidgets(Parent* parent, Sizer* sizer, wxSizerFlags const& flags)
-    {
-        std::apply([parent, sizer, flags](auto&&... tupleArg) {
-            (details::createAndAddVisiter(tupleArg, parent, sizer, flags), ...);
-        },
-            *items_);
-    }
+// Common template types
+template <typename Window>
+struct Wrapper;
 
-    std::optional<std::tuple<Items...>> items_ {};
-};
+template <typename... Items>
+struct VSizer;
 
-template <details::SizerItem... Item>
-LayoutIf(bool, Item... item) -> LayoutIf<Item...>;
+template <typename... Items>
+struct HSizer;
+
+template <typename... Items>
+struct FlexGridSizer;
+
+template <typename... Items>
+struct WrapSizer;
+
+template <typename... Items>
+struct LayoutIf;
+
+template <typename... Items>
+struct ForEach;
+
 }
 
-#include <wxUI/detail/ZapMacros.hpp>
+namespace wxUI::details {
+
+// Proxy template for accessing underlying wxWidgets controls
+template <typename T>
+struct Proxy;
+
+// Type traits
+template <typename, typename, typename = void>
+struct CanApply;
+
+template <typename F, typename Arg, typename = void>
+struct invoke_apply_result;
+
+template <typename F, typename... Args>
+using invoke_apply_result_t = typename invoke_apply_result<F, Args...>::type;
+
+}

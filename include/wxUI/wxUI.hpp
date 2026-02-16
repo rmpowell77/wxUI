@@ -27,6 +27,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <wxUI/version.hpp>
+
 #include <wxUI/Bitmap.hpp>
 #include <wxUI/BitmapButton.hpp>
 #include <wxUI/BitmapComboBox.hpp>

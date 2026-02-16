@@ -23,8 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Layout.hpp"
-#include "wxUITypes.hpp"
+#include <wxUI/Layout.hpp>
+#include <wxUI/wxUITypes.hpp>
 
 namespace wxUI::details {
 template <typename F, typename Arg>
@@ -147,4 +147,4 @@ auto HForEach(wxSizerFlags const& flags, Range&& args, Function&& function)
 }
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>
