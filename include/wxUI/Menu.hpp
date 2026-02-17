@@ -23,9 +23,6 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Customizations.hpp"
-#include "Proxy.hpp"
-#include "wxUITypes.hpp"
 #include <functional>
 #include <memory>
 #include <stdexcept>
@@ -33,6 +30,9 @@ SOFTWARE.
 #include <variant>
 #include <wx/frame.h>
 #include <wx/menu.h>
+#include <wxUI/Customizations.hpp>
+#include <wxUI/Proxy.hpp>
+#include <wxUI/wxUITypes.hpp>
 
 namespace wxUI::details {
 
@@ -503,4 +503,4 @@ private:
 };
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

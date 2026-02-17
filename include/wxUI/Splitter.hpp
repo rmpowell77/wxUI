@@ -23,11 +23,11 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.hpp"
 #include <wx/button.h>
 #include <wx/splitter.h>
+#include <wxUI/Widget.hpp>
 
-#include "HelperMacros.hpp"
+#include <wxUI/detail/HelperMacros.hpp>
 
 namespace wxUI {
 
@@ -153,4 +153,4 @@ struct SplitterProxy : details::Proxy<wxSplitterWindow> {
 };
 
 }
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

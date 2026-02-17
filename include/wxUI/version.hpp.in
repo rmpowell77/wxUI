@@ -23,43 +23,29 @@ SOFTWARE.
 */
 #pragma once
 
-#include <wxUI/Layout.hpp>
+// wxUI version information
+
+// clang-format off
+#define WXUI_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define WXUI_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define WXUI_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#define WXUI_VERSION_STRING "@PROJECT_VERSION@"
+// clang-format on
 
 namespace wxUI {
 
-template <details::SizerItem... Items>
-struct LayoutIf {
-    template <details::SizerItem... UItems>
-    explicit LayoutIf(bool enabled, UItems&&... items)
-    {
-        if (enabled) {
-            items_ = std::forward_as_tuple(std::forward<UItems>(items)...);
-        }
-    }
-    template <typename Parent, typename Sizer>
-    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
-    {
-        if (!items_) {
-            return;
-        }
-        createAndAddWidgets(parent, parentSizer, parentFlags);
-    }
+/// Version information for the wxUI library
+inline constexpr struct version_info {
+    int major = WXUI_VERSION_MAJOR;
+    int minor = WXUI_VERSION_MINOR;
+    int patch = WXUI_VERSION_PATCH;
+    const char* string = WXUI_VERSION_STRING;
 
-private:
-    template <typename Parent, typename Sizer>
-    void createAndAddWidgets(Parent* parent, Sizer* sizer, wxSizerFlags const& flags)
+    /// Returns the version as a comparable integer (major * 10000 + minor * 100 + patch)
+    constexpr int as_number() const
     {
-        std::apply([parent, sizer, flags](auto&&... tupleArg) {
-            (details::createAndAddVisiter(tupleArg, parent, sizer, flags), ...);
-        },
-            *items_);
+        return major * 10000 + minor * 100 + patch;
     }
+} version {};
 
-    std::optional<std::tuple<Items...>> items_ {};
-};
-
-template <details::SizerItem... Item>
-LayoutIf(bool, Item... item) -> LayoutIf<Item...>;
 }
-
-#include <wxUI/detail/ZapMacros.hpp>

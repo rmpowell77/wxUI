@@ -23,7 +23,6 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.hpp"
 #include <concepts>
 #include <stdexcept>
 #include <type_traits>
@@ -31,6 +30,7 @@ SOFTWARE.
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/wx.h>
+#include <wxUI/Widget.hpp>
 
 namespace wxUI {
 
@@ -136,4 +136,4 @@ template <typename Function>
 Factory(wxSizerFlags const&, Function) -> Factory<std::remove_pointer_t<std::invoke_result_t<Function&, wxWindow*>>, std::decay_t<Function>>;
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

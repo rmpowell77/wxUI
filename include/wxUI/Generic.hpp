@@ -23,13 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.hpp"
 #include <stdexcept>
 #include <type_traits>
 #include <variant>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/wx.h>
+#include <wxUI/Widget.hpp>
 
 namespace wxUI {
 
@@ -126,4 +126,4 @@ private:
 };
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

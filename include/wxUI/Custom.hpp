@@ -23,7 +23,7 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.hpp"
+#include <wxUI/Widget.hpp>
 
 namespace wxUI {
 
@@ -61,4 +61,4 @@ private:
 
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

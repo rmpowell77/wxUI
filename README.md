@@ -15,8 +15,8 @@ public:
 
 ExampleDialog::ExampleDialog(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExampleDialog",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
 
@@ -137,8 +137,8 @@ For instance, a usual programming pattern for [`wxWidgets`](https://www.wxwidget
 ```
 ExampleDialogWidgets::ExampleDialogWidgets(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExampleDialogWidgets",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     // Create the controls.
     auto* text = new wxStaticText(this, wxID_ANY, "Example of Text in wxWidgets");
@@ -164,8 +164,8 @@ This separates the "what" from the "where", and often makes it challenging to id
 ```
 ExampleDialog::ExampleDialog(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExampleDialog",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
 

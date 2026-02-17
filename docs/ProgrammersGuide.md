@@ -70,9 +70,10 @@ HelloWorldFrame::HelloWorldFrame()
                             ExampleDialog dialog(this);
                             dialog.ShowModal();
                         } },
-            wxUI::Separator {}, wxUI::Item { wxID_EXIT, [this] {
-                                                Close(true);
-                                            } },
+            wxUI::Separator {},
+            wxUI::Item { wxID_EXIT, [this] {
+                            Close(true);
+                        } },
     // ...
         }
     }.fitTo(this);
@@ -87,10 +88,11 @@ Menu Items are generally a name with a handler closure, such as a lambda, or nam
 Handlers are callable items that handle events.  The handler can be declared with both no arguments or the `wxCommandEvent` argument for deeper inspection of the event.
 
 ```cpp
-            wxUI::Separator {}, wxUI::Item { "&ExtendedExample...", [this] {
-                                                ExtendedExample dialog(this);
-                                                dialog.ShowModal();
-                                            } },
+            wxUI::Separator {},
+            wxUI::Item { "&ExtendedExample...", [this] {
+                            ExtendedExample dialog(this);
+                            dialog.ShowModal();
+                        } },
             wxUI::Item { "&MultibindExample...", [this] {
                             MultibindExample { this }.ShowModal();
                         } },
@@ -120,20 +122,22 @@ Items { "Name", "Help", Handler }
 
 ```cpp
         wxUI::Menu {
-            "&Extra", wxUI::Menu {
-                          "Pets",
-                          wxUI::CheckItem { "Cats", [](wxCommandEvent& event) {
-                                               wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
-                                           } },
-                          wxUI::CheckItem { "Dogs", [](wxCommandEvent& event) {
-                                               wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
-                                           } },
-                      },
+            "&Extra",
+            wxUI::Menu {
+                "Pets",
+                wxUI::CheckItem { "Cats", [](wxCommandEvent& event) {
+                                     wxLogMessage("Cats %s checked", event.IsChecked() ? "are" : "are not");
+                                 } },
+                wxUI::CheckItem { "Dogs", [](wxCommandEvent& event) {
+                                     wxLogMessage("Dogs %s checked", event.IsChecked() ? "are" : "are not");
+                                 } },
+            },
     // ...
-            wxUI::Separator {}, wxUI::Item { "&ExtendedExample...", [this] {
-                                                ExtendedExample dialog(this);
-                                                dialog.ShowModal();
-                                            } },
+            wxUI::Separator {},
+            wxUI::Item { "&ExtendedExample...", [this] {
+                            ExtendedExample dialog(this);
+                            dialog.ShowModal();
+                        } },
             wxUI::Item { "&MultibindExample...", [this] {
                             MultibindExample { this }.ShowModal();
                         } },

@@ -23,7 +23,7 @@ SOFTWARE.
 */
 // Generated with bash command
 // for i in *.cpp; do echo \#include \<wxUI\/ZapMacros.hpp\> > ZapMacros.cpp; for j in WXUI_RULE_OF_SIX_BOILERPLATE WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE\) >> ZapMacros.cpp; echo \#error Missed zapping WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE >> ZapMacros.cpp; echo \#endif >> ZapMacros.cpp; done; done
-#include <wxUI/ZapMacros.hpp>
+#include <wxUI/detail/ZapMacros.hpp>
 
 #if defined(WXUI_RULE_OF_SIX_BOILERPLATE)
 #error Missed zapping WXUI_RULE_OF_SIX_BOILERPLATE
