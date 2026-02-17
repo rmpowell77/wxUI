@@ -45,6 +45,10 @@ SOFTWARE.
 #error Missed zapping WXUI_FORWARD_BIND_TO_DETAILS
 #endif
 
+#if defined(WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS)
+#error Missed zapping WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS
+#endif
+
 #if defined(WXUI_FORWARD_ALL_TO_DETAILS)
 #error Missed zapping WXUI_FORWARD_ALL_TO_DETAILS
 #endif

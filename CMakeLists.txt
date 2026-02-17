@@ -49,6 +49,7 @@ add_library(
   include/wxUI/HelperMacros.hpp
   include/wxUI/Hyperlink.hpp
   include/wxUI/Layout.hpp
+  include/wxUI/LayoutDetails.hpp
   include/wxUI/LayoutIf.hpp
   include/wxUI/Line.hpp
   include/wxUI/Menu.hpp

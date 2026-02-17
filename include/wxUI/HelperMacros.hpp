@@ -95,6 +95,22 @@ SOFTWARE.
     }
 #endif
 
+#if !defined(WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS)
+#define WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS(ControllerType, MethodName, ArgType, ArgName) \
+    template <typename ArgType>\
+    auto MethodName(ArgType* ArgName)& -> ControllerType&                      \
+    {                                                                         \
+        details_.MethodName(ArgName);                                         \
+        return *this;                                                         \
+    }                                                                         \
+    template <typename ArgType>\
+    auto MethodName(ArgType* ArgName)&& -> ControllerType&&                    \
+    {                                                                         \
+        details_.MethodName(ArgName);                                         \
+        return std::move(*this);                                              \
+    }
+#endif
+
 #if !defined(WXUI_FORWARD_ALL_TO_DETAILS)
 #define WXUI_FORWARD_ALL_TO_DETAILS(ControllerType)                                                \
     WXUI_RULE_OF_SIX_BOILERPLATE(ControllerType)                                                   \

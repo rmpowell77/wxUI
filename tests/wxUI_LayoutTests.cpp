@@ -82,6 +82,64 @@ Dump sizerWithChildDump(wxOrientation parentOrientation,
         "sizer:" + sizerDescriptor(childOrientation, childCaption),
     };
 }
+
+std::string wrapSizerDescriptor(wxOrientation orientation)
+{
+    return "WrapSizer[orientation=" + sizerOrientation(orientation) + "]";
+}
+
+Dump wrapSizerDump(wxOrientation orientation)
+{
+    return {
+        "Create:" + wrapSizerDescriptor(orientation),
+        "topsizer:" + wrapSizerDescriptor(orientation),
+        "sizer:" + wrapSizerDescriptor(orientation),
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+    };
+}
+
+Dump wrapSizerWithButtonDump(wxOrientation orientation, int flags = 0)
+{
+    return {
+        "Create:" + wrapSizerDescriptor(orientation),
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+        "topsizer:" + wrapSizerDescriptor(orientation),
+        "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+        "SetEnabled:true",
+        "sizer:" + wrapSizerDescriptor(orientation),
+        "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]:flags:(" + std::to_string(flags) + ",0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+    };
+}
+
+std::string gridSizerDescriptor(int cols, bool isFlex = false)
+{
+    return (isFlex ? "FlexGridSizer[cols=" : "GridSizer[cols=") + std::to_string(cols) + "]";
+}
+
+Dump gridSizerDump(int cols, bool isFlex = false)
+{
+    return {
+        "Create:" + gridSizerDescriptor(cols, isFlex),
+        "topsizer:" + gridSizerDescriptor(cols, isFlex),
+        "sizer:" + gridSizerDescriptor(cols, isFlex),
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+    };
+}
+
+Dump gridSizerWithButtonDump(int cols, bool isFlex, int flags = 0)
+{
+    return {
+        "Create:" + gridSizerDescriptor(cols, isFlex),
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+        "topsizer:" + gridSizerDescriptor(cols, isFlex),
+        "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+        "SetEnabled:true",
+        "sizer:" + gridSizerDescriptor(cols, isFlex),
+        "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]:flags:(" + std::to_string(flags) + ",0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+    };
+}
 } // namespace
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
@@ -94,7 +152,7 @@ TEST_CASE("Size")
         wxUI::VSizer {}.fitTo(&frame);
         CHECK(frame.dump() == sizerDump(wxVERTICAL));
     }
-    SECTION("vSizer.empty1")
+    SECTION("vSizer.withButton")
     {
         TestParent frame;
         wxUI::VSizer { wxUI::Button { "Hello" } }.fitTo(&frame);
@@ -121,6 +179,12 @@ TEST_CASE("Size")
         wxString caption { "Inner" };
         wxUI::VSizer { wxUI_String {}, caption }.fitTo(&frame);
         CHECK(frame.dump() == sizerDump(wxVERTICAL, "Inner"));
+    }
+    SECTION("vSizer.flags.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxVERTICAL));
     }
     SECTION("vSizer.collapse.vSizer.empty")
     {
@@ -277,7 +341,7 @@ TEST_CASE("Size")
         wxUI::HSizer {}.fitTo(&frame);
         CHECK(frame.dump() == sizerDump(wxHORIZONTAL));
     }
-    SECTION("hSizer.empty1")
+    SECTION("hSizer.withButton")
     {
         TestParent frame;
         wxUI::HSizer { wxUI::Button { "Hello" } }.fitTo(&frame);
@@ -304,6 +368,12 @@ TEST_CASE("Size")
         wxString caption { "Child" };
         wxUI::HSizer { wxUI_String {}, caption }.fitTo(&frame);
         CHECK(frame.dump() == sizerDump(wxHORIZONTAL, "Child"));
+    }
+    SECTION("hSizer.flags.empty")
+    {
+        TestParent frame;
+        wxUI::HSizer { wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxHORIZONTAL));
     }
     SECTION("hSizer.collapse.hSizer.empty")
     {
@@ -428,6 +498,122 @@ TEST_CASE("Size")
         TestParent frame;
         wxUI::HSizer { "Parent", wxUI::HSizer { "Child" } }.fitTo(&frame);
         CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxHORIZONTAL, "Child"));
+    }
+
+    // <<<< VWrapSizer >>>>
+    SECTION("vWrapSizer.empty")
+    {
+        TestParent frame;
+        wxUI::VWrapSizer {}.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxVERTICAL));
+    }
+    SECTION("vWrapSizer.flags.empty")
+    {
+        TestParent frame;
+        wxUI::VWrapSizer { wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxVERTICAL));
+    }
+    SECTION("vWrapSizer.collapse.vWrapSizer.empty")
+    {
+        TestParent frame;
+        wxUI::VWrapSizer { wxUI::VWrapSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxVERTICAL));
+    }
+    SECTION("vWrapSizer.withButton")
+    {
+        TestParent frame;
+        wxUI::VWrapSizer { wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerWithButtonDump(wxVERTICAL));
+    }
+    SECTION("vWrapSizer.flags.withButton")
+    {
+        TestParent frame;
+        wxUI::VWrapSizer { wxSizerFlags(1), wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerWithButtonDump(wxVERTICAL, 1));
+    }
+
+    // <<<< HWrapSizer >>>>
+    SECTION("hWrapSizer.empty")
+    {
+        TestParent frame;
+        wxUI::HWrapSizer {}.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxHORIZONTAL));
+    }
+    SECTION("hWrapSizer.flags.empty")
+    {
+        TestParent frame;
+        wxUI::HWrapSizer { wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxHORIZONTAL));
+    }
+    SECTION("hWrapSizer.collapse.hWrapSizer.empty")
+    {
+        TestParent frame;
+        wxUI::HWrapSizer { wxUI::HWrapSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxHORIZONTAL));
+    }
+    SECTION("hWrapSizer.withButton")
+    {
+        TestParent frame;
+        wxUI::HWrapSizer { wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerWithButtonDump(wxHORIZONTAL));
+    }
+    SECTION("hWrapSizer.flags.withButton")
+    {
+        TestParent frame;
+        wxUI::HWrapSizer { wxSizerFlags(1), wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerWithButtonDump(wxHORIZONTAL, 1));
+    }
+
+    // <<<< GridSizer >>>>
+    SECTION("gridSizer.empty")
+    {
+        TestParent frame;
+        wxUI::GridSizer { 2 }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerDump(2));
+    }
+    SECTION("gridSizer.flags.empty")
+    {
+        TestParent frame;
+        wxUI::GridSizer { 2, wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerDump(2));
+    }
+    SECTION("gridSizer.withButton")
+    {
+        TestParent frame;
+        wxUI::GridSizer { 2, wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerWithButtonDump(2, false));
+    }
+    SECTION("gridSizer.flags.withButton")
+    {
+        TestParent frame;
+        wxUI::GridSizer { 2, wxSizerFlags(1), wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerWithButtonDump(2, false, 1));
+    }
+
+    // <<<< FlexGridSizer >>>>
+    SECTION("flexGridSizer.empty")
+    {
+        TestParent frame;
+        wxUI::FlexGridSizer { 2 }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerDump(2, true));
+    }
+    SECTION("flexGridSizer.flags.empty")
+    {
+        TestParent frame;
+        wxUI::FlexGridSizer { 2, wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerDump(2, true));
+    }
+    SECTION("flexGridSizer.withButton")
+    {
+        TestParent frame;
+        wxUI::FlexGridSizer { 2, wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerWithButtonDump(2, true));
+    }
+    SECTION("flexGridSizer.flags.withButton")
+    {
+        TestParent frame;
+        wxUI::FlexGridSizer { 2, wxSizerFlags(1), wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerWithButtonDump(2, true, 1));
     }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

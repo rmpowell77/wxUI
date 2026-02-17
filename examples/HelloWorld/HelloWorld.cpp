@@ -172,6 +172,15 @@ HelloWorldFrame::HelloWorldFrame()
             wxUI::Item { "&LayoutIf...", [this] {
                             LayoutIfExample { this }.ShowModal();
                         } },
+            wxUI::Item { "&WrapSizer...", [this] {
+                            WrapSizerExample { this }.ShowModal();
+                        } },
+            wxUI::Item { "&GridSizer...", [this] {
+                            GridSizerExample { this }.ShowModal();
+                        } },
+            wxUI::Item { "&FlexGridSizer...", [this] {
+                            FlexGridSizerExample { this }.ShowModal();
+                        } },
             wxUI::Item { "&UnicodeExample...", [this] {
                             UnicodeExample { this }.ShowModal();
                         } },

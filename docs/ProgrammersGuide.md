@@ -155,6 +155,15 @@ Items { "Name", "Help", Handler }
             wxUI::Item { "&LayoutIf...", [this] {
                             LayoutIfExample { this }.ShowModal();
                         } },
+            wxUI::Item { "&WrapSizer...", [this] {
+                            WrapSizerExample { this }.ShowModal();
+                        } },
+            wxUI::Item { "&GridSizer...", [this] {
+                            GridSizerExample { this }.ShowModal();
+                        } },
+            wxUI::Item { "&FlexGridSizer...", [this] {
+                            FlexGridSizerExample { this }.ShowModal();
+                        } },
             wxUI::Item { "&UnicodeExample...", [this] {
                             UnicodeExample { this }.ShowModal();
                         } },
@@ -207,7 +216,7 @@ HelloWorldFrame::HelloWorldFrame()
 
 ### Layout
 
-The basics of `wxUI` layout is the *Layout*.  You use a specific type of *Layout*, with the `wxUI::VSizer` (Vertical Sizer or "row") and `wxUI::HSizer` (Horizontal Sizer or "column") being the most common. When a *Layout* is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
+The `wxUI` library provides several ways to form the UI via *Layout* objects.  You use a specific type of *Layout*, with the `wxUI::VSizer` (Vertical Sizer or "row") and `wxUI::HSizer` (Horizontal Sizer or "column") being the most common. When a *Layout* is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
 
 ```cpp
     VSizer {
@@ -221,28 +230,58 @@ The basics of `wxUI` layout is the *Layout*.  You use a specific type of *Layout
 
 In the above example we have constructed a vertical layout sizer that will use a `wxSizer` with the `wxSizerFlags` set to expand with a default border.  Then the first item in the sizer is a second layer sizer with horizontal layout.  The `wxSizerFlags` are propagated to each layer so the horizontal layout in this example would also be set to expand with a default border.  The second sizer would be created as a "named" box horizonal sizer.
 
-A *Layout* takes a collection of "Items", which can be either additional *Layout* (to create a tree of *Layouts*), *Controllers*, anything that is convertable `wxSizer*`.  Here is the general form of constructions for *Sizers*:
+A *Layout* takes a collection of "Items", which can be either additional *Layout* (to create a tree of *Layouts*), *Controllers*, anything that is convertable `wxSizer*`.  An `wxSizerFlags` argument can be supplied with the *Controllers* to control how each item will be inserted into the *Layout*. can  Here is the general form of constructions for *Sizers*:
 
 ```
 Sizer { Items... }
 Sizer { SizerFlags, Items... }
-Sizer { "Name", Items... }
-Sizer { "Name", SizerFlags, Items... }
 ```
 
-`wxUI` supports 3 flavors of Sizers: `wxUI::VSizer` (Vertical Sizers), `wxUI::HSizer` (Horizontal Sizers), and `wxUI::FlexGridSizer` (Flexible Grid Sizers).  Both `wxUI::VSizer` and `wxUI::HSizer` can be created with a string to create a "named" box.
+`wxUI` supports several flavors of Sizers: `wxUI::VSizer`/`wxUI::HSizer` (Vertical/Horizontal `wxBoxSizer` or `wxStaticBoxSizer`), `wxUI::VWrapSizer`/`wxUI::HWrapSizer` (Vertical/Horizontal `wxWrapSizer`), `wxUI::GridSizer` (`wxGridSizer`), and `wxUI::FlexGridSizer` (`wxGridSizer`).  Both `wxUI::VSizer` and `wxUI::HSizer` can be created with a string to create a `wxStaticBoxSizer`.
 
-Note: Because Sizers are intended to be "recursive" data structures, it is possible for a `wxUI::VSizer` to contain a `wxUI::VSizer`.  However, be aware that if an empty `wxUI::VSizer` is created with *just* a `wxUI::VSizer` as the argument, we collapse that to be a single `wxUI::VSizer`.  ie, this:
+`wxUI::GridSizer` and `wxUI::FlexGridSizer` require specifying the number of columns to use.  An example of usage:
 
-```
-wxUI::VSizer { wxUI::VSizer { "Current Frame" } }.fitTo(this);
+```cpp
+    FlexGridSizer {
+        2,
+        wxSizerFlags().Expand().Border(),
+        CheckBox { "Check" },
+        CheckBox { "Check" },
+        TextCtrl { "Text" }.withSize(wxSize(100, 100)),
+        TextCtrl { "Text" },
+    }
+        .fitTo(this);
 ```
 
-is equivalent to:
+This table shows which Layout to use for the desired behavior
 
-```
-wxUI::VSizer { "Current Frame" }.fitTo(this);
-```
+| wxSizer                               | Form                                |
+| :------------------------------------ | :---------------------------------- |
+| `wxBoxSizer` with wxVERTICAL          | `VSizer { Items... }`               |
+| `wxBoxSizer` with wxHORIZONTAL        | `HSizer { Items... }`               |
+| `wxStaticBoxSizer` with wxVERTICAL    | `VSizer { "Name", Items... }`       |
+| `wxStaticBoxSizer` with wxHORIZONTAL  | `HSizer { "Name", Items... }`       |
+| `wxWrapSizer` with wxVERTICAL         | `VWrapSizer { Items... }`           |
+| `wxWrapSizer` with wxHORIZONTAL       | `HWrapSizer { Items... }`           |
+| `wxGridSizer`                         | `GridSizer { cols, Items... }`      |
+| `wxFlexGridSizer`                     | `FlexGridSizer { cols, Items... }`  |
+
+
+
+> [!NOTE]
+> Because Sizers are intended to be "recursive" data structures, it is possible for a `wxUI::VSizer` to contain a `wxUI::VSizer`. However, be aware that if an empty `wxUI::VSizer` is created with *just* a `wxUI::VSizer` as the argument, we collapse that to be a single `wxUI::VSizer`. ie, this:
+>
+> ```cpp
+> wxUI::VSizer { wxUI::VSizer { "Current Frame" } }.fitTo(this);
+> ```
+>
+> is equivalent to:
+>
+> ```cpp
+> wxUI::VSizer { "Current Frame" }.fitTo(this);
+> ```
+>
+> This only holds for `wxBoxSizer`.  Grid and FlexGrid allow nesting.
 
 #### LayoutIf
 

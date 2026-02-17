@@ -478,6 +478,64 @@ LayoutIfExample::LayoutIfExample(wxWindow* parent)
         .fitTo(this);
 }
 
+WrapSizerExample::WrapSizerExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "WrapSizer",
+        wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        HWrapSizer {
+            Button { "Button 1" },
+            Text { "Dog" },
+            SpinCtrl { std::pair { 1, 3 } },
+        },
+        VWrapSizer {
+            Button { "Button 2" },
+            Text { "Cat" },
+            SpinCtrl { std::pair { 1, 3 } },
+        },
+    }
+        .fitTo(this);
+}
+
+GridSizerExample::GridSizerExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "GridSizer",
+        wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    GridSizer {
+        2,
+        wxSizerFlags().Expand().Border(),
+        CheckBox { "Check" },
+        CheckBox { "Check" },
+        TextCtrl { "Text" }.withSize(wxSize(100, 100)),
+        TextCtrl { "Text" },
+    }
+        .fitTo(this);
+}
+
+FlexGridSizerExample::FlexGridSizerExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "FlexGridSizer",
+        wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    // snippet FlexGridSizerExample
+    FlexGridSizer {
+        2,
+        wxSizerFlags().Expand().Border(),
+        CheckBox { "Check" },
+        CheckBox { "Check" },
+        TextCtrl { "Text" }.withSize(wxSize(100, 100)),
+        TextCtrl { "Text" },
+    }
+        .fitTo(this);
+    // endsnippet FlexGridSizerExample
+}
+
 UnicodeExample::UnicodeExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "LayoutIf",
         wxDefaultPosition, wxDefaultSize,
