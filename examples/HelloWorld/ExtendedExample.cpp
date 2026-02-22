@@ -609,7 +609,7 @@ ComboUpdate::ComboUpdate(wxWindow* parent)
     wxLogDebug("Before clear");
     proxy2->Clear();
     wxLogDebug("Before append");
-#define ASAN_CRASH 0
+#define ASAN_CRASH 1
 #if ASAN_CRASH
     proxy2->Append(arr);
 #else // ASAN_CRASH
