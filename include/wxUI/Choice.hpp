@@ -35,8 +35,41 @@ namespace wxUI {
 struct Choice {
     using underlying_t = wxChoice;
 
+    explicit Choice(std::initializer_list<char const*> choices)
+        : Choice(wxID_ANY, choices)
+    {
+    }
+
+    explicit Choice(std::initializer_list<std::initializer_list<char const*>> choices)
+        : Choice(wxID_ANY, choices)
+    {
+    }
+
+    explicit Choice(std::initializer_list<std::string_view> choices)
+        : Choice(wxID_ANY, choices)
+    {
+    }
+
     explicit Choice(std::initializer_list<std::string> choices = {})
         : Choice(wxID_ANY, choices)
+    {
+    }
+
+    explicit Choice(wxWindowID identity, std::initializer_list<char const*> choices)
+        : details_(identity)
+        , choices_(details::Ranges::convertToUtf8(choices))
+    {
+    }
+
+    explicit Choice(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
+        : details_(identity)
+        , choices_(details::Ranges::flattenToUtf8(choices))
+    {
+    }
+
+    explicit Choice(wxWindowID identity, std::initializer_list<std::string_view> choices)
+        : details_(identity)
+        , choices_(details::Ranges::convertToUtf8(choices))
     {
     }
 
@@ -46,14 +79,14 @@ struct Choice {
     {
     }
 
-    explicit Choice(details::Ranges::input_range_of<wxString> auto&& choices)
+    explicit Choice(details::Ranges::utf8_text_input_range auto&& choices)
         : Choice(wxID_ANY, std::forward<decltype(choices)>(choices))
     {
     }
 
-    Choice(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
+    Choice(wxWindowID identity, details::Ranges::utf8_text_input_range auto&& choices)
         : details_(identity)
-        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+        , choices_(details::Ranges::ToVectorUtf8(std::forward<decltype(choices)>(choices)))
     {
     }
 

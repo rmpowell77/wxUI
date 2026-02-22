@@ -28,9 +28,11 @@ SOFTWARE.
 #include <wxUI/detail/BindInfo.hpp>
 #include <wxUI/wxUITypes.hpp>
 
+#include <array>
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <wx/sizer.h>
 #include <wx/string.h>
@@ -76,8 +78,106 @@ inline auto convertTo(std::initializer_list<T> choices) -> std::vector<wxString>
     return result;
 }
 
+inline auto convertToUtf8(std::initializer_list<char const*> choices) -> std::vector<wxString>
+{
+    auto result = std::vector<wxString> {};
+    result.reserve(choices.size());
+    for (auto const* choice : choices) {
+        result.push_back(wxString::FromUTF8(choice));
+    }
+    return result;
+}
+
+inline auto convertToUtf8(std::initializer_list<std::string_view> choices) -> std::vector<wxString>
+{
+    auto result = std::vector<wxString> {};
+    result.reserve(choices.size());
+    for (auto const choice : choices) {
+        result.push_back(wxString::FromUTF8(std::string(choice)));
+    }
+    return result;
+}
+
+template <size_t N>
+inline auto convertToUtf8(std::array<char const*, N> const& choices) -> std::vector<wxString>
+{
+    auto result = std::vector<wxString> {};
+    result.reserve(choices.size());
+    for (auto const* choice : choices) {
+        result.push_back(wxString::FromUTF8(choice));
+    }
+    return result;
+}
+
+template <size_t N>
+inline auto convertToUtf8(std::array<std::string, N> const& choices) -> std::vector<wxString>
+{
+    auto result = std::vector<wxString> {};
+    result.reserve(choices.size());
+    for (auto const& choice : choices) {
+        result.push_back(wxString::FromUTF8(choice));
+    }
+    return result;
+}
+
+inline auto convertToUtf8(std::vector<char const*> const& choices) -> std::vector<wxString>
+{
+    auto result = std::vector<wxString> {};
+    result.reserve(choices.size());
+    for (auto const* choice : choices) {
+        result.push_back(wxString::FromUTF8(choice));
+    }
+    return result;
+}
+
+inline auto flattenToUtf8(std::initializer_list<std::initializer_list<char const*>> choices) -> std::vector<wxString>
+{
+    auto count = static_cast<size_t>(0);
+    for (auto const& group : choices) {
+        count += group.size();
+    }
+    auto result = std::vector<wxString> {};
+    result.reserve(count);
+    for (auto const& group : choices) {
+        for (auto const* choice : group) {
+            result.push_back(wxString::FromUTF8(choice));
+        }
+    }
+    return result;
+}
+
 template <typename R, typename T>
 concept input_range_of = std::ranges::input_range<R> && std::convertible_to<std::ranges::range_value_t<R>, T>;
+
+template <typename R>
+concept utf8_text_input_range = std::ranges::input_range<R>
+    && (std::same_as<std::ranges::range_value_t<R>, wxString>
+        || std::same_as<std::ranges::range_value_t<R>, std::string>
+        || std::same_as<std::ranges::range_value_t<R>, std::string_view>
+        || std::same_as<std::ranges::range_value_t<R>, char const*>);
+
+template <utf8_text_input_range Range>
+inline auto ToVectorUtf8(Range&& range) -> std::vector<wxString>
+{
+    using value_t = std::ranges::range_value_t<Range>;
+    auto result = std::vector<wxString> {};
+    if constexpr (std::same_as<value_t, wxString>) {
+        std::ranges::copy(std::forward<Range>(range), std::back_inserter(result));
+    } else if constexpr (std::same_as<value_t, std::string>) {
+        std::ranges::transform(std::forward<Range>(range), std::back_inserter(result), [](auto const& choice) {
+            return wxString::FromUTF8(choice);
+        });
+    } else if constexpr (std::same_as<value_t, std::string_view>) {
+        std::ranges::transform(std::forward<Range>(range), std::back_inserter(result), [](auto const choice) {
+            return wxString::FromUTF8(std::string(choice));
+        });
+    } else {
+        std::ranges::transform(std::forward<Range>(range), std::back_inserter(result), [](auto const* choice) {
+            return wxString::FromUTF8(choice);
+        });
+    }
+    return result;
+}
 
 // This is due to missing support for ranges::to()
 template <typename T, std::ranges::range Range>
