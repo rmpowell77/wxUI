@@ -40,11 +40,15 @@ struct Choice {
     {
     }
 
+    Choice(std::initializer_list<std::initializer_list<char const*>>) = delete;
+
     explicit Choice(wxWindowID identity, std::initializer_list<std::string> choices = {})
         : details_(identity)
         , choices_(details::Ranges::convertTo(choices))
     {
     }
+
+    Choice(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>>) = delete;
 
     explicit Choice(details::Ranges::input_range_of<wxString> auto&& choices)
         : Choice(wxID_ANY, std::forward<decltype(choices)>(choices))

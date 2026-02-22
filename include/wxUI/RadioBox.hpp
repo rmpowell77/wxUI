@@ -43,20 +43,28 @@ struct RadioBox {
     {
     }
 
+    RadioBox(withChoices unused, std::initializer_list<std::initializer_list<char const*>>) = delete;
+
     RadioBox(wxWindowID identity, withChoices unused, std::initializer_list<std::string> choices)
         : RadioBox(identity, "", unused, choices)
     {
     }
+
+    RadioBox(wxWindowID identity, withChoices unused, std::initializer_list<std::initializer_list<char const*>>) = delete;
 
     RadioBox(std::string const& text, withChoices unused, std::initializer_list<std::string> choices)
         : RadioBox(wxID_ANY, text, unused, choices)
     {
     }
 
+    RadioBox(std::string const& text, withChoices unused, std::initializer_list<std::initializer_list<char const*>>) = delete;
+
     RadioBox(wxWindowID identity, std::string const& text, withChoices unused, std::initializer_list<std::string> choices)
         : RadioBox(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()), unused, choices)
     {
     }
+
+    RadioBox(wxWindowID identity, std::string const& text, withChoices unused, std::initializer_list<std::initializer_list<char const*>>) = delete;
 
     RadioBox(wxWindowID identity, wxUI_String, wxString text, withChoices, std::initializer_list<std::string> choices)
         : details_(identity)
@@ -65,6 +73,8 @@ struct RadioBox {
     {
         details_.setStyle(wxRA_SPECIFY_COLS);
     }
+
+    RadioBox(wxWindowID identity, wxUI_String, wxString text, withChoices, std::initializer_list<std::initializer_list<char const*>>) = delete;
 
     explicit RadioBox(withChoices unused, details::Ranges::input_range_of<wxString> auto&& choices)
         : RadioBox(wxID_ANY, "", unused, std::forward<decltype(choices)>(choices))

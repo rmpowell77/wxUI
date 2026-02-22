@@ -40,11 +40,15 @@ struct ListBox {
     {
     }
 
+    ListBox(std::initializer_list<std::initializer_list<char const*>>) = delete;
+
     explicit ListBox(wxWindowID identity, std::initializer_list<std::string> choices = {})
         : details_(identity)
         , choices_(details::Ranges::convertTo(choices))
     {
     }
+
+    ListBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>>) = delete;
 
     explicit ListBox(details::Ranges::input_range_of<wxString> auto&& choices)
         : ListBox(wxID_ANY, std::forward<decltype(choices)>(choices))

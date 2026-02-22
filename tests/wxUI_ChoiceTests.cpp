@@ -192,7 +192,7 @@ TEST_CASE("Choice")
     SECTION("AI")
     {
         TestParent provider;
-        auto uut = wxUI::Choice { { "one 🐨", "two", "three" } }.withSelection(1).bind([] {});
+        auto uut = wxUI::Choice { "one 🐨", "two", "three" }.withSelection(1).bind([] { });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",\"three\",)]",

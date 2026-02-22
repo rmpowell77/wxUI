@@ -40,11 +40,15 @@ struct ComboBox {
     {
     }
 
+    ComboBox(std::initializer_list<std::initializer_list<char const*>>) = delete;
+
     explicit ComboBox(wxWindowID identity, std::initializer_list<std::string> choices = {})
         : details_(identity)
         , choices_(details::Ranges::convertTo(choices))
     {
     }
+
+    ComboBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>>) = delete;
 
     explicit ComboBox(details::Ranges::input_range_of<wxString> auto&& choices)
         : ComboBox(wxID_ANY, std::forward<decltype(choices)>(choices))

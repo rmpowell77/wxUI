@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <type_traits>
 #include <wxUI/ComboBox.hpp>
 
 #include <wx/wx.h>
@@ -30,6 +31,8 @@ SOFTWARE.
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
 using TypeUnderTest = wxUI::ComboBox;
 using namespace wxUITests;
+
+static_assert(!std::is_constructible_v<wxUI::ComboBox, std::initializer_list<std::initializer_list<char const*>>>);
 
 struct ComboBoxTestPolicy {
     using TypeUnderTest = wxUI::ComboBox;
@@ -151,7 +154,7 @@ TEST_CASE("ComboBox")
     SECTION("AI")
     {
         TestParent provider;
-        auto uut = wxUI::ComboBox { { "one 🐨", "two", "three" } }.withSelection(2).bind([] {});
+        auto uut = wxUI::ComboBox { "one 🐨", "two", "three" }.withSelection(2).bind([] { });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",\"three\",)]",

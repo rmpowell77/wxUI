@@ -188,6 +188,9 @@ HelloWorldFrame::HelloWorldFrame()
             wxUI::Item { "&UnicodeExample...", [this] {
                             UnicodeExample { this }.ShowModal();
                         } },
+            wxUI::Item { "&ComboUpdate...", [this] {
+                            ComboUpdate { this }.ShowModal();
+                        } },
             // snippet wxUIMenuExample1
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
