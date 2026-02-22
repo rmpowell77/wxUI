@@ -93,3 +93,9 @@ class UnicodeExample : public wxDialog {
 public:
     explicit UnicodeExample(wxWindow* parent);
 };
+
+class ComboUpdate : public wxDialog {
+public:
+    explicit ComboUpdate(wxWindow* parent);
+    wxUI::ComboBox::Proxy proxy2;
+};
