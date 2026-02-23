@@ -45,6 +45,26 @@ static auto createUUT() { return ListBoxTestPolicy::createUUT(); }
 
 TEST_CASE("ListBox")
 {
+    SECTION("compile test")
+    {
+        // This just confirms which of the forms of construction are correct.
+        TypeUnderTest {};
+        TypeUnderTest { "hi" };
+        TypeUnderTest { "hi", "bye" };
+        TypeUnderTest { "hi", "bye", "goodbye" };
+        // TypeUnderTest{{}};
+        // TypeUnderTest{{"hi"}};
+        TypeUnderTest { { "hi", "bye" } };
+        TypeUnderTest { { "hi", "bye", "goodbye" } };
+        TypeUnderTest();
+        // TypeUnderTest( "hi" );
+        // TypeUnderTest( "hi", "bye" );
+        // TypeUnderTest( "hi", "bye", "goodbye" );
+        // TypeUnderTest({});
+        TypeUnderTest({ "hi" });
+        TypeUnderTest({ "hi", "bye" });
+        TypeUnderTest({ "hi", "bye", "goodbye" });
+    }
     SECTION("noargs")
     {
         TestParent provider;
@@ -101,6 +121,19 @@ TEST_CASE("ListBox")
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
                   "controller:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("string.literals.nested.braces")
+    {
+        TestParent provider;
+        auto uut = TypeUnderTest { { "one 🐨", "two" } }.withSelection(1);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",)]",
+                  "controller:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",)]",
+                  "SetSelection:1",
                   "SetEnabled:true",
               });
     }

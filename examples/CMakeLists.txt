@@ -3,5 +3,5 @@ project(wxUI_examples VERSION 0.1)
 
 include(GNUInstallDirs)
 
-add_subdirectory(HelloWorld)
+add_subdirectory(HelloWidgets)
 

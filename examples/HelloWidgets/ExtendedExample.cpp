@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-// wxUI "Hello World" example
+// wxUI "Hello Widgets" example
 
 #include "ExtendedExample.hpp"
 #include <wx/artprov.h>
@@ -29,8 +29,8 @@ SOFTWARE.
 
 ExtendedExample::ExtendedExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExtendedExample",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
     ComboBox::Proxy proxy2;
@@ -76,7 +76,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             CheckBox {},
         },
         HSizer {
-            ComboBox { { "hello" } }.withProxy(proxy2),
+            ComboBox { "hello" }.withProxy(proxy2),
         },
         HSizer {
             Line {},
@@ -157,7 +157,7 @@ SplitterExample::SplitterExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "SplitterExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
-    Generic<wxButton>::Proxy proxy {};
+    Factory<wxButton>::Proxy proxy {};
     // snippet SplitterExample
     VSizer {
         wxSizerFlags().Expand().Border(),
@@ -176,15 +176,27 @@ SplitterExample::SplitterExample(wxWindow* parent)
         // endsnippet SplitterExample
         VSplitter {
             TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
-            Generic {
+            Factory {
+                [](wxWindow* parent) {
+                    return new wxButton(parent, wxID_ANY, "Raw button");
+                } },
+        },
+#if 0
+        // snippet SplitterCompileFail
+        // This is not supported because the splitter needs to have the controls created with wxSplitterWindow as parent.
+        VSplitter {
+            TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
+            Wrapper {
                 [parent = this] {
                     return new wxButton(parent, wxID_ANY, "Raw button");
                 }() },
         },
+        // endsnippet SplitterCompileFail
+#endif
         VSplitter {
-            Generic<wxButton> { [parent = this] {
+            Factory<wxButton> { [](wxWindow* parent) {
                 return new wxButton(parent, wxID_ANY, "Raw button");
-            }() }
+            } }
                 .withProxy(proxy),
             TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
         },
@@ -196,29 +208,55 @@ SplitterExample::SplitterExample(wxWindow* parent)
     *rightUpper = std::string { proxy->GetLabel() };
 }
 
-GenericExample::GenericExample(wxWindow* parent)
-    : wxDialog(parent, wxID_ANY, "SplitterExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+WrapperExample::WrapperExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "WrapperExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
-    Generic<wxButton>::Proxy proxy {};
-    // snippet GenericExample
+    Wrapper<wxButton>::Proxy proxy {};
+    // snippet WrapperExample
     VSizer {
         wxSizerFlags().Expand().Border(),
-        Generic {
+        Wrapper {
             [window = this] {
-                return new wxButton(window, wxID_ANY, "Generic");
+                return new wxButton(window, wxID_ANY, "Wrapper");
             }() },
-        // endsnippet GenericExample
-        Generic<wxButton> {
+        // endsnippet WrapperExample
+        Wrapper<wxButton> {
             [window = this] {
                 return new wxButton(window, wxID_ANY, "Proxy");
             }() }
             .withProxy(proxy),
-        // snippet GenericExample
+        // snippet WrapperExample
         CreateStdDialogButtonSizer(wxOK),
     }
         .fitTo(this);
-    // endsnippet GenericExample
+    // endsnippet WrapperExample
+    assert(proxy->GetLabel() == "Proxy");
+}
+
+FactoryExample::FactoryExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "FactoryExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    Factory<wxButton>::Proxy proxy {};
+    // snippet FactoryExample
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        Factory {
+            [](wxWindow* window) {
+                return new wxButton(window, wxID_ANY, "Factory");
+            } },
+        // endsnippet FactoryExample
+        Factory<wxButton> {
+            [](wxWindow* window) {
+                return new wxButton(window, wxID_ANY, "Proxy");
+            } }
+            .withProxy(proxy),
+        // snippet FactoryExample
+        CreateStdDialogButtonSizer(wxOK),
+    }
+        .fitTo(this);
+    // endsnippet FactoryExample
     assert(proxy->GetLabel() == "Proxy");
 }
 
@@ -426,8 +464,8 @@ auto MakeLayout(bool layout)
 
 LayoutIfExample::LayoutIfExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "LayoutIf",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
     VSizer {
@@ -438,10 +476,68 @@ LayoutIfExample::LayoutIfExample(wxWindow* parent)
         .fitTo(this);
 }
 
+WrapSizerExample::WrapSizerExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "WrapSizer",
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        HWrapSizer {
+            Button { "Button 1" },
+            Text { "Dog" },
+            SpinCtrl { std::pair { 1, 3 } },
+        },
+        VWrapSizer {
+            Button { "Button 2" },
+            Text { "Cat" },
+            SpinCtrl { std::pair { 1, 3 } },
+        },
+    }
+        .fitTo(this);
+}
+
+GridSizerExample::GridSizerExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "GridSizer",
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    GridSizer {
+        2,
+        wxSizerFlags().Expand().Border(),
+        CheckBox { "Check" },
+        CheckBox { "Check" },
+        TextCtrl { "Text" }.withSize(wxSize(100, 100)),
+        TextCtrl { "Text" },
+    }
+        .fitTo(this);
+}
+
+FlexGridSizerExample::FlexGridSizerExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "FlexGridSizer",
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    // snippet FlexGridSizerExample
+    FlexGridSizer {
+        2,
+        wxSizerFlags().Expand().Border(),
+        CheckBox { "Check" },
+        CheckBox { "Check" },
+        TextCtrl { "Text" }.withSize(wxSize(100, 100)),
+        TextCtrl { "Text" },
+    }
+        .fitTo(this);
+    // endsnippet FlexGridSizerExample
+}
+
 UnicodeExample::UnicodeExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "LayoutIf",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
     // snippet UnicodeExample
@@ -475,4 +571,38 @@ NotebookExample::NotebookExample(wxWindow* parent)
     }
         .fitTo(this);
     // endsnippet NotebookExample
+}
+
+std::vector<wxString> GenerateStringArray()
+{
+    return {
+        wxT("This is a sample string item #1"),
+        wxT("This is a sample string item #2"),
+        wxT("This is a sample string item #3"),
+        wxT("This is a sample string item #4"),
+        wxT("This is a sample string item #5"),
+        wxT("This is a sample string item #6"),
+        wxT("This is a sample string item #7"),
+        wxT("This is a sample string item #7"),
+    };
+}
+
+ComboUpdate::ComboUpdate(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "ComboUpdate",
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        HSizer {
+            ComboBox { "hello" }
+                .withStyle(wxTE_PROCESS_ENTER)
+                .withProxy(proxy2),
+        },
+    }
+        .fitTo(this);
+    auto arr = GenerateStringArray();
+    proxy2->Clear();
+    proxy2->Append(arr);
 }

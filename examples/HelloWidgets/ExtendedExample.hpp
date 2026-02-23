@@ -49,11 +49,14 @@ private:
     wxUI::TextCtrl::Proxy rightUpper;
 };
 
-class GenericExample : public wxDialog {
+class WrapperExample : public wxDialog {
 public:
-    explicit GenericExample(wxWindow* parent);
+    explicit WrapperExample(wxWindow* parent);
+};
 
-private:
+class FactoryExample : public wxDialog {
+public:
+    explicit FactoryExample(wxWindow* parent);
 };
 
 class ForEachExample : public wxDialog {
@@ -71,6 +74,21 @@ public:
     explicit LayoutIfExample(wxWindow* parent);
 };
 
+class WrapSizerExample : public wxDialog {
+public:
+    explicit WrapSizerExample(wxWindow* parent);
+};
+
+class GridSizerExample : public wxDialog {
+public:
+    explicit GridSizerExample(wxWindow* parent);
+};
+
+class FlexGridSizerExample : public wxDialog {
+public:
+    explicit FlexGridSizerExample(wxWindow* parent);
+};
+
 class UnicodeExample : public wxDialog {
 public:
     explicit UnicodeExample(wxWindow* parent);
@@ -79,4 +97,10 @@ public:
 class NotebookExample : public wxDialog {
 public:
     explicit NotebookExample(wxWindow* parent);
+};
+
+class ComboUpdate : public wxDialog {
+public:
+    explicit ComboUpdate(wxWindow* parent);
+    wxUI::ComboBox::Proxy proxy2;
 };

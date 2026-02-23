@@ -23,9 +23,6 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Customizations.hpp"
-#include "Proxy.hpp"
-#include "wxUITypes.hpp"
 #include <functional>
 #include <memory>
 #include <stdexcept>
@@ -33,22 +30,21 @@ SOFTWARE.
 #include <variant>
 #include <wx/frame.h>
 #include <wx/menu.h>
+#include <wxUI/Customizations.hpp>
+#include <wxUI/Proxy.hpp>
+#include <wxUI/wxUITypes.hpp>
 
 namespace wxUI::details {
 
-// clang-format off
 template <typename T>
-concept MenuBarItem = requires(T widget, wxFrame frame, wxMenuBar menu, int identity)
-{
+concept MenuBarItem = requires(T widget, wxFrame frame, wxMenuBar menu, int identity) {
     widget.createAndAdd(frame, menu, identity);
 };
 
 template <typename T>
-concept MenuItem = requires(T widget, wxFrame frame, wxMenu menu, int identity)
-{
+concept MenuItem = requires(T widget, wxFrame frame, wxMenu menu, int identity) {
     widget.createAndAdd(frame, menu, identity);
 };
-// clang-format on
 
 template <typename F, typename Arg>
 concept MenuForEachFunction = MenuItem<typename invoke_apply_result<F, Arg>::type>;
@@ -364,11 +360,9 @@ struct Separator {
     }
 };
 
-// clang-format off
 template <std::ranges::input_range Range, typename Function>
 requires(details::MenuForEachFunction<Function, std::ranges::range_value_t<Range>>)
 struct MenuForEach {
-    // clang-format on
     MenuForEach(Range&& args, Function&& createFunction)
         : args_(std::forward<Range>(args))
         , createFunction_(std::forward<Function>(createFunction))
@@ -509,4 +503,4 @@ private:
 };
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

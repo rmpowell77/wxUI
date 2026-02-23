@@ -2,7 +2,7 @@
 C++ header-only library to make declarative UIs for wxWidgets.
 
 ```cpp
-{{{ examples/HelloWorld/HelloWorld.cpp Example "" }}}
+{{{ examples/HelloWidgets/HelloWidgets.cpp Example "" }}}
 ```
 <img src="docs/images/ExampleDialog.png"/>
 
@@ -64,7 +64,7 @@ This library grew out of work to create a C++ library that allowed a simple decl
 For instance, a usual programming pattern for [`wxWidgets`](https://www.wxwidgets.org) is to create the UI objects first, and then put them in a layout: 
 
 ```
-{{{ examples/HelloWorld/HelloWorld.cpp withwxWidgets "    // ..." }}}
+{{{ examples/HelloWidgets/HelloWidgets.cpp withwxWidgets "    // ..." }}}
 ```
 
 This separates the "what" from the "where", and often makes it challenging to identify what the structure of the UI will be from code inspection.
@@ -73,7 +73,7 @@ This separates the "what" from the "where", and often makes it challenging to id
 
 
 ```
-{{{ examples/HelloWorld/HelloWorld.cpp withwxUI "    // ..." }}}
+{{{ examples/HelloWidgets/HelloWidgets.cpp withwxUI "    // ..." }}}
 ```
 
 `wxUI` is not intended to be a replacement for `wxWidgets`, but instead is a library to simplify usage.  It is written such that it should be easy to "step outside" of `wxUI` and access `wxWidgets` directly.

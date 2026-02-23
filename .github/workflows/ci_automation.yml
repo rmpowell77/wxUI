@@ -15,17 +15,18 @@ on:
 
 jobs:
 
-  formatting-check:
-    name: Formatting Check
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Run clang-format style check for C/C++/Protobuf programs.
-      uses: jidicula/clang-format-action@v4.15.0
-      with:
-        clang-format-version: '14'
-        check-path: 'src'
-        fallback-style: 'Mozilla' # optional
+  # Disabling, reenable with #259
+  # formatting-check:
+  #   name: Formatting Check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Run clang-format style check for C/C++/Protobuf programs.
+  #     uses: jidicula/clang-format-action@v4.15.0
+  #     with:
+  #       clang-format-version: '21'
+  #       check-path: 'src'
+  #       fallback-style: 'Mozilla' # optional
 
   copyright-check:
     name: Copyright Check
@@ -145,13 +146,6 @@ jobs:
     - name: Installing Dependencies (Linux)
       if: matrix.config.os == 'ubuntu-latest'
       run: sudo apt-get update && sudo apt-get install build-essential libltdl-dev libgtk-3-dev freeglut3-dev autoconf autoconf-archive automake libtool; gcc -v
-     
-    - name: Updating to gcc 14 (Linux)
-      if: matrix.config.os == 'ubuntu-latest'
-      run: |
-        sudo apt install gcc-14 g++-14
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100 --slave /usr/bin/g++ g++ /usr/bin/g++-14 --slave /usr/bin/gcov gcov /usr/bin/gcov-14
-        sudo update-alternatives --set gcc /usr/bin/gcc-14
 
     - name: Configure CMake (Windows)
       if: matrix.config.os == 'windows-latest'
@@ -216,7 +210,8 @@ jobs:
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [formatting-check, copyright-check, build]
+    # needs: [formatting-check, copyright-check, build]
+    needs: [copyright-check, build]
     if: always()
     steps:
       - name: Check matrix success

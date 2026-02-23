@@ -23,11 +23,11 @@ SOFTWARE.
 */
 #pragma once
 
-#include "GetterSetter.hpp"
-#include "Widget.hpp"
 #include <wx/listbox.h>
+#include <wxUI/GetterSetter.hpp>
+#include <wxUI/Widget.hpp>
 
-#include "HelperMacros.hpp"
+#include <wxUI/detail/HelperMacros.hpp>
 
 namespace wxUI {
 
@@ -35,8 +35,41 @@ namespace wxUI {
 struct ListBox {
     using underlying_t = wxListBox;
 
+    explicit ListBox(std::initializer_list<char const*> choices)
+        : ListBox(wxID_ANY, choices)
+    {
+    }
+
+    explicit ListBox(std::initializer_list<std::initializer_list<char const*>> choices)
+        : ListBox(wxID_ANY, choices)
+    {
+    }
+
+    explicit ListBox(std::initializer_list<std::string_view> choices)
+        : ListBox(wxID_ANY, choices)
+    {
+    }
+
     explicit ListBox(std::initializer_list<std::string> choices = {})
         : ListBox(wxID_ANY, choices)
+    {
+    }
+
+    explicit ListBox(wxWindowID identity, std::initializer_list<char const*> choices)
+        : details_(identity)
+        , choices_(details::Ranges::convertToUtf8(choices))
+    {
+    }
+
+    explicit ListBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
+        : details_(identity)
+        , choices_(details::Ranges::flattenToUtf8(choices))
+    {
+    }
+
+    explicit ListBox(wxWindowID identity, std::initializer_list<std::string_view> choices)
+        : details_(identity)
+        , choices_(details::Ranges::convertToUtf8(choices))
     {
     }
 
@@ -46,14 +79,14 @@ struct ListBox {
     {
     }
 
-    explicit ListBox(details::Ranges::input_range_of<wxString> auto&& choices)
+    explicit ListBox(details::Ranges::utf8_text_input_range auto&& choices)
         : ListBox(wxID_ANY, std::forward<decltype(choices)>(choices))
     {
     }
 
-    ListBox(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
+    ListBox(wxWindowID identity, details::Ranges::utf8_text_input_range auto&& choices)
         : details_(identity)
-        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+        , choices_(details::Ranges::ToVectorUtf8(std::forward<decltype(choices)>(choices)))
     {
     }
 
@@ -196,4 +229,4 @@ public:
 WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(ListBox);
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

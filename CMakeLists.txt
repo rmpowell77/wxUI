@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.23)
-project(wxUI VERSION 0.1)
+
+# Initial project declaration (version will be updated from git tags)
+project(wxUI)
+
+# Determine version from git tags and set PROJECT_VERSION
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.cmake)
+set(PROJECT_VERSION ${wxUI_VERSION})
+set(PROJECT_VERSION_MAJOR ${wxUI_VERSION_MAJOR})
+set(PROJECT_VERSION_MINOR ${wxUI_VERSION_MINOR})
+set(PROJECT_VERSION_PATCH ${wxUI_VERSION_PATCH})
 
 # prevent In-source builds:
 # https://towardsdatascience.com/7-tips-for-clean-cmake-scripts-c8d276587389
@@ -21,6 +30,15 @@ option(WXUI_WITH_EXAMPLE "Build example." OFF)
 include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
 
 #============================================================================
+# Generate version header from template
+#============================================================================
+configure_file(
+  ${PROJECT_SOURCE_DIR}/include/wxUI/version.hpp.in
+  ${PROJECT_BINARY_DIR}/generated-includes/wxUI/version.hpp
+  @ONLY
+)
+
+#============================================================================
 # Internal compiler options
 #============================================================================
 # C++ standard
@@ -32,7 +50,12 @@ add_library(
   INTERFACE
   include/wxUI/wxUI.hpp
   include/wxUI/wxUITypes.hpp
-  include/wxUI/BindInfo.hpp
+  ${PROJECT_BINARY_DIR}/generated-includes/wxUI/version.hpp
+  include/wxUI/detail/BindInfo.hpp
+  include/wxUI/detail/fwd.hpp
+  include/wxUI/detail/LayoutDetails.hpp
+  include/wxUI/detail/HelperMacros.hpp
+  include/wxUI/detail/ZapMacros.hpp
   include/wxUI/Bitmap.hpp
   include/wxUI/BitmapToggleButton.hpp
   include/wxUI/BitmapComboBox.hpp
@@ -43,12 +66,12 @@ add_library(
   include/wxUI/ComboBox.hpp
   include/wxUI/Custom.hpp
   include/wxUI/ForEach.hpp
+  include/wxUI/Factory.hpp
   include/wxUI/Gauge.hpp
-  include/wxUI/Generic.hpp
   include/wxUI/GetterSetter.hpp
-  include/wxUI/HelperMacros.hpp
   include/wxUI/Hyperlink.hpp
   include/wxUI/Layout.hpp
+  include/wxUI/LayoutIf.hpp
   include/wxUI/Line.hpp
   include/wxUI/Menu.hpp
   include/wxUI/RadioBox.hpp
@@ -58,7 +81,7 @@ add_library(
   include/wxUI/Text.hpp
   include/wxUI/TextCtrl.hpp
   include/wxUI/Widget.hpp
-  include/wxUI/ZapMacros.hpp
+  include/wxUI/Wrapper.hpp
 )
 
 add_library(wxUI::wxUI ALIAS wxUI)
@@ -67,6 +90,7 @@ target_include_directories(
   wxUI
   INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/generated-includes>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
@@ -81,6 +105,13 @@ install(
 install(
   DIRECTORY ${PROJECT_SOURCE_DIR}/include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  PATTERN "*.in" EXCLUDE
+)
+
+# Install generated version.hpp
+install(
+  FILES ${PROJECT_BINARY_DIR}/generated-includes/wxUI/version.hpp
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/wxUI
 )
 
 install(

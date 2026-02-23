@@ -23,13 +23,13 @@ SOFTWARE.
 */
 #pragma once
 
-#include "Widget.hpp"
 #include <stdexcept>
 #include <type_traits>
 #include <variant>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/wx.h>
+#include <wxUI/Widget.hpp>
 
 namespace wxUI {
 
@@ -66,9 +66,7 @@ struct Generic {
     auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         auto* window = create(parent);
-        // clang-format off
         if constexpr (requires(Sizer* s, Window* w, wxSizerFlags f) { s->Add(w, f); }) {
-            // clang-format on
             parentSizer->Add(window, flags_.value_or(parentFlags));
         }
         return window;
@@ -128,4 +126,4 @@ private:
 };
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

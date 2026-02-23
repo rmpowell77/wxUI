@@ -27,6 +27,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <wxUI/version.hpp>
+
 #include <wxUI/Bitmap.hpp>
 #include <wxUI/BitmapButton.hpp>
 #include <wxUI/BitmapComboBox.hpp>
@@ -36,11 +38,12 @@
 #include <wxUI/Choice.hpp>
 #include <wxUI/ComboBox.hpp>
 #include <wxUI/Custom.hpp>
+#include <wxUI/Factory.hpp>
 #include <wxUI/ForEach.hpp>
 #include <wxUI/Gauge.hpp>
-#include <wxUI/Generic.hpp>
 #include <wxUI/Hyperlink.hpp>
 #include <wxUI/Layout.hpp>
+#include <wxUI/LayoutIf.hpp>
 #include <wxUI/Line.hpp>
 #include <wxUI/ListBox.hpp>
 #include <wxUI/Menu.hpp>
@@ -51,4 +54,5 @@
 #include <wxUI/Text.hpp>
 #include <wxUI/TextCtrl.hpp>
 #include <wxUI/Widget.hpp>
+#include <wxUI/Wrapper.hpp>
 #include <wxUI/wxUITypes.hpp>

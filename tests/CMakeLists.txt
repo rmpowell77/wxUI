@@ -11,13 +11,14 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_CheckBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ChoiceTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ComboBoxTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_FactoryTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ForEachTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_GaugeTests.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_GenericTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_GetterSetterTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_HSplitterTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_HyperlinkTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LayoutTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LayoutIfTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LineTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ListBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_MenuTests.cpp
@@ -28,6 +29,7 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_TextCtrlTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_TextTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_VSplitterTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_WrapperTests.cpp
 )
 
 add_subdirectory(BuildTests)

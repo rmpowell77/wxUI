@@ -48,11 +48,9 @@
             "displayName": "Mac - Release",
             "inherits": "mac-base",
             "binaryDir": "${sourceDir}/build/mac-release",
-            "environment": {
-                "VCPKG_TARGET_TRIPLET": "arm64-osx"
-            },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "VCPKG_TARGET_TRIPLET": "arm64-osx"
             }
         },
         {
@@ -60,11 +58,10 @@
             "displayName": "Mac - Debug",
             "inherits": "mac-base",
             "binaryDir": "${sourceDir}/build/mac-debug",
-            "environment": {
-                "VCPKG_TARGET_TRIPLET": "arm64-osx-debug"
-            },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/vcpkg-triplets",
+                "VCPKG_TARGET_TRIPLET": "arm64-osx-asan"
             }
         }
     ],
