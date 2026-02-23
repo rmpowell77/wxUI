@@ -337,26 +337,24 @@ Often times you would be laying out a set of buttons in a horizontal sizer.  The
 `HSplitter` and `VSplitter` are special types of *Layout* objects that take in two *Controllers*.
 
 ```cpp
-    VSizer
-    {
+    VSizer {
         wxSizerFlags().Expand().Border(),
-            VSplitter {
-                TextCtrl { "This is Left Side.\n" }
-                    .withStyle(wxTE_MULTILINE)
-                    .withSize(wxSize(200, 100)),
-                HSplitter {
-                    TextCtrl { "This is Right Top.\n" }.withProxy(rightUpper).withStyle(wxTE_MULTILINE).withSize(wxSize(200, 100)),
-                    Button { "Incr" }
-                        .bind([this]() {
-                            auto original = std::string { *rightUpper } + "\nThis is Right Top.\n";
-                            *rightUpper = original;
-                        }),
-                }
-            },
+        VSplitter {
+            TextCtrl { "This is Left Side.\n" }
+                .withStyle(wxTE_MULTILINE)
+                .withSize(wxSize(200, 100)),
+            HSplitter {
+                TextCtrl { "This is Right Top.\n" }.withProxy(rightUpper).withStyle(wxTE_MULTILINE).withSize(wxSize(200, 100)),
+                Button { "Incr" }
+                    .bind([this]() {
+                        auto original = std::string { *rightUpper } + "\nThis is Right Top.\n";
+                        *rightUpper = original;
+                    }),
+            } },
     // ...
-            CreateStdDialogButtonSizer(wxOK),
+        CreateStdDialogButtonSizer(wxOK),
     }
-    .fitTo(this);
+        .fitTo(this);
 ```
 
 Note: Because the Splitter requires both parts to be children of the Splitter itself, you cannot use `Wrapper` as a *Controller*.  This will not compile:

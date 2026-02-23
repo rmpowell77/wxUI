@@ -29,8 +29,8 @@ SOFTWARE.
 
 ExtendedExample::ExtendedExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "ExtendedExample",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
     ComboBox::Proxy proxy2;
@@ -76,7 +76,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
             CheckBox {},
         },
         HSizer {
-            ComboBox { { "hello" } }.withProxy(proxy2),
+            ComboBox { "hello" }.withProxy(proxy2),
         },
         HSizer {
             Line {},
@@ -159,30 +159,28 @@ SplitterExample::SplitterExample(wxWindow* parent)
     using namespace wxUI;
     Factory<wxButton>::Proxy proxy {};
     // snippet SplitterExample
-    VSizer
-    {
+    VSizer {
         wxSizerFlags().Expand().Border(),
-            VSplitter {
-                TextCtrl { "This is Left Side.\n" }
-                    .withStyle(wxTE_MULTILINE)
-                    .withSize(wxSize(200, 100)),
-                HSplitter {
-                    TextCtrl { "This is Right Top.\n" }.withProxy(rightUpper).withStyle(wxTE_MULTILINE).withSize(wxSize(200, 100)),
-                    Button { "Incr" }
-                        .bind([this]() {
-                            auto original = std::string { *rightUpper } + "\nThis is Right Top.\n";
-                            *rightUpper = original;
-                        }),
-                }
-            },
-            // endsnippet SplitterExample
-            VSplitter {
-                TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
-                Factory {
-                    [](wxWindow* parent) {
-                        return new wxButton(parent, wxID_ANY, "Raw button");
-                    } },
-            },
+        VSplitter {
+            TextCtrl { "This is Left Side.\n" }
+                .withStyle(wxTE_MULTILINE)
+                .withSize(wxSize(200, 100)),
+            HSplitter {
+                TextCtrl { "This is Right Top.\n" }.withProxy(rightUpper).withStyle(wxTE_MULTILINE).withSize(wxSize(200, 100)),
+                Button { "Incr" }
+                    .bind([this]() {
+                        auto original = std::string { *rightUpper } + "\nThis is Right Top.\n";
+                        *rightUpper = original;
+                    }),
+            } },
+        // endsnippet SplitterExample
+        VSplitter {
+            TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
+            Factory {
+                [](wxWindow* parent) {
+                    return new wxButton(parent, wxID_ANY, "Raw button");
+                } },
+        },
 #if 0
         // snippet SplitterCompileFail
         // This is not supported because the splitter needs to have the controls created with wxSplitterWindow as parent.
@@ -195,17 +193,17 @@ SplitterExample::SplitterExample(wxWindow* parent)
         },
         // endsnippet SplitterCompileFail
 #endif
-            VSplitter {
-                Factory<wxButton> { [](wxWindow* parent) {
-                    return new wxButton(parent, wxID_ANY, "Raw button");
-                } }
-                    .withProxy(proxy),
-                TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
-            },
-            // snippet SplitterExample
-            CreateStdDialogButtonSizer(wxOK),
+        VSplitter {
+            Factory<wxButton> { [](wxWindow* parent) {
+                return new wxButton(parent, wxID_ANY, "Raw button");
+            } }
+                .withProxy(proxy),
+            TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
+        },
+        // snippet SplitterExample
+        CreateStdDialogButtonSizer(wxOK),
     }
-    .fitTo(this);
+        .fitTo(this);
     // endsnippet SplitterExample
     *rightUpper = std::string { proxy->GetLabel() };
 }
@@ -466,8 +464,8 @@ auto MakeLayout(bool layout)
 
 LayoutIfExample::LayoutIfExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "LayoutIf",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
     VSizer {
@@ -480,8 +478,8 @@ LayoutIfExample::LayoutIfExample(wxWindow* parent)
 
 WrapSizerExample::WrapSizerExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "WrapSizer",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
     VSizer {
@@ -502,8 +500,8 @@ WrapSizerExample::WrapSizerExample(wxWindow* parent)
 
 GridSizerExample::GridSizerExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "GridSizer",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
     GridSizer {
@@ -519,8 +517,8 @@ GridSizerExample::GridSizerExample(wxWindow* parent)
 
 FlexGridSizerExample::FlexGridSizerExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "FlexGridSizer",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
     // snippet FlexGridSizerExample
@@ -538,8 +536,8 @@ FlexGridSizerExample::FlexGridSizerExample(wxWindow* parent)
 
 UnicodeExample::UnicodeExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "LayoutIf",
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     using namespace wxUI;
     // snippet UnicodeExample
