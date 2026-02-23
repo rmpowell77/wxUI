@@ -58,8 +58,8 @@ Example:
 The general concept is you declare a set of structures and then `fitTo` a frame.
 
 ```cpp
-HelloWorldFrame::HelloWorldFrame()
-    : wxFrame(NULL, wxID_ANY, "Hello World")
+HelloWidgetsFrame::HelloWidgetsFrame()
+    : wxFrame(NULL, wxID_ANY, "Hello Widgets")
 {
     wxUI::MenuItemProxy proxyItem;
     wxUI::MenuBar {
@@ -98,7 +98,7 @@ Handlers are callable items that handle events.  The handler can be declared wit
                         } },
     // ...
             wxUI::Item { "&Example Item...", [] {
-                            wxLogMessage("Hello World!");
+                            wxLogMessage("Hello Widgets!");
                         } },
             wxUI::CheckItem { "&Example Checked Item...", [](wxCommandEvent& event) {
                                  wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
@@ -175,7 +175,7 @@ Items { "Name", "Help", Handler }
                             ComboUpdate { this }.ShowModal();
                         } },
             wxUI::Item { "&Example Item...", [] {
-                            wxLogMessage("Hello World!");
+                            wxLogMessage("Hello Widgets!");
                         } },
             wxUI::CheckItem { "&Example Checked Item...", [](wxCommandEvent& event) {
                                  wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
@@ -190,8 +190,8 @@ The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold
 Sometime the `wxMenuItem` needs to be referenced.  *Menu* supports `MenuItemProxy` objects, a way to get the handle to the underlying `wxMenuItem` that is created for the *Menu*.
 
 ```cpp
-HelloWorldFrame::HelloWorldFrame()
-    : wxFrame(NULL, wxID_ANY, "Hello World")
+HelloWidgetsFrame::HelloWidgetsFrame()
+    : wxFrame(NULL, wxID_ANY, "Hello Widgets")
 {
     wxUI::MenuItemProxy proxyItem;
     // ...

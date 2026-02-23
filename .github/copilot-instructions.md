@@ -1,6 +1,6 @@
 ### Quick orientation (what this repo is)
 - wxUI is a C++ header-only library that provides a declarative layer over wxWidgets. The public API is in `include/wxUI/*.hpp` and the INTERFACE target is declared in `CMakeLists.txt`.
-- Key docs: `docs/ProgrammersGuide.md` (patterns & examples) and `examples/HelloWorld/HelloWorld.cpp` (runnable example).
+- Key docs: `docs/ProgrammersGuide.md` (patterns & examples) and `examples/HelloWidgets/HelloWidgets.cpp` (runnable example).
 
 ### Big-picture architecture
 - Header-only INTERFACE library: CMake target `wxUI` (INTERFACE) wraps headers in `include/`.
@@ -8,7 +8,7 @@
 - Important flows: Layout -> Controller -> concrete wxWindow/wxSizer creation at fit time; Proxy objects attach to named Controllers to access underlying controls after creation.
 
 ### Project-specific conventions and patterns to follow
-- Method-chaining style for controller customization: e.g. `TextCtrl{"x"}.withStyle(...).withProxy(p).bind(...)` (see `examples/HelloWorld/HelloWorld.cpp`).
+- Method-chaining style for controller customization: e.g. `TextCtrl{"x"}.withStyle(...).withProxy(p).bind(...)` (see `examples/HelloWidgets/HelloWidgets.cpp`).
 - Proxy lifetime caution: `Proxy` objects are references to runtime-created controls. Do not access a Proxy outside the lifetime of its parent window — this is undefined behavior (Programmer's Guide sections "Proxy").
 - Sizer collapse rule: an empty nested `VSizer{ VSizer{...} }` is collapsed. Be aware when refactoring nested layouts.
 - Menu ID enumeration: `wxUI::Menu` auto-assigns ids starting at `wxID_AUTO_LOWEST` — beware of collisions with manually chosen ids. See `docs/ProgrammersGuide.md` Menu section.
@@ -28,7 +28,7 @@
 - Change build/test flow: edit `CMakeLists.txt`, `cmake/dependencies.cmake`, and `cmake/compiler.cmake` (these centralize options, FetchContent and compiler flags).
 
 ### Useful examples to reference in code suggestions
-- `examples/HelloWorld/HelloWorld.cpp` — full usage of Menu, VSizer/HSizer, Controllers, Proxy and bind examples.
+- `examples/HelloWidgets/HelloWidgets.cpp` — full usage of Menu, VSizer/HSizer, Controllers, Proxy and bind examples.
 - `docs/ProgrammersGuide.md` — detailed patterns (Menu, Layout, ForEach, Proxy, Bind) to mirror in code changes or tests.
 - `tests/` — unit tests show intended usage and edge cases. Adding tests should follow the Catch2 style used in `tests/CMakeLists.txt`.
 

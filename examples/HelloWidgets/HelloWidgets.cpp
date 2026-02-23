@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-// wxUI "Hello World" example
+// wxUI "Hello Widgets" example
 // This example is inspired from https://docs.wxwidgets.org/latest/overview_helloworld.html
 
 #include "ExtendedExample.hpp"
@@ -31,14 +31,14 @@ SOFTWARE.
 #include <wxUI/wxUI.hpp>
 // endsnippet Example
 
-class HelloWorldApp : public wxApp {
+class HelloWidgetsApp : public wxApp {
 public:
     bool OnInit() override;
 };
 
-class HelloWorldFrame : public wxFrame {
+class HelloWidgetsFrame : public wxFrame {
 public:
-    HelloWorldFrame();
+    HelloWidgetsFrame();
 };
 
 enum {
@@ -61,19 +61,19 @@ public:
 };
 // endsnippet Example
 
-wxIMPLEMENT_APP(HelloWorldApp);
+wxIMPLEMENT_APP(HelloWidgetsApp);
 
-bool HelloWorldApp::OnInit()
+bool HelloWidgetsApp::OnInit()
 {
-    HelloWorldFrame* frame = new HelloWorldFrame();
+    HelloWidgetsFrame* frame = new HelloWidgetsFrame();
     frame->Show(true);
     return true;
 }
 
 // snippet wxUIMenu
 // snippet wxUIMenuProxy
-HelloWorldFrame::HelloWorldFrame()
-    : wxFrame(NULL, wxID_ANY, "Hello World")
+HelloWidgetsFrame::HelloWidgetsFrame()
+    : wxFrame(NULL, wxID_ANY, "Hello Widgets")
 {
     wxUI::MenuItemProxy proxyItem;
     // endsnippet wxUIMenuProxy
@@ -193,7 +193,7 @@ HelloWorldFrame::HelloWorldFrame()
                         } },
             // snippet wxUIMenuExample1
             wxUI::Item { "&Example Item...", [] {
-                            wxLogMessage("Hello World!");
+                            wxLogMessage("Hello Widgets!");
                         } },
             wxUI::CheckItem { "&Example Checked Item...", [](wxCommandEvent& event) {
                                  wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
@@ -205,8 +205,8 @@ HelloWorldFrame::HelloWorldFrame()
             "&Help",
             wxUI::Item { wxID_ABOUT, [] {
                             wxMessageBox(
-                                wxString::Format("The wxUI Hello World example\n\nUsing wxUI version %s", wxUI::version.string),
-                                "About Hello World",
+                                wxString::Format("The wxUI Hello Widgets example\n\nUsing wxUI version %s", wxUI::version.string),
+                                "About Hello Widgets",
                                 wxOK | wxICON_INFORMATION);
                         } },
 
