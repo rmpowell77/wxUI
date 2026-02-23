@@ -174,12 +174,9 @@ HSizer(wxUI_String, wxString const& caption, wxSizerFlags const& flags, UItems&&
 template <details::SizerItem... Items>
 struct VWrapSizer {
     template <details::SizerItem... UItems>
-    explicit LayoutIf(bool enabled, UItems&&... items)
-        : items_(std::forward_as_tuple(std::forward<UItems>(items)...))
+    explicit VWrapSizer(UItems&&... items)
+        : details_(details::withWrap {}, wxVERTICAL, std::forward<UItems>(items)...)
     {
-        if (!enabled) {
-            items_.reset();
-        }
     }
 
     template <details::SizerItem... UItems>
