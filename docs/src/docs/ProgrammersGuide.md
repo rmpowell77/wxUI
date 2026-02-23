@@ -8,10 +8,11 @@ C++ header-only library to make declarative UIs for wxWidgets.
   - [Menu Proxy](#menu-proxy)
   - [Menu ForEach](#menu-foreach)
 - [Layout](#layout)
-  - [Generic](#generic)
-  - [Splitter](#splitter)
   - [LayoutIf](#layoutif)
   - [ForEach](#foreach)
+  - [Splitter](#splitter)
+  - [Wrapper](#wrapper)
+  - [Factory](#factory)
 - [Controllers](#controllers)
   - [Bind](#bind)
   - [Proxy](#proxy)
@@ -41,7 +42,7 @@ To help disambiguate between `std::string` and `wxString`, the tag `wxUI_String`
 
 Example:
 ```cpp
-{{{ examples/HelloWorld/ExtendedExample.cpp UnicodeExample "    // ..." }}}
+{{{ examples/HelloWidgets/ExtendedExample.cpp UnicodeExample "    // ..." }}}
 ```
 
 ### Menu
@@ -51,7 +52,7 @@ Example:
 The general concept is you declare a set of structures and then `fitTo` a frame.
 
 ```cpp
-{{{ examples/HelloWorld/HelloWorld.cpp wxUIMenu "    // ..." }}}
+{{{ examples/HelloWidgets/HelloWidgets.cpp wxUIMenu "    // ..." }}}
 ```
 
 In `wxWidgets` the general paradigm is to create an enumeration of identity ints that you associate with a member, then you would bind, either statically or dynamically, to a function.  With `wxUI::Menu` the construction of the identify and association with a function is handled automatically.  By default `wxUI::Menu` starts the enumeration with `wxID_AUTO_LOWEST` and increments for each item.  Take caution if you use these enumerations as it may collide with other ids assocated with the frame.
@@ -63,7 +64,7 @@ Menu Items are generally a name with a handler closure, such as a lambda, or nam
 Handlers are callable items that handle events.  The handler can be declared with both no arguments or the `wxCommandEvent` argument for deeper inspection of the event.
 
 ```cpp
-{{{ examples/HelloWorld/HelloWorld.cpp wxUIMenuExample1 "    // ..." }}}
+{{{ examples/HelloWidgets/HelloWidgets.cpp wxUIMenuExample1 "    // ..." }}}
 ```
 
 Menu items (except `Separator`) follow the general pattern:
@@ -82,7 +83,7 @@ Items { "Name", "Help", Handler }
 `wxUI::Menu` also allows nesting of menus.  This allows complicated menus to be composed easily.
 
 ```cpp
-{{{ examples/HelloWorld/HelloWorld.cpp wxUIMenuSubMenu "    // ..." }}}
+{{{ examples/HelloWidgets/HelloWidgets.cpp wxUIMenuSubMenu "    // ..." }}}
 ```
 
 The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primitives on construction.  When `fitTo` a frame is invoked does the underlying logic construct the menu structure.
@@ -92,7 +93,7 @@ The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold
 Sometime the `wxMenuItem` needs to be referenced.  *Menu* supports `MenuItemProxy` objects, a way to get the handle to the underlying `wxMenuItem` that is created for the *Menu*.
 
 ```cpp
-{{{ examples/HelloWorld/HelloWorld.cpp wxUIMenuProxy "    // ..." }}}
+{{{ examples/HelloWidgets/HelloWidgets.cpp wxUIMenuProxy "    // ..." }}}
 ```
 
 #### Menu ForEach
@@ -100,89 +101,126 @@ Sometime the `wxMenuItem` needs to be referenced.  *Menu* supports `MenuItemProx
 `MenuForEach` Allows you to specify a range of values or `std::tuples` that are arguments to a closure that will returns a *MenuItem*.  These will then be added one at a time.
 
 ```cpp
-{{{ examples/HelloWorld/HelloWorld.cpp wxUIMenuForEach "    // ..." }}}
+{{{ examples/HelloWidgets/HelloWidgets.cpp wxUIMenuForEach "    // ..." }}}
 ```
 
 ### Layout
 
-The basics of `wxUI` layout is the *Layout*.  You use a specific type of *Layout*, with the `wxUI::VSizer` (Vertical Sizer or "row") and `wxUI::HSizer` (Horizontal Sizer or "column") being the most common. When a *Layout* is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
+The `wxUI` library provides several ways to form the UI via *Layout* objects.  You use a specific type of *Layout*, with the `wxUI::VSizer` (Vertical Sizer or "row") and `wxUI::HSizer` (Horizontal Sizer or "column") being the most common. When a *Layout* is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
 
 ```cpp
-{{{ examples/HelloWorld/HelloWorld.cpp wxUILayoutBasic "    // ..." }}}
+{{{ examples/HelloWidgets/HelloWidgets.cpp wxUILayoutBasic "    // ..." }}}
 ```
 
 In the above example we have constructed a vertical layout sizer that will use a `wxSizer` with the `wxSizerFlags` set to expand with a default border.  Then the first item in the sizer is a second layer sizer with horizontal layout.  The `wxSizerFlags` are propagated to each layer so the horizontal layout in this example would also be set to expand with a default border.  The second sizer would be created as a "named" box horizonal sizer.
 
-A *Layout* takes a collection of "Items", which can be either additional *Layout* (to create a tree of *Layouts*), *Controllers*, anything that is convertable `wxSizer*`.  Here is the general form of constructions for *Sizers*:
+A *Layout* takes a collection of "Items", which can be either additional *Layout* (to create a tree of *Layouts*), *Controllers*, anything that is convertable `wxSizer*`.  An `wxSizerFlags` argument can be supplied with the *Controllers* to control how each item will be inserted into the *Layout*. can  Here is the general form of constructions for *Sizers*:
 
 ```
 Sizer { Items... }
 Sizer { SizerFlags, Items... }
-Sizer { "Name", Items... }
-Sizer { "Name", SizerFlags, Items... }
 ```
 
-`wxUI` supports 3 flavors of Sizers: `wxUI::VSizer` (Vertical Sizers), `wxUI::HSizer` (Horizontal Sizers), and `wxUI::FlexGridSizer` (Flexible Grid Sizers).  Both `wxUI::VSizer` and `wxUI::HSizer` can be created with a string to create a "named" box.
+`wxUI` supports several flavors of Sizers: `wxUI::VSizer`/`wxUI::HSizer` (Vertical/Horizontal `wxBoxSizer` or `wxStaticBoxSizer`), `wxUI::VWrapSizer`/`wxUI::HWrapSizer` (Vertical/Horizontal `wxWrapSizer`), `wxUI::GridSizer` (`wxGridSizer`), and `wxUI::FlexGridSizer` (`wxGridSizer`).  Both `wxUI::VSizer` and `wxUI::HSizer` can be created with a string to create a `wxStaticBoxSizer`.
 
-Note: Because Sizers are intended to be "recursive" data structures, it is possible for a `wxUI::VSizer` to contain a `wxUI::VSizer`.  However, be aware that if an empty `wxUI::VSizer` is created with *just* a `wxUI::VSizer` as the argument, we collapse that to be a single `wxUI::VSizer`.  ie, this:
-
-```
-wxUI::VSizer { wxUI::VSizer { "Current Frame" } }.fitTo(this);
-```
-
-is equivalent to:
-
-```
-wxUI::VSizer { "Current Frame" }.fitTo(this);
-```
-
-
-#### Generic
-
-One special type of *Layout* is `Generic`.  There are cases where you have a `Window` object constructed by some other mechanism you need to insert in the Layout.  This is a case to use `Generic`:
+`wxUI::GridSizer` and `wxUI::FlexGridSizer` require specifying the number of columns to use.  An example of usage:
 
 ```cpp
-{{{ examples/HelloWorld/ExtendedExample.cpp GenericExample "    // ..." }}}
+{{{ examples/HelloWidgets/ExtendedExample.cpp FlexGridSizerExample "    // ..." }}}
 ```
 
-Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, and it will be inserted into the *Layout*.
+This table shows which Layout to use for the desired behavior
 
-#### Splitter
+| wxSizer                               | Form                                |
+| :------------------------------------ | :---------------------------------- |
+| `wxBoxSizer` with wxVERTICAL          | `VSizer { Items... }`               |
+| `wxBoxSizer` with wxHORIZONTAL        | `HSizer { Items... }`               |
+| `wxStaticBoxSizer` with wxVERTICAL    | `VSizer { "Name", Items... }`       |
+| `wxStaticBoxSizer` with wxHORIZONTAL  | `HSizer { "Name", Items... }`       |
+| `wxWrapSizer` with wxVERTICAL         | `VWrapSizer { Items... }`           |
+| `wxWrapSizer` with wxHORIZONTAL       | `HWrapSizer { Items... }`           |
+| `wxGridSizer`                         | `GridSizer { cols, Items... }`      |
+| `wxFlexGridSizer`                     | `FlexGridSizer { cols, Items... }`  |
 
-`HSplitter` and `VSplitter` are special types of *Layout* objects that take in two *Controllers*.
 
-```cpp
-{{{ examples/HelloWorld/ExtendedExample.cpp SplitterExample "    // ..." }}}
-```
+
+> [!NOTE]
+> Because Sizers are intended to be "recursive" data structures, it is possible for a `wxUI::VSizer` to contain a `wxUI::VSizer`. However, be aware that if an empty `wxUI::VSizer` is created with *just* a `wxUI::VSizer` as the argument, we collapse that to be a single `wxUI::VSizer`. ie, this:
+>
+> ```cpp
+> wxUI::VSizer { wxUI::VSizer { "Current Frame" } }.fitTo(this);
+> ```
+>
+> is equivalent to:
+>
+> ```cpp
+> wxUI::VSizer { "Current Frame" }.fitTo(this);
+> ```
+>
+> This only holds for `wxBoxSizer`.  Grid and FlexGrid allow nesting.
 
 #### LayoutIf
 
 `LayoutIf` is useful for when parts of a Layout are not needed depending on runtime logic.  `LayoutIf` takes a boolean which determines if a set of "Items" should be created or not.
 
 ```
-{{{ examples/HelloWorld/ExtendedExample.cpp LayoutIfExample "    // ..." }}}
+{{{ examples/HelloWidgets/ExtendedExample.cpp LayoutIfExample "    // ..." }}}
 ```
-
 
 #### ForEach
 
 Often times you will need to layout several widgets which only are different in their wxWindowID and Name.  Or perhaps there are cases where the items to be laid out are dynamic.  `ForEach` allows you to specify a range of values or `std::tuples` that are arguments to a closure that will returns a *Controller*.  These will then be added one at a time.
 
 ```
-{{{ examples/HelloWorld/ExtendedExample.cpp ForEachExample "    // ..." }}}
+{{{ examples/HelloWidgets/ExtendedExample.cpp ForEachExample "    // ..." }}}
 ```
 
 *Ranges* are valid arguments for `ForEach`, which allows you to build up complicated layouts at run time.
 
 ```
-{{{ examples/HelloWorld/ExtendedExample.cpp ComplicatedForEachExample "    // ..." }}}
+{{{ examples/HelloWidgets/ExtendedExample.cpp ComplicatedForEachExample "    // ..." }}}
 ```
 
 Often times you would be laying out a set of buttons in a horizontal sizer.  The `HForEach` and `VForEach` functions are provided as convenience functions:
 
 ```
-{{{ examples/HelloWorld/ExtendedExample.cpp HForEach "    // ..." }}}
+{{{ examples/HelloWidgets/ExtendedExample.cpp HForEach "    // ..." }}}
 ```
+
+#### Splitter
+
+`HSplitter` and `VSplitter` are special types of *Layout* objects that take in two *Controllers*.
+
+```cpp
+{{{ examples/HelloWidgets/ExtendedExample.cpp SplitterExample "    // ..." }}}
+```
+
+Note: Because the Splitter requires both parts to be children of the Splitter itself, you cannot use `Wrapper` as a *Controller*.  This will not compile:
+
+```cpp
+{{{ examples/HelloWidgets/ExtendedExample.cpp SplitterCompileFail "    // ..." }}}
+```
+
+
+#### Wrapper
+
+There are cases where you have a `Window` object constructed by some other mechanism you need to insert in the *Layout*.  This is a case to use `Wrapper`:
+
+```cpp
+{{{ examples/HelloWidgets/ExtendedExample.cpp WrapperExample "    // ..." }}}
+```
+
+Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, and it will be inserted into the *Layout*.
+
+#### Factory
+
+One special case is when a *Controller* needs the parent `Window` to be constructed.  This is a case to use `Factory`:
+
+```cpp
+{{{ examples/HelloWidgets/ExtendedExample.cpp FactoryExample "    // ..." }}}
+```
+
+Essentially, you supply a closure or function that returns something convertable to `wxWindow*` when supplied with a `wxWindow*`, and it will be inserted into the *Layout*.
 
 
 ### Controllers
@@ -190,7 +228,7 @@ Often times you would be laying out a set of buttons in a horizontal sizer.  The
 *Controllers* are the general term to refer to items that behave like a [`wxContol`](https://docs.wxwidgets.org/3.0/classwx_control.html).  In `wxUI` we attempt to conform a consistent style that favors the common things you do with a specific `wxControl`.
 
 ```cpp
-{{{ examples/HelloWorld/HelloWorld.cpp wxUIController "    // ..." }}}
+{{{ examples/HelloWidgets/HelloWidgets.cpp wxUIController "    // ..." }}}
 ```
 
 By default *Controllers* are constructed using the default arguments for position, style, size, etc.  *Controllers* are designed to use [Method Chaining](https://en.wikipedia.org/wiki/Method_chaining) to specialize the way the controller is constructed.  In the example above we see that `wxUI::TextCtrl` is being augmented with the style `wxALIGN_LEFT`.
@@ -213,7 +251,7 @@ The list of Methods supported by all controllers:
 *Controllers* support "binding" a function call to their event handlers.  When the event for that *controller* is emitted, the function-like object supplied will be called.  You can bind multiple events on a single *controller*.  *Controllers* `bind` the most common events, and supply additional `bind` extensions (like `ListBox::bindDClick`) for more specialized events.
 
 ```cpp
-{{{ examples/HelloWorld/HelloWorld.cpp wxUIBind "    // ..." }}}
+{{{ examples/HelloWidgets/HelloWidgets.cpp wxUIBind "    // ..." }}}
 ```
 
 For convenience the event parameter of the function can be omitted in cases where it is unused.
@@ -291,7 +329,7 @@ From time to time you may need to do some complicated custom wxWidget "controlle
 An example of how to use could be as follows:
 
 ```cpp
-{{{ examples/HelloWorld/ExtendedExample.cpp CustomExample "    // ..." }}}
+{{{ examples/HelloWidgets/ExtendedExample.cpp CustomExample "    // ..." }}}
 ```
 
 #### Miscellaneous Notes

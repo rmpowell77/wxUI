@@ -49,7 +49,7 @@ TEST_CASE("TextCtrl")
 {
     SECTION("noargs")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -61,7 +61,7 @@ TEST_CASE("TextCtrl")
 
     SECTION("name")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { "Hello" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -73,7 +73,7 @@ TEST_CASE("TextCtrl")
 
     SECTION("name_unicode")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { "🐨" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -85,7 +85,7 @@ TEST_CASE("TextCtrl")
 
     SECTION("name_tag")
     {
-        TestProvider provider;
+        TestParent provider;
         wxString wx_label { "Hello" };
         auto uut = TypeUnderTest { wxUI_String {}, wx_label };
         uut.create(&provider);
@@ -98,7 +98,7 @@ TEST_CASE("TextCtrl")
 
     SECTION("id")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -110,7 +110,7 @@ TEST_CASE("TextCtrl")
 
     SECTION("id.name")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, "Hello" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -122,7 +122,7 @@ TEST_CASE("TextCtrl")
 
     SECTION("style")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withStyle(wxTE_PROCESS_ENTER);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -134,7 +134,7 @@ TEST_CASE("TextCtrl")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -146,7 +146,7 @@ TEST_CASE("TextCtrl")
 
     SECTION("size")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

@@ -1,32 +1,32 @@
 cmake_minimum_required(VERSION 3.23)
 project(wxUI_examples VERSION 0.1)
 
-add_executable(wxUI_HelloWorld
+add_executable(wxUI_HelloWidgets
   ExtendedExample.cpp
   ExtendedExample.hpp
-  HelloWorld.cpp
+  HelloWidgets.cpp
 )
 
 # Special stuff for Mac
 if(APPLE)
 set_target_properties(
-  wxUI_HelloWorld PROPERTIES
+  wxUI_HelloWidgets PROPERTIES
   MACOSX_BUNDLE TRUE
 )
 endif()
 
 if(MSVC)
 set_target_properties(
-  wxUI_HelloWorld PROPERTIES
+  wxUI_HelloWidgets PROPERTIES
   WIN32_EXECUTABLE TRUE
 )
 endif()
 
-wxUI_SetupCompilerForTarget(wxUI_HelloWorld)
+wxUI_SetupCompilerForTarget(wxUI_HelloWidgets)
 
-target_link_libraries(wxUI_HelloWorld 
+target_link_libraries(wxUI_HelloWidgets 
   wx::core
-  wxUI
+  wxUI::wxUI
 )
 
 

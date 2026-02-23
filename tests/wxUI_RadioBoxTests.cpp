@@ -25,6 +25,9 @@ SOFTWARE.
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/RadioBox.hpp>
 
+#include <array>
+#include <string_view>
+
 #include <wx/wx.h>
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
@@ -45,9 +48,29 @@ static auto createUUT() { return RadioBoxTestPolicy::createUUT(); }
 
 TEST_CASE("RadioBox")
 {
+    SECTION("compile test")
+    {
+        // This just confirms which of the forms of construction are correct.
+        // TypeUnderTest { TypeUnderTest::withChoices {} };
+        TypeUnderTest { TypeUnderTest::withChoices {}, "hi" };
+        // TypeUnderTest { TypeUnderTest::withChoices {}, "hi", "bye" };
+        // TypeUnderTest { TypeUnderTest::withChoices {}, "hi", "bye", "goodbye" };
+        // TypeUnderTest { TypeUnderTest::withChoices {}, {} };
+        TypeUnderTest { TypeUnderTest::withChoices {}, { "hi" } };
+        TypeUnderTest { TypeUnderTest::withChoices {}, { "hi", "bye" } };
+        TypeUnderTest { TypeUnderTest::withChoices {}, { "hi", "bye", "goodbye" } };
+        // TypeUnderTest(TypeUnderTest::withChoices {});
+        TypeUnderTest(TypeUnderTest::withChoices {}, "hi");
+        // TypeUnderTest(TypeUnderTest::withChoices {}, "hi", "bye");
+        // TypeUnderTest(TypeUnderTest::withChoices {}, "hi", "bye", "goodbye");
+        // TypeUnderTest(TypeUnderTest::withChoices {}, {});
+        TypeUnderTest(TypeUnderTest::withChoices {}, { "hi" });
+        TypeUnderTest(TypeUnderTest::withChoices {}, { "hi", "bye" });
+        TypeUnderTest(TypeUnderTest::withChoices {}, { "hi", "bye", "goodbye" });
+    }
     SECTION("choices")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -60,7 +83,7 @@ TEST_CASE("RadioBox")
 
     SECTION("name.choice")
     {
-        TestProvider provider;
+        TestParent provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
@@ -74,7 +97,7 @@ TEST_CASE("RadioBox")
 
     SECTION("id.choices")
     {
-        TestProvider provider;
+        TestParent provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
@@ -88,7 +111,7 @@ TEST_CASE("RadioBox")
 
     SECTION("id.name.choice")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -99,9 +122,75 @@ TEST_CASE("RadioBox")
               });
     }
 
+    SECTION("choices.single.literal")
+    {
+        TestParent provider;
+        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, "Hello 🐨" };
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",), majorDim=0]",
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("id.choices.single.literal")
+    {
+        TestParent provider;
+        auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, "Hello 🐨" };
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",), majorDim=0]",
+                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("choices.initializer_list.string_view")
+    {
+        TestParent provider;
+        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, { std::string_view { "Hello 🐨" }, std::string_view { "Goodbye" } } };
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("choices.ranges.array.string.literals")
+    {
+        TestParent provider;
+        auto const choices = std::array<char const*, 2> { "Hello 🐨", "Goodbye" };
+        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, choices };
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:0",
+                  "SetEnabled:true",
+              });
+    }
+
+    SECTION("choices.string.literals.nested.braces")
+    {
+        TestParent provider;
+        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, { { "Hello 🐨", "Goodbye" } } }.withSelection(1);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
+                  "SetSelection:1",
+                  "SetEnabled:true",
+              });
+    }
+
     SECTION("choices.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -114,7 +203,7 @@ TEST_CASE("RadioBox")
 
     SECTION("name.choice.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
@@ -128,7 +217,7 @@ TEST_CASE("RadioBox")
 
     SECTION("id.choices.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         using namespace std::literals;
         auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨"s, "Goodbye"s } };
         uut.create(&provider);
@@ -142,7 +231,7 @@ TEST_CASE("RadioBox")
 
     SECTION("id.name.choice.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, "Greetings 🐨", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -155,7 +244,7 @@ TEST_CASE("RadioBox")
 
     SECTION("style")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withStyle(wxRA_SPECIFY_COLS);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -168,7 +257,7 @@ TEST_CASE("RadioBox")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -181,7 +270,7 @@ TEST_CASE("RadioBox")
 
     SECTION("size")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

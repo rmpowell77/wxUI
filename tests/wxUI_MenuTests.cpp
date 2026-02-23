@@ -56,7 +56,7 @@ struct MenuTypeLookup<wxUI::RadioItem> {
 template <typename MenuType>
 auto RunMenuTest_id()
 {
-    TestProvider frame;
+    TestParent frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT } }
@@ -70,7 +70,7 @@ auto RunMenuTest_id()
 template <typename MenuType, typename Function>
 auto RunMenuTest_id_func(Function function)
 {
-    TestProvider frame;
+    TestParent frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, function } }
@@ -97,7 +97,7 @@ auto RunMenuTest_id_func2()
 template <typename MenuType>
 auto RunMenuTest_id_name()
 {
-    TestProvider frame;
+    TestParent frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1" } }
@@ -111,7 +111,7 @@ auto RunMenuTest_id_name()
 template <typename MenuType, typename Function>
 auto RunMenuTest_id_name_func(Function function)
 {
-    TestProvider frame;
+    TestParent frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1", function } }
@@ -138,7 +138,7 @@ auto RunMenuTest_id_name_func2()
 template <typename MenuType>
 auto RunMenuTest_id_name_help()
 {
-    TestProvider frame;
+    TestParent frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1", "Help1" } }
@@ -153,7 +153,7 @@ auto RunMenuTest_id_name_help()
 template <typename MenuType, typename Function>
 auto RunMenuTest_id_name_help_func(Function function)
 {
-    TestProvider frame;
+    TestParent frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { wxID_EXIT, "Item1", "Help1", function } }
@@ -180,7 +180,7 @@ auto RunMenuTest_id_name_help_func2()
 template <typename MenuType, typename Function>
 auto RunMenuTest_name_func(Function function)
 {
-    TestProvider frame;
+    TestParent frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { "Item1", function } }
@@ -207,7 +207,7 @@ auto RunMenuTest_name_func2()
 template <typename MenuType, typename Function>
 auto RunMenuTest_name_help_func(Function function)
 {
-    TestProvider frame;
+    TestParent frame;
     wxUI::MenuBar menu {
         wxUI::Menu {
             "Menu1", MenuType { "Item1", "Help1", function } }
@@ -234,7 +234,7 @@ auto RunMenuTest_name_help_func2()
 template <typename MenuType>
 auto RunMenuTest_id_name_tag()
 {
-    TestProvider frame;
+    TestParent frame;
     wxString item_label { "Item1" };
     wxUI::MenuBar menu {
         wxUI::Menu {
@@ -249,7 +249,7 @@ auto RunMenuTest_id_name_tag()
 template <typename MenuType, typename Function>
 auto RunMenuTest_id_name_tag_func(Function function)
 {
-    TestProvider frame;
+    TestParent frame;
     wxString item_label { "Item1" };
     wxUI::MenuBar menu {
         wxUI::Menu {
@@ -277,7 +277,7 @@ auto RunMenuTest_id_name_tag_func2()
 template <typename MenuType>
 auto RunMenuTest_menu_name_tag()
 {
-    TestProvider frame;
+    TestParent frame;
     wxString menu_label { "Menu1" };
     wxUI::MenuBar menu {
         wxUI::Menu {
@@ -293,7 +293,7 @@ TEST_CASE("Menu")
 {
     SECTION("emptyMenuBar1")
     {
-        TestProvider frame;
+        TestParent frame;
         wxUI::MenuBar menu {};
         menu.fitTo(&frame);
         CHECK(frame.dump() == std::vector<std::string> {
@@ -302,7 +302,7 @@ TEST_CASE("Menu")
     }
     SECTION("menu.empty")
     {
-        TestProvider frame;
+        TestParent frame;
         wxUI::MenuBar menu { wxUI::Menu { "Menu1" } };
         menu.fitTo(&frame);
         CHECK(frame.dump() == std::vector<std::string> {

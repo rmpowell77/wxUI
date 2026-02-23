@@ -46,9 +46,29 @@ static auto createUUT() { return ChoiceTestPolicy::createUUT(); }
 
 TEST_CASE("Choice")
 {
+    SECTION("compile test")
+    {
+        // This just confirms which of the forms of construction are correct.
+        TypeUnderTest {};
+        TypeUnderTest { "hi" };
+        TypeUnderTest { "hi", "bye" };
+        TypeUnderTest { "hi", "bye", "goodbye" };
+        // TypeUnderTest{{}};
+        // TypeUnderTest{{"hi"}};
+        TypeUnderTest { { "hi", "bye" } };
+        TypeUnderTest { { "hi", "bye", "goodbye" } };
+        TypeUnderTest();
+        // TypeUnderTest( "hi" );
+        // TypeUnderTest( "hi", "bye" );
+        // TypeUnderTest( "hi", "bye", "goodbye" );
+        // TypeUnderTest({});
+        TypeUnderTest({ "hi" });
+        TypeUnderTest({ "hi", "bye" });
+        TypeUnderTest({ "hi", "bye", "goodbye" });
+    }
     SECTION("noargs")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -61,7 +81,7 @@ TEST_CASE("Choice")
 
     SECTION("choice")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { "Hello 🐨", "Goodbye" };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -74,7 +94,7 @@ TEST_CASE("Choice")
 
     SECTION("id")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -87,7 +107,7 @@ TEST_CASE("Choice")
 
     SECTION("id.choice")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -100,7 +120,7 @@ TEST_CASE("Choice")
 
     SECTION("choice.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { std::vector<std::string> { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -113,7 +133,7 @@ TEST_CASE("Choice")
 
     SECTION("id.choice.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -126,7 +146,7 @@ TEST_CASE("Choice")
 
     SECTION("choice.ranges.1")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { std::views::iota(0, 2) | std::views::transform([](auto i) { return std::to_string(i); }) };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -139,7 +159,7 @@ TEST_CASE("Choice")
 
     SECTION("setSelection")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withSelection(1);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -152,7 +172,7 @@ TEST_CASE("Choice")
 
     SECTION("style")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withStyle(wxCB_SORT);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -165,7 +185,7 @@ TEST_CASE("Choice")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -178,7 +198,7 @@ TEST_CASE("Choice")
 
     SECTION("size")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -191,8 +211,8 @@ TEST_CASE("Choice")
 
     SECTION("AI")
     {
-        TestProvider provider;
-        auto uut = wxUI::Choice { { "one 🐨", "two", "three" } }.withSelection(1).bind([] {});
+        TestParent provider;
+        auto uut = wxUI::Choice { { "one 🐨", "two", "three" } }.withSelection(1).bind([] { });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",\"three\",)]",
@@ -200,6 +220,19 @@ TEST_CASE("Choice")
                   "SetSelection:1",
                   "SetEnabled:true",
                   "BindEvents:1",
+              });
+    }
+
+    SECTION("string.literals.nested.braces")
+    {
+        TestParent provider;
+        auto uut = wxUI::Choice { { "one 🐨", "two" } }.withSelection(1);
+        uut.create(&provider);
+        CHECK(provider.dump() == std::vector<std::string> {
+                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",)]",
+                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",)]",
+                  "SetSelection:1",
+                  "SetEnabled:true",
               });
     }
 

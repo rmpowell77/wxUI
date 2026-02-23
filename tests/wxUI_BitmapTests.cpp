@@ -47,7 +47,7 @@ TEST_CASE("Bitmap")
 {
     SECTION("bitmap")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -59,7 +59,7 @@ TEST_CASE("Bitmap")
 
     SECTION("id.bitmap")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, wxBitmap {} };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

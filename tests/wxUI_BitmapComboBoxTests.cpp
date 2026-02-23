@@ -48,7 +48,7 @@ TEST_CASE("BitmapComboBox")
 {
     SECTION("bitmap")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -63,7 +63,7 @@ TEST_CASE("BitmapComboBox")
 
     SECTION("id.bitmap")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -78,7 +78,7 @@ TEST_CASE("BitmapComboBox")
 
     SECTION("size.bitmap")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -93,7 +93,7 @@ TEST_CASE("BitmapComboBox")
 
     SECTION("size.id.bitmap")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -108,7 +108,7 @@ TEST_CASE("BitmapComboBox")
 
     SECTION("bitmap.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { std::vector<std::tuple<std::string, wxBitmap>> { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -123,7 +123,7 @@ TEST_CASE("BitmapComboBox")
 
     SECTION("id.bitmap.ranges")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, std::vector<std::tuple<std::string, wxBitmap>> { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -138,7 +138,7 @@ TEST_CASE("BitmapComboBox")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -153,7 +153,7 @@ TEST_CASE("BitmapComboBox")
 
     SECTION("size")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -168,7 +168,7 @@ TEST_CASE("BitmapComboBox")
 
     SECTION("setSelection")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, { { "Hello 🐨", wxBitmap {} }, { "Goodbye", wxBitmap {} } } }.withSize({ 1, 2 }).withSelection(1);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -183,7 +183,7 @@ TEST_CASE("BitmapComboBox")
 
     SECTION("Empty")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = wxUI::BitmapComboBox { {} };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

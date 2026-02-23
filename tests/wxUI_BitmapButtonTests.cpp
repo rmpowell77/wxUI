@@ -49,7 +49,7 @@ TEST_CASE("BitmapButton")
 {
     SECTION("bitmap")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -61,7 +61,7 @@ TEST_CASE("BitmapButton")
 
     SECTION("id.bitmap")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, wxBitmap {} };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -73,7 +73,7 @@ TEST_CASE("BitmapButton")
 
     SECTION("style")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withStyle(wxBU_LEFT);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -85,7 +85,7 @@ TEST_CASE("BitmapButton")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -97,7 +97,7 @@ TEST_CASE("BitmapButton")
 
     SECTION("size")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

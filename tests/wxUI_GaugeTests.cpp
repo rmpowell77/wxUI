@@ -47,7 +47,7 @@ TEST_CASE("Gauge")
 {
     SECTION("noargs")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -59,7 +59,7 @@ TEST_CASE("Gauge")
 
     SECTION("name")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { wxUI::Gauge::withRange {}, 200 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -71,7 +71,7 @@ TEST_CASE("Gauge")
 
     SECTION("id")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { wxUI::Gauge::withIdentity {}, 10000 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -83,7 +83,7 @@ TEST_CASE("Gauge")
 
     SECTION("id.name")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { wxUI::Gauge::withIdentity {}, 10000, 200 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -95,7 +95,7 @@ TEST_CASE("Gauge")
 
     SECTION("style")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().setStyle(wxGA_VERTICAL);
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -107,7 +107,7 @@ TEST_CASE("Gauge")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -119,7 +119,7 @@ TEST_CASE("Gauge")
 
     SECTION("AI")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = wxUI::Gauge { wxUI::Gauge::withRange {}, 250 };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {

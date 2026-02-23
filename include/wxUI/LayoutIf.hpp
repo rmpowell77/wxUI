@@ -22,56 +22,44 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #pragma once
-// wxUI Extended Dialog Example
 
-#include <wx/wx.h>
-#include <wxUI/wxUI.hpp>
+#include <wxUI/Layout.hpp>
 
-class ExtendedExample : public wxDialog {
-public:
-    explicit ExtendedExample(wxWindow* parent);
+namespace wxUI {
 
-private:
-    wxUI::Text::Proxy textProxy;
-    wxUI::SpinCtrl::Proxy spinProxy;
-};
-
-class MultibindExample : public wxDialog {
-public:
-    explicit MultibindExample(wxWindow* parent);
-};
-
-class SplitterExample : public wxDialog {
-public:
-    explicit SplitterExample(wxWindow* parent);
-
-private:
-    wxUI::TextCtrl::Proxy rightUpper;
-};
-
-class GenericExample : public wxDialog {
-public:
-    explicit GenericExample(wxWindow* parent);
+template <details::SizerItem... Items>
+struct LayoutIf {
+    template <details::SizerItem... UItems>
+    explicit LayoutIf(bool enabled, UItems&&... items)
+    {
+        if (enabled) {
+            items_ = std::forward_as_tuple(std::forward<UItems>(items)...);
+        }
+    }
+    template <typename Parent, typename Sizer>
+    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
+    {
+        if (!items_) {
+            return;
+        }
+        createAndAddWidgets(parent, parentSizer, parentFlags);
+    }
 
 private:
+    template <typename Parent, typename Sizer>
+    void createAndAddWidgets(Parent* parent, Sizer* sizer, wxSizerFlags const& flags)
+    {
+        std::apply([parent, sizer, flags](auto&&... tupleArg) {
+            (details::createAndAddVisiter(tupleArg, parent, sizer, flags), ...);
+        },
+            *items_);
+    }
+
+    std::optional<std::tuple<Items...>> items_ {};
 };
 
-class ForEachExample : public wxDialog {
-public:
-    explicit ForEachExample(wxWindow* parent);
-};
+template <details::SizerItem... Item>
+LayoutIf(bool, Item... item) -> LayoutIf<Item...>;
+}
 
-class ListExample : public wxDialog {
-public:
-    explicit ListExample(wxWindow* parent);
-};
-
-class LayoutIfExample : public wxDialog {
-public:
-    explicit LayoutIfExample(wxWindow* parent);
-};
-
-class UnicodeExample : public wxDialog {
-public:
-    explicit UnicodeExample(wxWindow* parent);
-};
+#include <wxUI/detail/ZapMacros.hpp>

@@ -24,6 +24,8 @@ SOFTWARE.
 #include "TestCustomizations.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <ranges>
+#include <string>
+#include <string_view>
 #include <wxUI/Button.hpp>
 #include <wxUI/Layout.hpp>
 #include <wxUI/Menu.hpp>
@@ -34,23 +36,125 @@ SOFTWARE.
 using namespace wxUITests;
 using namespace wxUI;
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string sizerOrientation(wxOrientation orientation)
+{
+    return orientation == wxVERTICAL ? "wxVERTICAL" : "wxHORIZONTAL";
+}
+
+std::string sizerDescriptor(wxOrientation orientation, std::string_view caption = {})
+{
+    std::string descriptor = "Sizer[orientation=" + sizerOrientation(orientation);
+    if (!caption.empty()) {
+        descriptor += ", caption=\"";
+        descriptor += caption;
+        descriptor += "\"";
+    }
+    descriptor += "]";
+    return descriptor;
+}
+
+Dump sizerDump(wxOrientation orientation, std::string_view caption = {})
+{
+    return {
+        "Create:" + sizerDescriptor(orientation, caption),
+        "topsizer:" + sizerDescriptor(orientation, caption),
+        "sizer:" + sizerDescriptor(orientation, caption),
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+    };
+}
+
+Dump sizerWithChildDump(wxOrientation parentOrientation,
+    std::string_view parentCaption,
+    wxOrientation childOrientation,
+    std::string_view childCaption,
+    int flags = 0)
+{
+    return {
+        "Create:" + sizerDescriptor(parentOrientation, parentCaption),
+        "Create:" + sizerDescriptor(childOrientation, childCaption),
+        "topsizer:" + sizerDescriptor(parentOrientation, parentCaption),
+        "sizer:" + sizerDescriptor(parentOrientation, parentCaption),
+        "AddSizer:" + sizerDescriptor(childOrientation, childCaption) + ":flags:(" + std::to_string(flags) + ",0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+        "sizer:" + sizerDescriptor(childOrientation, childCaption),
+    };
+}
+
+std::string wrapSizerDescriptor(wxOrientation orientation)
+{
+    return "WrapSizer[orientation=" + sizerOrientation(orientation) + "]";
+}
+
+Dump wrapSizerDump(wxOrientation orientation)
+{
+    return {
+        "Create:" + wrapSizerDescriptor(orientation),
+        "topsizer:" + wrapSizerDescriptor(orientation),
+        "sizer:" + wrapSizerDescriptor(orientation),
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+    };
+}
+
+Dump wrapSizerWithButtonDump(wxOrientation orientation, int flags = 0)
+{
+    return {
+        "Create:" + wrapSizerDescriptor(orientation),
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+        "topsizer:" + wrapSizerDescriptor(orientation),
+        "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+        "SetEnabled:true",
+        "sizer:" + wrapSizerDescriptor(orientation),
+        "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]:flags:(" + std::to_string(flags) + ",0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+    };
+}
+
+std::string gridSizerDescriptor(int cols, bool isFlex = false)
+{
+    return (isFlex ? "FlexGridSizer[cols=" : "GridSizer[cols=") + std::to_string(cols) + "]";
+}
+
+Dump gridSizerDump(int cols, bool isFlex = false)
+{
+    return {
+        "Create:" + gridSizerDescriptor(cols, isFlex),
+        "topsizer:" + gridSizerDescriptor(cols, isFlex),
+        "sizer:" + gridSizerDescriptor(cols, isFlex),
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+    };
+}
+
+Dump gridSizerWithButtonDump(int cols, bool isFlex, int flags = 0)
+{
+    return {
+        "Create:" + gridSizerDescriptor(cols, isFlex),
+        "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+        "topsizer:" + gridSizerDescriptor(cols, isFlex),
+        "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+        "SetEnabled:true",
+        "sizer:" + gridSizerDescriptor(cols, isFlex),
+        "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]:flags:(" + std::to_string(flags) + ",0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+    };
+}
+} // namespace
+
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 TEST_CASE("Size")
 {
+    // <<<< VSizer >>>>
     SECTION("vSizer.empty")
     {
-        TestProvider frame;
+        TestParent frame;
         wxUI::VSizer {}.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxVERTICAL]",
-                  "topsizer:Sizer[orientation=wxVERTICAL]",
-                  "sizer:Sizer[orientation=wxVERTICAL]",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        CHECK(frame.dump() == sizerDump(wxVERTICAL));
     }
-    SECTION("vSizer.empty1")
+    SECTION("vSizer.withButton")
     {
-        TestProvider frame;
+        TestParent frame;
         wxUI::VSizer { wxUI::Button { "Hello" } }.fitTo(&frame);
         CHECK(frame.dump() == std::vector<std::string> {
                   "Create:Sizer[orientation=wxVERTICAL]",
@@ -65,360 +169,451 @@ TEST_CASE("Size")
     }
     SECTION("vSizer.named.empty")
     {
-        TestProvider frame;
-        wxUI::VSizer { "Test1" }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "topsizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "sizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        TestParent frame;
+        wxUI::VSizer { "Inner" }.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxVERTICAL, "Inner"));
     }
-    SECTION("vSizer.named.empty_tag")
+    SECTION("vSizer.named.tag.empty")
     {
-        TestProvider frame;
-        wxString caption { "Test1" };
+        TestParent frame;
+        wxString caption { "Inner" };
         wxUI::VSizer { wxUI_String {}, caption }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "topsizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "sizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        CHECK(frame.dump() == sizerDump(wxVERTICAL, "Inner"));
     }
+    SECTION("vSizer.flags.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxVERTICAL));
+    }
+    SECTION("vSizer.collapse.vSizer.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { wxUI::VSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxVERTICAL));
+    }
+    SECTION("vSizer.collapse.vSizer.named.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { wxUI::VSizer { "Inner" } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxVERTICAL, "Inner"));
+    }
+    SECTION("vSizer.collapse.vSizer.named.tag.empty")
+    {
+        TestParent frame;
+        wxString caption { "Inner" };
+        wxUI::VSizer { wxUI::VSizer { wxUI_String {}, caption } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxVERTICAL, "Inner"));
+    }
+    SECTION("vSizer.hSizer.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { wxUI::HSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "", wxHORIZONTAL, ""));
+    }
+    SECTION("vSizer.hSizer.empty.flags")
+    {
+        TestParent frame;
+        wxUI::VSizer { wxUI::HSizer {} }.withFlags(wxSizerFlags(1)).fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "", wxHORIZONTAL, "", 1));
+    }
+    SECTION("vSizer.flags.hSizer.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { wxSizerFlags(1), wxUI::HSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "", wxHORIZONTAL, "", 1));
+    }
+    SECTION("vSizer.named.flags.hSizer.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { "Parent", wxSizerFlags(1), wxUI::HSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxHORIZONTAL, "", 1));
+    }
+    SECTION("vSizer.named.tag.flags.hSizer.empty")
+    {
+        TestParent frame;
+        wxString caption { "Parent" };
+        wxUI::VSizer { wxUI_String {}, caption, wxSizerFlags(1), wxUI::HSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxHORIZONTAL, "", 1));
+    }
+    SECTION("vSizer.hSizer.named.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { wxUI::HSizer { "Child" } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "", wxHORIZONTAL, "Child"));
+    }
+    SECTION("vSizer.hSizer.named.tag.empty")
+    {
+        TestParent frame;
+        wxString caption { "Child" };
+        wxUI::VSizer { wxUI::HSizer { wxUI_String {}, caption } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "", wxHORIZONTAL, "Child"));
+    }
+
+    SECTION("vSizer.named.vSizer.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { "Parent", wxUI::VSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxVERTICAL, ""));
+    }
+    SECTION("vSizer.named.tag.vSizer.empty")
+    {
+        TestParent frame;
+        wxString caption { "Parent" };
+        wxUI::VSizer { wxUI_String {}, caption, wxUI::VSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxVERTICAL, ""));
+    }
+
+    SECTION("vSizer.named.vSizer.named.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { "Parent", wxUI::VSizer { "Inner" } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxVERTICAL, "Inner"));
+    }
+    SECTION("vSizer.named.tag.vSizer.named.empty")
+    {
+        TestParent frame;
+        wxString caption1 { "Parent" };
+        wxUI::VSizer { wxUI_String {}, caption1, wxUI::VSizer { "Inner" } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxVERTICAL, "Inner"));
+    }
+    SECTION("vSizer.named.vSizer.named.tag.empty")
+    {
+        TestParent frame;
+        wxString caption2 { "Inner" };
+        wxUI::VSizer { "Parent", wxUI::VSizer { wxUI_String {}, caption2 } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxVERTICAL, "Inner"));
+    }
+    SECTION("vSizer.named.tag.vSizer.named.tag.empty")
+    {
+        TestParent frame;
+        wxString caption1 { "Parent" };
+        wxString caption2 { "Inner" };
+        wxUI::VSizer { wxUI_String {}, caption1, wxUI::VSizer { wxUI_String {}, caption2 } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxVERTICAL, "Inner"));
+    }
+    SECTION("vSizer.named.hSizer.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { "Parent", wxUI::HSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxHORIZONTAL, ""));
+    }
+    SECTION("vSizer.named.tag.hSizer.empty")
+    {
+        TestParent frame;
+        wxString caption { "Parent" };
+        wxUI::VSizer { wxUI_String {}, caption, wxUI::HSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxHORIZONTAL, ""));
+    }
+    SECTION("vSizer.named.hSizer.named.empty")
+    {
+        TestParent frame;
+        wxUI::VSizer { "Parent", wxUI::HSizer { "Child" } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxHORIZONTAL, "Child"));
+    }
+    SECTION("vSizer.named.tag.hSizer.named.empty")
+    {
+        TestParent frame;
+        wxString caption { "Parent" };
+        wxUI::VSizer { wxUI_String {}, caption, wxUI::HSizer { "Child" } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxHORIZONTAL, "Child"));
+    }
+    SECTION("vSizer.named.hSizer.named.tag.empty")
+    {
+        TestParent frame;
+        wxString caption2 { "Child" };
+        wxUI::VSizer { "Parent", wxUI::HSizer { wxUI_String {}, caption2 } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxHORIZONTAL, "Child"));
+    }
+    SECTION("vSizer.named.tag.hSizer.named.tag.empty")
+    {
+        TestParent frame;
+        wxString caption1 { "Parent" };
+        wxString caption2 { "Child" };
+        wxUI::VSizer { wxUI_String {}, caption1, wxUI::HSizer { wxUI_String {}, caption2 } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxHORIZONTAL, "Child"));
+    }
+
+    // <<<< HSizer >>>>
     SECTION("hSizer.empty")
     {
-        TestProvider frame;
+        TestParent frame;
         wxUI::HSizer {}.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxHORIZONTAL));
+    }
+    SECTION("hSizer.withButton")
+    {
+        TestParent frame;
+        wxUI::HSizer { wxUI::Button { "Hello" } }.fitTo(&frame);
         CHECK(frame.dump() == std::vector<std::string> {
                   "Create:Sizer[orientation=wxHORIZONTAL]",
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "topsizer:Sizer[orientation=wxHORIZONTAL]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
                   "sizer:Sizer[orientation=wxHORIZONTAL]",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]:flags:(0,0x0,0)",
                   "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
               });
     }
     SECTION("hSizer.named.empty")
     {
-        TestProvider frame;
-        wxUI::HSizer { "Test2" }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        TestParent frame;
+        wxUI::HSizer { "Child" }.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxHORIZONTAL, "Child"));
     }
-    SECTION("hSizer.named.empty_tag")
+    SECTION("hSizer.named.tag.empty")
     {
-        TestProvider frame;
-        wxString caption { "Test2" };
+        TestParent frame;
+        wxString caption { "Child" };
         wxUI::HSizer { wxUI_String {}, caption }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        CHECK(frame.dump() == sizerDump(wxHORIZONTAL, "Child"));
     }
-
-    SECTION("vSizer.collapse.vSizer.empty")
+    SECTION("hSizer.flags.empty")
     {
-        TestProvider frame;
-        wxUI::VSizer { wxUI::VSizer {} }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxVERTICAL]",
-                  "topsizer:Sizer[orientation=wxVERTICAL]",
-                  "sizer:Sizer[orientation=wxVERTICAL]",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
-    }
-    SECTION("vSizer.collapse.vSizer.named.empty")
-    {
-        TestProvider frame;
-        wxUI::VSizer { wxUI::VSizer { "Test1" } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "topsizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "sizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
-    }
-    SECTION("vSizer.hSizer.empty")
-    {
-        TestProvider frame;
-        wxUI::VSizer { wxUI::HSizer {} }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxVERTICAL]",
-                  "Create:Sizer[orientation=wxHORIZONTAL]",
-                  "topsizer:Sizer[orientation=wxVERTICAL]",
-                  "sizer:Sizer[orientation=wxVERTICAL]",
-                  "AddSizer:Sizer[orientation=wxHORIZONTAL]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL]",
-              });
-    }
-    SECTION("vSizer.hSizer.named.empty")
-    {
-        TestProvider frame;
-        wxUI::VSizer { wxUI::HSizer { "Test2" } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxVERTICAL]",
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "topsizer:Sizer[orientation=wxVERTICAL]",
-                  "sizer:Sizer[orientation=wxVERTICAL]",
-                  "AddSizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-              });
-    }
-
-    SECTION("vSizer.named.vSizer.empty")
-    {
-        TestProvider frame;
-        wxUI::VSizer { "Test3", wxUI::VSizer {} }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "Create:Sizer[orientation=wxVERTICAL]",
-                  "topsizer:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "sizer:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "AddSizer:Sizer[orientation=wxVERTICAL]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxVERTICAL]",
-              });
-    }
-    SECTION("vSizer.named.vSizer.named.empty")
-    {
-        TestProvider frame;
-        wxUI::VSizer { "Test3", wxUI::VSizer { "Test1" } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "Create:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "topsizer:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "sizer:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "AddSizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-              });
-    }
-    SECTION("vSizer.named.hSizer.empty")
-    {
-        TestProvider frame;
-        wxUI::VSizer { "Test3", wxUI::HSizer {} }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "Create:Sizer[orientation=wxHORIZONTAL]",
-                  "topsizer:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "sizer:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "AddSizer:Sizer[orientation=wxHORIZONTAL]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL]",
-              });
-    }
-    SECTION("vSizer.named.hSizer.named.empty")
-    {
-        TestProvider frame;
-        wxUI::VSizer { "Test3", wxUI::HSizer { "Test2" } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "topsizer:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "sizer:Sizer[orientation=wxVERTICAL, caption=\"Test3\"]",
-                  "AddSizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-              });
-    }
-
-    SECTION("hSizer.vSizer.empty")
-    {
-        TestProvider frame;
-        wxUI::HSizer { wxUI::VSizer {} }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL]",
-                  "Create:Sizer[orientation=wxVERTICAL]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL]",
-                  "AddSizer:Sizer[orientation=wxVERTICAL]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxVERTICAL]",
-              });
-    }
-    SECTION("hSizer.vSizer.named.empty")
-    {
-        TestProvider frame;
-        wxUI::HSizer { wxUI::VSizer { "Test1" } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL]",
-                  "Create:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL]",
-                  "AddSizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-              });
+        TestParent frame;
+        wxUI::HSizer { wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxHORIZONTAL));
     }
     SECTION("hSizer.collapse.hSizer.empty")
     {
-        TestProvider frame;
+        TestParent frame;
         wxUI::HSizer { wxUI::HSizer {} }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL]",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        CHECK(frame.dump() == sizerDump(wxHORIZONTAL));
     }
     SECTION("hSizer.collapse.hSizer.named.empty")
     {
-        TestProvider frame;
-        wxUI::HSizer { wxUI::HSizer { "Test2" } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        TestParent frame;
+        wxUI::HSizer { wxUI::HSizer { "Inner" } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxHORIZONTAL, "Inner"));
     }
+    SECTION("hSizer.collapse.hSizer.named.tag.empty")
+    {
+        TestParent frame;
+        wxString caption { "Inner" };
+        wxUI::HSizer { wxUI::HSizer { wxUI_String {}, caption } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerDump(wxHORIZONTAL, "Inner"));
+    }
+    SECTION("hSizer.vSizer.empty")
+    {
+        TestParent frame;
+        wxUI::HSizer { wxUI::VSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "", wxVERTICAL, ""));
+    }
+    SECTION("hSizer.vSizer.empty.flags")
+    {
+        TestParent frame;
+        wxUI::HSizer { wxUI::VSizer {} }.withFlags(wxSizerFlags(1)).fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "", wxVERTICAL, "", 1));
+    }
+    SECTION("hSizer.flags.vSizer.empty")
+    {
+        TestParent frame;
+        wxUI::HSizer { wxSizerFlags(1), wxUI::VSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "", wxVERTICAL, "", 1));
+    }
+    SECTION("hSizer.named.flags.vSizer.empty")
+    {
+        TestParent frame;
+        wxUI::HSizer { "Parent", wxSizerFlags(1), wxUI::VSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxVERTICAL, "", 1));
+    }
+    SECTION("hSizer.named.tag.flags.vSizer.empty")
+    {
+        TestParent frame;
+        wxString caption { "Parent" };
+        wxUI::HSizer { wxUI_String {}, caption, wxSizerFlags(1), wxUI::VSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxVERTICAL, "", 1));
+    }
+    SECTION("hSizer.vSizer.named.empty")
+    {
+        TestParent frame;
+        wxUI::HSizer { wxUI::VSizer { "Inner" } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "", wxVERTICAL, "Inner"));
+    }
+    SECTION("hSizer.vSizer.named.tag.empty")
+    {
+        TestParent frame;
+        wxString caption { "Inner" };
+        wxUI::HSizer { wxUI::VSizer { wxUI_String {}, caption } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "", wxVERTICAL, "Inner"));
+    }
+
     SECTION("hSizer.named.vSizer.empty")
     {
-        TestProvider frame;
-        wxUI::HSizer { "Test3", wxUI::VSizer {} }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "Create:Sizer[orientation=wxVERTICAL]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "AddSizer:Sizer[orientation=wxVERTICAL]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxVERTICAL]",
-              });
+        TestParent frame;
+        wxUI::HSizer { "Parent", wxUI::VSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxVERTICAL, ""));
+    }
+    SECTION("hSizer.named.tag.vSizer.empty")
+    {
+        TestParent frame;
+        wxString caption { "Parent" };
+        wxUI::HSizer { wxUI_String {}, caption, wxUI::VSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxVERTICAL, ""));
     }
     SECTION("hSizer.named.vSizer.named.empty")
     {
-        TestProvider frame;
-        wxUI::HSizer { "Test3", wxUI::VSizer { "Test1" } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "Create:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "AddSizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxVERTICAL, caption=\"Test1\"]",
-              });
+        TestParent frame;
+        wxUI::HSizer { "Parent", wxUI::VSizer { "Inner" } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxVERTICAL, "Inner"));
+    }
+    SECTION("hSizer.named.tag.vSizer.named.empty")
+    {
+        TestParent frame;
+        wxString caption1 { "Parent" };
+        wxUI::HSizer { wxUI_String {}, caption1, wxUI::VSizer { "Inner" } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxVERTICAL, "Inner"));
+    }
+    SECTION("hSizer.named.vSizer.named.tag.empty")
+    {
+        TestParent frame;
+        wxString caption2 { "Inner" };
+        wxUI::HSizer { "Parent", wxUI::VSizer { wxUI_String {}, caption2 } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxVERTICAL, "Inner"));
+    }
+    SECTION("hSizer.named.tag.vSizer.named.tag.empty")
+    {
+        TestParent frame;
+        wxString caption1 { "Parent" };
+        wxString caption2 { "Inner" };
+        wxUI::HSizer { wxUI_String {}, caption1, wxUI::VSizer { wxUI_String {}, caption2 } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxVERTICAL, "Inner"));
     }
     SECTION("hSizer.named.hSizer.empty")
     {
-        TestProvider frame;
-        wxUI::HSizer { "Test3", wxUI::HSizer {} }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "Create:Sizer[orientation=wxHORIZONTAL]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "AddSizer:Sizer[orientation=wxHORIZONTAL]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL]",
-              });
+        TestParent frame;
+        wxUI::HSizer { "Parent", wxUI::HSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxHORIZONTAL, ""));
+    }
+    SECTION("hSizer.named.tag.hSizer.empty")
+    {
+        TestParent frame;
+        wxString caption { "Parent" };
+        wxUI::HSizer { wxUI_String {}, caption, wxUI::HSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxHORIZONTAL, ""));
     }
     SECTION("hSizer.named.hSizer.named.empty")
     {
-        TestProvider frame;
-        wxUI::HSizer { "Test3", wxUI::HSizer { "Test2" } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "AddSizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-              });
+        TestParent frame;
+        wxUI::HSizer { "Parent", wxUI::HSizer { "Child" } }.fitTo(&frame);
+        CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxHORIZONTAL, "Child"));
     }
-    SECTION("layoutif.true.1sizer")
+
+    // <<<< VWrapSizer >>>>
+    SECTION("vWrapSizer.empty")
     {
-        TestProvider frame;
-        wxUI::HSizer { "Test3", wxUI::LayoutIf { true, wxUI::HSizer { "Test2" } } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "AddSizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test2\"]",
-              });
+        TestParent frame;
+        wxUI::VWrapSizer {}.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxVERTICAL));
     }
-    SECTION("layoutif.false.1sizer")
+    SECTION("vWrapSizer.flags.empty")
     {
-        TestProvider frame;
-        wxUI::HSizer { "Test3", wxUI::LayoutIf { false, wxUI::HSizer { "Test2" } } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        TestParent frame;
+        wxUI::VWrapSizer { wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxVERTICAL));
     }
-    SECTION("layoutif.true.button")
+    SECTION("vWrapSizer.collapse.vWrapSizer.empty")
     {
-        TestProvider frame;
-        wxUI::HSizer { "Test3", wxUI::LayoutIf { true, wxUI::Button { "Test2" } } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]",
-                  "SetEnabled:true",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        TestParent frame;
+        wxUI::VWrapSizer { wxUI::VWrapSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxVERTICAL));
     }
-    SECTION("layoutif.false.button")
+    SECTION("vWrapSizer.withButton")
     {
-        TestProvider frame;
-        wxUI::HSizer { "Test3", wxUI::LayoutIf { false, wxUI::Button { "Test2" } } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        TestParent frame;
+        wxUI::VWrapSizer { wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerWithButtonDump(wxVERTICAL));
     }
-    SECTION("layoutif.true.true.button")
+    SECTION("vWrapSizer.flags.withButton")
     {
-        TestProvider frame;
-        wxUI::HSizer { "Test3", wxUI::LayoutIf { true, wxUI::Button { "Test2" }, wxUI::LayoutIf { true, wxUI::Button { "Test2" } } } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]",
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]",
-                  "SetEnabled:true",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]",
-                  "SetEnabled:true",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]:flags:(0,0x0,0)",
-                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        TestParent frame;
+        wxUI::VWrapSizer { wxSizerFlags(1), wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerWithButtonDump(wxVERTICAL, 1));
     }
-    SECTION("layoutif.true.false.button")
+
+    // <<<< HWrapSizer >>>>
+    SECTION("hWrapSizer.empty")
     {
-        TestProvider frame;
-        wxUI::HSizer { "Test3", wxUI::LayoutIf { true, wxUI::Button { "Test2" }, wxUI::LayoutIf { false, wxUI::Button { "Test2" } } } }.fitTo(&frame);
-        CHECK(frame.dump() == std::vector<std::string> {
-                  "Create:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]",
-                  "topsizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]",
-                  "SetEnabled:true",
-                  "sizer:Sizer[orientation=wxHORIZONTAL, caption=\"Test3\"]",
-                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Test2\"]:flags:(0,0x0,0)",
-                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
-              });
+        TestParent frame;
+        wxUI::HWrapSizer {}.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxHORIZONTAL));
+    }
+    SECTION("hWrapSizer.flags.empty")
+    {
+        TestParent frame;
+        wxUI::HWrapSizer { wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxHORIZONTAL));
+    }
+    SECTION("hWrapSizer.collapse.hWrapSizer.empty")
+    {
+        TestParent frame;
+        wxUI::HWrapSizer { wxUI::HWrapSizer {} }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerDump(wxHORIZONTAL));
+    }
+    SECTION("hWrapSizer.withButton")
+    {
+        TestParent frame;
+        wxUI::HWrapSizer { wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerWithButtonDump(wxHORIZONTAL));
+    }
+    SECTION("hWrapSizer.flags.withButton")
+    {
+        TestParent frame;
+        wxUI::HWrapSizer { wxSizerFlags(1), wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == wrapSizerWithButtonDump(wxHORIZONTAL, 1));
+    }
+
+    // <<<< GridSizer >>>>
+    SECTION("gridSizer.empty")
+    {
+        TestParent frame;
+        wxUI::GridSizer { 2 }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerDump(2));
+    }
+    SECTION("gridSizer.flags.empty")
+    {
+        TestParent frame;
+        wxUI::GridSizer { 2, wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerDump(2));
+    }
+    SECTION("gridSizer.withButton")
+    {
+        TestParent frame;
+        wxUI::GridSizer { 2, wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerWithButtonDump(2, false));
+    }
+    SECTION("gridSizer.flags.withButton")
+    {
+        TestParent frame;
+        wxUI::GridSizer { 2, wxSizerFlags(1), wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerWithButtonDump(2, false, 1));
+    }
+
+    // <<<< FlexGridSizer >>>>
+    SECTION("flexGridSizer.empty")
+    {
+        TestParent frame;
+        wxUI::FlexGridSizer { 2 }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerDump(2, true));
+    }
+    SECTION("flexGridSizer.flags.empty")
+    {
+        TestParent frame;
+        wxUI::FlexGridSizer { 2, wxSizerFlags(1) }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerDump(2, true));
+    }
+    SECTION("flexGridSizer.withButton")
+    {
+        TestParent frame;
+        wxUI::FlexGridSizer { 2, wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerWithButtonDump(2, true));
+    }
+    SECTION("flexGridSizer.flags.withButton")
+    {
+        TestParent frame;
+        wxUI::FlexGridSizer { 2, wxSizerFlags(1), wxUI::Button { "Hello" } }.fitTo(&frame);
+        CHECK(frame.dump() == gridSizerWithButtonDump(2, true, 1));
     }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

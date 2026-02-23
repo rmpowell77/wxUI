@@ -24,6 +24,7 @@ SOFTWARE.
 #pragma once
 
 #include <format>
+#include <list>
 #include <memory>
 #include <optional>
 #include <ostream>
@@ -49,9 +50,10 @@ SOFTWARE.
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/tglbtn.h>
+#include <wxUI/Customizations.hpp>
 
 // Forward declarations to avoid including Widget.hpp here. We want the
-// test-provider customization overloads to be visible to translation
+// test-parent customization overloads to be visible to translation
 // units before Widget.hpp is processed so qualified calls in that header
 // can find these overloads. Only a couple of types are needed here.
 namespace wxUI::details {
@@ -159,19 +161,27 @@ struct std::formatter<wxMenuBar, char> {
 
 namespace wxUITests {
 
-struct TestProvider;
+enum class SizerType {
+    Box,
+    WrapBox,
+    Grid,
+    FlexGrid,
+};
+struct TestParent;
 struct TestSizer {
     bool top { false };
-    std::optional<wxString> caption {};
+    SizerType type { SizerType::Box };
+    std::optional<std::string> caption {};
     wxOrientation orientation {};
+    std::optional<int> cols {};
 
-    void SetSizeHints(TestProvider*);
-    void Add(TestProvider*, wxSizerFlags const& flags);
+    void SetSizeHints(TestParent*);
+    void Add(TestParent*, wxSizerFlags const& flags);
     void Add(TestSizer*, wxSizerFlags const& flags);
     std::vector<std::string> log {};
 };
 
-struct TestProvider {
+struct TestParent {
     std::string type;
     int id {};
     wxPoint pos {};
@@ -187,18 +197,18 @@ struct TestProvider {
 
     std::vector<std::string> log {};
     std::vector<std::string> menuDetails {};
-    std::list<TestProvider> providers {};
+    std::list<TestParent> parents {};
     std::list<TestSizer> sizers {};
 
     TestSizer* currentSizer {};
-    TestProvider* currentMenu {};
+    TestParent* currentMenu {};
     void SetSizer(TestSizer* sizer) { currentSizer = sizer; }
     void SetSashGravity(double gravity)
     {
         log.push_back(std::format("SetSashGravity:{}", gravity));
     }
-    void SplitVertically(TestProvider* window1, TestProvider* window2);
-    void SplitHorizontally(TestProvider* window1, TestProvider* window2);
+    void SplitVertically(TestParent* window1, TestParent* window2);
+    void SplitHorizontally(TestParent* window1, TestParent* window2);
     template <typename Bitmap>
     void SetBitmapPressed(Bitmap const& bitmap)
     {
@@ -238,7 +248,7 @@ struct TestProvider {
         log.push_back(std::format("SetDefault:{}", id));
     }
 
-    auto add(TestProvider controller) -> TestProvider*;
+    auto add(TestParent controller) -> TestParent*;
     auto add(TestSizer controller) -> TestSizer*;
     auto dump() const -> std::vector<std::string>;
 };
@@ -246,11 +256,11 @@ struct TestProvider {
 }
 
 template <>
-struct std::formatter<wxUITests::TestProvider, char> {
+struct std::formatter<wxUITests::TestParent, char> {
     // No format specifications supported.
     constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
 
-    auto format(wxUITests::TestProvider const& c, std::format_context& ctx) const
+    auto format(wxUITests::TestParent const& c, std::format_context& ctx) const
     {
         std::format_to(
             ctx.out(), "{}[id={}, pos={}, size={}, style={}", c.type, c.id, c.pos, c.size, c.style);
@@ -295,7 +305,21 @@ struct std::formatter<wxUITests::TestSizer, char> {
             : c.orientation == wxVERTICAL
             ? std::string("wxVERTICAL")
             : std::format("{}", static_cast<int>(c.orientation));
-        std::format_to(ctx.out(), "{}Sizer[orientation={}", c.top ? "Top" : "", orientationStr);
+        switch (c.type) {
+        case wxUITests::SizerType::Box:
+            std::format_to(ctx.out(), "{}Sizer[orientation={}", c.top ? "Top" : "", orientationStr);
+            break;
+        case wxUITests::SizerType::WrapBox:
+            std::format_to(ctx.out(), "{}WrapSizer[orientation={}", c.top ? "Top" : "", orientationStr);
+            break;
+        case wxUITests::SizerType::Grid:
+            std::format_to(ctx.out(), "{}GridSizer[cols={}", c.top ? "Top" : "", *c.cols);
+            orientationStr = "Grid";
+            break;
+        case wxUITests::SizerType::FlexGrid:
+            std::format_to(ctx.out(), "{}FlexGridSizer[cols={}", c.top ? "Top" : "", *c.cols);
+            break;
+        }
         if (c.caption.has_value()) {
             std::format_to(ctx.out(), ", caption=\"{}\"", std::string(*c.caption));
         }
@@ -304,31 +328,31 @@ struct std::formatter<wxUITests::TestSizer, char> {
 };
 
 namespace wxUITests {
-inline auto TestProvider::add(TestProvider controller) -> TestProvider*
+inline auto TestParent::add(TestParent controller) -> TestParent*
 {
-    providers.push_back(controller);
+    parents.push_back(controller);
     log.push_back(std::format("Create:{}", controller));
-    return &providers.back();
+    return &parents.back();
 }
 
-inline auto TestProvider::add(TestSizer sizer) -> TestSizer*
+inline auto TestParent::add(TestSizer sizer) -> TestSizer*
 {
     sizers.push_back(sizer);
     log.push_back(std::format("Create:{}", sizer));
     return &sizers.back();
 }
 
-inline void TestProvider::SplitVertically(TestProvider* window1, TestProvider* window2)
+inline void TestParent::SplitVertically(TestParent* window1, TestParent* window2)
 {
     log.push_back(std::format("SplitVertical:{}:{}", *window1, *window2));
 }
 
-inline void TestProvider::SplitHorizontally(TestProvider* window1, TestProvider* window2)
+inline void TestParent::SplitHorizontally(TestParent* window1, TestParent* window2)
 {
     log.push_back(std::format("SplitHorizontal:{}:{}", *window1, *window2));
 }
 
-inline auto TestProvider::dump() const -> std::vector<std::string>
+inline auto TestParent::dump() const -> std::vector<std::string>
 {
     auto result = std::vector<std::string> {};
     for (auto entry : log) {
@@ -340,7 +364,7 @@ inline auto TestProvider::dump() const -> std::vector<std::string>
     for (auto menuDetail : menuDetails) {
         result.push_back(std::format("menu:{}", menuDetail));
     }
-    for (auto controller : providers) {
+    for (auto controller : parents) {
         result.push_back(std::format("controller:{}", controller));
         result.insert(result.end(), controller.log.begin(), controller.log.end());
     }
@@ -351,12 +375,12 @@ inline auto TestProvider::dump() const -> std::vector<std::string>
     return result;
 }
 
-inline void TestSizer::SetSizeHints(TestProvider* controller)
+inline void TestSizer::SetSizeHints(TestParent* controller)
 {
     log.push_back(std::format("SetSizeHints:{}", *controller));
 }
 
-inline void TestSizer::Add(TestProvider* controller, wxSizerFlags const& flags)
+inline void TestSizer::Add(TestParent* controller, wxSizerFlags const& flags)
 {
     log.push_back(std::format("Add:{}:flags:{}", *controller, flags));
 }
@@ -375,8 +399,8 @@ template <typename Underlying, typename Parent>
 struct ParentCreateImpl;
 
 template <>
-struct ParentCreateImpl<wxStaticBitmap, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxBitmap bitmap, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxStaticBitmap, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxBitmap bitmap, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxStaticBitmap",
@@ -390,8 +414,8 @@ struct ParentCreateImpl<wxStaticBitmap, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxBitmapButton, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxBitmap bitmap, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxBitmapButton, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxBitmap bitmap, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxBitmapButton",
@@ -405,8 +429,8 @@ struct ParentCreateImpl<wxBitmapButton, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxBitmapComboBox, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxString const& first, wxPoint pos, wxSize size, int n, const wxString* choices, int64_t style)
+struct ParentCreateImpl<wxBitmapComboBox, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxString const& first, wxPoint pos, wxSize size, int n, const wxString* choices, int64_t style)
     {
         auto tchoices = std::vector<std::string> {};
         for (auto i = 0; i < n; ++i) {
@@ -425,8 +449,8 @@ struct ParentCreateImpl<wxBitmapComboBox, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxBitmapToggleButton, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxBitmap bitmap, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxBitmapToggleButton, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxBitmap bitmap, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxBitmapToggleButton",
@@ -440,8 +464,8 @@ struct ParentCreateImpl<wxBitmapToggleButton, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxButton, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxString const& text, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxButton, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxString const& text, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxButton",
@@ -455,8 +479,8 @@ struct ParentCreateImpl<wxButton, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxCheckBox, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxString const& text, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxCheckBox, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxString const& text, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxCheckBox",
@@ -470,8 +494,8 @@ struct ParentCreateImpl<wxCheckBox, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxChoice, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxPoint pos, wxSize size, int n, const wxString* choices, int64_t style)
+struct ParentCreateImpl<wxChoice, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxPoint pos, wxSize size, int n, const wxString* choices, int64_t style)
     {
         auto tchoices = std::vector<std::string> {};
         for (auto i = 0; i < n; ++i) {
@@ -489,8 +513,8 @@ struct ParentCreateImpl<wxChoice, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxComboBox, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxString const& first, wxPoint pos, wxSize size, int n, const wxString* choices, int64_t style)
+struct ParentCreateImpl<wxComboBox, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxString const& first, wxPoint pos, wxSize size, int n, const wxString* choices, int64_t style)
     {
         auto tchoices = std::vector<std::string> {};
         for (auto i = 0; i < n; ++i) {
@@ -509,8 +533,8 @@ struct ParentCreateImpl<wxComboBox, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxGauge, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, int value, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxGauge, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, int value, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxGauge",
@@ -524,8 +548,8 @@ struct ParentCreateImpl<wxGauge, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxHyperlinkCtrl, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxString const& text, wxString const& text2, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxHyperlinkCtrl, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxString const& text, wxString const& text2, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxHyperlinkCtrl",
@@ -540,8 +564,8 @@ struct ParentCreateImpl<wxHyperlinkCtrl, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxStaticLine, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxStaticLine, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxStaticLine",
@@ -554,8 +578,8 @@ struct ParentCreateImpl<wxStaticLine, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxListBox, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxPoint pos, wxSize size, int n, const wxString* choices, int64_t style)
+struct ParentCreateImpl<wxListBox, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxPoint pos, wxSize size, int n, const wxString* choices, int64_t style)
     {
         auto tchoices = std::vector<std::string> {};
         for (auto i = 0; i < n; ++i) {
@@ -573,8 +597,8 @@ struct ParentCreateImpl<wxListBox, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxRadioBox, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxString const& text, wxPoint pos, wxSize size, int n, const wxString* choices, int majorDim, int64_t style)
+struct ParentCreateImpl<wxRadioBox, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxString const& text, wxPoint pos, wxSize size, int n, const wxString* choices, int majorDim, int64_t style)
     {
         auto tchoices = std::vector<std::string> {};
         for (auto i = 0; i < n; ++i) {
@@ -594,8 +618,8 @@ struct ParentCreateImpl<wxRadioBox, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxSlider, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, int value, int min, int max, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxSlider, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, int value, int min, int max, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxSlider",
@@ -610,8 +634,8 @@ struct ParentCreateImpl<wxSlider, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxSpinCtrl, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxString const&, wxPoint pos, wxSize size, int64_t style, int min, int max, int value)
+struct ParentCreateImpl<wxSpinCtrl, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxString const&, wxPoint pos, wxSize size, int64_t style, int min, int max, int value)
     {
         return parent->add({
             .type = "wxSpinCtrl",
@@ -626,8 +650,8 @@ struct ParentCreateImpl<wxSpinCtrl, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxTextCtrl, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxString const& text, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxTextCtrl, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxString const& text, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxTextCtrl",
@@ -641,8 +665,8 @@ struct ParentCreateImpl<wxTextCtrl, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxStaticText, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxString text, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxStaticText, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxString text, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxStaticText",
@@ -656,8 +680,8 @@ struct ParentCreateImpl<wxStaticText, wxUITests::TestProvider> {
 };
 
 template <>
-struct ParentCreateImpl<wxSplitterWindow, wxUITests::TestProvider> {
-    static auto create(wxUITests::TestProvider* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style)
+struct ParentCreateImpl<wxSplitterWindow, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style)
     {
         return parent->add({
             .type = "wxSplitterWindow",
@@ -669,14 +693,14 @@ struct ParentCreateImpl<wxSplitterWindow, wxUITests::TestProvider> {
     }
 };
 
-inline void ControllerBindEvent(wxUITests::TestProvider* controller, wxUI::details::BindInfo const&)
+inline void ControllerBindEvent(wxUITests::TestParent* controller, wxUI::details::BindInfo const&)
 {
     auto count = std::ranges::count_if(controller->log, [](auto const& e) { return e.starts_with("BindEvents:"); });
     controller->log.push_back(std::format("BindEvents:{}", count + 1));
 }
 
 template <typename Proxy>
-inline void ControllerBindProxy(wxUITests::TestProvider* controller, Proxy&)
+inline void ControllerBindProxy(wxUITests::TestParent* controller, Proxy&)
 {
     auto count = std::ranges::count_if(controller->log, [](auto const& e) { return e.starts_with("BindProxy:"); });
     controller->log.push_back(std::format("BindProxy:{}", count + 1));
@@ -689,24 +713,47 @@ inline void SizerBindProxy(wxUITests::TestSizer* controller, Proxy&)
     controller->log.push_back(std::format("SizerBindProxy:{}", count + 1));
 }
 
-inline auto SizerCreate(wxUITests::TestProvider* provider, std::optional<wxString> caption, wxOrientation orientation) -> wxUITests::TestSizer*
+inline auto SizerCreate(wxUITests::TestParent* parent, SizerInfo const& info) -> wxUITests::TestSizer*
 {
-    return provider->add(wxUITests::TestSizer {
-        .caption = caption,
-        .orientation = orientation,
-    });
+    return std::visit(overloaded {
+                          [parent](BoxSizerInfo const& info) -> wxUITests::TestSizer* {
+                              return parent->add(wxUITests::TestSizer {
+                                  .type = wxUITests::SizerType::Box,
+                                  .caption = info.caption.has_value() ? std::optional { info.caption->utf8_string() } : std::nullopt,
+                                  .orientation = info.orientation,
+                              });
+                          },
+                          [parent](WrapSizerInfo const& info) -> wxUITests::TestSizer* {
+                              return parent->add(wxUITests::TestSizer {
+                                  .type = wxUITests::SizerType::WrapBox,
+                                  .orientation = info.orientation,
+                              });
+                          },
+                          [parent](GridSizerInfo const& info) -> wxUITests::TestSizer* {
+                              return parent->add(wxUITests::TestSizer {
+                                  .type = wxUITests::SizerType::Grid,
+                                  .cols = info.cols,
+                              });
+                          },
+                          [parent](FlexGridSizerInfo const& info) -> wxUITests::TestSizer* {
+                              return parent->add(wxUITests::TestSizer {
+                                  .type = wxUITests::SizerType::FlexGrid,
+                                  .cols = info.cols,
+                              });
+                          } },
+
+        info);
 }
 
-inline void MenuSetMenuBar(wxUITests::TestProvider* parent, wxMenuBar* menuBar)
+inline void MenuSetMenuBar(wxUITests::TestParent* parent, wxMenuBar* menuBar)
 {
-    // Represent the menu-bar as a child provider so tests can inspect it
+    // Represent the menu-bar as a child parent so tests can inspect it
     parent->menuDetails.push_back(std::format("MenuBar:{}", *menuBar));
 }
 
-inline void MenuBindToFrame(wxUITests::TestProvider& frame, int identity, std::variant<std::function<void(wxCommandEvent&)>, std::function<void()>> const&)
+inline void MenuBindToFrame(wxUITests::TestParent& frame, int identity, std::variant<std::function<void(wxCommandEvent&)>, std::function<void()>> const&)
 {
     auto count = std::ranges::count_if(frame.log, [identity](auto const& e) { return e.starts_with(std::format("BindMenu:{}", identity)); });
     frame.log.push_back(std::format("BindMenu:{}:{}", identity, count + 1));
 }
-
 }

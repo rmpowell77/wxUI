@@ -18,8 +18,8 @@ Then it would open the file and parse select the snippets with that name and
 insert with the optional deliminator between them.
 
 So for instance:
-{{{ examples/HelloWorld/HelloWorld.cpp Example "    // ..." }}}
-would open HelloWorld.cpp and look for these lines:
+{{{ examples/HelloWidgets/HelloWidgets.cpp Example "    // ..." }}}
+would open HelloWidgets.cpp and look for these lines:
 
 // snippet Example 
 // endsnippet

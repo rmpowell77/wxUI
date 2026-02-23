@@ -149,7 +149,7 @@ TEST_CASE("ForEach")
     };
     SECTION("ForEach.Vector.T.xV")
     {
-        TestProvider frame;
+        TestParent frame;
         wxUI::VSizer {
             wxUI::ForEach {
                 std::vector { "A", "B", "C" },
@@ -162,7 +162,7 @@ TEST_CASE("ForEach")
     }
     SECTION("ForEach.Vector.T.V")
     {
-        TestProvider frame;
+        TestParent frame;
         wxUI::VForEach(
             std::vector { "A", "B", "C" },
             [](auto name) {
@@ -173,7 +173,7 @@ TEST_CASE("ForEach")
     }
     SECTION("ForEach.Vector.T.H")
     {
-        TestProvider frame;
+        TestParent frame;
         wxUI::HForEach(
             std::vector { "A", "B", "C" },
             [](auto name) {
@@ -189,7 +189,7 @@ TEST_CASE("ForEach")
             return wxUI::Button { name };
         };
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer {
                 wxUI::ForEach {
                     data,
@@ -201,7 +201,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 data,
                 [](auto name) {
@@ -211,7 +211,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 data,
                 [](auto name) {
@@ -221,7 +221,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer {
                 wxUI::ForEach {
                     std::vector { "A", "B", "C" },
@@ -231,7 +231,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 std::vector { "A", "B", "C" },
                 builder)
@@ -239,7 +239,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 std::vector { "A", "B", "C" },
                 builder)
@@ -247,17 +247,17 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach { data, builder } }.fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseHForEach);
         }
@@ -265,7 +265,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Vector.Tuple")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
                                [](auto name) {
@@ -275,7 +275,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
                 [](auto name) {
@@ -285,7 +285,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
                 [](auto name) {
@@ -298,7 +298,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Vector.Tuple.Multiarg")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
                                [](auto identity, auto name) {
@@ -308,7 +308,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
                 [](auto identity, auto name) {
@@ -318,7 +318,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
                 [](auto identity, auto name) {
@@ -331,7 +331,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Range.T")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
                                [](auto name) {
@@ -341,7 +341,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
                 [](auto name) {
@@ -351,7 +351,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
                 [](auto name) {
@@ -368,7 +368,7 @@ TEST_CASE("ForEach")
             return wxUI::Button { name };
         };
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                data,
                                [](auto name) {
@@ -378,7 +378,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 data,
                 [](auto name) {
@@ -388,7 +388,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 data,
                 [](auto name) {
@@ -398,7 +398,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                std::vector { "A", "B", "C" },
                                builder } }
@@ -406,7 +406,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 std::vector { "A", "B", "C" },
                 builder)
@@ -414,7 +414,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 std::vector { "A", "B", "C" },
                 builder)
@@ -422,17 +422,17 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach { data, builder } }.fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseHForEachFiltered);
         }
@@ -440,7 +440,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Range.Tuple")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
                                [](auto name) {
@@ -450,7 +450,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFilteredWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
                 [](auto name) {
@@ -460,7 +460,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFilteredWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
                 [](auto name) {
@@ -473,7 +473,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Range.Tuple.Multiarg")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
                                [](auto identity, auto name) {
@@ -483,7 +483,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFilteredWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
                 [](auto identity, auto name) {
@@ -493,7 +493,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFilteredWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
                 [](auto identity, auto name) {
@@ -506,7 +506,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.InitializerList.T")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                { "A", "B", "C" },
                                [](auto name) {
@@ -516,7 +516,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 { "A", "B", "C" },
                 [](auto name) {
@@ -526,7 +526,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 { "A", "B", "C" },
                 [](auto name) {
@@ -543,7 +543,7 @@ TEST_CASE("ForEach")
             return wxUI::Button { name };
         };
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                data,
                                [](auto name) {
@@ -553,7 +553,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 data,
                 [](auto name) {
@@ -563,7 +563,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 data,
                 [](auto name) {
@@ -573,7 +573,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                std::vector { "A", "B", "C" },
                                builder } }
@@ -581,7 +581,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 std::vector { "A", "B", "C" },
                 builder)
@@ -589,7 +589,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 std::vector { "A", "B", "C" },
                 builder)
@@ -597,17 +597,17 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach { data, builder } }.fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseHForEach);
         }
@@ -615,7 +615,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.InitializerList.Tuple")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
                                [](auto name) {
@@ -625,7 +625,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
                 [](auto name) {
@@ -635,7 +635,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
                 [](auto name) {
@@ -648,7 +648,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.InitializerList.Tuple.Multiarg")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
                                [](auto identity, auto name) {
@@ -658,7 +658,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
                 [](auto identity, auto name) {
@@ -668,7 +668,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
                 [](auto identity, auto name) {
@@ -681,7 +681,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Flags.Vector.T")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                std::vector { "A", "B", "C" },
@@ -692,7 +692,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 std::vector { "A", "B", "C" },
@@ -703,7 +703,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 std::vector { "A", "B", "C" },
@@ -721,7 +721,7 @@ TEST_CASE("ForEach")
             return wxUI::Button { name };
         };
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                data,
@@ -732,7 +732,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 data,
@@ -743,7 +743,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 data,
@@ -754,7 +754,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                std::vector { "A", "B", "C" },
@@ -763,7 +763,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 std::vector { "A", "B", "C" },
@@ -772,7 +772,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 std::vector { "A", "B", "C" },
@@ -781,17 +781,17 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach { wxSizerFlags {}, data, builder } }.fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseHForEach);
         }
@@ -799,7 +799,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Flags.Vector.Tuple")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
@@ -810,7 +810,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
@@ -821,7 +821,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
@@ -835,7 +835,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Flags.Vector.Tuple.Multiarg")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
@@ -846,7 +846,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
@@ -857,7 +857,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
@@ -871,7 +871,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Flags.Range.T")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
@@ -882,7 +882,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
@@ -893,7 +893,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
@@ -911,7 +911,7 @@ TEST_CASE("ForEach")
             return wxUI::Button { name };
         };
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                data,
@@ -922,7 +922,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 data,
@@ -933,7 +933,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 data,
@@ -944,7 +944,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                std::vector { "A", "B", "C" },
@@ -953,7 +953,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 std::vector { "A", "B", "C" },
@@ -962,7 +962,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 std::vector { "A", "B", "C" },
@@ -971,17 +971,17 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach { wxSizerFlags {}, data, builder } }.fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEachFiltered);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseHForEachFiltered);
         }
@@ -989,7 +989,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Flags.Range.Tuple")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
@@ -1000,7 +1000,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFilteredWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
@@ -1011,7 +1011,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFilteredWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
@@ -1025,7 +1025,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Flags.Range.Tuple.Multiarg")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
@@ -1036,7 +1036,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFilteredWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
@@ -1047,7 +1047,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachFilteredWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
@@ -1061,7 +1061,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Flags.InitializerList.T")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                { "A", "B", "C" },
@@ -1072,7 +1072,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 { "A", "B", "C" },
@@ -1083,7 +1083,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 { "A", "B", "C" },
@@ -1101,7 +1101,7 @@ TEST_CASE("ForEach")
             return wxUI::Button { name };
         };
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                data,
@@ -1112,7 +1112,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 data,
@@ -1123,7 +1123,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 data,
@@ -1134,7 +1134,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                std::vector { "A", "B", "C" },
@@ -1143,7 +1143,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 std::vector { "A", "B", "C" },
@@ -1152,7 +1152,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 std::vector { "A", "B", "C" },
@@ -1161,17 +1161,17 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseHForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach { wxSizerFlags {}, data, builder } }.fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseVForEach);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
             CHECK(frame.dump() == kCaseHForEach);
         }
@@ -1179,7 +1179,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Flags.InitializerList.Tuple")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
@@ -1190,7 +1190,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
@@ -1201,7 +1201,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
@@ -1215,7 +1215,7 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Flags.InitializerList.Tuple.Multiarg")
     {
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VSizer { wxUI::ForEach {
                                wxSizerFlags {},
                                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
@@ -1226,7 +1226,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::VForEach(
                 wxSizerFlags {},
                 { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
@@ -1237,7 +1237,7 @@ TEST_CASE("ForEach")
             CHECK(frame.dump() == kCaseVForEachWithID);
         }
         {
-            TestProvider frame;
+            TestParent frame;
             wxUI::HForEach(
                 wxSizerFlags {},
                 { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },

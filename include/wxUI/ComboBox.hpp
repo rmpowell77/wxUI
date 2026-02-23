@@ -23,11 +23,11 @@ SOFTWARE.
 */
 #pragma once
 
-#include "GetterSetter.hpp"
-#include "Widget.hpp"
 #include <wx/combobox.h>
+#include <wxUI/GetterSetter.hpp>
+#include <wxUI/Widget.hpp>
 
-#include "HelperMacros.hpp"
+#include <wxUI/detail/HelperMacros.hpp>
 
 namespace wxUI {
 
@@ -35,8 +35,41 @@ namespace wxUI {
 struct ComboBox {
     using underlying_t = wxComboBox;
 
+    ComboBox(std::initializer_list<char const*> choices)
+        : ComboBox(wxID_ANY, choices)
+    {
+    }
+
+    ComboBox(std::initializer_list<std::initializer_list<char const*>> choices)
+        : ComboBox(wxID_ANY, choices)
+    {
+    }
+
+    ComboBox(std::initializer_list<std::string_view> choices)
+        : ComboBox(wxID_ANY, choices)
+    {
+    }
+
     ComboBox(std::initializer_list<std::string> choices = {})
         : ComboBox(wxID_ANY, choices)
+    {
+    }
+
+    explicit ComboBox(wxWindowID identity, std::initializer_list<char const*> choices)
+        : details_(identity)
+        , choices_(details::Ranges::convertToUtf8(choices))
+    {
+    }
+
+    explicit ComboBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
+        : details_(identity)
+        , choices_(details::Ranges::flattenToUtf8(choices))
+    {
+    }
+
+    explicit ComboBox(wxWindowID identity, std::initializer_list<std::string_view> choices)
+        : details_(identity)
+        , choices_(details::Ranges::convertToUtf8(choices))
     {
     }
 
@@ -46,21 +79,27 @@ struct ComboBox {
     {
     }
 
-    explicit ComboBox(details::Ranges::input_range_of<wxString> auto&& choices)
+    explicit ComboBox(details::Ranges::utf8_text_input_range auto&& choices)
         : ComboBox(wxID_ANY, std::forward<decltype(choices)>(choices))
     {
     }
 
-    ComboBox(wxWindowID identity, details::Ranges::input_range_of<wxString> auto&& choices)
+    ComboBox(wxWindowID identity, details::Ranges::utf8_text_input_range auto&& choices)
         : details_(identity)
-        , choices_(details::Ranges::ToVector<wxString>(std::forward<decltype(choices)>(choices)))
+        , choices_(details::Ranges::ToVectorUtf8(std::forward<decltype(choices)>(choices)))
     {
     }
 
-    auto withSelection(int which) -> ComboBox&
+    auto withSelection(int which) & -> ComboBox&
     {
         selection_ = which;
         return *this;
+    }
+
+    auto withSelection(int which) && -> ComboBox&&
+    {
+        selection_ = which;
+        return std::move(*this);
     }
 
     template <typename Function>
@@ -123,4 +162,4 @@ public:
 WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(ComboBox);
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

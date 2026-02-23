@@ -21,35 +21,34 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-// #pragma once
-
-// This header is library details only header, and should not be relevant to users of the library.
-// Libary Implementer Notes:
-// Put all the Macros in HelperMacros.h
-// Put all the undefs in ZapMacros.h
-// ZapMacros.h should be the last line included in all Header files.
-// Due to the way we are using these header files, they should *not* use #pragma once
+// Generated with bash command
+// for i in *.cpp; do echo \#include \<wxUI\/Layout.hpp\> > Layout.cpp; for j in WXUI_RULE_OF_SIX_BOILERPLATE WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE\) >> Layout.cpp; echo \#error Missed zapping WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE >> Layout.cpp; echo \#endif >> Layout.cpp; done; done
+#include <wxUI/Factory.hpp>
 
 #if defined(WXUI_RULE_OF_SIX_BOILERPLATE)
-#undef WXUI_RULE_OF_SIX_BOILERPLATE
+#error Missed zapping WXUI_RULE_OF_SIX_BOILERPLATE
 #endif
 
 #if defined(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE)
-#undef WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE
+#error Missed zapping WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE
 #endif
 
 #if defined(WXUI_WIDGET_CREATE_BOILERPLATE)
-#undef WXUI_WIDGET_CREATE_BOILERPLATE
+#error Missed zapping WXUI_WIDGET_CREATE_BOILERPLATE
 #endif
 
 #if defined(WXUI_FORWARD_TO_DETAILS)
-#undef WXUI_FORWARD_TO_DETAILS
+#error Missed zapping WXUI_FORWARD_TO_DETAILS
 #endif
 
 #if defined(WXUI_FORWARD_BIND_TO_DETAILS)
-#undef WXUI_FORWARD_BIND_TO_DETAILS
+#error Missed zapping WXUI_FORWARD_BIND_TO_DETAILS
+#endif
+
+#if defined(WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS)
+#error Missed zapping WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS
 #endif
 
 #if defined(WXUI_FORWARD_ALL_TO_DETAILS)
-#undef WXUI_FORWARD_ALL_TO_DETAILS
+#error Missed zapping WXUI_FORWARD_ALL_TO_DETAILS
 #endif

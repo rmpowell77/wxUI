@@ -23,12 +23,12 @@ SOFTWARE.
 */
 #pragma once
 
-#include "GetterSetter.hpp"
-#include "Widget.hpp"
 #include <wx/string.h>
 #include <wx/textctrl.h>
+#include <wxUI/GetterSetter.hpp>
+#include <wxUI/Widget.hpp>
 
-#include "HelperMacros.hpp"
+#include <wxUI/detail/HelperMacros.hpp>
 
 namespace wxUI {
 
@@ -103,4 +103,4 @@ public:
 WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(TextCtrl);
 }
 
-#include "ZapMacros.hpp"
+#include <wxUI/detail/ZapMacros.hpp>

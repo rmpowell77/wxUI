@@ -47,7 +47,7 @@ TEST_CASE("BitmapToggleButton")
 {
     SECTION("bitmap")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -59,7 +59,7 @@ TEST_CASE("BitmapToggleButton")
 
     SECTION("bitmap.toggle")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { wxBitmap {}, wxBitmap {} };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -72,7 +72,7 @@ TEST_CASE("BitmapToggleButton")
 
     SECTION("id.bitmap")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, wxBitmap {} };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -84,7 +84,7 @@ TEST_CASE("BitmapToggleButton")
 
     SECTION("id.bitmap.toggle")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = TypeUnderTest { 10000, wxBitmap {}, wxBitmap {} };
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -97,7 +97,7 @@ TEST_CASE("BitmapToggleButton")
 
     SECTION("pos")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
@@ -109,7 +109,7 @@ TEST_CASE("BitmapToggleButton")
 
     SECTION("size")
     {
-        TestProvider provider;
+        TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
