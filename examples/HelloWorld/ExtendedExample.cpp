@@ -550,3 +550,37 @@ UnicodeExample::UnicodeExample(wxWindow* parent)
         .fitTo(this);
     // endsnippet UnicodeExample
 }
+
+std::vector<wxString> GenerateStringArray()
+{
+    return {
+        wxT("This is a sample string item #1"),
+        wxT("This is a sample string item #2"),
+        wxT("This is a sample string item #3"),
+        wxT("This is a sample string item #4"),
+        wxT("This is a sample string item #5"),
+        wxT("This is a sample string item #6"),
+        wxT("This is a sample string item #7"),
+        wxT("This is a sample string item #7"),
+    };
+}
+
+ComboUpdate::ComboUpdate(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "ComboUpdate",
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        HSizer {
+            ComboBox { "hello" }
+                .withStyle(wxTE_PROCESS_ENTER)
+                .withProxy(proxy2),
+        },
+    }
+        .fitTo(this);
+    auto arr = GenerateStringArray();
+    proxy2->Clear();
+    proxy2->Append(arr);
+}

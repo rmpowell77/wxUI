@@ -171,6 +171,9 @@ Items { "Name", "Help", Handler }
             wxUI::Item { "&UnicodeExample...", [this] {
                             UnicodeExample { this }.ShowModal();
                         } },
+            wxUI::Item { "&ComboUpdate...", [this] {
+                            ComboUpdate { this }.ShowModal();
+                        } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello World!");
                         } },
