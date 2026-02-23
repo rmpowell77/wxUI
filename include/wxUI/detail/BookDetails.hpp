@@ -27,7 +27,7 @@ SOFTWARE.
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wxUI/Widget.hpp>
-#include <wxUI/detail/HelperMacros.hpp>
+#include <wxUI/detail/LayoutDetails.hpp>
 #include <wxUI/wxUITypes.hpp>
 
 template <details::SizerItem Item>

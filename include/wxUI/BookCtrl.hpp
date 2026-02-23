@@ -27,9 +27,7 @@ SOFTWARE.
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/notebook.h>
-#include <wxUI/Widget.hpp>
-#include <wxUI/detail/HelperMacros.hpp>
-#include <wxUI/wxUITypes.hpp>
+#include <wxUI/detail/BookDetails.hpp>
 
 template <typename Book, details::SizerItem... Items>
 struct BookCtrl {
