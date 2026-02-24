@@ -49,7 +49,7 @@ struct Custom {
     {
     }
 
-    void createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags) const
+    auto createAndAdd(wxWindow* parent, wxSizer* parentSizer, wxSizerFlags const& parentFlags)
     {
         function_(parent, parentSizer, flags_.value_or(parentFlags));
     }
