@@ -29,6 +29,8 @@ SOFTWARE.
 #include <wx/notebook.h>
 #include <wxUI/detail/BookDetails.hpp>
 
+namespace wxUI {
+
 template <typename Book, details::SizerItem... Items>
 struct BookCtrl {
     template <details::SizerItem... UItems>
@@ -88,3 +90,5 @@ Notebook(Items... items) -> Notebook<Items...>;
 
 template <details::SizerItem... Items>
 Notebook(wxSizerFlags const& flags, Items... items) -> Notebook<Items...>;
+
+}

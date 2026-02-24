@@ -30,6 +30,8 @@ SOFTWARE.
 #include <wxUI/detail/LayoutDetails.hpp>
 #include <wxUI/wxUITypes.hpp>
 
+namespace wxUI {
+
 template <details::SizerItem Item>
 struct BookItem {
     template <details::SizerItem UItem>
@@ -93,3 +95,5 @@ BookItem(wxUI_String, wxString const& caption, Item&& item) -> BookItem<Item>;
 
 template <details::SizerItem Item>
 BookItem(wxUI_String, wxString const& caption, bool select, Item&& item) -> BookItem<Item>;
+
+}
