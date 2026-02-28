@@ -30,15 +30,6 @@ option(WXUI_WITH_EXAMPLE "Build example." OFF)
 include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
 
 #============================================================================
-# Generate version header from template
-#============================================================================
-configure_file(
-  ${PROJECT_SOURCE_DIR}/include/wxUI/version.hpp.in
-  ${PROJECT_BINARY_DIR}/generated-includes/wxUI/version.hpp
-  @ONLY
-)
-
-#============================================================================
 # Internal compiler options
 #============================================================================
 # C++ standard
@@ -50,7 +41,7 @@ add_library(
   INTERFACE
   include/wxUI/wxUI.hpp
   include/wxUI/wxUITypes.hpp
-  ${PROJECT_BINARY_DIR}/generated-includes/wxUI/version.hpp
+  include/wxUI/version.hpp
   include/wxUI/detail/BindInfo.hpp
   include/wxUI/detail/fwd.hpp
   include/wxUI/detail/LayoutDetails.hpp
@@ -90,7 +81,6 @@ target_include_directories(
   wxUI
   INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/generated-includes>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
@@ -105,13 +95,6 @@ install(
 install(
   DIRECTORY ${PROJECT_SOURCE_DIR}/include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  PATTERN "*.in" EXCLUDE
-)
-
-# Install generated version.hpp
-install(
-  FILES ${PROJECT_BINARY_DIR}/generated-includes/wxUI/version.hpp
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/wxUI
 )
 
 install(

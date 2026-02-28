@@ -4,6 +4,7 @@ Bugs addressed in this release:
 
 * [#255](../../issues/255) Missed some std::string that should be std::string_view
 * [#274](../../issues/274) ASAN failure with when using ComboBox { { hello, goodbye } }
+* [#279](../../issues/279) We have made it more difficult to use include dir
 
 Other changes:
 
