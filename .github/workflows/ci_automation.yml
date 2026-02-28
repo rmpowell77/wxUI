@@ -115,18 +115,18 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/vcpkg-cache
-        key: vcpkg-archives-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build_type }}-${{ hashFiles('vcpkg.json') }}-${{ steps.vcpkg-baseline.outputs.hash }}
+        key: vcpkg-archives-v2-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build_type }}-${{ hashFiles('vcpkg.json') }}-${{ steps.vcpkg-baseline.outputs.hash }}
         restore-keys: |
-          vcpkg-archives-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build_type }}-${{ hashFiles('vcpkg.json') }}-
-          vcpkg-archives-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build_type }}-
-          vcpkg-archives-${{ runner.os }}-${{ runner.arch }}-
+          vcpkg-archives-v2-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build_type }}-${{ hashFiles('vcpkg.json') }}-
+          vcpkg-archives-v2-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build_type }}-
+          vcpkg-archives-v2-${{ runner.os }}-${{ runner.arch }}-
 
     - name: Log vcpkg cache status
       run: |
         echo "=== Vcpkg Cache Status ==="
         echo "Vcpkg installation cache hit: ${{ steps.cache-vcpkg.outputs.cache-hit }}"
         echo "Vcpkg binary cache hit: ${{ steps.cache-vcpkg-binary.outputs.cache-hit }}"
-        echo "Binary cache key: vcpkg-archives-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build_type }}-${{ hashFiles('vcpkg.json') }}-${{ steps.vcpkg-baseline.outputs.hash }}"
+        echo "Binary cache key: vcpkg-archives-v2-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build_type }}-${{ hashFiles('vcpkg.json') }}-${{ steps.vcpkg-baseline.outputs.hash }}"
         if [ -d "${{github.workspace}}/vcpkg-cache" ]; then
           echo "Binary cache size: $(du -sh ${{github.workspace}}/vcpkg-cache 2>/dev/null || echo 'empty')"
           echo "Binary cache file count: $(find ${{github.workspace}}/vcpkg-cache -type f 2>/dev/null | wc -l)"
@@ -136,12 +136,6 @@ jobs:
           echo "Binary cache directory does not exist"
         fi
       shell: bash
-
-    - name: Installing Xcode (MacOS)
-      if: matrix.config.os == 'macos-latest'
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: latest
 
     - name: Installing Dependencies (Linux)
       if: matrix.config.os == 'ubuntu-latest'
