@@ -11,6 +11,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
   - [LayoutIf](#layoutif)
   - [ForEach](#foreach)
   - [Splitter](#splitter)
+  - [BookCtrl](#bootctrl)
   - [Wrapper](#wrapper)
   - [Factory](#factory)
 - [Controllers](#controllers)
@@ -186,6 +187,16 @@ Often times you would be laying out a set of buttons in a horizontal sizer.  The
 ```
 {{{ examples/HelloWidgets/ExtendedExample.cpp HForEach "    // ..." }}}
 ```
+
+#### BookCtrl
+
+`wxUI` supports `wxNoteboook` style UIs via `Notebook`.
+
+```cpp
+{{{ examples/HelloWidgets/ExtendedExample.cpp NotebookExample "    // ..." }}}
+```
+
+The `Notebook` is populated with `BookItem` declarations, which can contain Layouts and Controllers.
 
 #### Splitter
 

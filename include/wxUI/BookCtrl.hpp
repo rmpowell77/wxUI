@@ -24,9 +24,9 @@ SOFTWARE.
 #pragma once
 
 #include <variant>
+#include <wx/notebook.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-#include <wx/notebook.h>
 #include <wxUI/detail/BookDetails.hpp>
 
 namespace wxUI {
@@ -92,3 +92,5 @@ template <details::SizerItem... Items>
 Notebook(wxSizerFlags const& flags, Items... items) -> Notebook<Items...>;
 
 }
+
+#include <wxUI/detail/ZapMacros.hpp>
