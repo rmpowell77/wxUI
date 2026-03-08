@@ -4,6 +4,7 @@ Bugs addressed in this release:
 
 * [#255](../../issues/255) Missed some std::string that should be std::string_view
 * [#274](../../issues/274) ASAN failure with when using ComboBox { { hello, goodbye } }
+* [#279](../../issues/279) We have made it more difficult to use include dir
 
 Other changes:
 
@@ -13,6 +14,7 @@ Other changes:
 * [#233](../../issues/233) We should figure out the best long term header layout
 * [#254](../../issues/254) Generic is too generic. Split into Wrapper and Factory
 * [#256](../../issues/256) Proxy should follow controller_ convention
+* [#263](../../issues/263) Will Factory with move-only lambda work?
 * [#271](../../issues/271) Change example from HelloWorld to HelloWidgets
 * [#276](../../issues/276) ASAN crash when we're adding items to a combobox
 

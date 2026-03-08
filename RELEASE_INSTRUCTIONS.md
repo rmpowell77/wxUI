@@ -27,20 +27,42 @@ The current version can by found by running `git describe --tags --abbrev=0`.  Y
 
  2. Update LATEST_RELEASE_NOTES.md with all the changes (it will get posted to the release by our CI bot)
 
- 3. Tag the depot
+ 3. Update version.hpp to the new version number
 
 ```
-$ git tag -a $VERS -m "wxUI-$VERS"
-$ git push origin $VERS
+$ ./scripts/update-version.sh $VERS
+```
+
+This updates `include/wxUI/version.hpp` with the new version number from the specified version.
+
+ 4. Commit the version change
+
+```
+$ git add include/wxUI/version.hpp LATEST_RELEASE_NOTES.md
+$ git commit -m "Bump version to $VERS"
+```
+
+**Note:** If you have git hooks installed (via `./scripts/install-hooks.sh`), the commit will automatically create tag `v$VERS` for you!
+
+ 5. If you don't have hooks installed, manually tag the commit
+
+```
+$ git tag -a v$VERS -m "wxUI-v$VERS"
+```
+
+ 6. Push everything to trigger the release
+
+```
+$ git push origin main --tags
 ```
 
 This should trigger the github action, which should publish release notes in Draft form.
 
- 4. Once the Release information looks good, Press the Publish Release button on github.
+ 7. Once the Release information looks good, Press the Publish Release button on github.
 
- 5. Update https://github.com/rmpowell77/wxUI/milestone by closing the shipped milestone and starting the next one.
+ 8. Update https://github.com/rmpowell77/wxUI/milestone by closing the shipped milestone and starting the next one.
 
- 6. Notify the world about the new version of wxUI.
+ 9. Notify the world about the new version of wxUI.
 
- 7. Have a cookie.
+ 10. Have a cookie.
 
