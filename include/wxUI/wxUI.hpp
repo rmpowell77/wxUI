@@ -33,6 +33,7 @@
 #include <wxUI/BitmapButton.hpp>
 #include <wxUI/BitmapComboBox.hpp>
 #include <wxUI/BitmapToggleButton.hpp>
+#include <wxUI/BookCtrl.hpp>
 #include <wxUI/Button.hpp>
 #include <wxUI/CheckBox.hpp>
 #include <wxUI/Choice.hpp>

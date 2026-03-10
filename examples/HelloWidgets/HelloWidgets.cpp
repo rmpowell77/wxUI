@@ -185,8 +185,11 @@ HelloWidgetsFrame::HelloWidgetsFrame()
             wxUI::Item { "&FlexGridSizer...", [this] {
                             FlexGridSizerExample { this }.ShowModal();
                         } },
-            wxUI::Item { "&UnicodeExample...", [this] {
-                            UnicodeExample { this }.ShowModal();
+            wxUI::Item { "&NotebookExample...", [this] {
+                            NotebookExample { this }.ShowModal();
+                        } },
+            wxUI::Item { "&GridSizer...", [this] {
+                            GridSizerExample { this }.ShowModal();
                         } },
             wxUI::Item { "&ComboUpdate...", [this] {
                             ComboUpdate { this }.ShowModal();

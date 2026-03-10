@@ -11,6 +11,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
   - [LayoutIf](#layoutif)
   - [ForEach](#foreach)
   - [Splitter](#splitter)
+  - [BookCtrl](#bootctrl)
   - [Wrapper](#wrapper)
   - [Factory](#factory)
 - [Controllers](#controllers)
@@ -168,8 +169,11 @@ Items { "Name", "Help", Handler }
             wxUI::Item { "&FlexGridSizer...", [this] {
                             FlexGridSizerExample { this }.ShowModal();
                         } },
-            wxUI::Item { "&UnicodeExample...", [this] {
-                            UnicodeExample { this }.ShowModal();
+            wxUI::Item { "&NotebookExample...", [this] {
+                            NotebookExample { this }.ShowModal();
+                        } },
+            wxUI::Item { "&GridSizer...", [this] {
+                            GridSizerExample { this }.ShowModal();
                         } },
             wxUI::Item { "&ComboUpdate...", [this] {
                             ComboUpdate { this }.ShowModal();
@@ -334,6 +338,27 @@ Often times you would be laying out a set of buttons in a horizontal sizer.  The
                 return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
             }),
 ```
+
+#### BookCtrl
+
+`wxUI` supports `wxNoteboook` style UIs via `Notebook`.
+
+```cpp
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        Notebook {
+            BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+            BookItem { "Item 2", HSizer { Text { "Item 2" }.withSize({ 200, 50 }) } },
+            LayoutIf {
+                true,
+                BookItem { "Optional Item", VSizer { Text { "Optional Item" }.withSize({ 200, 50 }) } },
+            },
+        },
+    }
+        .fitTo(this);
+```
+
+The `Notebook` is populated with `BookItem` declarations, which can contain Layouts and Controllers.
 
 #### Splitter
 

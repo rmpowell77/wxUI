@@ -551,6 +551,28 @@ UnicodeExample::UnicodeExample(wxWindow* parent)
     // endsnippet UnicodeExample
 }
 
+NotebookExample::NotebookExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "Notebook",
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    // snippet NotebookExample
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        Notebook {
+            BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+            BookItem { "Item 2", HSizer { Text { "Item 2" }.withSize({ 200, 50 }) } },
+            LayoutIf {
+                true,
+                BookItem { "Optional Item", VSizer { Text { "Optional Item" }.withSize({ 200, 50 }) } },
+            },
+        },
+    }
+        .fitTo(this);
+    // endsnippet NotebookExample
+}
+
 std::vector<wxString> GenerateStringArray()
 {
     return {
