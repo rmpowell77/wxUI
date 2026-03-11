@@ -7,6 +7,7 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_BitmapButtonTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_BitmapComboBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_BitmapToggleButtonTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_BookCtrlTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ButtonTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_CheckBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ChoiceTests.cpp
