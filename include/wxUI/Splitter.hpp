@@ -26,6 +26,7 @@ SOFTWARE.
 #include <wx/button.h>
 #include <wx/splitter.h>
 #include <wxUI/Widget.hpp>
+#include <wxUI/detail/LayoutDetails.hpp>
 
 #include <wxUI/detail/HelperMacros.hpp>
 
@@ -35,7 +36,7 @@ namespace wxUI {
 
 // unfortunately due to template types here, it is not easily possible to create a hierarchy of
 // a generic Splitter.  This may be able to be fixed with Deducing this...
-template <details::Createable W1, details::Createable W2>
+template <details::SizerItem W1, details::SizerItem W2>
 struct HSplitter {
     using underlying_t = wxSplitterWindow;
 
@@ -80,7 +81,21 @@ private:
     {
         return [&widgets = widgets_, &stashGravity = stashGravity_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, pos, size, style);
-            widget->SplitHorizontally(std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
+
+            // Create windows for each item - use fitTo for sizers, create for controllers
+            auto createWindow = [widget](auto& item) {
+                if constexpr (requires { item.fitTo(widget); }) {
+                    // It's a sizer - create a container window and fit the sizer to it
+                    auto* window = customizations::ParentCreate<wxWindow>(widget, wxID_ANY);
+                    item.fitTo(window);
+                    return window;
+                } else {
+                    // It's a controller - use create() directly
+                    return item.create(widget);
+                }
+            };
+
+            widget->SplitHorizontally(createWindow(std::get<0>(widgets)), createWindow(std::get<1>(widgets)));
             if (stashGravity) {
                 widget->SetSashGravity(*stashGravity);
             }
@@ -92,7 +107,7 @@ public:
     WXUI_FORWARD_ALL_TO_DETAILS(HSplitter)
 };
 
-template <details::Createable W1, details::Createable W2>
+template <details::SizerItem W1, details::SizerItem W2>
 struct VSplitter {
     using underlying_t = wxSplitterWindow;
 
@@ -137,7 +152,21 @@ private:
     {
         return [&widgets = widgets_, &stashGravity = stashGravity_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, pos, size, style);
-            widget->SplitVertically(std::get<0>(widgets).create(widget), std::get<1>(widgets).create(widget));
+
+            // Create windows for each item - use fitTo for sizers, create for controllers
+            auto createWindow = [widget](auto& item) {
+                if constexpr (requires { item.fitTo(widget); }) {
+                    // It's a sizer - create a container window and fit the sizer to it
+                    auto* window = customizations::ParentCreate<wxWindow>(widget, wxID_ANY);
+                    item.fitTo(window);
+                    return window;
+                } else {
+                    // It's a controller - use create() directly
+                    return item.create(widget);
+                }
+            };
+
+            widget->SplitVertically(createWindow(std::get<0>(widgets)), createWindow(std::get<1>(widgets)));
             if (stashGravity) {
                 widget->SetSashGravity(*stashGravity);
             }
