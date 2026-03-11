@@ -27,6 +27,7 @@ SOFTWARE.
 #include <wx/notebook.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wxUI/Customizations.hpp>
 #include <wxUI/detail/BookDetails.hpp>
 
 namespace wxUI {
@@ -59,7 +60,7 @@ private:
     template <typename Parent>
     auto constructBook(Parent* parent) const
     {
-        return new Book(parent, wxID_ANY);
+        return customizations::ParentCreate<Book>(parent, wxID_ANY);
     }
 
     template <typename Parent>
