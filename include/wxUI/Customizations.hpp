@@ -26,6 +26,8 @@ SOFTWARE.
 #include <functional>
 #include <optional>
 #include <variant>
+#include <vector>
+#include <tuple>
 #include <wx/frame.h>
 #include <wx/menu.h>
 #include <wx/sizer.h>
@@ -88,8 +90,8 @@ struct GridSizerInfo {
 
 struct FlexGridSizerInfo {
     int cols {};
-    std::map<size_t, int> flexibleRows {};
-    std::map<size_t, int> flexibleCols {};
+    std::vector<std::pair<size_t, int>> flexibleRows {};
+    std::vector<std::pair<size_t, int>> flexibleCols {};
 };
 
 using SizerInfo = std::variant<BoxSizerInfo, WrapSizerInfo, GridSizerInfo, FlexGridSizerInfo>;
