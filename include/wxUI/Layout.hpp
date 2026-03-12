@@ -330,7 +330,7 @@ struct FlexGridSizer {
         return *this;
     }
 
-    auto withFlexibleRows(size_t col, int proportion) && -> FlexGridSizer&&
+    auto withFlexibleCol(size_t col, int proportion) && -> FlexGridSizer&&
     {
         flexibleCols_.emplace_back(col, proportion);
         return std::move(*this);
