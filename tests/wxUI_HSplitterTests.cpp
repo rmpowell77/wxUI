@@ -23,7 +23,10 @@ SOFTWARE.
 */
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <wxUI/Button.hpp>
+#include <wxUI/Layout.hpp>
 #include <wxUI/Splitter.hpp>
+#include <wxUI/Text.hpp>
 #include <wxUI/TextCtrl.hpp>
 
 #include <wx/wx.h>
@@ -43,54 +46,111 @@ struct HSplitterTestPolicy {
     static auto expectedSize() { return wxSize { 100, 40 }; }
 };
 
-TEST_CASE("HSplitter")
+TEST_CASE("HSplitter") {
+    SECTION("noargs") {
+        TestParent provider;
+auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} };
+uut.create(&provider);
+CHECK(provider.dump() == std::vector<std::string> {
+          "Create:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
+          "controller:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
+          "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+          "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+          "SplitHorizontal:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+          "SetEnabled:true",
+      });
+}
+
+SECTION("id")
 {
-    SECTION("noargs")
+    TestParent provider;
+    auto uut = TypeUnderTest { 10000, wxUI::TextCtrl {}, wxUI::TextCtrl {} };
+    uut.create(&provider);
+    CHECK(provider.dump() == std::vector<std::string> {
+              "Create:wxSplitterWindow[id=10000, pos=(-1,-1), size=(-1,-1), style=896]",
+              "controller:wxSplitterWindow[id=10000, pos=(-1,-1), size=(-1,-1), style=896]",
+              "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+              "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+              "SplitHorizontal:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+              "SetEnabled:true",
+          });
+}
+
+SECTION("withGravity")
+{
+    TestParent provider;
+    auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} }.withStashGravity(1.0);
+    uut.create(&provider);
+    CHECK(provider.dump() == std::vector<std::string> {
+              "Create:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
+              "controller:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
+              "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+              "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+              "SplitHorizontal:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+              "SetSashGravity:1",
+              "SetEnabled:true",
+          });
+}
+
+COMMON_TESTS(HSplitterTestPolicy)
+}
+
+TEST_CASE("HSplitter with sizers")
+{
+    SECTION("both sides with sizers")
     {
         TestParent provider;
-        auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} };
+        auto uut = wxUI::HSplitter {
+            wxUI::VSizer { wxUI::Text { "Top" }, wxUI::Button { "Button" } },
+            wxUI::HSizer { wxUI::Text { "Left" }, wxUI::Text { "Right" } }
+        };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
-                  "controller:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SplitHorizontal:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SetEnabled:true",
-              });
+        auto dump = provider.dump();
+        // Should create splitter, then two container windows for the sizers
+        CHECK(dump[0] == "Create:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]");
+        CHECK(dump[1] == "controller:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]");
+        // Container window for first sizer
+        CHECK(dump[2] == "Create:wxWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=0]");
+        // Container window for second sizer
+        CHECK(dump[3] == "Create:wxWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=0]");
+        // The split call should reference the container windows, not the text/button controls
+        CHECK(dump[4].starts_with("SplitHorizontal:"));
     }
 
-    SECTION("id")
+    SECTION("left sizer, right controller")
     {
         TestParent provider;
-        auto uut = TypeUnderTest { 10000, wxUI::TextCtrl {}, wxUI::TextCtrl {} };
+        auto uut = wxUI::HSplitter {
+            wxUI::VSizer { wxUI::Text { "Top" }, wxUI::Text { "Bottom" } },
+            wxUI::TextCtrl { "Right" }
+        };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSplitterWindow[id=10000, pos=(-1,-1), size=(-1,-1), style=896]",
-                  "controller:wxSplitterWindow[id=10000, pos=(-1,-1), size=(-1,-1), style=896]",
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SplitHorizontal:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SetEnabled:true",
-              });
+        auto dump = provider.dump();
+        CHECK(dump[0] == "Create:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]");
+        CHECK(dump[1] == "controller:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]");
+        // Container window for the sizer
+        CHECK(dump[2] == "Create:wxWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=0]");
+        // TextCtrl created directly
+        CHECK(dump[3] == "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Right\"]");
+        CHECK(dump[4].starts_with("SplitHorizontal:"));
     }
 
-    SECTION("withGravity")
+    SECTION("left controller, right sizer")
     {
         TestParent provider;
-        auto uut = TypeUnderTest { wxUI::TextCtrl {}, wxUI::TextCtrl {} }.withStashGravity(1.0);
+        auto uut = wxUI::HSplitter {
+            wxUI::TextCtrl { "Left" },
+            wxUI::HSizer { wxUI::Button { "Button1" }, wxUI::Button { "Button2" } }
+        };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
-                  "controller:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]",
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SplitHorizontal:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SetSashGravity:1",
-                  "SetEnabled:true",
-              });
+        auto dump = provider.dump();
+        CHECK(dump[0] == "Create:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]");
+        CHECK(dump[1] == "controller:wxSplitterWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=896]");
+        // TextCtrl created directly
+        CHECK(dump[2] == "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Left\"]");
+        // Container window for the sizer
+        CHECK(dump[3] == "Create:wxWindow[id=-1, pos=(-1,-1), size=(-1,-1), style=0]");
+        CHECK(dump[4].starts_with("SplitHorizontal:"));
     }
-
-    COMMON_TESTS(HSplitterTestPolicy)
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
