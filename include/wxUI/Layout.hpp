@@ -371,8 +371,8 @@ private:
 
     details::Sizer<Items...> details_;
     int cols_ = 0;
-    std::map<size_t, int> flexibleRows_;
-    std::map<size_t, int> flexibleCols_;
+    std::vector<std::pair<size_t, int>> flexibleRows_;
+    std::vector<std::pair<size_t, int>> flexibleCols_;
 };
 
 template <details::SizerItem... UItems>
