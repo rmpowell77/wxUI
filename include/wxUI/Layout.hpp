@@ -312,6 +312,30 @@ struct FlexGridSizer {
     {
     }
 
+    auto withFlexibleRow(size_t row, int proportion) & -> FlexGridSizer&
+    {
+        flexibleRows_.insert_or_assign(row, proportion);
+        return *this;
+    }
+
+    auto withFlexibleRow(size_t row, int proportion) && -> FlexGridSizer&&
+    {
+        flexibleRows_.insert_or_assign(row, proportion);
+        return std::move(*this);
+    }
+
+    auto withFlexibleCol(size_t col, int proportion) & -> FlexGridSizer&
+    {
+        flexibleCols_.insert_or_assign(col, proportion);
+        return *this;
+    }
+
+    auto withFlexibleRows(size_t col, int proportion) && -> FlexGridSizer&&
+    {
+        flexibleCols_.insert_or_assign(col, proportion);
+        return std::move(*this);
+    }
+
     template <typename Parent, typename Sizer>
     auto createAndAdd(Parent* parent, Sizer* sizer, wxSizerFlags const& parentFlags)
     {
@@ -341,12 +365,14 @@ private:
         return [this](Parent* parent) {
             using ::wxUI::customizations::FlexGridSizerInfo;
             using ::wxUI::customizations::SizerCreate;
-            return SizerCreate(parent, FlexGridSizerInfo { cols_ });
+            return SizerCreate(parent, FlexGridSizerInfo { cols_, flexibleRows_, flexibleCols_ });
         };
     }
 
     details::Sizer<Items...> details_;
     int cols_ = 0;
+    std::map<size_t, int> flexibleRows_;
+    std::map<size_t, int> flexibleCols_;
 };
 
 template <details::SizerItem... UItems>
