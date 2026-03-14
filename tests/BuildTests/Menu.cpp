@@ -21,34 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-// Generated with bash command
-// for i in *.cpp; do echo \#include \<wxUI\/Menu.hpp\> > Menu.cpp; for j in WXUI_RULE_OF_SIX_BOILERPLATE WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE\) >> Menu.cpp; echo \#error Missed zapping WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE >> Menu.cpp; echo \#endif >> Menu.cpp; done; done
+
+// This is an auto-generated file. Run checklists/do_buildtests to regenerate.
+
+// clang-format off
 #include <wxUI/Menu.hpp>
-
-#if defined(WXUI_RULE_OF_SIX_BOILERPLATE)
-#error Missed zapping WXUI_RULE_OF_SIX_BOILERPLATE
-#endif
-
-#if defined(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE)
-#error Missed zapping WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE
-#endif
-
-#if defined(WXUI_WIDGET_CREATE_BOILERPLATE)
-#error Missed zapping WXUI_WIDGET_CREATE_BOILERPLATE
-#endif
-
-#if defined(WXUI_FORWARD_TO_DETAILS)
-#error Missed zapping WXUI_FORWARD_TO_DETAILS
-#endif
-
-#if defined(WXUI_FORWARD_BIND_TO_DETAILS)
-#error Missed zapping WXUI_FORWARD_BIND_TO_DETAILS
-#endif
-
-#if defined(WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS)
-#error Missed zapping WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS
-#endif
-
-#if defined(WXUI_FORWARD_ALL_TO_DETAILS)
-#error Missed zapping WXUI_FORWARD_ALL_TO_DETAILS
-#endif
+#include "ZapChecker.hpp"
+// clang-format on
