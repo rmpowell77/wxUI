@@ -23,7 +23,6 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LayoutIfTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LineTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ListBoxTests.cpp
-  # Temporarily disabled Menu tests to isolate Windows ID management issue
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_MenuTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_RadioBoxTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_SpinCtrlTests.cpp
@@ -46,4 +45,8 @@ target_link_libraries(
   wx::core
   wxUI::wxUI
 )
+
+include(CTest)
+include(Catch)
+catch_discover_tests(wxUI_Tests)
 
