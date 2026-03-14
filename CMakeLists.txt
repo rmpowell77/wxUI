@@ -24,8 +24,8 @@ include(${PROJECT_SOURCE_DIR}/cmake/compiler.cmake)
 #============================================================================
 # Settable options
 #============================================================================
-option(WXUI_WITH_TESTS "Build tests." OFF)
-option(WXUI_WITH_EXAMPLE "Build example." OFF)
+option(WXUI_WITH_TESTS "Build tests." ${PROJECT_IS_TOP_LEVEL})
+option(WXUI_WITH_EXAMPLE "Build example." ${PROJECT_IS_TOP_LEVEL})
 
 include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
 

@@ -23,4 +23,5 @@ Other changes:
 * [#289](../../issues/289) We should allow Splitter to take in any types of sizers and layouts
 * [#292](../../issues/292) FlexGridSizer does not support growable columns and will never increase to fill space
 * [#295](../../issues/295) make sure all files have a BuildTests
+* [#302](../../issues/302) Need better defaults for WXUI_WITH_TESTS, WXUI_WITH_EXAMPLE
 
