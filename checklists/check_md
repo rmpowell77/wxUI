@@ -2,7 +2,26 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-diff <(${SCRIPT_DIR}/../docs/src/make_md.py ${SCRIPT_DIR}/../docs/src/README.md) <(cat ${SCRIPT_DIR}/../README.md) \
-&& \
-diff <(${SCRIPT_DIR}/../docs/src/make_md.py docs/src/docs/ProgrammersGuide.md) <(cat ${SCRIPT_DIR}/../docs/ProgrammersGuide.md) 
+EXIT_CODE=0
+
+echo "Checking if generated markdown files are up to date..."
+
+if ! diff <(${SCRIPT_DIR}/../docs/src/make_md.py ${SCRIPT_DIR}/../docs/src/README.md) <(cat ${SCRIPT_DIR}/../README.md) > /dev/null 2>&1; then
+    echo "Error: README.md is out of sync with docs/src/README.md"
+    EXIT_CODE=1
+fi
+
+if ! diff <(${SCRIPT_DIR}/../docs/src/make_md.py docs/src/docs/ProgrammersGuide.md) <(cat ${SCRIPT_DIR}/../docs/ProgrammersGuide.md) > /dev/null 2>&1; then
+    echo "Error: docs/ProgrammersGuide.md is out of sync with docs/src/docs/ProgrammersGuide.md"
+    EXIT_CODE=1
+fi
+
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "✓ All markdown files are up to date"
+else
+    echo ""
+    echo "Markdown check failed. Run 'checklists/do_md' to regenerate documentation files."
+fi
+
+exit $EXIT_CODE 
 

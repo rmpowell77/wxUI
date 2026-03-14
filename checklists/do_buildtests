@@ -1,0 +1,117 @@
+#!/bin/bash
+
+# This script generates/updates BuildTests files for all public headers in include/wxUI/
+# Each test file verifies that the header is self-contained and doesn't leak macros.
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PROJECT_ROOT="${SCRIPT_DIR}/.."
+INCLUDE_DIR="${PROJECT_ROOT}/include/wxUI"
+BUILDTESTS_DIR="${PROJECT_ROOT}/tests/BuildTests"
+LICENSE_FILE="${PROJECT_ROOT}/LICENSE.md"
+CMAKE_FILE="${BUILDTESTS_DIR}/CMakeLists.txt"
+
+# Ensure BuildTests directory exists
+mkdir -p "${BUILDTESTS_DIR}"
+
+# Get the license text as C++ comment block
+get_license_header() {
+    echo "/*"
+    cat "${LICENSE_FILE}"
+    echo "*/"
+}
+
+# Create ZapChecker.hpp if it doesn't exist
+ZAPCHECKER="${BUILDTESTS_DIR}/ZapChecker.hpp"
+if [ ! -f "$ZAPCHECKER" ]; then
+    echo "Creating ZapChecker.hpp..."
+    {
+        get_license_header
+        cat << 'EOF'
+
+// This is an auto-generated file. Run checklists/do_buildtests to regenerate.
+
+// This header verifies that all wxUI helper macros have been properly "zapped"
+// (undefined) after including a wxUI header. Include this file after including
+// any wxUI header to ensure the header is self-contained and doesn't leak macros.
+
+#if defined(WXUI_RULE_OF_SIX_BOILERPLATE)
+#error Missed zapping WXUI_RULE_OF_SIX_BOILERPLATE
+#endif
+
+#if defined(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE)
+#error Missed zapping WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE
+#endif
+
+#if defined(WXUI_WIDGET_CREATE_BOILERPLATE)
+#error Missed zapping WXUI_WIDGET_CREATE_BOILERPLATE
+#endif
+
+#if defined(WXUI_FORWARD_TO_DETAILS)
+#error Missed zapping WXUI_FORWARD_TO_DETAILS
+#endif
+
+#if defined(WXUI_FORWARD_BIND_TO_DETAILS)
+#error Missed zapping WXUI_FORWARD_BIND_TO_DETAILS
+#endif
+
+#if defined(WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS)
+#error Missed zapping WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS
+#endif
+
+#if defined(WXUI_FORWARD_ALL_TO_DETAILS)
+#error Missed zapping WXUI_FORWARD_ALL_TO_DETAILS
+#endif
+EOF
+    } > "$ZAPCHECKER"
+fi
+
+# Get all public headers (excluding detail subdirectory and version.hpp which is auto-generated)
+HEADERS=$(find "${INCLUDE_DIR}" -maxdepth 1 -name "*.hpp" ! -name "version.hpp" -exec basename {} \; | sort)
+
+if [ -z "$HEADERS" ]; then
+    echo "Error: No headers found in ${INCLUDE_DIR}"
+    exit 1
+fi
+
+echo "Generating BuildTests files..."
+
+# Generate test files
+for HEADER in $HEADERS; do
+    TEST_FILE="${HEADER%.hpp}.cpp"
+    TEST_PATH="${BUILDTESTS_DIR}/${TEST_FILE}"
+    
+    echo "Generating ${TEST_FILE}..."
+    
+    # Create the test file
+    {
+        get_license_header
+        echo ""
+        echo "// This is an auto-generated file. Run checklists/do_buildtests to regenerate."
+        echo ""
+        echo "// clang-format off"
+        echo "#include <wxUI/${HEADER}>"
+        echo '#include "ZapChecker.hpp"'
+        echo "// clang-format on"
+    } > "${TEST_PATH}"
+done
+
+# Generate CMakeLists.txt
+echo "Generating CMakeLists.txt..."
+{
+    echo "cmake_minimum_required(VERSION 3.23)"
+    echo ""
+    echo "target_sources(wxUI_Tests PRIVATE"
+    
+    # Add all test files in sorted order
+    for HEADER in $HEADERS; do
+        TEST_FILE="${HEADER%.hpp}.cpp"
+        echo "  \${CMAKE_CURRENT_SOURCE_DIR}/${TEST_FILE}"
+    done
+    
+    echo ")"
+    echo ""
+} > "${CMAKE_FILE}"
+
+echo "Done! Generated $(echo "$HEADERS" | wc -l | tr -d ' ') BuildTests files."
+echo ""
+echo "To verify: run 'checklists/check_buildtests'"
