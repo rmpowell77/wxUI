@@ -5,6 +5,7 @@ Bugs addressed in this release:
 * [#255](../../issues/255) Missed some std::string that should be std::string_view
 * [#274](../../issues/274) ASAN failure with when using ComboBox { { hello, goodbye } }
 * [#279](../../issues/279) We have made it more difficult to use include dir
+* [#297](../../issues/297) Make sure that mutable lambdas are usable in places that take lambdas
 
 Other changes:
 

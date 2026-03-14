@@ -298,14 +298,14 @@ struct WidgetDetails {
 
     // Bind API (made public here so controllers can forward easily)
     template <typename Function, typename Event = wxCommandEvent>
-    auto bind(wxEventTypeTag<Event> event, Function function)
+    auto bind(wxEventTypeTag<Event> event, Function&& function)
     {
-        if constexpr (is_noarg_callable<Function>()) {
-            boundedFunctions_.emplace_back(event, [function = function](Event&) {
+        if constexpr (is_noarg_callable<std::decay_t<Function>>()) {
+            boundedFunctions_.emplace_back(event, [function = std::forward<Function>(function)](Event&) mutable {
                 function();
             });
         } else {
-            boundedFunctions_.emplace_back(event, function);
+            boundedFunctions_.emplace_back(event, std::forward<Function>(function));
         }
     }
 
