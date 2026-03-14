@@ -26,6 +26,7 @@ SOFTWARE.
 #include <variant>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wxUI/Customizations.hpp>
 #include <wxUI/Widget.hpp>
 #include <wxUI/detail/LayoutDetails.hpp>
 #include <wxUI/wxUITypes.hpp>
@@ -63,13 +64,20 @@ struct BookItem {
     template <typename Parent, typename Sizer>
     auto createAndAdd(Parent* parent, [[maybe_unused]] Sizer* parentSizer, [[maybe_unused]] wxSizerFlags const& parentFlags)
     {
-        auto page = new wxWindow(parent, wxID_ANY);
-        auto sizer = new wxBoxSizer(wxVERTICAL);
-        auto flags = wxSizerFlags { 1 }.Expand();
+        auto page = customizations::ParentCreate<wxWindow>(parent, wxID_ANY);
 
-        details::createAndAddVisiter(item_, page, sizer, flags);
-
-        page->SetSizerAndFit(sizer);
+        // If the item has fitTo (i.e., it's a sizer), use it directly
+        if constexpr (requires { item_.fitTo(page); }) {
+            item_.fitTo(page);
+        } else {
+            // Otherwise, create a sizer for the page and add the item to it
+            using ::wxUI::customizations::BoxSizerInfo;
+            using ::wxUI::customizations::SizerCreate;
+            auto sizer = SizerCreate(page, BoxSizerInfo { std::nullopt, wxVERTICAL });
+            auto flags = wxSizerFlags { 1 }.Expand();
+            details::createAndAddVisiter(item_, page, sizer, flags);
+            page->SetSizerAndFit(sizer);
+        }
 
         if constexpr (requires(Parent p) { p.AddPage(page, title_, select_); }) {
             parent->AddPage(page, title_, select_);

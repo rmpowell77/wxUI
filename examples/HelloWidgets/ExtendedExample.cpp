@@ -166,7 +166,10 @@ SplitterExample::SplitterExample(wxWindow* parent)
                 .withStyle(wxTE_MULTILINE)
                 .withSize(wxSize(200, 100)),
             HSplitter {
-                TextCtrl { "This is Right Top.\n" }.withProxy(rightUpper).withStyle(wxTE_MULTILINE).withSize(wxSize(200, 100)),
+                VSizer {
+                    TextCtrl { "This is Right Top.\n" }.withProxy(rightUpper).withStyle(wxTE_MULTILINE).withSize(wxSize(200, 100)),
+                    Text { "And this is right below it" },
+                },
                 Button { "Incr" }
                     .bind([this]() {
                         auto original = std::string { *rightUpper } + "\nThis is Right Top.\n";
@@ -562,7 +565,7 @@ NotebookExample::NotebookExample(wxWindow* parent)
         wxSizerFlags().Expand().Border(),
         Notebook {
             BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
-            BookItem { "Item 2", HSizer { Text { "Item 2" }.withSize({ 200, 50 }) } },
+            BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
             LayoutIf {
                 true,
                 BookItem { "Optional Item", VSizer { Text { "Optional Item" }.withSize({ 200, 50 }) } },

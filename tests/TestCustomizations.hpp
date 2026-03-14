@@ -40,6 +40,7 @@ SOFTWARE.
 #include <wx/hyperlink.h>
 #include <wx/listbox.h>
 #include <wx/menu.h>
+#include <wx/notebook.h>
 #include <wx/radiobox.h>
 #include <wx/sizer.h>
 #include <wx/slider.h>
@@ -197,6 +198,7 @@ struct TestParent {
 
     std::vector<std::string> log {};
     std::vector<std::string> menuDetails {};
+    std::vector<std::string> bookPages {};
     std::list<TestParent> parents {};
     std::list<TestSizer> sizers {};
 
@@ -247,6 +249,8 @@ struct TestParent {
     {
         log.push_back(std::format("SetDefault:{}", id));
     }
+    void SetSizerAndFit(TestSizer* sizer);
+    void AddPage(TestParent* page, wxString const& title, bool select);
 
     auto add(TestParent controller) -> TestParent*;
     auto add(TestSizer controller) -> TestSizer*;
@@ -352,6 +356,18 @@ inline void TestParent::SplitHorizontally(TestParent* window1, TestParent* windo
     log.push_back(std::format("SplitHorizontal:{}:{}", *window1, *window2));
 }
 
+inline void TestParent::AddPage(TestParent* page, wxString const& title, bool select)
+{
+    bookPages.push_back(std::format("{}:{}:{}", *page, title.utf8_string(), select));
+}
+
+inline void TestParent::SetSizerAndFit(TestSizer* sizer)
+{
+    SetSizer(sizer);
+    auto const& sizerRef = *sizer;
+    log.push_back(std::format("SetSizerAndFit:{}", sizerRef));
+}
+
 inline auto TestParent::dump() const -> std::vector<std::string>
 {
     auto result = std::vector<std::string> {};
@@ -364,9 +380,15 @@ inline auto TestParent::dump() const -> std::vector<std::string>
     for (auto menuDetail : menuDetails) {
         result.push_back(std::format("menu:{}", menuDetail));
     }
+    for (auto bookPage : bookPages) {
+        result.push_back(std::format("bookPage:{}", bookPage));
+    }
     for (auto controller : parents) {
         result.push_back(std::format("controller:{}", controller));
         result.insert(result.end(), controller.log.begin(), controller.log.end());
+        for (auto const& bookPage : controller.bookPages) {
+            result.push_back(std::format("bookPage:{}", bookPage));
+        }
     }
     for (auto sizer : sizers) {
         result.push_back(std::format("sizer:{}", sizer));
@@ -689,6 +711,34 @@ struct ParentCreateImpl<wxSplitterWindow, wxUITests::TestParent> {
             .pos = pos,
             .size = size,
             .style = style,
+        });
+    }
+};
+
+template <>
+struct ParentCreateImpl<wxNotebook, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id)
+    {
+        return parent->add({
+            .type = "wxNotebook",
+            .id = id,
+            .pos = wxPoint { -1, -1 },
+            .size = wxSize { -1, -1 },
+            .style = 0,
+        });
+    }
+};
+
+template <>
+struct ParentCreateImpl<wxWindow, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id)
+    {
+        return parent->add({
+            .type = "wxWindow",
+            .id = id,
+            .pos = wxPoint { -1, -1 },
+            .size = wxSize { -1, -1 },
+            .style = 0,
         });
     }
 };
