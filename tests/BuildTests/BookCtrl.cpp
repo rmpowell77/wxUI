@@ -25,6 +25,6 @@ SOFTWARE.
 // This is an auto-generated file. Run checklists/do_buildtests to regenerate.
 
 // clang-format off
-#include <wxUI/Choice.hpp>
+#include <wxUI/BookCtrl.hpp>
 #include "ZapChecker.hpp"
 // clang-format on
