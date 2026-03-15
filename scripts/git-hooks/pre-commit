@@ -1,12 +1,57 @@
 #!/bin/bash
 # Copyright (c) 2025 Richard Powell
 #
-# Git pre-commit hook to signal that a version tag should be created
-# When version.hpp is committed with a new version, mark it for tagging after commit
+# Git pre-commit hook for wxUI project
+# - Regenerates documentation when source docs or examples change
+# - Signals version tag creation when version.hpp is updated
 
 HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$HOOK_DIR/../.." && pwd)"
 VERSION_FILE="include/wxUI/version.hpp"
+
+# =============================================================================
+# Documentation Generation
+# =============================================================================
+
+# Check if documentation source files or example code are being committed
+if git diff --cached --name-only | grep -qE "^(docs/src/|examples/.*\.(cpp|hpp))"; then
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📝 Documentation sources or examples changed"
+    echo "   Regenerating documentation..."
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    
+    # Save current directory and change to project root
+    pushd "$PROJECT_ROOT" > /dev/null
+    
+    # Run documentation generation
+    if ./checklists/do_md; then
+        # Check if documentation files changed
+        if ! git diff --quiet README.md docs/ProgrammersGuide.md; then
+            echo ""
+            echo "✓ Documentation regenerated successfully"
+            echo "  Adding updated documentation to commit..."
+            git add README.md docs/ProgrammersGuide.md
+            echo "  📄 README.md and docs/ProgrammersGuide.md staged"
+            echo ""
+        else
+            echo "✓ Documentation is up to date"
+        fi
+    else
+        echo ""
+        echo "❌ Documentation generation failed"
+        echo "   Please fix errors and try again"
+        popd > /dev/null
+        exit 1
+    fi
+    
+    popd > /dev/null
+fi
+
+# =============================================================================
+# Version Tagging
+# =============================================================================
 
 # Check if version.hpp is being committed
 if git diff --cached --name-only | grep -q "^$VERSION_FILE$"; then
