@@ -55,7 +55,7 @@ TEST_CASE("CheckBox")
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxCheckBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "controller:wxCheckBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SetValue:false",
+                  "SetValue3State:unchecked",
                   "SetEnabled:true",
               });
     }
@@ -68,7 +68,7 @@ TEST_CASE("CheckBox")
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxCheckBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "controller:wxCheckBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "SetValue:false",
+                  "SetValue3State:unchecked",
                   "SetEnabled:true",
               });
     }
@@ -81,7 +81,7 @@ TEST_CASE("CheckBox")
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxCheckBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"🐨\"]",
                   "controller:wxCheckBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"🐨\"]",
-                  "SetValue:false",
+                  "SetValue3State:unchecked",
                   "SetEnabled:true",
               });
     }
@@ -95,7 +95,7 @@ TEST_CASE("CheckBox")
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxCheckBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "controller:wxCheckBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "SetValue:false",
+                  "SetValue3State:unchecked",
                   "SetEnabled:true",
               });
     }
@@ -108,7 +108,7 @@ TEST_CASE("CheckBox")
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxCheckBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
                   "controller:wxCheckBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SetValue:false",
+                  "SetValue3State:unchecked",
                   "SetEnabled:true",
               });
     }
@@ -121,7 +121,7 @@ TEST_CASE("CheckBox")
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxCheckBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
                   "controller:wxCheckBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "SetValue:false",
+                  "SetValue3State:unchecked",
                   "SetEnabled:true",
               });
     }
@@ -134,7 +134,7 @@ TEST_CASE("CheckBox")
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxCheckBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4096, text=\"\"]",
                   "controller:wxCheckBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4096, text=\"\"]",
-                  "SetValue:false",
+                  "SetValue3State:unchecked",
                   "SetEnabled:true",
               });
     }
@@ -147,7 +147,7 @@ TEST_CASE("CheckBox")
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxCheckBox[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
                   "controller:wxCheckBox[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
-                  "SetValue:false",
+                  "SetValue3State:unchecked",
                   "SetEnabled:true",
               });
     }
@@ -160,7 +160,7 @@ TEST_CASE("CheckBox")
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxCheckBox[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
                   "controller:wxCheckBox[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
-                  "SetValue:false",
+                  "SetValue3State:unchecked",
                   "SetEnabled:true",
               });
     }
