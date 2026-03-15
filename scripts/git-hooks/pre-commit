@@ -1,12 +1,101 @@
 #!/bin/bash
 # Copyright (c) 2025 Richard Powell
 #
-# Git pre-commit hook to signal that a version tag should be created
-# When version.hpp is committed with a new version, mark it for tagging after commit
+# Git pre-commit hook for wxUI project
+# - Regenerates documentation when source docs or examples change
+# - Signals version tag creation when version.hpp is updated
 
 HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$HOOK_DIR/../.." && pwd)"
 VERSION_FILE="include/wxUI/version.hpp"
+
+# =============================================================================
+# Documentation Generation
+# =============================================================================
+
+# Check if generated documentation files are being committed
+GENERATED_FILES_STAGED=false
+if git diff --cached --name-only | grep -qE "^(README\.md|docs/ProgrammersGuide\.md)$"; then
+    GENERATED_FILES_STAGED=true
+fi
+
+# Check if documentation sources or examples are being committed
+SOURCE_FILES_STAGED=false
+if git diff --cached --name-only | grep -qE "^(docs/src/|examples/.*\.(cpp|hpp))"; then
+    SOURCE_FILES_STAGED=true
+fi
+
+# If generated files are staged, check if they're in sync with sources
+if [ "$GENERATED_FILES_STAGED" = true ]; then
+    # Save current directory and change to project root
+    pushd "$PROJECT_ROOT" > /dev/null
+    
+    # Check if documentation is out of sync
+    if ! ./checklists/check_md > /dev/null 2>&1; then
+        if [ "$SOURCE_FILES_STAGED" = false ]; then
+            # Generated files modified without source changes - ERROR
+            echo ""
+            echo "================================================"
+            echo "   ERROR: Manual Edit of Generated Files"
+            echo "================================================"
+            echo ""
+            echo "README.md and docs/ProgrammersGuide.md are generated files."
+            echo "They should not be edited directly."
+            echo ""
+            echo "To make documentation changes:"
+            echo "  1. Edit the source files in docs/src/ instead"
+            echo "  2. Run: ./checklists/do_md"
+            echo "  3. Commit the source changes (generated files will be auto-staged)"
+            echo ""
+            echo "Commit aborted."
+            popd > /dev/null
+            exit 1
+        fi
+        # else: regeneration will happen below
+    fi
+    
+    popd > /dev/null
+fi
+
+# Auto-regenerate documentation when source files change
+if [ "$SOURCE_FILES_STAGED" = true ]; then
+    echo ""
+    echo "================================================"
+    echo "   Documentation sources or examples changed"
+    echo "   Regenerating documentation..."
+    echo "================================================"
+    echo ""
+    
+    # Save current directory and change to project root
+    pushd "$PROJECT_ROOT" > /dev/null
+    
+    # Run documentation generation
+    if ./checklists/do_md; then
+        # Check if documentation files changed
+        if ! git diff --quiet README.md docs/ProgrammersGuide.md; then
+            echo ""
+            echo "  Documentation regenerated successfully"
+            echo "  Adding updated documentation to commit..."
+            git add README.md docs/ProgrammersGuide.md
+            echo "  README.md and docs/ProgrammersGuide.md staged"
+            echo ""
+        else
+            echo "  Documentation is up to date"
+        fi
+    else
+        echo ""
+        echo "Documentation generation failed"
+        echo "   Please fix errors and try again"
+        popd > /dev/null
+        exit 1
+    fi
+    
+    popd > /dev/null
+fi
+
+# =============================================================================
+# Version Tagging
+# =============================================================================
 
 # Check if version.hpp is being committed
 if git diff --cached --name-only | grep -q "^$VERSION_FILE$"; then
@@ -18,16 +107,16 @@ if git diff --cached --name-only | grep -q "^$VERSION_FILE$"; then
         
         # Check if tag already exists
         if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
-            echo "⚠️  Tag $TAG_NAME already exists, skipping tag creation"
+            echo "WARNING: Tag $TAG_NAME already exists, skipping tag creation"
             rm -f "$PROJECT_ROOT/.git/WXUI_PENDING_TAG"
         else
             # Store version for post-commit hook to create tag
             echo "$NEW_VERSION" > "$PROJECT_ROOT/.git/WXUI_PENDING_TAG"
             echo ""
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "📦 Version update detected: $NEW_VERSION"
+            echo "================================================"
+            echo "   Version update detected: $NEW_VERSION"
             echo "   Tag $TAG_NAME will be created after commit completes"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "================================================"
             echo ""
         fi
     fi

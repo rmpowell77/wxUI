@@ -16,13 +16,13 @@ if [ -f "$PENDING_TAG_FILE" ]; then
     # Create the tag on the commit we just made
     if git tag -a "$TAG_NAME" -m "wxUI-$TAG_NAME"; then
         echo ""
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo "🏷️  Created tag: $TAG_NAME"
+        echo "================================================"
+        echo "Created tag: $TAG_NAME"
         echo "   Remember to push with: git push origin main --tags"
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "================================================"
         echo ""
     else
-        echo "❌ Failed to create tag $TAG_NAME"
+        echo "ERROR: Failed to create tag $TAG_NAME"
     fi
     
     # Clean up the pending tag file
