@@ -24,65 +24,21 @@ SOFTWARE.
 #pragma once
 
 #include <variant>
+#include <wx/choicebk.h>
+#include <wx/listbook.h>
 #include <wx/notebook.h>
+#include <wx/simplebook.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wx/treebook.h>
 #include <wxUI/Customizations.hpp>
 #include <wxUI/detail/BookDetails.hpp>
 
 namespace wxUI {
 
-template <typename Book, details::SizerItem... Items>
-struct BookCtrl {
-    template <details::SizerItem... UItems>
-    explicit BookCtrl(UItems&&... items)
-        : items_(std::forward_as_tuple(std::forward<UItems>(items)...))
-    {
-    }
-
-    template <details::SizerItem... UItems>
-    explicit BookCtrl(wxSizerFlags const& flags, UItems&&... items)
-        : flags_(flags)
-        , items_(std::forward_as_tuple(std::forward<UItems>(items)...))
-    {
-    }
-
-    template <typename Parent, typename Sizer>
-    auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
-    {
-        auto currentFlags = flags_.value_or(parentFlags);
-        auto* book = createAndAddPages(parent, currentFlags);
-        parentSizer->Add(book, currentFlags);
-        return book;
-    }
-
-private:
-    template <typename Parent>
-    auto constructBook(Parent* parent) const
-    {
-        return customizations::ParentCreate<Book>(parent, wxID_ANY);
-    }
-
-    template <typename Parent>
-    auto createAndAddPages(Parent* parent, wxSizerFlags const& flags)
-    {
-        auto* book = constructBook(parent);
-
-        std::apply([book, flags](auto&&... tupleArg) {
-            (details::createAndAddVisiter(tupleArg, book, static_cast<wxSizer*>(nullptr), flags), ...);
-        },
-            items_);
-
-        return book;
-    }
-
-    std::optional<wxSizerFlags> flags_ {};
-    std::tuple<Items...> items_ {};
-};
-
 template <details::SizerItem... Items>
-struct Notebook : BookCtrl<wxNotebook, Items...> {
-    using Base = BookCtrl<wxNotebook, Items...>;
+struct Notebook : details::BookCtrl<wxNotebook, Items...> {
+    using Base = details::BookCtrl<wxNotebook, Items...>;
     using Base::Base; // inherit constructors
 };
 
@@ -91,6 +47,54 @@ Notebook(Items... items) -> Notebook<Items...>;
 
 template <details::SizerItem... Items>
 Notebook(wxSizerFlags const& flags, Items... items) -> Notebook<Items...>;
+
+template <details::SizerItem... Items>
+struct Choicebook : details::BookCtrl<wxChoicebook, Items...> {
+    using Base = details::BookCtrl<wxChoicebook, Items...>;
+    using Base::Base; // inherit constructors
+};
+
+template <details::SizerItem... Items>
+Choicebook(Items... items) -> Choicebook<Items...>;
+
+template <details::SizerItem... Items>
+Choicebook(wxSizerFlags const& flags, Items... items) -> Choicebook<Items...>;
+
+template <details::SizerItem... Items>
+struct Listbook : details::BookCtrl<wxListbook, Items...> {
+    using Base = details::BookCtrl<wxListbook, Items...>;
+    using Base::Base; // inherit constructors
+};
+
+template <details::SizerItem... Items>
+Listbook(Items... items) -> Listbook<Items...>;
+
+template <details::SizerItem... Items>
+Listbook(wxSizerFlags const& flags, Items... items) -> Listbook<Items...>;
+
+template <details::SizerItem... Items>
+struct Simplebook : details::BookCtrl<wxSimplebook, Items...> {
+    using Base = details::BookCtrl<wxSimplebook, Items...>;
+    using Base::Base; // inherit constructors
+};
+
+template <details::SizerItem... Items>
+Simplebook(Items... items) -> Simplebook<Items...>;
+
+template <details::SizerItem... Items>
+Simplebook(wxSizerFlags const& flags, Items... items) -> Simplebook<Items...>;
+
+template <details::SizerItem... Items>
+struct Treebook : details::BookCtrl<wxTreebook, Items...> {
+    using Base = details::BookCtrl<wxTreebook, Items...>;
+    using Base::Base; // inherit constructors
+};
+
+template <details::SizerItem... Items>
+Treebook(Items... items) -> Treebook<Items...>;
+
+template <details::SizerItem... Items>
+Treebook(wxSizerFlags const& flags, Items... items) -> Treebook<Items...>;
 
 }
 

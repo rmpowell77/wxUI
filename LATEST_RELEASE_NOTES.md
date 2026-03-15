@@ -22,6 +22,7 @@ Other changes:
 * [#271](../../issues/271) Change example from HelloWorld to HelloWidgets
 * [#276](../../issues/276) ASAN crash when we're adding items to a combobox
 * [#285](../../issues/285) We should have some unit tests for Notebook
+* [#286](../../issues/286) How about adding all the "books"?
 * [#289](../../issues/289) We should allow Splitter to take in any types of sizers and layouts
 * [#292](../../issues/292) FlexGridSizer does not support growable columns and will never increase to fill space
 * [#294](../../issues/294) Is fwd.hpp used?

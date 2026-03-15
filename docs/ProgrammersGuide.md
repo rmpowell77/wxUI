@@ -341,24 +341,64 @@ Often times you would be laying out a set of buttons in a horizontal sizer.  The
 
 #### BookCtrl
 
-`wxUI` supports `wxNoteboook` style UIs via `Notebook`.
+`wxUI` supports several book control types for tabbed/paged interfaces:
+- `Notebook` (wxNotebook) - standard tabbed interface
+- `Choicebook` (wxChoicebook) - uses a choice control for page selection
+- `Listbook` (wxListbook) - uses a list control for page selection
+- `Simplebook` (wxSimplebook) - pages without visible selector
+- `Treebook` (wxTreebook) - uses a tree control for hierarchical page selection
 
 ```cpp
     VSizer {
         wxSizerFlags().Expand().Border(),
-        Notebook {
-            BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
-            BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
-            LayoutIf {
-                true,
-                BookItem { "Optional Item", VSizer { Text { "Optional Item" }.withSize({ 200, 50 }) } },
+        GridSizer {
+            2,
+            wxSizerFlags().Expand().Border(),
+            VSizer {
+                "Notebook",
+                Notebook {
+                    BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+                    BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
+                    LayoutIf {
+                        true,
+                        BookItem { "Optional", VSizer { Text { "Optional Item" }.withSize({ 200, 50 }) } },
+                    },
+                },
+            },
+            VSizer {
+                "Choicebook",
+                Choicebook {
+                    BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+                    BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
+                },
+            },
+            VSizer {
+                "Listbook",
+                Listbook {
+                    BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+                    BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
+                },
+            },
+            VSizer {
+                "Simplebook",
+                Simplebook {
+                    BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+                    BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
+                },
+            },
+            VSizer {
+                "Treebook",
+                Treebook {
+                    BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+                    BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
+                },
             },
         },
     }
         .fitTo(this);
 ```
 
-The `Notebook` is populated with `BookItem` declarations, which can contain Layouts and Controllers.
+All book controls are populated with `BookItem` declarations, which can contain Layouts and Controllers.
 
 #### Splitter
 
