@@ -97,17 +97,17 @@ SOFTWARE.
 
 #if !defined(WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS)
 #define WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS(ControllerType, MethodName, ArgType, ArgName) \
-    template <typename ArgType>\
-    auto MethodName(ArgType* ArgName)& -> ControllerType&                      \
-    {                                                                         \
-        details_.MethodName(ArgName);                                         \
-        return *this;                                                         \
-    }                                                                         \
-    template <typename ArgType>\
-    auto MethodName(ArgType* ArgName)&& -> ControllerType&&                    \
-    {                                                                         \
-        details_.MethodName(ArgName);                                         \
-        return std::move(*this);                                              \
+    template <typename ArgType>                                                           \
+    auto MethodName(ArgType* ArgName) & -> ControllerType&                                \
+    {                                                                                     \
+        details_.MethodName(ArgName);                                                     \
+        return *this;                                                                     \
+    }                                                                                     \
+    template <typename ArgType>                                                           \
+    auto MethodName(ArgType* ArgName) && -> ControllerType&&                              \
+    {                                                                                     \
+        details_.MethodName(ArgName);                                                     \
+        return std::move(*this);                                                          \
     }
 #endif
 

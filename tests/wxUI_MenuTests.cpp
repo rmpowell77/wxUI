@@ -85,13 +85,13 @@ auto RunMenuTest_id_func(Function function)
 template <typename MenuType>
 auto RunMenuTest_id_func1()
 {
-    RunMenuTest_id_func<MenuType>([]() {});
+    RunMenuTest_id_func<MenuType>([]() { });
 }
 
 template <typename MenuType>
 auto RunMenuTest_id_func2()
 {
-    RunMenuTest_id_func<MenuType>([](wxCommandEvent&) {});
+    RunMenuTest_id_func<MenuType>([](wxCommandEvent&) { });
 }
 
 template <typename MenuType>
@@ -126,13 +126,13 @@ auto RunMenuTest_id_name_func(Function function)
 template <typename MenuType>
 auto RunMenuTest_id_name_func1()
 {
-    RunMenuTest_id_name_func<MenuType>([]() {});
+    RunMenuTest_id_name_func<MenuType>([]() { });
 }
 
 template <typename MenuType>
 auto RunMenuTest_id_name_func2()
 {
-    RunMenuTest_id_name_func<MenuType>([](wxCommandEvent&) {});
+    RunMenuTest_id_name_func<MenuType>([](wxCommandEvent&) { });
 }
 
 template <typename MenuType>
@@ -168,13 +168,13 @@ auto RunMenuTest_id_name_help_func(Function function)
 template <typename MenuType>
 auto RunMenuTest_id_name_help_func1()
 {
-    RunMenuTest_id_name_help_func<MenuType>([]() {});
+    RunMenuTest_id_name_help_func<MenuType>([]() { });
 }
 
 template <typename MenuType>
 auto RunMenuTest_id_name_help_func2()
 {
-    RunMenuTest_id_name_help_func<MenuType>([](wxCommandEvent&) {});
+    RunMenuTest_id_name_help_func<MenuType>([](wxCommandEvent&) { });
 }
 
 template <typename MenuType, typename Function>
@@ -187,21 +187,21 @@ auto RunMenuTest_name_func(Function function)
     };
     menu.fitTo(&frame);
     CHECK(frame.dump() == std::vector<std::string> {
-              "BindMenu:-1000000:1",
-              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=-1000000,kind={},label=\"Item1\",help=\"\"),],]", MenuTypeLookup<MenuType>::name),
+              std::format("BindMenu:{}:1", static_cast<int>(wxID_AUTO_LOWEST)),
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id={},kind={},label=\"Item1\",help=\"\"),],]", static_cast<int>(wxID_AUTO_LOWEST), MenuTypeLookup<MenuType>::name),
           });
 }
 
 template <typename MenuType>
 auto RunMenuTest_name_func1()
 {
-    RunMenuTest_name_func<MenuType>([]() {});
+    RunMenuTest_name_func<MenuType>([]() { });
 }
 
 template <typename MenuType>
 auto RunMenuTest_name_func2()
 {
-    RunMenuTest_name_func<MenuType>([](wxCommandEvent&) {});
+    RunMenuTest_name_func<MenuType>([](wxCommandEvent&) { });
 }
 
 template <typename MenuType, typename Function>
@@ -214,21 +214,21 @@ auto RunMenuTest_name_help_func(Function function)
     };
     menu.fitTo(&frame);
     CHECK(frame.dump() == std::vector<std::string> {
-              "BindMenu:-1000000:1",
-              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id=-1000000,kind={},label=\"Item1\",help=\"Help1\"),],]", MenuTypeLookup<MenuType>::name),
+              std::format("BindMenu:{}:1", static_cast<int>(wxID_AUTO_LOWEST)),
+              std::format("menu:MenuBar:[[title:Menu1:[(menuItem:id={},kind={},label=\"Item1\",help=\"Help1\"),],]", static_cast<int>(wxID_AUTO_LOWEST), MenuTypeLookup<MenuType>::name),
           });
 }
 
 template <typename MenuType>
 auto RunMenuTest_name_help_func1()
 {
-    RunMenuTest_name_help_func<MenuType>([]() {});
+    RunMenuTest_name_help_func<MenuType>([]() { });
 }
 
 template <typename MenuType>
 auto RunMenuTest_name_help_func2()
 {
-    RunMenuTest_name_help_func<MenuType>([](wxCommandEvent&) {});
+    RunMenuTest_name_help_func<MenuType>([](wxCommandEvent&) { });
 }
 
 template <typename MenuType>
@@ -265,13 +265,13 @@ auto RunMenuTest_id_name_tag_func(Function function)
 template <typename MenuType>
 auto RunMenuTest_id_name_tag_func1()
 {
-    RunMenuTest_id_name_tag_func<MenuType>([]() {});
+    RunMenuTest_id_name_tag_func<MenuType>([]() { });
 }
 
 template <typename MenuType>
 auto RunMenuTest_id_name_tag_func2()
 {
-    RunMenuTest_id_name_tag_func<MenuType>([](wxCommandEvent&) {});
+    RunMenuTest_id_name_tag_func<MenuType>([](wxCommandEvent&) { });
 }
 
 template <typename MenuType>
@@ -548,6 +548,87 @@ TEST_CASE("Menu")
     SECTION("menu.radioitem.menu.name_tag")
     {
         RunMenuTest_menu_name_tag<wxUI::RadioItem>();
+    }
+
+    SECTION("menu.item.proxy")
+    {
+        TestParent frame;
+        wxUI::MenuItemProxy proxy;
+        CHECK(proxy.control() == nullptr);
+
+        wxUI::MenuBar menu {
+            wxUI::Menu {
+                "Menu1",
+                wxUI::Item { wxID_EXIT }.withProxy(proxy) }
+        };
+        menu.fitTo(&frame);
+
+        CHECK(frame.dump() == std::vector { std::string { "menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind=normal,label=\"Quit\",help=\"Quit this program\"):numProxyHandles=1,],]" } });
+    }
+
+    SECTION("menu.checkitem.proxy")
+    {
+        TestParent frame;
+        wxUI::MenuItemProxy proxy;
+        CHECK(proxy.control() == nullptr);
+
+        wxUI::MenuBar menu {
+            wxUI::Menu {
+                "Menu1",
+                wxUI::CheckItem { wxID_EXIT }.withProxy(proxy) }
+        };
+        menu.fitTo(&frame);
+
+        CHECK(frame.dump() == std::vector { std::string { "menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind=check,label=\"Quit\",help=\"Quit this program\"):numProxyHandles=1,],]" } });
+    }
+
+    SECTION("menu.radioitem.proxy")
+    {
+        TestParent frame;
+        wxUI::MenuItemProxy proxy;
+        CHECK(proxy.control() == nullptr);
+
+        wxUI::MenuBar menu {
+            wxUI::Menu {
+                "Menu1",
+                wxUI::RadioItem { wxID_EXIT }.withProxy(proxy) }
+        };
+        menu.fitTo(&frame);
+
+        CHECK(frame.dump() == std::vector { std::string { "menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind=radio,label=\"Quit\",help=\"Quit this program\"):numProxyHandles=1,],]" } });
+    }
+
+    SECTION("menu.proxy")
+    {
+        TestParent frame;
+        wxUI::MenuProxy proxy;
+        CHECK(proxy.control() == nullptr);
+
+        wxUI::MenuBar menuBar {
+            wxUI::Menu {
+                "Menu1",
+                wxUI::Item { wxID_EXIT } }
+                .withProxy(proxy)
+        };
+        menuBar.fitTo(&frame);
+
+        CHECK(frame.dump() == std::vector { std::string { "menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind=normal,label=\"Quit\",help=\"Quit this program\"),]:numProxyHandles=1,]" } });
+    }
+
+    SECTION("menubar.proxy")
+    {
+        TestParent frame;
+        wxUI::MenuBarProxy proxy;
+        CHECK(proxy.control() == nullptr);
+
+        wxUI::MenuBar {
+            wxUI::Menu {
+                "Menu1",
+                wxUI::Item { wxID_EXIT } }
+        }.withProxy(proxy)
+            .fitTo(&frame);
+
+        CHECK(frame.dump() == std::vector { std::string { "menu:MenuBar:[[title:Menu1:[(menuItem:id=5006,kind=normal,label=\"Quit\",help=\"Quit this program\"),],]:numProxyHandles=1" } });
     }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

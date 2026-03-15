@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# This script verifies that all public headers in include/wxUI/ have corresponding
+# BuildTests files and are listed in tests/BuildTests/CMakeLists.txt
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PROJECT_ROOT="${SCRIPT_DIR}/.."
+INCLUDE_DIR="${PROJECT_ROOT}/include/wxUI"
+BUILDTESTS_DIR="${PROJECT_ROOT}/tests/BuildTests"
+CMAKE_FILE="${BUILDTESTS_DIR}/CMakeLists.txt"
+
+EXIT_CODE=0
+
+# Get all public headers (excluding detail subdirectory and version.hpp which is auto-generated)
+HEADERS=$(find "${INCLUDE_DIR}" -maxdepth 1 -name "*.hpp" ! -name "version.hpp" -exec basename {} \; | sort)
+
+if [ -z "$HEADERS" ]; then
+    echo "Error: No headers found in ${INCLUDE_DIR}"
+    exit 1
+fi
+
+echo "Checking BuildTests coverage for public headers..."
+
+# Check ZapChecker.hpp exists and is properly generated
+ZAPCHECKER="${BUILDTESTS_DIR}/ZapChecker.hpp"
+if [ ! -f "$ZAPCHECKER" ]; then
+    echo "Error: ZapChecker.hpp not found"
+    EXIT_CODE=1
+elif ! grep -q "This is an auto-generated file" "$ZAPCHECKER"; then
+    echo "Error: ZapChecker.hpp is missing auto-generated comment"
+    EXIT_CODE=1
+fi
+
+for HEADER in $HEADERS; do
+    # Convert header name to expected test file name (e.g., Button.hpp -> Button.cpp)
+    TEST_FILE="${HEADER%.hpp}.cpp"
+    TEST_PATH="${BUILDTESTS_DIR}/${TEST_FILE}"
+    
+    # Check if test file exists
+    if [ ! -f "$TEST_PATH" ]; then
+        echo "Error: Missing BuildTest file for ${HEADER}: ${TEST_FILE}"
+        EXIT_CODE=1
+        continue
+    fi
+    
+    # Check if test file is in CMakeLists.txt
+    if ! grep -q "\${CMAKE_CURRENT_SOURCE_DIR}/${TEST_FILE}" "${CMAKE_FILE}"; then
+        echo "Error: BuildTest file ${TEST_FILE} not listed in CMakeLists.txt"
+        EXIT_CODE=1
+        continue
+    fi
+    
+    # Verify the test file includes the correct header
+    if ! grep -q "#include <wxUI/${HEADER}>" "${TEST_PATH}"; then
+        echo "Error: BuildTest file ${TEST_FILE} does not include <wxUI/${HEADER}>"
+        EXIT_CODE=1
+        continue
+    fi
+    
+    # Verify the test file includes ZapChecker.hpp
+    if ! grep -q '#include "ZapChecker.hpp"' "${TEST_PATH}"; then
+        echo "Error: BuildTest file ${TEST_FILE} does not include ZapChecker.hpp"
+        EXIT_CODE=1
+        continue
+    fi
+    
+    # Verify the test file has the auto-generated comment
+    if ! grep -q "This is an auto-generated file" "${TEST_PATH}"; then
+        echo "Error: BuildTest file ${TEST_FILE} is missing auto-generated comment"
+        EXIT_CODE=1
+        continue
+    fi
+done
+
+# Check for extra test files that don't correspond to headers
+TEST_FILES=$(find "${BUILDTESTS_DIR}" -maxdepth 1 -name "*.cpp" -exec basename {} \; | sort)
+
+for TEST_FILE in $TEST_FILES; do
+    # Convert test file name to expected header name (e.g., Button.cpp -> Button.hpp)
+    HEADER="${TEST_FILE%.cpp}.hpp"
+    HEADER_PATH="${INCLUDE_DIR}/${HEADER}"
+    
+    # Check if corresponding header exists (or if it's version.hpp which is special)
+    if [ ! -f "$HEADER_PATH" ] && [ "$HEADER" != "version.hpp" ]; then
+        echo "Warning: BuildTest file ${TEST_FILE} exists but no corresponding header ${HEADER} found in include/wxUI/"
+        # This is a warning, not an error, as there might be legitimate reasons
+    fi
+done
+
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "✓ All BuildTests checks passed"
+else
+    echo ""
+    echo "BuildTests check failed. Run 'checklists/do_buildtests' to regenerate test files."
+fi
+
+exit $EXIT_CODE

@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "TestCustomizations.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <memory>
 #include <ranges>
 #include <wxUI/Button.hpp>
 #include <wxUI/ForEach.hpp>
@@ -1247,6 +1248,92 @@ TEST_CASE("ForEach")
                 .fitTo(&frame);
             CHECK(frame.dump() == kCaseHForEachWithID);
         }
+    }
+}
+
+TEST_CASE("ForEach - Move-only lambda support")
+{
+    TestParent provider;
+
+    SECTION("ForEach with move-only lambda (unique_ptr capture)")
+    {
+        auto resource = std::make_unique<int>(42);
+
+        wxUI::VForEach({ "A", "B", "C" }, [resource = std::move(resource)](auto const& name) {
+            CHECK(resource != nullptr);
+            CHECK(*resource == 42);
+            return wxUI::Button { name };
+        }).fitTo(&provider);
+
+        auto dump = provider.dump();
+        CHECK(dump.size() > 0);
+    }
+
+    SECTION("HForEach with move-only lambda")
+    {
+        auto data = std::make_unique<std::string>("test");
+
+        wxUI::HForEach({ "X", "Y" }, [data = std::move(data)](auto const& name) {
+            CHECK(data != nullptr);
+            CHECK(*data == "test");
+            return wxUI::Button { name };
+        }).fitTo(&provider);
+
+        auto dump = provider.dump();
+        CHECK(dump.size() > 0);
+    }
+}
+
+TEST_CASE("ForEach - Mutable lambda support")
+{
+    TestParent provider;
+
+    SECTION("VForEach with mutable lambda")
+    {
+        int counter = 0;
+
+        wxUI::VForEach({ "A", "B", "C" }, [counter](auto const& name) mutable {
+            counter++;
+            CHECK(counter <= 3);
+            return wxUI::Button { name };
+        }).fitTo(&provider);
+
+        auto dump = provider.dump();
+        CHECK(dump.size() > 0);
+    }
+
+    SECTION("HForEach with mutable lambda modifying captured state")
+    {
+        int value = 0;
+
+        wxUI::HForEach({ "X", "Y" }, [value](auto const& name) mutable {
+            value += 10;
+            CHECK(value <= 20);
+            return wxUI::Button { name };
+        }).fitTo(&provider);
+
+        auto dump = provider.dump();
+        CHECK(dump.size() > 0);
+    }
+}
+
+TEST_CASE("ForEach - Move-only mutable lambda")
+{
+    TestParent provider;
+
+    SECTION("ForEach with move-only mutable lambda")
+    {
+        auto counter = std::make_unique<int>(0);
+
+        wxUI::VForEach({ "A", "B" }, [counter = std::move(counter)](auto const& name) mutable {
+            CHECK(counter != nullptr);
+            (*counter)++;
+            CHECK(*counter <= 2);
+            return wxUI::Button { name };
+        }).fitTo(&provider);
+
+        auto dump = provider.dump();
+        CHECK(dump.size() > 0);
     }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

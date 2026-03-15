@@ -120,7 +120,7 @@ TEST_CASE("Slider")
     SECTION("AI")
     {
         TestParent provider;
-        auto uut = wxUI::Slider { { 10, 20 }, 12 }.bind([] {});
+        auto uut = wxUI::Slider { { 10, 20 }, 12 }.bind([] { });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=12, range=[10,20]]",

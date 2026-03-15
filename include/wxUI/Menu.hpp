@@ -36,14 +36,20 @@ SOFTWARE.
 
 namespace wxUI::details {
 
+// Tag types for disambiguating Menu::createAndAdd overloads
+struct ToMenuBarTag { };
+struct ToMenuTag { };
+
 template <typename T>
-concept MenuBarItem = requires(T widget, wxFrame frame, wxMenuBar menu, int identity) {
-    widget.createAndAdd(frame, menu, identity);
+concept MenuBarItem = requires(T widget, ToMenuBarTag tag, wxFrame frame, wxMenuBar menu, int identity) {
+    widget.createAndAdd(tag, frame, menu, identity);
 };
 
 template <typename T>
 concept MenuItem = requires(T widget, wxFrame frame, wxMenu menu, int identity) {
     widget.createAndAdd(frame, menu, identity);
+} || requires(T widget, ToMenuTag tag, wxFrame frame, wxMenu menu, int identity) {
+    widget.createAndAdd(tag, frame, menu, identity);
 };
 
 template <typename F, typename Arg>
@@ -168,18 +174,27 @@ struct Item {
         return std::move(*this);
     }
 
-    template <typename Frame>
-    void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
+    template <typename Frame, typename MenuT>
+    void createAndAdd(Frame& frame, MenuT& menu, int& identity)
     {
         details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& help) {
-            auto* menuItem = menu.Append(identity, item, help);
-            for (auto& proxyHandle : proxyHandles_) {
-                proxyHandle.setUnderlying(menuItem);
-            }
+            using ::wxUI::customizations::MenuAppend;
+            auto* menuItem = MenuAppend(&menu, identity, item, help);
+            bindProxy(menuItem);
         });
     }
 
 private:
+    template <typename MenuT>
+    auto bindProxy(MenuT* widget)
+    {
+        for (auto& proxyHandle : proxyHandles_) {
+            using ::wxUI::customizations::MenuBindProxy;
+            MenuBindProxy(widget, proxyHandle);
+        }
+        return widget;
+    }
+
     details::MenuDetails menuDetails_;
     std::vector<MenuItemProxy> proxyHandles_;
 };
@@ -252,18 +267,27 @@ struct CheckItem {
         return std::move(*this);
     }
 
-    template <typename Frame>
-    void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
+    template <typename Frame, typename MenuT>
+    void createAndAdd(Frame& frame, MenuT& menu, int& identity)
     {
         details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& help) {
-            auto* menuItem = menu.AppendCheckItem(identity, item, help);
-            for (auto& proxyHandle : proxyHandles_) {
-                proxyHandle.setUnderlying(menuItem);
-            }
+            using ::wxUI::customizations::MenuAppendCheckItem;
+            auto* menuItem = MenuAppendCheckItem(&menu, identity, item, help);
+            bindProxy(menuItem);
         });
     }
 
 private:
+    template <typename MenuT>
+    auto bindProxy(MenuT* widget)
+    {
+        for (auto& proxyHandle : proxyHandles_) {
+            using ::wxUI::customizations::MenuBindProxy;
+            MenuBindProxy(widget, proxyHandle);
+        }
+        return widget;
+    }
+
     details::MenuDetails menuDetails_;
     std::vector<MenuItemProxy> proxyHandles_;
 };
@@ -336,25 +360,34 @@ struct RadioItem {
         return std::move(*this);
     }
 
-    template <typename Frame>
-    void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
+    template <typename Frame, typename MenuT>
+    void createAndAdd(Frame& frame, MenuT& menu, int& identity)
     {
         details::createAndAdd(frame, menuDetails_, identity, [this, &menu](int identity, wxString const& item, wxString const& help) {
-            auto* menuItem = menu.AppendRadioItem(identity, item, help);
-            for (auto& proxyHandle : proxyHandles_) {
-                proxyHandle.setUnderlying(menuItem);
-            }
+            using ::wxUI::customizations::MenuAppendRadioItem;
+            auto* menuItem = MenuAppendRadioItem(&menu, identity, item, help);
+            bindProxy(menuItem);
         });
     }
 
 private:
+    template <typename MenuT>
+    auto bindProxy(MenuT* widget)
+    {
+        for (auto& proxyHandle : proxyHandles_) {
+            using ::wxUI::customizations::MenuBindProxy;
+            MenuBindProxy(widget, proxyHandle);
+        }
+        return widget;
+    }
+
     details::MenuDetails menuDetails_;
     std::vector<MenuItemProxy> proxyHandles_;
 };
 
 struct Separator {
-    template <typename Frame>
-    static void createAndAdd(Frame&, wxMenu& menu, int&)
+    template <typename Frame, typename MenuT>
+    static void createAndAdd(Frame&, MenuT& menu, int&)
     {
         menu.AppendSeparator();
     }
@@ -369,8 +402,8 @@ struct MenuForEach {
     {
     }
 
-    template <typename Frame>
-    void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
+    template <typename Frame, typename MenuT>
+    void createAndAdd(Frame& frame, MenuT& menu, int& identity)
     {
         using RawArg = std::remove_cvref_t<std::ranges::range_value_t<Range>>;
         for (auto&& item : args_) {
@@ -423,35 +456,52 @@ struct Menu {
         return std::move(*this);
     }
 
-    template <typename Frame>
-    void createAndAdd(Frame& frame, wxMenuBar& menuBar, int& identity)
+    template <typename Frame, typename MenuBarT>
+    void createAndAdd(details::ToMenuBarTag, Frame& frame, MenuBarT& menuBar, int& identity)
     {
-        auto menu = std::make_unique<wxMenu>();
-        std::apply([&frame, menu = menu.get(), &identity](auto&&... tupleArg) {
+        using ::wxUI::customizations::MenuBarAppend;
+        using ::wxUI::customizations::MenuCreate;
+        auto menu = MenuCreate(frame);
+        std::apply([&frame, menu, &identity](auto&&... tupleArg) {
             (tupleArg.createAndAdd(frame, *menu, identity), ...);
         },
             items);
-        for (auto& proxyHandle : proxyHandles_) {
-            proxyHandle.setUnderlying(menu.get());
-        }
-        menuBar.Append(menu.release(), name);
+        bindProxy(menu);
+        MenuBarAppend(&menuBar, menu, name);
     }
 
-    template <typename Frame>
-    void createAndAdd(Frame& frame, wxMenu& menu, int& identity)
+    template <typename Frame, typename MenuT>
+    void createAndAdd(details::ToMenuTag, Frame& frame, MenuT& menu, int& identity)
     {
-        auto subMenu = std::make_unique<wxMenu>();
-        std::apply([&frame, subMenu = subMenu.get(), &identity](auto&&... tupleArg) {
+        using ::wxUI::customizations::MenuAppendSubMenu;
+        using ::wxUI::customizations::MenuCreate;
+        auto subMenu = MenuCreate(frame);
+        std::apply([&frame, subMenu, &identity](auto&&... tupleArg) {
             (tupleArg.createAndAdd(frame, *subMenu, identity), ...);
         },
             items);
-        for (auto& proxyHandle : proxyHandles_) {
-            proxyHandle.setUnderlying(subMenu.get());
-        }
-        menu.AppendSubMenu(subMenu.release(), name);
+        bindProxy(subMenu);
+        MenuAppendSubMenu(&menu, subMenu, name);
+    }
+
+    // MenuItem concept-satisfying method: when Menu is used as a menu item (submenu)
+    template <typename Frame, typename MenuT>
+    void createAndAdd(Frame& frame, MenuT& menu, int& identity)
+    {
+        createAndAdd(details::ToMenuTag {}, frame, menu, identity);
     }
 
 private:
+    template <typename MenuT>
+    auto bindProxy(MenuT* widget)
+    {
+        for (auto& proxyHandle : proxyHandles_) {
+            using ::wxUI::customizations::MenuBindProxy;
+            MenuBindProxy(widget, proxyHandle);
+        }
+        return widget;
+    }
+
     wxString name;
     std::tuple<M...> items;
     std::vector<MenuProxy> proxyHandles_;
@@ -483,21 +533,30 @@ struct MenuBar {
     template <typename Frame>
     auto fitTo(Frame* frame) -> auto&
     {
+        using ::wxUI::customizations::MenuBarCreate;
+        using ::wxUI::customizations::MenuSetMenuBar;
         auto numbering = int(wxID_AUTO_LOWEST);
-        auto menuBar = std::make_unique<wxMenuBar>();
-        std::apply([frame, menuBar = menuBar.get(), &numbering](auto&&... tupleArg) {
-            (tupleArg.createAndAdd(*frame, *menuBar, numbering), ...);
+        auto menuBar = MenuBarCreate(frame);
+        std::apply([frame, menuBar, &numbering](auto&&... tupleArg) {
+            (tupleArg.createAndAdd(details::ToMenuBarTag {}, *frame, *menuBar, numbering), ...);
         },
             menus);
-        for (auto& proxyHandle : proxyHandles_) {
-            proxyHandle.setUnderlying(menuBar.get());
-        }
-        using ::wxUI::customizations::MenuSetMenuBar;
-        MenuSetMenuBar(frame, menuBar.release());
+        bindProxy(menuBar);
+        MenuSetMenuBar(frame, menuBar);
         return *this;
     }
 
 private:
+    template <typename MenuT>
+    auto bindProxy(MenuT* widget)
+    {
+        for (auto& proxyHandle : proxyHandles_) {
+            using ::wxUI::customizations::MenuBindProxy;
+            MenuBindProxy(widget, proxyHandle);
+        }
+        return widget;
+    }
+
     std::tuple<M...> menus;
     std::vector<MenuBarProxy> proxyHandles_;
 };

@@ -95,7 +95,10 @@ private:
                 }
             };
 
-            widget->SplitHorizontally(createWindow(std::get<0>(widgets)), createWindow(std::get<1>(widgets)));
+            // Enforce evaluation order for deterministic behavior across platforms
+            auto* window0 = createWindow(std::get<0>(widgets));
+            auto* window1 = createWindow(std::get<1>(widgets));
+            widget->SplitHorizontally(window0, window1);
             if (stashGravity) {
                 widget->SetSashGravity(*stashGravity);
             }
@@ -166,7 +169,10 @@ private:
                 }
             };
 
-            widget->SplitVertically(createWindow(std::get<0>(widgets)), createWindow(std::get<1>(widgets)));
+            // Enforce evaluation order for deterministic behavior across platforms
+            auto* window0 = createWindow(std::get<0>(widgets));
+            auto* window1 = createWindow(std::get<1>(widgets));
+            widget->SplitVertically(window0, window1);
             if (stashGravity) {
                 widget->SetSashGravity(*stashGravity);
             }

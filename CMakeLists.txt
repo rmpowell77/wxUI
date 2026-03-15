@@ -24,8 +24,8 @@ include(${PROJECT_SOURCE_DIR}/cmake/compiler.cmake)
 #============================================================================
 # Settable options
 #============================================================================
-option(WXUI_WITH_TESTS "Build tests." OFF)
-option(WXUI_WITH_EXAMPLE "Build example." OFF)
+option(WXUI_WITH_TESTS "Build tests." ${PROJECT_IS_TOP_LEVEL})
+option(WXUI_WITH_EXAMPLE "Build example." ${PROJECT_IS_TOP_LEVEL})
 
 include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
 
@@ -43,7 +43,6 @@ add_library(
   include/wxUI/wxUITypes.hpp
   include/wxUI/version.hpp
   include/wxUI/detail/BindInfo.hpp
-  include/wxUI/detail/fwd.hpp
   include/wxUI/detail/LayoutDetails.hpp
   include/wxUI/detail/HelperMacros.hpp
   include/wxUI/detail/ZapMacros.hpp
