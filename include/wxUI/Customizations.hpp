@@ -25,9 +25,9 @@ SOFTWARE.
 
 #include <functional>
 #include <optional>
+#include <tuple>
 #include <variant>
 #include <vector>
-#include <tuple>
 #include <wx/frame.h>
 #include <wx/menu.h>
 #include <wx/sizer.h>
@@ -162,6 +162,65 @@ inline void SizerBindProxy(Sizer* sizer, Proxy& proxyHandle)
         proxyHandle.setUnderlying(sizer);
     } else {
         static_assert(always_false_v<Proxy>, "LayoutBindProxy: Provide a customization in namespace wxUI::customizations.");
+    }
+}
+
+// Menu creation customization points
+// These allow tests to avoid creating real wxMenu/wxMenuBar objects
+
+// Trait to get MenuItem type for a given Frame type
+template <typename Frame>
+struct MenuItemTypeFor {
+    using type = wxMenuItem;
+};
+
+template <typename Frame>
+using MenuItemTypeFor_t = typename MenuItemTypeFor<Frame>::type;
+
+template <typename Frame>
+inline auto MenuCreate(Frame&)
+{
+    return new wxMenu();
+}
+
+template <typename Frame>
+inline auto MenuBarCreate(Frame*)
+{
+    return new wxMenuBar();
+}
+
+inline auto MenuAppend(wxMenu* menu, int id, wxString const& item, wxString const& help) -> wxMenuItem*
+{
+    return menu->Append(id, item, help);
+}
+
+inline auto MenuAppendCheckItem(wxMenu* menu, int id, wxString const& item, wxString const& help) -> wxMenuItem*
+{
+    return menu->AppendCheckItem(id, item, help);
+}
+
+inline auto MenuAppendRadioItem(wxMenu* menu, int id, wxString const& item, wxString const& help) -> wxMenuItem*
+{
+    return menu->AppendRadioItem(id, item, help);
+}
+
+inline void MenuBarAppend(wxMenuBar* menuBar, wxMenu* menu, wxString const& name)
+{
+    menuBar->Append(menu, name);
+}
+
+inline void MenuAppendSubMenu(wxMenu* parentMenu, wxMenu* subMenu, wxString const& name)
+{
+    parentMenu->AppendSubMenu(subMenu, name);
+}
+
+template <typename Controller, typename Proxy>
+inline void MenuBindProxy(Controller* controller, Proxy& proxyHandle)
+{
+    if constexpr (requires(Proxy proxy, Controller* c) { proxy.setUnderlying(c); }) {
+        proxyHandle.setUnderlying(controller);
+    } else {
+        static_assert(always_false_v<Proxy>, "MenuBindProxy: Provide a customization in namespace wxUI::customizations.");
     }
 }
 

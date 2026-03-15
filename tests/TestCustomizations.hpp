@@ -49,6 +49,7 @@ SOFTWARE.
 #include <wx/statbmp.h>
 #include <wx/statline.h>
 #include <wx/stattext.h>
+#include <wx/stockitem.h>
 #include <wx/textctrl.h>
 #include <wx/tglbtn.h>
 #include <wxUI/Customizations.hpp>
@@ -162,6 +163,79 @@ struct std::formatter<wxMenuBar, char> {
 
 namespace wxUITests {
 
+// Mock menu structures to avoid creating real wxMenu/wxMenuBar objects in tests
+struct TestMenuItem {
+    int id {};
+    std::string kind; // "normal", "check", "radio"
+    std::string label;
+    std::string help;
+    int numProxyHandles { 0 };
+};
+
+struct TestMenu {
+    std::string title;
+    std::vector<TestMenuItem> items;
+    int numProxyHandles { 0 };
+};
+
+struct TestMenuBar {
+    std::vector<TestMenu> menus;
+    int numProxyHandles { 0 };
+};
+
+}
+
+// Formatters for test mock menu structures
+template <>
+struct std::formatter<wxUITests::TestMenuItem, char> {
+    constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+    auto format(wxUITests::TestMenuItem const& item, std::format_context& ctx) const
+    {
+        std::format_to(ctx.out(), "(menuItem:id={},kind={},label=\"{}\",help=\"{}\")",
+            item.id, item.kind, item.label, item.help);
+        if (item.numProxyHandles > 0) {
+            std::format_to(ctx.out(), ":numProxyHandles={}", item.numProxyHandles);
+        }
+        return ctx.out();
+    }
+};
+
+template <>
+struct std::formatter<wxUITests::TestMenu, char> {
+    constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+    auto format(wxUITests::TestMenu const& menu, std::format_context& ctx) const
+    {
+        std::format_to(ctx.out(), "[title:{}:[", menu.title);
+        for (auto const& item : menu.items) {
+            std::format_to(ctx.out(), "{},", item);
+        }
+        std::format_to(ctx.out(), "]");
+        if (menu.numProxyHandles > 0) {
+            std::format_to(ctx.out(), ":numProxyHandles={}", menu.numProxyHandles);
+        }
+        return ctx.out();
+    }
+};
+
+template <>
+struct std::formatter<wxUITests::TestMenuBar, char> {
+    constexpr auto parse(std::format_parse_context& ctx) { return ctx.begin(); }
+    auto format(wxUITests::TestMenuBar const& bar, std::format_context& ctx) const
+    {
+        std::format_to(ctx.out(), "[");
+        for (auto const& menu : bar.menus) {
+            std::format_to(ctx.out(), "{},", menu);
+        }
+        std::format_to(ctx.out(), "]");
+        if (bar.numProxyHandles > 0) {
+            std::format_to(ctx.out(), ":numProxyHandles={}", bar.numProxyHandles);
+        }
+        return ctx.out();
+    }
+};
+
+namespace wxUITests {
+
 enum class SizerType {
     Box,
     WrapBox,
@@ -169,6 +243,19 @@ enum class SizerType {
     FlexGrid,
 };
 struct TestParent;
+
+}
+
+// Specialize MenuItem type for TestParent (must be after forward declaration)
+namespace wxUI::customizations {
+template <>
+struct MenuItemTypeFor<wxUITests::TestParent> {
+    using type = wxUITests::TestMenuItem;
+};
+}
+
+namespace wxUITests {
+
 struct TestSizer {
     bool top { false };
     SizerType type { SizerType::Box };
@@ -201,6 +288,8 @@ struct TestParent {
     std::vector<std::string> bookPages {};
     std::list<TestParent> parents {};
     std::list<TestSizer> sizers {};
+    std::list<TestMenu> menus {}; // Storage for mock menus
+    std::list<TestMenuBar> menuBars {}; // Storage for mock menubars
 
     TestSizer* currentSizer {};
     TestParent* currentMenu {};
@@ -795,9 +884,102 @@ inline auto SizerCreate(wxUITests::TestParent* parent, SizerInfo const& info) ->
         info);
 }
 
-inline void MenuSetMenuBar(wxUITests::TestParent* parent, wxMenuBar* menuBar)
+// Menu customization overloads for TestParent - creates mock menus instead of real wx objects
+inline auto MenuCreate(wxUITests::TestParent& parent) -> wxUITests::TestMenu*
 {
-    // Represent the menu-bar as a child parent so tests can inspect it
+    parent.menus.emplace_back();
+    return &parent.menus.back();
+}
+
+inline auto MenuBarCreate(wxUITests::TestParent* parent) -> wxUITests::TestMenuBar*
+{
+    parent->menuBars.emplace_back();
+    return &parent->menuBars.back();
+}
+
+// Helper to get stock label/help for standard IDs
+namespace {
+    inline std::string getStockLabel(int id)
+    {
+        auto label = wxGetStockLabel(static_cast<wxWindowID>(id), wxSTOCK_NOFLAGS); // No mnemonic
+        return label.utf8_string();
+    }
+
+    inline std::string getStockHelp(int id)
+    {
+        // wxWidgets doesn't expose wxGetStockHelpString publicly, so we provide our own mapping
+        switch (id) {
+        case wxID_EXIT:
+            return "Quit this program";
+        case wxID_ABOUT:
+            return "Show about dialog";
+        default:
+            return "";
+        }
+    }
+}
+
+inline auto MenuAppend(wxUITests::TestMenu* menu, int id, wxString const& item, wxString const& help) -> wxUITests::TestMenuItem*
+{
+    // Mimic wxWidgets behavior: if item is empty and id is a standard ID, use default label/help
+    std::string label = item.utf8_string();
+    std::string helpText = help.utf8_string();
+    if (label.empty()) {
+        label = getStockLabel(id);
+    }
+    if (helpText.empty()) {
+        helpText = getStockHelp(id);
+    }
+    menu->items.push_back({ id, "normal", label, helpText });
+    return &menu->items.back();
+}
+
+inline auto MenuAppendCheckItem(wxUITests::TestMenu* menu, int id, wxString const& item, wxString const& help) -> wxUITests::TestMenuItem*
+{
+    // Mimic wxWidgets behavior: if item is empty and id is a standard ID, use default label/help
+    std::string label = item.utf8_string();
+    std::string helpText = help.utf8_string();
+    if (label.empty()) {
+        label = getStockLabel(id);
+    }
+    if (helpText.empty()) {
+        helpText = getStockHelp(id);
+    }
+    menu->items.push_back({ id, "check", label, helpText });
+    return &menu->items.back();
+}
+
+inline auto MenuAppendRadioItem(wxUITests::TestMenu* menu, int id, wxString const& item, wxString const& help) -> wxUITests::TestMenuItem*
+{
+    // Mimic wxWidgets behavior: if item is empty and id is a standard ID, use default label/help
+    std::string label = item.utf8_string();
+    std::string helpText = help.utf8_string();
+    if (label.empty()) {
+        label = getStockLabel(id);
+    }
+    if (helpText.empty()) {
+        helpText = getStockHelp(id);
+    }
+    menu->items.push_back({ id, "radio", label, helpText });
+    return &menu->items.back();
+}
+
+inline void MenuBarAppend(wxUITests::TestMenuBar* menuBar, wxUITests::TestMenu* menu, wxString const& name)
+{
+    menu->title = name.utf8_string();
+    menuBar->menus.push_back(*menu);
+}
+
+inline void MenuAppendSubMenu(wxUITests::TestMenu* parentMenu, wxUITests::TestMenu* subMenu, wxString const& name)
+{
+    subMenu->title = name.utf8_string();
+    // Represent submenu as a special menu item
+    parentMenu->items.push_back({ -1, std::format("submenu:{}", *subMenu), "", "" });
+}
+
+inline void MenuSetMenuBar(wxUITests::TestParent* parent, wxUITests::TestMenuBar* menuBar)
+{
+    // Just format it for inspection - it's already stored in parent->menuBars
     parent->menuDetails.push_back(std::format("MenuBar:{}", *menuBar));
 }
 
@@ -806,4 +988,41 @@ inline void MenuBindToFrame(wxUITests::TestParent& frame, int identity, std::var
     auto count = std::ranges::count_if(frame.log, [identity](auto const& e) { return e.starts_with(std::format("BindMenu:{}", identity)); });
     frame.log.push_back(std::format("BindMenu:{}:{}", identity, count + 1));
 }
+
+// Proxy binding customization points for menu items in tests
+// Note: In tests, we can't actually set the proxy because TestMenuItem* != wxMenuItem*
+// But calling the customization point is sufficient for test coverage
+template <typename Proxy>
+inline void MenuBindProxy(wxUITests::TestMenuItem* menu, Proxy&)
+{
+    menu->numProxyHandles += 1;
+}
+template <typename Proxy>
+inline void MenuBindProxy(wxUITests::TestMenu* menu, Proxy&)
+{
+    menu->numProxyHandles += 1;
+}
+template <typename Proxy>
+inline void MenuBindProxy(wxUITests::TestMenuBar* menu, Proxy&)
+{
+    menu->numProxyHandles += 1;
+}
+// template <typename ProxyType>
+// inline void MenuItemBindProxy(wxUITests::TestMenuItem*, ProxyType const&)
+// {
+//     // No-op in tests - the proxy type (Proxy<wxMenuItem>) doesn't match TestMenuItem*
+//     // This is acceptable because we're testing the code paths, not runtime behavior
+// }
+
+// template <typename ProxyType>
+// inline void MenuBindProxy(wxUITests::TestMenu*, ProxyType const&)
+// {
+//     // No-op in tests
+// }
+
+// template <typename ProxyType>
+// inline void MenuBarBindProxy(wxUITests::TestMenuBar*, ProxyType const&)
+// {
+//     // No-op in tests
+// }
 }
