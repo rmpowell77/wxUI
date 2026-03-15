@@ -156,7 +156,7 @@ TEST_CASE("SpinCtrl")
     SECTION("AI")
     {
         TestParent provider;
-        auto uut = wxUI::SpinCtrl { { 0, 10 }, 3 }.bind([] {});
+        auto uut = wxUI::SpinCtrl { { 0, 10 }, 3 }.bind([] { });
         uut.create(&provider);
         CHECK(provider.dump() == std::vector<std::string> {
                   "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[0,10]]",
