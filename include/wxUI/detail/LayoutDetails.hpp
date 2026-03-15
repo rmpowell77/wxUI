@@ -176,7 +176,7 @@ struct BoxSizer {
     BoxSizer(wxOrientation orientation, std::string_view caption, UItems&&... items)
         : details_(std::forward<UItems>(items)...)
         , orientation_(orientation)
-        , caption_(wxString::FromUTF8(caption.data(), caption.size()))
+        , caption_(wxString::FromUTF8(caption))
     {
     }
 
@@ -192,7 +192,7 @@ struct BoxSizer {
     BoxSizer(wxOrientation orientation, std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
         : details_(flags, std::forward<UItems>(items)...)
         , orientation_(orientation)
-        , caption_(wxString::FromUTF8(caption.data(), caption.size()))
+        , caption_(wxString::FromUTF8(caption))
     {
     }
 

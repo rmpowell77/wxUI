@@ -42,7 +42,7 @@ struct TextCtrl {
     }
 
     explicit TextCtrl(wxWindowID identity, std::string_view text = "")
-        : TextCtrl(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()))
+        : TextCtrl(identity, wxUI_String {}, wxString::FromUTF8(text))
     {
     }
 

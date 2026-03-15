@@ -40,7 +40,7 @@ struct Button {
     }
 
     explicit Button(wxWindowID identity, std::string_view text = "")
-        : Button(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()))
+        : Button(identity, wxUI_String {}, wxString::FromUTF8(text))
     {
     }
 
