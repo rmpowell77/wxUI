@@ -31,7 +31,7 @@ template <details::SizerItem... Items>
 struct LayoutIf {
     template <details::SizerItem... UItems>
     explicit LayoutIf(bool enabled, UItems&&... items)
-        : items_( std::forward_as_tuple(std::forward<UItems>(items)...) )
+        : items_(std::forward_as_tuple(std::forward<UItems>(items)...))
     {
         if (!enabled) {
             items_.reset();
