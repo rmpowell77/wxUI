@@ -41,7 +41,7 @@ struct CheckBox {
     }
 
     explicit CheckBox(wxWindowID identity, std::string_view text = "")
-        : CheckBox(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()))
+        : CheckBox(identity, wxUI_String {}, wxString::FromUTF8(text))
     {
     }
 

@@ -30,4 +30,5 @@ Other changes:
 * [#295](../../issues/295) make sure all files have a BuildTests
 * [#302](../../issues/302) Need better defaults for WXUI_WITH_TESTS, WXUI_WITH_EXAMPLE
 * [#304](../../issues/304) Need a way to tests menu without instantiating wxMenu
+* [#311](../../issues/311) Examine usage of wxString::FromUTF8(text.data(), text.size())
 

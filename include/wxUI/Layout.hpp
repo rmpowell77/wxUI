@@ -43,7 +43,7 @@ struct VSizer {
 
     template <details::SizerItem... UItems>
     VSizer(std::string_view caption, UItems&&... items)
-        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), std::forward<UItems>(items)...)
+        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption), std::forward<UItems>(items)...)
     {
     }
 
@@ -61,7 +61,7 @@ struct VSizer {
 
     template <details::SizerItem... UItems>
     VSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
-        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
+        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption), flags, std::forward<UItems>(items)...)
     {
     }
 
@@ -112,7 +112,7 @@ struct HSizer {
 
     template <details::SizerItem... UItems>
     HSizer(std::string_view caption, UItems&&... items)
-        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), std::forward<UItems>(items)...)
+        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption), std::forward<UItems>(items)...)
     {
     }
 
@@ -130,7 +130,7 @@ struct HSizer {
 
     template <details::SizerItem... UItems>
     HSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
-        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
+        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption), flags, std::forward<UItems>(items)...)
     {
     }
 
