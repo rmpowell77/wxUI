@@ -39,14 +39,14 @@ namespace wxUI {
 #define WXUI_VERSION_STRING "0.3.0"
 // clang-format on
 
-    struct Version {
-        static constexpr int major = WXUI_VERSION_MAJOR;
-        static constexpr int minor = WXUI_VERSION_MINOR;
-        static constexpr int patch = WXUI_VERSION_PATCH;
-        static constexpr int tweak = WXUI_VERSION_TWEAK;
-        static constexpr const char* string = WXUI_VERSION_STRING;
-    };
+struct Version {
+    static constexpr int major = WXUI_VERSION_MAJOR;
+    static constexpr int minor = WXUI_VERSION_MINOR;
+    static constexpr int patch = WXUI_VERSION_PATCH;
+    static constexpr int tweak = WXUI_VERSION_TWEAK;
+    static constexpr const char* string = WXUI_VERSION_STRING;
+};
 
-    inline constexpr Version version{};
+inline constexpr Version version {};
 
 } // namespace wxUI

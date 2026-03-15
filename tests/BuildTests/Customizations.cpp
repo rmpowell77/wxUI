@@ -21,6 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-// Generated with bash command
-// for i in *.cpp; do echo \#include \<wxUI\/HelperMacros.hpp\> > HelperMacros.cpp; for j in WXUI_RULE_OF_SIX_BOILERPLATE WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE; do echo \#if defined\(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE\) >> HelperMacros.cpp; echo \#error Missed zapping WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE >> HelperMacros.cpp; echo \#endif >> HelperMacros.cpp; done; done
-#include <wxUI/detail/HelperMacros.hpp>
+
+// This is an auto-generated file. Run checklists/do_buildtests to regenerate.
+
+// clang-format off
+#include <wxUI/Customizations.hpp>
+#include "ZapChecker.hpp"
+// clang-format on

@@ -21,54 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
 
-// Forward declarations for commonly-used wxUI types
-// This header can be included to avoid circular dependencies
+// This is an auto-generated file. Run checklists/do_buildtests to regenerate.
 
-namespace wxUI {
-
-// Tag struct for explicit wxString constructor usage
-struct wxUI_String;
-
-// Common template types
-template <typename Window>
-struct Wrapper;
-
-template <typename... Items>
-struct VSizer;
-
-template <typename... Items>
-struct HSizer;
-
-template <typename... Items>
-struct FlexGridSizer;
-
-template <typename... Items>
-struct WrapSizer;
-
-template <typename... Items>
-struct LayoutIf;
-
-template <typename... Items>
-struct ForEach;
-
-}
-
-namespace wxUI::details {
-
-// Proxy template for accessing underlying wxWidgets controls
-template <typename T>
-struct Proxy;
-
-// Type traits
-template <typename, typename, typename = void>
-struct CanApply;
-
-template <typename F, typename Arg, typename = void>
-struct invoke_apply_result;
-
-template <typename F, typename... Args>
-using invoke_apply_result_t = typename invoke_apply_result<F, Args...>::type;
-
-}
+// clang-format off
+#include <wxUI/Proxy.hpp>
+#include "ZapChecker.hpp"
+// clang-format on

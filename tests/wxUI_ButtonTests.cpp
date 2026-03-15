@@ -24,7 +24,9 @@ SOFTWARE.
 #include "TestCustomizations.hpp"
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <memory>
 #include <wxUI/Button.hpp>
+#include <wxUI/Layout.hpp>
 #include <wxUI/wxUITypes.hpp>
 
 #include <wx/wx.h>
@@ -46,131 +48,171 @@ struct ButtonTestPolicy {
 };
 static auto createUUT() { return ButtonTestPolicy::createUUT(); }
 
-TEST_CASE("Button")
-{
-    SECTION("noargs")
-    {
+TEST_CASE("Button") {
+    SECTION("noargs") {
         TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SetEnabled:true",
-              });
-    }
-
-    SECTION("name")
-    {
-        TestParent provider;
-        auto uut = TypeUnderTest { "Hello" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "SetEnabled:true",
-              });
-    }
-
-    SECTION("name_unicode")
-    {
-        TestParent provider;
-        auto uut = TypeUnderTest { "🐨" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"🐨\"]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"🐨\"]",
-                  "SetEnabled:true",
-              });
-    }
-
-    SECTION("name_tag")
-    {
-        TestParent provider;
-        wxString wx_label { "Hello" };
-        auto uut = TypeUnderTest { wxUI_String {}, wx_label };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "SetEnabled:true",
-              });
-    }
-
-    SECTION("id")
-    {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "controller:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SetEnabled:true",
-              });
-    }
-
-    SECTION("id.name")
-    {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, "Hello" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "controller:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "SetEnabled:true",
-              });
-    }
-
-    SECTION("style")
-    {
-        TestParent provider;
-        auto uut = createUUT().withStyle(wxBU_LEFT);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=64, text=\"\"]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=64, text=\"\"]",
-                  "SetEnabled:true",
-              });
-    }
-
-    SECTION("pos")
-    {
-        TestParent provider;
-        auto uut = createUUT().withPosition({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
-                  "controller:wxButton[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
-                  "SetEnabled:true",
-              });
-    }
-
-    SECTION("size")
-    {
-        TestParent provider;
-        auto uut = createUUT().withSize({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
-                  "controller:wxButton[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
-                  "SetEnabled:true",
-              });
-    }
-
-    SECTION("AI Gen")
-    {
-        TestParent provider;
-        auto uut = wxUI::Button { "Hello" }.withStyle(wxBU_LEFT).withPosition({ 1, 2 }).withSize({ 10, 12 }).setDefault().bind([] {});
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxButton[id=-1, pos=(1,2), size=(10,12), style=64, text=\"Hello\"]",
-                  "controller:wxButton[id=-1, pos=(1,2), size=(10,12), style=64, text=\"Hello\"]",
-                  "SetDefault:-1",
-                  "SetEnabled:true",
-                  "BindEvents:1",
-              });
-    }
-
-    COMMON_TESTS(ButtonTestPolicy)
+auto uut = createUUT();
+uut.create(&provider);
+CHECK(provider.dump() == std::vector<std::string> {
+          "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+          "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+          "SetEnabled:true",
+      });
 }
+
+SECTION("name")
+{
+    TestParent provider;
+    auto uut = TypeUnderTest { "Hello" };
+    uut.create(&provider);
+    CHECK(provider.dump() == std::vector<std::string> {
+              "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+              "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+              "SetEnabled:true",
+          });
+}
+
+SECTION("name_unicode")
+{
+    TestParent provider;
+    auto uut = TypeUnderTest { "🐨" };
+    uut.create(&provider);
+    CHECK(provider.dump() == std::vector<std::string> {
+              "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"🐨\"]",
+              "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"🐨\"]",
+              "SetEnabled:true",
+          });
+}
+
+SECTION("name_tag")
+{
+    TestParent provider;
+    wxString wx_label { "Hello" };
+    auto uut = TypeUnderTest { wxUI_String {}, wx_label };
+    uut.create(&provider);
+    CHECK(provider.dump() == std::vector<std::string> {
+              "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+              "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+              "SetEnabled:true",
+          });
+}
+
+SECTION("id")
+{
+    TestParent provider;
+    auto uut = TypeUnderTest { 10000 };
+    uut.create(&provider);
+    CHECK(provider.dump() == std::vector<std::string> {
+              "Create:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+              "controller:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
+              "SetEnabled:true",
+          });
+}
+
+SECTION("id.name")
+{
+    TestParent provider;
+    auto uut = TypeUnderTest { 10000, "Hello" };
+    uut.create(&provider);
+    CHECK(provider.dump() == std::vector<std::string> {
+              "Create:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+              "controller:wxButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+              "SetEnabled:true",
+          });
+}
+
+SECTION("style")
+{
+    TestParent provider;
+    auto uut = createUUT().withStyle(wxBU_LEFT);
+    uut.create(&provider);
+    CHECK(provider.dump() == std::vector<std::string> {
+              "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=64, text=\"\"]",
+              "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=64, text=\"\"]",
+              "SetEnabled:true",
+          });
+}
+
+SECTION("pos")
+{
+    TestParent provider;
+    auto uut = createUUT().withPosition({ 1, 2 });
+    uut.create(&provider);
+    CHECK(provider.dump() == std::vector<std::string> {
+              "Create:wxButton[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
+              "controller:wxButton[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
+              "SetEnabled:true",
+          });
+}
+
+SECTION("size")
+{
+    TestParent provider;
+    auto uut = createUUT().withSize({ 1, 2 });
+    uut.create(&provider);
+    CHECK(provider.dump() == std::vector<std::string> {
+              "Create:wxButton[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
+              "controller:wxButton[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
+              "SetEnabled:true",
+          });
+}
+
+SECTION("AI Gen")
+{
+    TestParent provider;
+    auto uut = wxUI::Button { "Hello" }.withStyle(wxBU_LEFT).withPosition({ 1, 2 }).withSize({ 10, 12 }).setDefault().bind([] { });
+    uut.create(&provider);
+    CHECK(provider.dump() == std::vector<std::string> {
+              "Create:wxButton[id=-1, pos=(1,2), size=(10,12), style=64, text=\"Hello\"]",
+              "controller:wxButton[id=-1, pos=(1,2), size=(10,12), style=64, text=\"Hello\"]",
+              "SetDefault:-1",
+              "SetEnabled:true",
+              "BindEvents:1",
+          });
+}
+
+COMMON_TESTS(ButtonTestPolicy)
+}
+
+TEST_CASE("Button - Mutable lambda in bind")
+{
+    TestParent provider;
+
+    SECTION("Button.bind with mutable lambda (no-arg)")
+    {
+        int counter = 0;
+
+        wxUI::VSizer {
+            wxUI::Button { "Click" }.bind([counter]() mutable {
+                counter++;
+                // Note: This will be called when the button is clicked
+                // For testing purposes, we just verify it compiles and stores correctly
+            })
+        }
+            .fitTo(&provider);
+
+        auto dump = provider.dump();
+        CHECK(dump.size() > 0);
+    }
+
+    SECTION("Button.bind with mutable lambda (with event)")
+    {
+        int value = 10;
+
+        wxUI::VSizer {
+            wxUI::Button { "Click" }.bind([value](wxCommandEvent&) mutable {
+                value += 5;
+            })
+        }
+            .fitTo(&provider);
+
+        auto dump = provider.dump();
+        CHECK(dump.size() > 0);
+    }
+}
+
+// Note: Move-only lambdas (capturing unique_ptr) cannot be used with bind()
+// because wxWidgets' event system requires event handlers to be copyable.
+// BindInfo must support copying via clone(), which is incompatible with move-only types.
+
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)

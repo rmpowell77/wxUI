@@ -58,8 +58,8 @@ struct BindInfo {
     }
 
     template <typename Event, typename Function>
-    BindInfo(Event event, Function function)
-        : info_(std::make_unique<BindInfoDetails<Event, Function>>(event, function))
+    BindInfo(Event event, Function&& function)
+        : info_(std::make_unique<BindInfoDetails<Event, std::decay_t<Function>>>(event, std::forward<Function>(function)))
     {
     }
 
@@ -99,9 +99,10 @@ private:
 
     template <typename Event, typename Function>
     struct BindInfoDetails : BindInfoDetailsBase {
-        BindInfoDetails(Event event, Function function)
+        template <typename F>
+        BindInfoDetails(Event event, F&& function)
             : event(event)
-            , function(function)
+            , function(std::forward<F>(function))
         {
         }
         Event event;
