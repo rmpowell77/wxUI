@@ -323,9 +323,9 @@ struct TestParent {
     {
         log.push_back(std::format("SetValue:{}", value));
     }
-    void SetValue3State(wxCheckBoxState value)
+    void Set3StateValue(wxCheckBoxState value)
     {
-        log.push_back(std::format("SetValue3State:{}", value == wxCHK_UNCHECKED ? "unchecked" : (value == wxCHK_CHECKED ? "checked" : "undetermined")));
+        log.push_back(std::format("Set3StateValue:{}", value == wxCHK_UNCHECKED ? "unchecked" : (value == wxCHK_CHECKED ? "checked" : "undetermined")));
     }
     void Wrap(bool value)
     {
