@@ -21,6 +21,7 @@ Other changes:
 * [#259](../../issues/259) Re-enable jidicula Format check once issue is resolved
 * [#263](../../issues/263) Will Factory with move-only lambda work?
 * [#271](../../issues/271) Change example from HelloWorld to HelloWidgets
+* [#273](../../issues/273) Create a contributor's guide
 * [#276](../../issues/276) ASAN crash when we're adding items to a combobox
 * [#285](../../issues/285) We should have some unit tests for Notebook
 * [#286](../../issues/286) How about adding all the "books"?
