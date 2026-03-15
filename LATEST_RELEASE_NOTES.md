@@ -24,4 +24,5 @@ Other changes:
 * [#292](../../issues/292) FlexGridSizer does not support growable columns and will never increase to fill space
 * [#295](../../issues/295) make sure all files have a BuildTests
 * [#302](../../issues/302) Need better defaults for WXUI_WITH_TESTS, WXUI_WITH_EXAMPLE
+* [#304](../../issues/304) Need a way to tests menu without instantiating wxMenu
 
