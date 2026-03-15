@@ -43,7 +43,6 @@ add_library(
   include/wxUI/wxUITypes.hpp
   include/wxUI/version.hpp
   include/wxUI/detail/BindInfo.hpp
-  include/wxUI/detail/fwd.hpp
   include/wxUI/detail/LayoutDetails.hpp
   include/wxUI/detail/HelperMacros.hpp
   include/wxUI/detail/ZapMacros.hpp
