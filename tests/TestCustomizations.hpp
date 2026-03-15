@@ -35,13 +35,16 @@ SOFTWARE.
 #include <wx/bmpcbox.h>
 #include <wx/checkbox.h>
 #include <wx/choice.h>
+#include <wx/choicebk.h>
 #include <wx/combobox.h>
 #include <wx/gauge.h>
 #include <wx/hyperlink.h>
+#include <wx/listbook.h>
 #include <wx/listbox.h>
 #include <wx/menu.h>
 #include <wx/notebook.h>
 #include <wx/radiobox.h>
+#include <wx/simplebook.h>
 #include <wx/sizer.h>
 #include <wx/slider.h>
 #include <wx/spinctrl.h>
@@ -52,6 +55,7 @@ SOFTWARE.
 #include <wx/stockitem.h>
 #include <wx/textctrl.h>
 #include <wx/tglbtn.h>
+#include <wx/treebook.h>
 #include <wxUI/Customizations.hpp>
 
 // Forward declarations to avoid including Widget.hpp here. We want the
@@ -814,6 +818,62 @@ struct ParentCreateImpl<wxNotebook, wxUITests::TestParent> {
     {
         return parent->add({
             .type = "wxNotebook",
+            .id = id,
+            .pos = wxPoint { -1, -1 },
+            .size = wxSize { -1, -1 },
+            .style = 0,
+        });
+    }
+};
+
+template <>
+struct ParentCreateImpl<wxChoicebook, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id)
+    {
+        return parent->add({
+            .type = "wxChoicebook",
+            .id = id,
+            .pos = wxPoint { -1, -1 },
+            .size = wxSize { -1, -1 },
+            .style = 0,
+        });
+    }
+};
+
+template <>
+struct ParentCreateImpl<wxListbook, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id)
+    {
+        return parent->add({
+            .type = "wxListbook",
+            .id = id,
+            .pos = wxPoint { -1, -1 },
+            .size = wxSize { -1, -1 },
+            .style = 0,
+        });
+    }
+};
+
+template <>
+struct ParentCreateImpl<wxSimplebook, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id)
+    {
+        return parent->add({
+            .type = "wxSimplebook",
+            .id = id,
+            .pos = wxPoint { -1, -1 },
+            .size = wxSize { -1, -1 },
+            .style = 0,
+        });
+    }
+};
+
+template <>
+struct ParentCreateImpl<wxTreebook, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id)
+    {
+        return parent->add({
+            .type = "wxTreebook",
             .id = id,
             .pos = wxPoint { -1, -1 },
             .size = wxSize { -1, -1 },

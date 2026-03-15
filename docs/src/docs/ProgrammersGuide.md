@@ -190,13 +190,18 @@ Often times you would be laying out a set of buttons in a horizontal sizer.  The
 
 #### BookCtrl
 
-`wxUI` supports `wxNoteboook` style UIs via `Notebook`.
+`wxUI` supports several book control types for tabbed/paged interfaces:
+- `Notebook` (wxNotebook) - standard tabbed interface
+- `Choicebook` (wxChoicebook) - uses a choice control for page selection
+- `Listbook` (wxListbook) - uses a list control for page selection
+- `Simplebook` (wxSimplebook) - pages without visible selector
+- `Treebook` (wxTreebook) - uses a tree control for hierarchical page selection
 
 ```cpp
 {{{ examples/HelloWidgets/ExtendedExample.cpp NotebookExample "    // ..." }}}
 ```
 
-The `Notebook` is populated with `BookItem` declarations, which can contain Layouts and Controllers.
+All book controls are populated with `BookItem` declarations, which can contain Layouts and Controllers.
 
 #### Splitter
 

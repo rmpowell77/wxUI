@@ -555,7 +555,7 @@ UnicodeExample::UnicodeExample(wxWindow* parent)
 }
 
 NotebookExample::NotebookExample(wxWindow* parent)
-    : wxDialog(parent, wxID_ANY, "Notebook",
+    : wxDialog(parent, wxID_ANY, "Book Controls",
           wxDefaultPosition, wxDefaultSize,
           wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
@@ -563,12 +563,47 @@ NotebookExample::NotebookExample(wxWindow* parent)
     // snippet NotebookExample
     VSizer {
         wxSizerFlags().Expand().Border(),
-        Notebook {
-            BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
-            BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
-            LayoutIf {
-                true,
-                BookItem { "Optional Item", VSizer { Text { "Optional Item" }.withSize({ 200, 50 }) } },
+        GridSizer {
+            2,
+            wxSizerFlags().Expand().Border(),
+            VSizer {
+                "Notebook",
+                Notebook {
+                    BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+                    BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
+                    LayoutIf {
+                        true,
+                        BookItem { "Optional", VSizer { Text { "Optional Item" }.withSize({ 200, 50 }) } },
+                    },
+                },
+            },
+            VSizer {
+                "Choicebook",
+                Choicebook {
+                    BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+                    BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
+                },
+            },
+            VSizer {
+                "Listbook",
+                Listbook {
+                    BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+                    BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
+                },
+            },
+            VSizer {
+                "Simplebook",
+                Simplebook {
+                    BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+                    BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
+                },
+            },
+            VSizer {
+                "Treebook",
+                Treebook {
+                    BookItem { "Item 1", VSizer { Text { "Item 1" }.withSize({ 200, 50 }) } },
+                    BookItem { "Item 2", Text { "Item 2" }.withSize({ 200, 50 }) },
+                },
             },
         },
     }

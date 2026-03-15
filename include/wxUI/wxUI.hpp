@@ -58,6 +58,5 @@
 #include <wxUI/Splitter.hpp>
 #include <wxUI/Text.hpp>
 #include <wxUI/TextCtrl.hpp>
-#include <wxUI/Widget.hpp>
 #include <wxUI/Wrapper.hpp>
 #include <wxUI/wxUITypes.hpp>
