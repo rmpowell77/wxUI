@@ -24,69 +24,15 @@ SOFTWARE.
 #pragma once
 
 #include <wxUI/Layout.hpp>
-#include <wxUI/wxUITypes.hpp>
-
-namespace wxUI::details {
-template <typename F, typename Arg>
-concept ForEachFunction = CreateAndAddable<typename invoke_apply_result<F, Arg>::type>;
-}
+#include <wxUI/detail/ForEachDetail.hpp>
 
 namespace wxUI {
-
-template <std::ranges::input_range Range, typename Function>
-requires(details::ForEachFunction<Function, std::ranges::range_value_t<Range>>)
-struct ForEach {
-
-    ForEach(Range&& args, Function&& createFunction)
-        : args_(std::forward<Range>(args))
-        , createFunction_(std::forward<Function>(createFunction))
-    {
-    }
-
-    ForEach(wxSizerFlags const& flags, Range&& args, Function&& createFunction)
-        : flags_(flags)
-        , args_(std::forward<Range>(args))
-        , createFunction_(std::forward<Function>(createFunction))
-    {
-    }
-
-    template <typename Parent, typename Sizer>
-    void createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
-    {
-        using RawArg = std::remove_cvref_t<std::ranges::range_value_t<Range>>;
-        for (auto&& item : args_) {
-            if constexpr (details::CanApply<Function, RawArg>::value) {
-                std::apply(createFunction_, item).createAndAdd(parent, parentSizer, flags_.value_or(parentFlags));
-            } else {
-                createFunction_(item).createAndAdd(parent, parentSizer, flags_.value_or(parentFlags));
-            }
-        }
-    }
-
-private:
-    std::optional<wxSizerFlags> flags_ {};
-    Range args_;
-    Function createFunction_;
-};
-
-template <std::ranges::input_range Range, typename Function>
-ForEach(Range&&, Function&&) -> ForEach<Range, Function>;
-
-template <std::ranges::input_range Range, typename Function>
-ForEach(wxSizerFlags const& flags, Range&&, Function&&) -> ForEach<Range, Function>;
-
-// initializer_list is like a string_view, we want a copy.  So deduce as vector so we have a copy
-template <typename Function, typename T>
-ForEach(std::initializer_list<T>, Function&&) -> ForEach<std::vector<T>, Function>;
-
-template <typename Function, typename T>
-ForEach(wxSizerFlags const& flags, std::initializer_list<T>, Function&&) -> ForEach<std::vector<T>, Function>;
 
 template <typename T, typename Function>
 auto VForEach(std::initializer_list<T> args, Function&& function)
 {
     return VSizer {
-        ForEach { std::move(args), std::forward<Function>(function) }
+        detail::ForEach(std::move(args), std::forward<Function>(function))
     };
 }
 
@@ -94,7 +40,7 @@ template <std::ranges::input_range Range, typename Function>
 auto VForEach(Range&& args, Function&& function)
 {
     return VSizer {
-        ForEach { std::forward<Range>(args), std::forward<Function>(function) }
+        detail::ForEach(std::forward<Range>(args), std::forward<Function>(function))
     };
 }
 
@@ -102,7 +48,7 @@ template <typename T, typename Function>
 auto VForEach(wxSizerFlags const& flags, std::initializer_list<T> args, Function&& function)
 {
     return VSizer {
-        ForEach { flags, std::move(args), std::forward<Function>(function) }
+        detail::ForEach(flags, std::move(args), std::forward<Function>(function))
     };
 }
 
@@ -110,7 +56,7 @@ template <std::ranges::input_range Range, typename Function>
 auto VForEach(wxSizerFlags const& flags, Range&& args, Function&& function)
 {
     return VSizer {
-        ForEach { flags, std::forward<Range>(args), std::forward<Function>(function) }
+        detail::ForEach(flags, std::forward<Range>(args), std::forward<Function>(function))
     };
 }
 
@@ -118,7 +64,7 @@ template <typename T, typename Function>
 auto HForEach(std::initializer_list<T> args, Function&& function)
 {
     return HSizer {
-        ForEach { std::move(args), std::forward<Function>(function) }
+        detail::ForEach(std::move(args), std::forward<Function>(function))
     };
 }
 
@@ -126,7 +72,7 @@ template <std::ranges::input_range Range, typename Function>
 auto HForEach(Range&& args, Function&& function)
 {
     return HSizer {
-        ForEach { std::forward<Range>(args), std::forward<Function>(function) }
+        detail::ForEach(std::forward<Range>(args), std::forward<Function>(function))
     };
 }
 
@@ -134,7 +80,7 @@ template <typename T, typename Function>
 auto HForEach(wxSizerFlags const& flags, std::initializer_list<T> args, Function&& function)
 {
     return HSizer {
-        ForEach { flags, std::move(args), std::forward<Function>(function) }
+        detail::ForEach(flags, std::move(args), std::forward<Function>(function))
     };
 }
 
@@ -142,7 +88,7 @@ template <std::ranges::input_range Range, typename Function>
 auto HForEach(wxSizerFlags const& flags, Range&& args, Function&& function)
 {
     return HSizer {
-        ForEach { flags, std::forward<Range>(args), std::forward<Function>(function) }
+        detail::ForEach(flags, std::forward<Range>(args), std::forward<Function>(function))
     };
 }
 }

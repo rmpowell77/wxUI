@@ -170,23 +170,19 @@ This table shows which Layout to use for the desired behavior
 
 #### ForEach
 
-Often times you will need to layout several widgets which only are different in their wxWindowID and Name.  Or perhaps there are cases where the items to be laid out are dynamic.  `ForEach` allows you to specify a range of values or `std::tuples` that are arguments to a closure that will returns a *Controller*.  These will then be added one at a time.
+Often times you will need to layout several widgets which only are different in their wxWindowID and Name.  Or perhaps there are cases where the items to be laid out are dynamic.  `HForEach` and `VForEach` allow you to specify a range of values or `std::tuples` that are arguments to a closure that will return a *Controller*.  These will then be added one at a time.
 
 ```
 {{{ examples/HelloWidgets/ExtendedExample.cpp ForEachExample "    // ..." }}}
 ```
 
-*Ranges* are valid arguments for `ForEach`, which allows you to build up complicated layouts at run time.
+*Ranges* are valid arguments for `HForEach` and `VForEach`, which allows you to build up complicated layouts at run time.
 
 ```
 {{{ examples/HelloWidgets/ExtendedExample.cpp ComplicatedForEachExample "    // ..." }}}
 ```
 
-Often times you would be laying out a set of buttons in a horizontal sizer.  The `HForEach` and `VForEach` functions are provided as convenience functions:
-
-```
-{{{ examples/HelloWidgets/ExtendedExample.cpp HForEach "    // ..." }}}
-```
+`HForEach` utilizes a Horizontal Sizer and `VForEach` uses a Vertical Sizer.
 
 #### BookCtrl
 
