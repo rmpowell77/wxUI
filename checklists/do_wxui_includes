@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Auto-fix wxUI.hpp to include all top-level headers from include/wxUI/
+# This script regenerates the #include section with all headers in alphabetical order
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+ROOT_DIR="${SCRIPT_DIR}/.."
+WXUI_HPP="${ROOT_DIR}/include/wxUI/wxUI.hpp"
+
+# Get all headers except wxUI.hpp itself, in alphabetical order
+ALL_HEADERS=$(find "${ROOT_DIR}/include/wxUI" -maxdepth 1 -name "*.hpp" -type f ! -name "wxUI.hpp" | xargs -n1 basename | sort)
+
+# Backup the original file
+cp "${WXUI_HPP}" "${WXUI_HPP}.bak"
+
+# Extract the header and footer (before and after the includes)
+sed -n '1,/^#include <wxUI\/version.hpp>/p' "${WXUI_HPP}.bak" | head -n -1 > "${WXUI_HPP}.tmp.header"
+echo "" >> "${WXUI_HPP}.tmp.header"
+echo '#include <wxUI/version.hpp>' >> "${WXUI_HPP}.tmp.header"
+echo "" >> "${WXUI_HPP}.tmp.header"
+
+# Generate all includes in alphabetical order (skip version.hpp as it's already at the top)
+echo "$ALL_HEADERS" | while read header; do
+    if [ "$header" != "version.hpp" ] && [ "$header" != "wxUITypes.hpp" ]; then
+        echo "#include <wxUI/$header>"
+    fi
+done > "${WXUI_HPP}.tmp.includes"
+
+# Add wxUITypes.hpp at the end (if it exists)
+if echo "$ALL_HEADERS" | grep -q "wxUITypes.hpp"; then
+    echo "#include <wxUI/wxUITypes.hpp>" >> "${WXUI_HPP}.tmp.includes"
+fi
+
+# Combine header, includes
+cat "${WXUI_HPP}.tmp.header" "${WXUI_HPP}.tmp.includes" > "${WXUI_HPP}"
+
+# Clean up
+rm -f "${WXUI_HPP}.tmp.header" "${WXUI_HPP}.tmp.includes" "${WXUI_HPP}.bak"
+
+echo "✓ Updated wxUI.hpp with all headers"
+"${SCRIPT_DIR}/check_wxui_includes"

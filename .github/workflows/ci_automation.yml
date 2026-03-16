@@ -41,6 +41,9 @@ jobs:
     - name: check
       run: ${{github.workspace}}/checklists/check_md
 
+    - name: check
+      run: ${{github.workspace}}/checklists/check_wxui_includes
+
   buildtests-check:
     name: BuildTests Check
     runs-on: ubuntu-latest
