@@ -151,13 +151,11 @@ TEST_CASE("ForEach")
     SECTION("ForEach.Vector.T.xV")
     {
         TestParent frame;
-        wxUI::VSizer {
-            wxUI::ForEach {
-                std::vector { "A", "B", "C" },
-                [](auto name) {
-                    return wxUI::Button { name };
-                } },
-        }
+        wxUI::VForEach(
+            std::vector { "A", "B", "C" },
+            [](auto name) {
+                return wxUI::Button { name };
+            })
             .fitTo(&frame);
         CHECK(frame.dump() == kCaseVForEach);
     }
@@ -186,1068 +184,264 @@ TEST_CASE("ForEach")
     SECTION("ForEach.lvalue.Vector.T")
     {
         auto data = std::vector { "A", "B", "C" };
-        auto builder = [](auto name) {
+        TestParent frame;
+        wxUI::VForEach(data, [](auto name) {
             return wxUI::Button { name };
-        };
-        {
-            TestParent frame;
-            wxUI::VSizer {
-                wxUI::ForEach {
-                    data,
-                    [](auto name) {
-                        return wxUI::Button { name };
-                    } },
-            }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer {
-                wxUI::ForEach {
-                    std::vector { "A", "B", "C" },
-                    builder }
-            }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach { data, builder } }.fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
+        }).fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEach);
     }
     SECTION("ForEach.Vector.Tuple")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                               [](auto name) {
-                                   return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
+            [](auto name) {
+                return wxUI::Button { std::get<0>(name), std::get<1>(name) };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachWithID);
     }
     SECTION("ForEach.Vector.Tuple.Multiarg")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                               [](auto identity, auto name) {
-                                   return wxUI::Button { identity, name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachWithID);
     }
     SECTION("ForEach.Range.T")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
-                               [](auto name) {
-                                   return wxUI::Button { name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachFiltered);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
+            [](auto name) {
+                return wxUI::Button { name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachFiltered);
     }
     SECTION("ForEach.lvalue.Range.T")
     {
         auto data = std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; });
-        auto builder = [](auto name) {
+        TestParent frame;
+        wxUI::VForEach(data, [](auto name) {
             return wxUI::Button { name };
-        };
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               data,
-                               [](auto name) {
-                                   return wxUI::Button { name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               std::vector { "A", "B", "C" },
-                               builder } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach { data, builder } }.fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachFiltered);
-        }
+        }).fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachFiltered);
     }
     SECTION("ForEach.Range.Tuple")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                               [](auto name) {
-                                   return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFilteredWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFilteredWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachFilteredWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
+            [](auto name) {
+                return wxUI::Button { std::get<0>(name), std::get<1>(name) };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachFilteredWithID);
     }
     SECTION("ForEach.Range.Tuple.Multiarg")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                               [](auto identity, auto name) {
-                                   return wxUI::Button { identity, name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFilteredWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFilteredWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachFilteredWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachFilteredWithID);
     }
     SECTION("ForEach.InitializerList.T")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               { "A", "B", "C" },
-                               [](auto name) {
-                                   return wxUI::Button { name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                { "A", "B", "C" },
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                { "A", "B", "C" },
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            { "A", "B", "C" },
+            [](auto name) {
+                return wxUI::Button { name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEach);
     }
     SECTION("ForEach.lvalue.InitializerList.T")
     {
         auto data = { "A", "B", "C" };
-        auto builder = [](auto name) {
+        TestParent frame;
+        wxUI::VForEach(data, [](auto name) {
             return wxUI::Button { name };
-        };
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               data,
-                               [](auto name) {
-                                   return wxUI::Button { name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               std::vector { "A", "B", "C" },
-                               builder } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach { data, builder } }.fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
+        }).fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEach);
     }
     SECTION("ForEach.InitializerList.Tuple")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                               [](auto name) {
-                                   return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
+            [](auto name) {
+                return wxUI::Button { std::get<0>(name), std::get<1>(name) };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachWithID);
     }
     SECTION("ForEach.InitializerList.Tuple.Multiarg")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                               [](auto identity, auto name) {
-                                   return wxUI::Button { identity, name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachWithID);
     }
     SECTION("ForEach.Flags.Vector.T")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               std::vector { "A", "B", "C" },
-                               [](auto name) {
-                                   return wxUI::Button { name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                std::vector { "A", "B", "C" },
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                std::vector { "A", "B", "C" },
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            std::vector { "A", "B", "C" },
+            [](auto name) {
+                return wxUI::Button { name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEach);
     }
     SECTION("ForEach.Flags.lvalue.Vector.T")
     {
         auto data = std::vector { "A", "B", "C" };
-        auto builder = [](auto name) {
-            return wxUI::Button { name };
-        };
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               data,
-                               [](auto name) {
-                                   return wxUI::Button { name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               std::vector { "A", "B", "C" },
-                               builder } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach { wxSizerFlags {}, data, builder } }.fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            data,
+            [](auto name) {
+                return wxUI::Button { name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEach);
     }
     SECTION("ForEach.Flags.Vector.Tuple")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                               [](auto name) {
-                                   return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
+            [](auto name) {
+                return wxUI::Button { std::get<0>(name), std::get<1>(name) };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachWithID);
     }
     SECTION("ForEach.Flags.Vector.Tuple.Multiarg")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                               [](auto identity, auto name) {
-                                   return wxUI::Button { identity, name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } },
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachWithID);
     }
     SECTION("ForEach.Flags.Range.T")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
-                               [](auto name) {
-                                   return wxUI::Button { name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachFiltered);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; }),
+            [](auto name) {
+                return wxUI::Button { name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachFiltered);
     }
     SECTION("ForEach.Flags.lvalue.Range.T")
     {
         auto data = std::vector { "A", "B", "C" } | std::views::filter([](auto str) { return str[0] == 'A'; });
-        auto builder = [](auto name) {
-            return wxUI::Button { name };
-        };
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               data,
-                               [](auto name) {
-                                   return wxUI::Button { name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               std::vector { "A", "B", "C" },
-                               builder } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach { wxSizerFlags {}, data, builder } }.fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFiltered);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachFiltered);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            data,
+            [](auto name) {
+                return wxUI::Button { name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachFiltered);
     }
     SECTION("ForEach.Flags.Range.Tuple")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                               [](auto name) {
-                                   return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFilteredWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFilteredWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachFilteredWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
+            [](auto name) {
+                return wxUI::Button { std::get<0>(name), std::get<1>(name) };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachFilteredWithID);
     }
     SECTION("ForEach.Flags.Range.Tuple.Multiarg")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                               [](auto identity, auto name) {
-                                   return wxUI::Button { identity, name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFilteredWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachFilteredWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachFilteredWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            std::vector<std::tuple<wxWindowID, std::string>> { { wxID_CANCEL, "A" }, { wxID_OK, "B" }, { wxID_APPLY, "C" } } | std::views::filter([](auto item) { return std::get<1>(item)[0] == 'A'; }),
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachFilteredWithID);
     }
     SECTION("ForEach.Flags.InitializerList.T")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               { "A", "B", "C" },
-                               [](auto name) {
-                                   return wxUI::Button { name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                { "A", "B", "C" },
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                { "A", "B", "C" },
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            { "A", "B", "C" },
+            [](auto name) {
+                return wxUI::Button { name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEach);
     }
     SECTION("ForEach.Flags.lvalue.InitializerList.T")
     {
         auto data = { "A", "B", "C" };
-        auto builder = [](auto name) {
-            return wxUI::Button { name };
-        };
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               data,
-                               [](auto name) {
-                                   return wxUI::Button { name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                data,
-                [](auto name) {
-                    return wxUI::Button { name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               std::vector { "A", "B", "C" },
-                               builder } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                std::vector { "A", "B", "C" },
-                builder)
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach { wxSizerFlags {}, data, builder } }.fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEach);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(wxSizerFlags {}, data, builder).fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEach);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            data,
+            [](auto name) {
+                return wxUI::Button { name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEach);
     }
     SECTION("ForEach.Flags.InitializerList.Tuple")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                               [](auto name) {
-                                   return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                [](auto name) {
-                    return wxUI::Button { std::get<0>(name), std::get<1>(name) };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
+            [](auto name) {
+                return wxUI::Button { std::get<0>(name), std::get<1>(name) };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachWithID);
     }
     SECTION("ForEach.Flags.InitializerList.Tuple.Multiarg")
     {
-        {
-            TestParent frame;
-            wxUI::VSizer { wxUI::ForEach {
-                               wxSizerFlags {},
-                               { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                               [](auto identity, auto name) {
-                                   return wxUI::Button { identity, name };
-                               } } }
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::VForEach(
-                wxSizerFlags {},
-                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseVForEachWithID);
-        }
-        {
-            TestParent frame;
-            wxUI::HForEach(
-                wxSizerFlags {},
-                { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
-                [](auto identity, auto name) {
-                    return wxUI::Button { identity, name };
-                })
-                .fitTo(&frame);
-            CHECK(frame.dump() == kCaseHForEachWithID);
-        }
+        TestParent frame;
+        wxUI::VForEach(
+            wxSizerFlags {},
+            { std::tuple<wxWindowID, std::string> { wxID_CANCEL, "A" }, std::tuple<wxWindowID, std::string> { wxID_OK, "B" }, std::tuple<wxWindowID, std::string> { wxID_APPLY, "C" } },
+            [](auto identity, auto name) {
+                return wxUI::Button { identity, name };
+            })
+            .fitTo(&frame);
+        CHECK(frame.dump() == kCaseVForEachWithID);
     }
 }
 
