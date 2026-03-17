@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Check that wxUI.hpp includes all top-level headers from include/wxUI/
+# This ensures the "include everything" header is complete
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+ROOT_DIR="${SCRIPT_DIR}/.."
+
+# Get all headers except wxUI.hpp itself
+ALL_HEADERS=$(find "${ROOT_DIR}/include/wxUI" -maxdepth 1 -name "*.hpp" -type f ! -name "wxUI.hpp" | xargs -n1 basename | sort)
+
+# Get headers included in wxUI.hpp
+INCLUDED_HEADERS=$(grep "^#include <wxUI/" "${ROOT_DIR}/include/wxUI/wxUI.hpp" | sed 's/.*<wxUI\///' | sed 's/>//' | sort)
+
+# Find missing headers
+MISSING=$(comm -23 <(echo "$ALL_HEADERS") <(echo "$INCLUDED_HEADERS"))
+
+if [ -n "$MISSING" ]; then
+    echo "Error: wxUI.hpp is missing the following headers:"
+    echo "$MISSING"
+    echo ""
+    echo "These headers should be added to include/wxUI/wxUI.hpp in alphabetical order."
+    exit 1
+fi
+
+echo "✓ All headers are included in wxUI.hpp"
+exit 0

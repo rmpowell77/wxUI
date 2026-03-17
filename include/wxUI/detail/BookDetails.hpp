@@ -104,4 +104,56 @@ BookItem(wxUI_String, wxString const& caption, Item&& item) -> BookItem<Item>;
 template <details::SizerItem Item>
 BookItem(wxUI_String, wxString const& caption, bool select, Item&& item) -> BookItem<Item>;
 
+namespace details {
+
+    template <typename Book, SizerItem... Items>
+    struct BookCtrl {
+        template <SizerItem... UItems>
+        explicit BookCtrl(UItems&&... items)
+            : items_(std::forward_as_tuple(std::forward<UItems>(items)...))
+        {
+        }
+
+        template <SizerItem... UItems>
+        explicit BookCtrl(wxSizerFlags const& flags, UItems&&... items)
+            : flags_(flags)
+            , items_(std::forward_as_tuple(std::forward<UItems>(items)...))
+        {
+        }
+
+        template <typename Parent, typename Sizer>
+        auto createAndAdd(Parent* parent, Sizer* parentSizer, wxSizerFlags const& parentFlags)
+        {
+            auto currentFlags = flags_.value_or(parentFlags);
+            auto* book = createAndAddPages(parent, currentFlags);
+            parentSizer->Add(book, currentFlags);
+            return book;
+        }
+
+    private:
+        template <typename Parent>
+        auto constructBook(Parent* parent) const
+        {
+            return customizations::ParentCreate<Book>(parent, wxID_ANY);
+        }
+
+        template <typename Parent>
+        auto createAndAddPages(Parent* parent, wxSizerFlags const& flags)
+        {
+            auto* book = constructBook(parent);
+
+            std::apply([book, flags](auto&&... tupleArg) {
+                (createAndAddVisiter(tupleArg, book, static_cast<wxSizer*>(nullptr), flags), ...);
+            },
+                items_);
+
+            return book;
+        }
+
+        std::optional<wxSizerFlags> flags_ {};
+        std::tuple<Items...> items_ {};
+    };
+
+} // namespace details
+
 }

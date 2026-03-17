@@ -2,7 +2,7 @@
 
 Did all the examples build and run?
 
-Did you run the commands `checklists/check_copyright` and `checklists/check_md`?
+Did you run the commands `checklists/check_copyright`, `checklists/check_md`, and `checklists/check_wxui_includes`?
 
 Did you make sure the LICENSE.md is the correct date?
 
