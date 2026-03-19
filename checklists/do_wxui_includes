@@ -2,6 +2,7 @@
 
 # Auto-fix wxUI.hpp to include all top-level headers from include/wxUI/
 # This script regenerates the #include section with all headers in alphabetical order
+# while preserving the license header at the top of the file
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ROOT_DIR="${SCRIPT_DIR}/.."
@@ -13,29 +14,32 @@ ALL_HEADERS=$(find "${ROOT_DIR}/include/wxUI" -maxdepth 1 -name "*.hpp" -type f 
 # Backup the original file
 cp "${WXUI_HPP}" "${WXUI_HPP}.bak"
 
-# Extract the header and footer (before and after the includes)
-sed -n '1,/^#include <wxUI\/version.hpp>/p' "${WXUI_HPP}.bak" | head -n -1 > "${WXUI_HPP}.tmp.header"
-echo "" >> "${WXUI_HPP}.tmp.header"
-echo '#include <wxUI/version.hpp>' >> "${WXUI_HPP}.tmp.header"
-echo "" >> "${WXUI_HPP}.tmp.header"
+# Extract the license header and #pragma once (everything before the first #include)
+# This preserves the copyright notice at the top of the file
+awk '/^#include/ {exit} {print}' "${WXUI_HPP}.bak" > "${WXUI_HPP}.tmp.header"
 
-# Generate all includes in alphabetical order (skip version.hpp as it's already at the top)
-echo "$ALL_HEADERS" | while read header; do
-    if [ "$header" != "version.hpp" ] && [ "$header" != "wxUITypes.hpp" ]; then
-        echo "#include <wxUI/$header>"
+# Generate all includes in alphabetical order
+# Put version.hpp first, then all others, then wxUITypes.hpp last
+{
+    echo '#include <wxUI/version.hpp>'
+    echo ''
+    
+    echo "$ALL_HEADERS" | while read header; do
+        if [ "$header" != "version.hpp" ] && [ "$header" != "wxUITypes.hpp" ]; then
+            echo "#include <wxUI/$header>"
+        fi
+    done
+    
+    if echo "$ALL_HEADERS" | grep -q "wxUITypes.hpp"; then
+        echo "#include <wxUI/wxUITypes.hpp>"
     fi
-done > "${WXUI_HPP}.tmp.includes"
+} > "${WXUI_HPP}.tmp.includes"
 
-# Add wxUITypes.hpp at the end (if it exists)
-if echo "$ALL_HEADERS" | grep -q "wxUITypes.hpp"; then
-    echo "#include <wxUI/wxUITypes.hpp>" >> "${WXUI_HPP}.tmp.includes"
-fi
-
-# Combine header, includes
+# Combine license header and includes to create the complete file
 cat "${WXUI_HPP}.tmp.header" "${WXUI_HPP}.tmp.includes" > "${WXUI_HPP}"
 
-# Clean up
+# Clean up temporary files
 rm -f "${WXUI_HPP}.tmp.header" "${WXUI_HPP}.tmp.includes" "${WXUI_HPP}.bak"
 
-echo "✓ Updated wxUI.hpp with all headers"
+echo "✓ Updated wxUI.hpp with all headers (license preserved)"
 "${SCRIPT_DIR}/check_wxui_includes"
