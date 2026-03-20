@@ -288,6 +288,7 @@ struct TestParent {
     std::optional<wxBitmap> bitmap {};
     std::optional<std::vector<std::string>> choices {};
     std::optional<int> value {};
+    std::optional<wxCheckBoxState> value3State {};
     std::optional<std::pair<int, int>> range {};
     std::optional<int> majorDim {};
 
@@ -325,6 +326,10 @@ struct TestParent {
     void SetValue(bool value)
     {
         log.push_back(std::format("SetValue:{}", value));
+    }
+    void Set3StateValue(wxCheckBoxState value)
+    {
+        log.push_back(std::format("Set3StateValue:{}", value == wxCHK_UNCHECKED ? "unchecked" : (value == wxCHK_CHECKED ? "checked" : "undetermined")));
     }
     void Wrap(bool value)
     {
@@ -383,6 +388,9 @@ struct std::formatter<wxUITests::TestParent, char> {
         }
         if (c.value.has_value()) {
             std::format_to(ctx.out(), ", value={}", *c.value);
+        }
+        if (c.value3State.has_value()) {
+            std::format_to(ctx.out(), ", value3State={}", *c.value == wxCHK_UNCHECKED ? "unchecked" : (*c.value == wxCHK_CHECKED ? "checked" : "undetermined"));
         }
         if (c.range.has_value()) {
             std::format_to(ctx.out(), ", range=[{},{}]", c.range->first, c.range->second);
