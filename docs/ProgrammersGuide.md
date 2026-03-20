@@ -307,19 +307,17 @@ This table shows which Layout to use for the desired behavior
 
 #### ForEach
 
-Often times you will need to layout several widgets which only are different in their wxWindowID and Name.  Or perhaps there are cases where the items to be laid out are dynamic.  `ForEach` allows you to specify a range of values or `std::tuples` that are arguments to a closure that will returns a *Controller*.  These will then be added one at a time.
+Often times you will need to layout several widgets which only are different in their wxWindowID and Name.  Or perhaps there are cases where the items to be laid out are dynamic.  `HForEach` and `VForEach` allows you to specify a range of values or `std::tuples` that are arguments to a closure that will returns a *Controller*.  These will then be added one at a time.
 
 ```
-        HSizer {
-            ForEach {
-                { wxART_PLUS, wxART_MINUS, wxART_FIND },
-                [](auto identity) {
-                    return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
-                } },
-        },
+        HForEach(
+            { wxART_PLUS, wxART_MINUS, wxART_FIND },
+            [](auto identity) {
+                return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
+            }),
 ```
 
-*Ranges* are valid arguments for `ForEach`, which allows you to build up complicated layouts at run time.
+*Ranges* are valid arguments for `HForEach` and `VForEach`, which allows you to build up complicated layouts at run time.
 
 ```
         HForEach(
@@ -329,15 +327,7 @@ Often times you will need to layout several widgets which only are different in 
             }),
 ```
 
-Often times you would be laying out a set of buttons in a horizontal sizer.  The `HForEach` and `VForEach` functions are provided as convenience functions:
-
-```
-        HForEach(
-            std::vector { wxART_PLUS, wxART_MINUS, wxART_FIND },
-            [](auto identity) {
-                return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
-            }),
-```
+`HForEach` utilizes a Horizontal Sizer and `VForEach` uses a Vertical Sizer.
 
 #### BookCtrl
 
