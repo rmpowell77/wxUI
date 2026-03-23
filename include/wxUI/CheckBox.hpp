@@ -58,11 +58,23 @@ struct CheckBox {
 
     auto withValue(bool value) & -> CheckBox&
     {
-        value_ = value;
+        value_ = value ? wxCHK_CHECKED : wxCHK_UNCHECKED;
         return *this;
     }
 
     auto withValue(bool value) && -> CheckBox&&
+    {
+        value_ = value ? wxCHK_CHECKED : wxCHK_UNCHECKED;
+        return std::move(*this);
+    }
+
+    auto with3StateValue(wxCheckBoxState value) & -> CheckBox&
+    {
+        value_ = value;
+        return *this;
+    }
+
+    auto with3StateValue(wxCheckBoxState value) && -> CheckBox&&
     {
         value_ = value;
         return std::move(*this);
@@ -98,14 +110,14 @@ struct CheckBox {
 private:
     details::WidgetDetails<CheckBox, wxCheckBox> details_;
     wxString text_;
-    bool value_ = false;
+    wxCheckBoxState value_ = wxCHK_UNCHECKED;
 
     template <typename Parent>
     auto createImpl()
     {
         return [&text = text_, value = value_](Parent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style) {
             auto* widget = customizations::ParentCreate<underlying_t>(parent, id, text, pos, size, style);
-            widget->SetValue(value);
+            widget->Set3StateValue(value);
             return widget;
         };
     }
