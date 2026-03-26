@@ -270,13 +270,11 @@ ForEachExample::ForEachExample(wxWindow* parent)
     using namespace std::literals;
     VSizer {
         wxSizerFlags {}.Border(wxALL, 2),
-        HSizer {
-            ForEach {
-                std::vector<std::string> { "A", "B", "C" },
-                [](auto name) {
-                    return wxUI::Button { name };
-                } },
-        },
+        HForEach(
+            std::vector<std::string> { "A", "B", "C" },
+            [](auto name) {
+                return wxUI::Button { name };
+            }),
         HForEach(
             std::vector<std::string> { "A", "B", "C" },
             [](auto name) {
@@ -318,13 +316,11 @@ ForEachExample::ForEachExample(wxWindow* parent)
                 return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
             }),
         // snippet ForEachExample
-        HSizer {
-            ForEach {
-                { wxART_PLUS, wxART_MINUS, wxART_FIND },
-                [](auto identity) {
-                    return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
-                } },
-        },
+        HForEach(
+            { wxART_PLUS, wxART_MINUS, wxART_FIND },
+            [](auto identity) {
+                return wxUI::BitmapButton { wxArtProvider::GetBitmap(identity) };
+            }),
         // endsnippet ForEachExample
         // snippet HForEach
         HForEach(
