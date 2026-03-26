@@ -33,10 +33,10 @@ namespace wxUI {
 
 // clang-format off
 #define WXUI_VERSION_MAJOR 0
-#define WXUI_VERSION_MINOR 3
+#define WXUI_VERSION_MINOR 4
 #define WXUI_VERSION_PATCH 0
 #define WXUI_VERSION_TWEAK 0
-#define WXUI_VERSION_STRING "0.3.0"
+#define WXUI_VERSION_STRING "0.4.0"
 // clang-format on
 
 struct Version {

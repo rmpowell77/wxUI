@@ -21,6 +21,14 @@ docs/src/make_md.py docs/src/docs/ProgrammersGuide.md > docs/ProgrammersGuide.md
 
 wxUI uses CMake and Github actions to automate the release process.  When you push a tag for the repository, github will build and package the release.
 
+## Version Workflow
+
+**Important:** The workflow is:
+1. Update `version.hpp` first (using `update-version.sh`)
+2. Commit the change
+3. Manually create the version tag
+4. Push to trigger the release
+
 The current version can by found by running `git describe --tags --abbrev=0`.  You should pick an appropriate incremented version, trying to follow the guidance of [https://semver.org](https://semver.org).  In all commands below, substitute that number for `$VERS` (meaning when you read `$VERS`).
 
  1. Prebuild the project to make sure its working
@@ -33,7 +41,9 @@ The current version can by found by running `git describe --tags --abbrev=0`.  Y
 $ ./scripts/update-version.sh $VERS
 ```
 
-This updates `include/wxUI/version.hpp` with the new version number from the specified version.
+This updates `include/wxUI/version.hpp` by generating it from scratch with the specified version.
+
+**Note:** This script generates the header file directly, not from a template. The version is embedded in the file that gets committed to the repository.
 
  4. Commit the version change
 
@@ -42,15 +52,13 @@ $ git add include/wxUI/version.hpp LATEST_RELEASE_NOTES.md
 $ git commit -m "Bump version to $VERS"
 ```
 
-**Note:** If you have git hooks installed (via `./scripts/install-hooks.sh`), the commit will automatically create tag `v$VERS` for you!
-
- 5. If you don't have hooks installed, manually tag the commit
+ 5. Tag the commit
 
 ```
 $ git tag -a v$VERS -m "wxUI-v$VERS"
 ```
 
- 6. Push everything to trigger the release
+ 6. Push to trigger the release
 
 ```
 $ git push origin main --tags
