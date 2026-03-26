@@ -92,32 +92,3 @@ if [ "$SOURCE_FILES_STAGED" = true ]; then
     
     popd > /dev/null
 fi
-
-# =============================================================================
-# Version Tagging
-# =============================================================================
-
-# Check if version.hpp is being committed
-if git diff --cached --name-only | grep -q "^$VERSION_FILE$"; then
-    # Extract version from staged version.hpp
-    NEW_VERSION=$(git diff --cached "$VERSION_FILE" | grep "^+#define WXUI_VERSION_STRING" | cut -d'"' -f2)
-    
-    if [ -n "$NEW_VERSION" ]; then
-        TAG_NAME="v$NEW_VERSION"
-        
-        # Check if tag already exists
-        if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
-            echo "WARNING: Tag $TAG_NAME already exists, skipping tag creation"
-            rm -f "$PROJECT_ROOT/.git/WXUI_PENDING_TAG"
-        else
-            # Store version for post-commit hook to create tag
-            echo "$NEW_VERSION" > "$PROJECT_ROOT/.git/WXUI_PENDING_TAG"
-            echo ""
-            echo "================================================"
-            echo "   Version update detected: $NEW_VERSION"
-            echo "   Tag $TAG_NAME will be created after commit completes"
-            echo "================================================"
-            echo ""
-        fi
-    fi
-fi

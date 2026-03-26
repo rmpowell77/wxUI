@@ -2,7 +2,7 @@
 # Copyright (c) 2025 Richard Powell
 #
 # Install git hooks for wxUI project
-# This script sets up automatic version.hpp updates when tags are created
+# This script sets up automatic documentation regeneration when source files change
 
 set -e
 
@@ -21,6 +21,16 @@ fi
 
 # Create hooks directory if it doesn't exist
 mkdir -p "$HOOKS_TARGET"
+
+# Remove obsolete hooks that are no longer needed
+OBSOLETE_HOOKS="post-commit"
+for hook_name in $OBSOLETE_HOOKS; do
+    target="$HOOKS_TARGET/$hook_name"
+    if [ -f "$target" ]; then
+        echo "  Removing obsolete hook: $hook_name"
+        rm -f "$target"
+    fi
+done
 
 # Install each hook
 for hook in "$HOOKS_SOURCE"/*; do
@@ -49,16 +59,11 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "✓ Git hooks installed successfully!"
 echo ""
 echo "Installed hooks:"
-echo "  • pre-commit: Detects version.hpp changes and schedules tag creation"
-echo "  • post-commit: Creates the version tag after commit completes"
+echo "  • pre-commit: Auto-regenerates documentation when source files change"
 echo ""
-echo "Release workflow:"
-echo "  1. Run: ./scripts/update-version.sh v1.2.3"
-echo "  2. Stage: git add include/wxUI/version.hpp"
-echo "  3. Commit: git commit -m 'Bump version to 1.2.3'"
-echo "  4. Hooks automatically create tag v1.2.3"
-echo "  5. Push: git push origin main --tags"
+echo "The hooks will automatically update README.md and docs/ProgrammersGuide.md"
+echo "when you commit changes to source files in docs/src/ or examples/."
 echo ""
-echo "You can also manually update version.hpp anytime by running:"
-echo "  ./scripts/update-version.sh"
+echo "To manually update documentation, run:"
+echo "  ./checklists/do_md"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
