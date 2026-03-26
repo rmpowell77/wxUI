@@ -22,36 +22,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// This is an auto-generated file. Run checklists/do_buildtests to regenerate.
+// This test verifies that wxUI headers properly "zap" (undefine) internal helper
+// macros and don't leak them into user code. This is critical for macro hygiene.
 
-// This header verifies that all wxUI helper macros have been properly "zapped"
-// (undefined) after including a wxUI header. Include this file after including
-// any wxUI header to ensure the header is self-contained and doesn't leak macros.
+#include <wxUI/wxUI.hpp>
+
+// After including wxUI headers, all internal macros should be undefined.
+// If any of these static_asserts fail, it means a header forgot to include
+// ZapMacros.hpp at the end.
 
 #if defined(WXUI_RULE_OF_SIX_BOILERPLATE)
-#error Missed zapping WXUI_RULE_OF_SIX_BOILERPLATE
+#error "WXUI_RULE_OF_SIX_BOILERPLATE leaked from wxUI headers - missing ZapMacros.hpp include"
 #endif
 
 #if defined(WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE)
-#error Missed zapping WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE
+#error "WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE leaked from wxUI headers - missing ZapMacros.hpp include"
 #endif
 
 #if defined(WXUI_WIDGET_CREATE_BOILERPLATE)
-#error Missed zapping WXUI_WIDGET_CREATE_BOILERPLATE
+#error "WXUI_WIDGET_CREATE_BOILERPLATE leaked from wxUI headers - missing ZapMacros.hpp include"
 #endif
 
 #if defined(WXUI_FORWARD_TO_DETAILS)
-#error Missed zapping WXUI_FORWARD_TO_DETAILS
+#error "WXUI_FORWARD_TO_DETAILS leaked from wxUI headers - missing ZapMacros.hpp include"
 #endif
 
 #if defined(WXUI_FORWARD_BIND_TO_DETAILS)
-#error Missed zapping WXUI_FORWARD_BIND_TO_DETAILS
+#error "WXUI_FORWARD_BIND_TO_DETAILS leaked from wxUI headers - missing ZapMacros.hpp include"
 #endif
 
 #if defined(WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS)
-#error Missed zapping WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS
+#error "WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS leaked from wxUI headers - missing ZapMacros.hpp include"
 #endif
 
 #if defined(WXUI_FORWARD_ALL_TO_DETAILS)
-#error Missed zapping WXUI_FORWARD_ALL_TO_DETAILS
+#error "WXUI_FORWARD_ALL_TO_DETAILS leaked from wxUI headers - missing ZapMacros.hpp include"
 #endif
+
+// Compile-time test - no runtime assertions needed.
+// The presence of this file in the build verifies macro hygiene.
