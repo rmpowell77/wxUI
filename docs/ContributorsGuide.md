@@ -585,21 +585,18 @@ Understanding the CI pipeline helps you anticipate what checks your PR will face
    - Verifies documentation is up-to-date with source
    - Runs: `./checklists/check_md`
 
-3. **BuildTests Check** (`buildtests-check`)
-   - Verifies build test files are up-to-date
-   - Runs: `./checklists/check_buildtests`
-
-4. **Build Matrix** (`build`)
+3. **Build Matrix** (`build`)
    - **Platforms**: macOS, Ubuntu Linux, Windows
    - **Configurations**: Debug, Release
    - Builds with tests and examples enabled
    - Runs all unit tests via CTest
+   - Header self-containment is automatically verified via CMake's `VERIFY_INTERFACE_HEADER_SETS`
    - Uses vcpkg for dependency management
 
-5. **Summary**
+4. **Summary**
    - Aggregates results from all checks
 
-6. **Release** (on version tags)
+5. **Release** (on version tags)
    - Creates GitHub release with notes from `LATEST_RELEASE_NOTES.md`
 
 ### Passing CI on First Try
@@ -630,7 +627,6 @@ ctest --test-dir build --output-on-failure
 # 4. Check that everything is as expected
 ./checklists/check_copyright
 ./checklists/check_md
-./checklists/check_buildtests
 
 # 5. Manual smoke test
 # Run the ExtendedExample app and interact with your changes

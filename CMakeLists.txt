@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.28)
 
 # Initial project declaration (version will be updated from git tags)
 project(wxUI)
@@ -36,42 +36,59 @@ include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(
-  wxUI
+add_library(wxUI INTERFACE)
+
+# Use FILE_SET to enable automatic header verification
+target_sources(wxUI
   INTERFACE
-  include/wxUI/wxUI.hpp
-  include/wxUI/wxUITypes.hpp
-  include/wxUI/version.hpp
-  include/wxUI/detail/BindInfo.hpp
-  include/wxUI/detail/LayoutDetails.hpp
-  include/wxUI/detail/HelperMacros.hpp
-  include/wxUI/detail/ZapMacros.hpp
-  include/wxUI/Bitmap.hpp
-  include/wxUI/BitmapToggleButton.hpp
-  include/wxUI/BitmapComboBox.hpp
-  include/wxUI/BitmapButton.hpp
-  include/wxUI/Button.hpp
-  include/wxUI/CheckBox.hpp
-  include/wxUI/Choice.hpp
-  include/wxUI/ComboBox.hpp
-  include/wxUI/Custom.hpp
-  include/wxUI/ForEach.hpp
-  include/wxUI/Factory.hpp
-  include/wxUI/Gauge.hpp
-  include/wxUI/GetterSetter.hpp
-  include/wxUI/Hyperlink.hpp
-  include/wxUI/Layout.hpp
-  include/wxUI/LayoutIf.hpp
-  include/wxUI/Line.hpp
-  include/wxUI/Menu.hpp
-  include/wxUI/RadioBox.hpp
-  include/wxUI/SpinCtrl.hpp
-  include/wxUI/Splitter.hpp
-  include/wxUI/Slider.hpp
-  include/wxUI/Text.hpp
-  include/wxUI/TextCtrl.hpp
-  include/wxUI/Widget.hpp
-  include/wxUI/Wrapper.hpp
+  FILE_SET HEADERS
+  BASE_DIRS include
+  FILES
+    include/wxUI/Bitmap.hpp
+    include/wxUI/BitmapButton.hpp
+    include/wxUI/BitmapComboBox.hpp
+    include/wxUI/BitmapToggleButton.hpp
+    include/wxUI/BookCtrl.hpp
+    include/wxUI/Button.hpp
+    include/wxUI/CheckBox.hpp
+    include/wxUI/Choice.hpp
+    include/wxUI/ComboBox.hpp
+    include/wxUI/Custom.hpp
+    include/wxUI/Customizations.hpp
+    include/wxUI/Factory.hpp
+    include/wxUI/ForEach.hpp
+    include/wxUI/Gauge.hpp
+    include/wxUI/Generic.hpp
+    include/wxUI/GetterSetter.hpp
+    include/wxUI/Hyperlink.hpp
+    include/wxUI/Layout.hpp
+    include/wxUI/LayoutIf.hpp
+    include/wxUI/Line.hpp
+    include/wxUI/ListBox.hpp
+    include/wxUI/Menu.hpp
+    include/wxUI/Proxy.hpp
+    include/wxUI/RadioBox.hpp
+    include/wxUI/Slider.hpp
+    include/wxUI/SpinCtrl.hpp
+    include/wxUI/Splitter.hpp
+    include/wxUI/Text.hpp
+    include/wxUI/TextCtrl.hpp
+    include/wxUI/version.hpp
+    include/wxUI/Widget.hpp
+    include/wxUI/Wrapper.hpp
+    include/wxUI/wxUI.hpp
+    include/wxUI/wxUITypes.hpp
+    include/wxUI/detail/BindInfo.hpp
+    include/wxUI/detail/BookDetails.hpp
+    include/wxUI/detail/HelperMacros.hpp
+    include/wxUI/detail/LayoutDetails.hpp
+    include/wxUI/detail/ZapMacros.hpp
+)
+
+# Enable automatic header self-containment verification
+# This replaces the manual BuildTests with CMake's native capability
+set_target_properties(wxUI PROPERTIES
+  VERIFY_INTERFACE_HEADER_SETS ON
 )
 
 add_library(wxUI::wxUI ALIAS wxUI)
@@ -89,11 +106,7 @@ target_include_directories(
 install(
   TARGETS wxUI
   EXPORT wxUITargets
-)
-
-install(
-  DIRECTORY ${PROJECT_SOURCE_DIR}/include/
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILE_SET HEADERS
 )
 
 install(

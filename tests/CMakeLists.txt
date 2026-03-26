@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.28)
 
 find_package(Catch2 CONFIG REQUIRED)
 
@@ -23,6 +23,7 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LayoutIfTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_LineTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_ListBoxTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_MacroHygieneTests.cpp
   # Temporarily disabled Menu tests to isolate Windows ID management issue
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_MenuTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_RadioBoxTests.cpp
@@ -34,8 +35,6 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_VSplitterTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_WrapperTests.cpp
 )
-
-add_subdirectory(BuildTests)
 
 wxUI_SetupCompilerForTarget(wxUI_Tests)
 
