@@ -36,6 +36,7 @@ SOFTWARE.
 #include <wx/checkbox.h>
 #include <wx/choice.h>
 #include <wx/choicebk.h>
+#include <wx/clrpicker.h>
 #include <wx/combobox.h>
 #include <wx/gauge.h>
 #include <wx/hyperlink.h>
@@ -289,6 +290,7 @@ struct TestParent {
     std::optional<std::vector<std::string>> choices {};
     std::optional<int> value {};
     std::optional<wxCheckBoxState> value3State {};
+    std::optional<wxColour> color {};
     std::optional<std::pair<int, int>> range {};
     std::optional<int> majorDim {};
 
@@ -390,7 +392,10 @@ struct std::formatter<wxUITests::TestParent, char> {
             std::format_to(ctx.out(), ", value={}", *c.value);
         }
         if (c.value3State.has_value()) {
-            std::format_to(ctx.out(), ", value3State={}", *c.value == wxCHK_UNCHECKED ? "unchecked" : (*c.value == wxCHK_CHECKED ? "checked" : "undetermined"));
+            std::format_to(ctx.out(), ", value3State={}", *c.value3State == wxCHK_UNCHECKED ? "unchecked" : (*c.value3State == wxCHK_CHECKED ? "checked" : "undetermined"));
+        }
+        if (c.color.has_value()) {
+            std::format_to(ctx.out(), ", color={}", c.color->GetAsString(wxC2S_NAME | wxC2S_HTML_SYNTAX).utf8_string());
         }
         if (c.range.has_value()) {
             std::format_to(ctx.out(), ", range=[{},{}]", c.range->first, c.range->second);
@@ -635,6 +640,21 @@ struct ParentCreateImpl<wxChoice, wxUITests::TestParent> {
             .size = size,
             .style = style,
             .choices = std::move(tchoices),
+        });
+    }
+};
+
+template <>
+struct ParentCreateImpl<wxColourPickerCtrl, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxColour const& color, wxPoint pos, wxSize size, int64_t style)
+    {
+        return parent->add({
+            .type = "wxColourPickerCtrl",
+            .id = id,
+            .pos = pos,
+            .size = size,
+            .style = style,
+            .color = color,
         });
     }
 };

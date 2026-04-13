@@ -37,6 +37,7 @@
 #include <wxUI/Button.hpp>
 #include <wxUI/CheckBox.hpp>
 #include <wxUI/Choice.hpp>
+#include <wxUI/ColorPickerCtrl.hpp>
 #include <wxUI/ComboBox.hpp>
 #include <wxUI/Custom.hpp>
 #include <wxUI/Customizations.hpp>
