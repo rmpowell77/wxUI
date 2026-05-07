@@ -48,14 +48,14 @@ struct CalendarCtrl {
     template <typename Function>
     auto bind(Function func) & -> CalendarCtrl&
     {
-        details_.bind(wxEVT_COLOURPICKER_CHANGED, func);
+        details_.bind(wxEVT_CALENDAR_SEL_CHANGED, func);
         return *this;
     }
 
     template <typename Function>
     auto bind(Function func) && -> CalendarCtrl&&
     {
-        details_.bind(wxEVT_COLOURPICKER_CHANGED, func);
+        details_.bind(wxEVT_CALENDAR_SEL_CHANGED, func);
         return std::move(*this);
     }
 
