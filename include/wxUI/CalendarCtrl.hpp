@@ -75,10 +75,10 @@ private:
     }
 
 public:
-    WXUI_FORWARD_ALL_TO_DETAILS(ColorPickerCtrl)
+    WXUI_FORWARD_ALL_TO_DETAILS(CalendarCtrl)
 };
 
-WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(ColorPickerCtrl);
+WXUI_WIDGET_STATIC_ASSERT_BOILERPLATE(CalendarCtrl);
 }
 
 #include <wxUI/detail/ZapMacros.hpp>
