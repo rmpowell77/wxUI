@@ -15,6 +15,8 @@ docs/src/make_md.py docs/src/README.md > README.md
 docs/src/make_md.py docs/src/docs/ProgrammersGuide.md > docs/ProgrammersGuide.md 
 ```
 
+Did you verify the wxWidgets compatibility matrix is up to date in `.github/wxwidgets-versions.txt`?
+
 ---
 
 # How to release wxUI:
@@ -65,6 +67,8 @@ $ git push origin main --tags
 ```
 
 This should trigger the github action, which should publish release notes in Draft form.
+
+**Note:** Pushing a version tag will also trigger the wxWidgets Compatibility Matrix workflow, which will test wxUI against multiple wxWidgets versions (v3.2.2 through v3.2.6) on all supported platforms. This may take 30-60 minutes to complete. You can monitor progress at: https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_compatibility.yml
 
  7. Once the Release information looks good, Press the Publish Release button on github.
 

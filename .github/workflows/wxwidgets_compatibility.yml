@@ -1,0 +1,393 @@
+# wxWidgets Compatibility Testing Matrix
+# Tests wxUI against multiple wxWidgets versions across different platforms
+# Runs on:
+#   - Tagged releases (tags/v*)
+#   - Weekly schedule (every Monday at 00:00 UTC)
+#   - Manual trigger (workflow_dispatch)
+
+name: wxWidgets Compatibility Matrix
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - 'test-compat-*'  # Allow testing on branches named test-compat-*
+  schedule:
+    # Run weekly on Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+    inputs:
+      wxwidgets_versions:
+        description: 'Comma-separated list of wxWidgets tags to test (leave empty to use .github/wxwidgets-versions.txt)'
+        required: false
+        default: ''
+
+jobs:
+  matrix-setup:
+    name: Setup Test Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.get-versions.outputs.versions }}
+      wxui-version: ${{ steps.get-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get wxUI version
+        id: get-version
+        run: |
+          # Get latest tag or use commit SHA
+          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "dev-$(git rev-parse --short HEAD)")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Testing wxUI version: $VERSION"
+
+      - name: Read wxWidgets versions from config file
+        id: get-versions
+        run: |
+          # Check if manual versions were provided via workflow_dispatch
+          if [ -n "${{ github.event.inputs.wxwidgets_versions }}" ]; then
+            echo "Using manually specified versions from workflow input"
+            VERSIONS="${{ github.event.inputs.wxwidgets_versions }}"
+          else
+            echo "Reading versions from .github/wxwidgets-versions.txt"
+            # Read versions from .github/wxwidgets-versions.txt
+            # Skip comments and empty lines
+            VERSIONS=$(grep -v '^#' .github/wxwidgets-versions.txt | grep -v '^[[:space:]]*$' | tr '\n' ',' | sed 's/,$//')
+          fi
+          
+          echo "wxWidgets versions to test: $VERSIONS"
+          
+          # Convert to JSON array for matrix
+          JSON_VERSIONS=$(echo "$VERSIONS" | jq -R -c 'split(",")')
+          
+          echo "versions=$JSON_VERSIONS" >> $GITHUB_OUTPUT
+          echo "Testing matrix:"
+          echo "$JSON_VERSIONS" | jq '.'
+
+  compatibility-test:
+    name: Test ${{ matrix.name }} with wxWidgets ${{ matrix.wxwidgets-version }}
+    runs-on: ${{ matrix.os }}
+    needs: matrix-setup
+    strategy:
+      fail-fast: false
+      matrix:
+        wxwidgets-version: ${{ fromJson(needs.matrix-setup.outputs.versions) }}
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        build_type: [Release]
+        include:
+          - os: ubuntu-latest
+            name: "Ubuntu Latest GCC"
+          - os: macos-latest
+            name: "macOS Latest Clang"
+          - os: windows-latest
+            name: "Windows Latest MSVC"
+
+    steps:
+      - name: Checkout wxUI
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup build environment (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libgtk-3-dev freeglut3-dev \
+            libgl1-mesa-dev libglu1-mesa-dev xvfb ninja-build
+          gcc --version
+          g++ --version
+
+      - name: Setup build environment (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install ninja
+          clang --version
+
+      - name: Setup build environment (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install ninja
+          echo "Visual Studio environment:"
+          where cl
+
+      - name: Cache wxWidgets build
+        id: cache-wxwidgets
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/wxwidgets-install
+          key: wxwidgets-${{ matrix.os }}-${{ matrix.wxwidgets-version }}-${{ matrix.build_type }}-v2
+          restore-keys: |
+            wxwidgets-${{ matrix.os }}-${{ matrix.wxwidgets-version }}-
+
+      - name: Configure CMake
+        run: |
+          cmake -B ${{ github.workspace }}/build \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DWXUI_WITH_TESTS=ON \
+            -DWXUI_WITH_EXAMPLE=ON \
+            -DWXUI_FETCH_WXWIDGETS=ON \
+            -DWXUI_WXWIDGETS_GIT_TAG=${{ matrix.wxwidgets-version }} \
+            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/wxwidgets-install
+
+      - name: Build
+        run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }} --parallel
+
+      - name: Run tests (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          xvfb-run -a ctest --test-dir ${{ github.workspace }}/build \
+            -C ${{ matrix.build_type }} \
+            --output-on-failure \
+            --timeout 60
+        env:
+          LSAN_OPTIONS: suppressions=${{ github.workspace }}/tests/lsan.supp
+
+      - name: Run tests (macOS/Windows)
+        if: matrix.os != 'ubuntu-latest'
+        run: |
+          ctest --test-dir ${{ github.workspace }}/build \
+            -C ${{ matrix.build_type }} \
+            --output-on-failure \
+            --timeout 60
+
+      - name: Output test log on failure
+        if: failure()
+        run: |
+          if [ -f "${{ github.workspace }}/build/Testing/Temporary/LastTest.log" ]; then
+            cat "${{ github.workspace }}/build/Testing/Temporary/LastTest.log"
+          else
+            echo "Test log not found"
+          fi
+        shell: bash
+
+      - name: Generate test report
+        if: always()
+        run: |
+          mkdir -p ${{ github.workspace }}/test-reports
+          
+          # Create a simple JSON report
+          cat > ${{ github.workspace }}/test-reports/result.json << EOF
+          {
+            "wxui_version": "${{ needs.matrix-setup.outputs.wxui-version }}",
+            "wxwidgets_version": "${{ matrix.wxwidgets-version }}",
+            "platform": "${{ matrix.name }}",
+            "os": "${{ matrix.os }}",
+            "build_type": "${{ matrix.build_type }}",
+            "status": "${{ job.status }}",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
+          
+          cat ${{ github.workspace }}/test-reports/result.json
+        shell: bash
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}-${{ matrix.wxwidgets-version }}
+          path: ${{ github.workspace }}/test-reports/
+          retention-days: 90
+
+  generate-report:
+    name: Generate Compatibility Report
+    runs-on: ubuntu-latest
+    needs: [matrix-setup, compatibility-test]
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all test results
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ github.workspace }}/all-test-results
+          pattern: test-results-*
+
+      - name: Generate HTML report
+        run: |
+          mkdir -p ${{ github.workspace }}/compatibility-report
+          
+          cat > ${{ github.workspace }}/compatibility-report/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>wxUI - wxWidgets Compatibility Report</title>
+            <style>
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                background: #f5f5f5;
+              }
+              h1 {
+                color: #333;
+                border-bottom: 3px solid #0066cc;
+                padding-bottom: 10px;
+              }
+              .metadata {
+                background: white;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                overflow: hidden;
+              }
+              th, td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+              }
+              th {
+                background: #0066cc;
+                color: white;
+                font-weight: 600;
+              }
+              tr:hover {
+                background: #f8f9fa;
+              }
+              .status-success {
+                color: #28a745;
+                font-weight: bold;
+              }
+              .status-failure {
+                color: #dc3545;
+                font-weight: bold;
+              }
+              .status-cancelled {
+                color: #6c757d;
+                font-weight: bold;
+              }
+              .footer {
+                margin-top: 40px;
+                text-align: center;
+                color: #666;
+                font-size: 14px;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>🧪 wxUI - wxWidgets Compatibility Report</h1>
+            
+            <div class="metadata">
+              <p><strong>wxUI Version:</strong> ${{ needs.matrix-setup.outputs.wxui-version }}</p>
+              <p><strong>Test Date:</strong> $(date -u +"%Y-%m-%d %H:%M:%S UTC")</p>
+              <p><strong>GitHub Run:</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">${{ github.run_id }}</a></p>
+            </div>
+            
+            <h2>Test Results Matrix</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>wxWidgets Version</th>
+                  <th>Platform</th>
+                  <th>Status</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="results">
+                <!-- Results will be inserted here -->
+              </tbody>
+            </table>
+            
+            <div class="footer">
+              <p>Generated by wxUI Compatibility Testing Pipeline</p>
+              <p><a href="https://github.com/${{ github.repository }}">View on GitHub</a></p>
+            </div>
+            
+            <script>
+              // Parse and display results
+              const results = RESULTS_DATA;
+              const tbody = document.getElementById('results');
+              
+              results.forEach(result => {
+                const row = tbody.insertRow();
+                row.innerHTML = \`
+                  <td>\${result.wxwidgets_version}</td>
+                  <td>\${result.platform}</td>
+                  <td class="status-\${result.status}">\${result.status.toUpperCase()}</td>
+                  <td>\${result.timestamp}</td>
+                \`;
+              });
+            </script>
+          </body>
+          </html>
+          EOF
+          
+          # Collect all JSON results
+          find ${{ github.workspace }}/all-test-results -name "result.json" -exec cat {} \; | \
+            jq -s '.' > ${{ github.workspace }}/compatibility-report/results.json
+          
+          # Inject results into HTML
+          RESULTS_JSON=$(cat ${{ github.workspace }}/compatibility-report/results.json | jq -c '.')
+          sed -i "s|RESULTS_DATA|$RESULTS_JSON|g" ${{ github.workspace }}/compatibility-report/index.html
+          
+          echo "Report generated at: compatibility-report/index.html"
+
+      - name: Upload compatibility report
+        uses: actions/upload-artifact@v4
+        with:
+          name: wxwidgets-compatibility-report
+          path: ${{ github.workspace }}/compatibility-report/
+          retention-days: 90
+
+      - name: Generate summary
+        run: |
+          echo "## 🧪 wxWidgets Compatibility Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**wxUI Version:** ${{ needs.matrix-setup.outputs.wxui-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Test Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Parse results and create markdown table
+          echo "| wxWidgets Version | Platform | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------------|----------|--------|" >> $GITHUB_STEP_SUMMARY
+          
+          find ${{ github.workspace }}/all-test-results -name "result.json" | while read file; do
+            WX_VER=$(jq -r '.wxwidgets_version' "$file")
+            PLATFORM=$(jq -r '.platform' "$file")
+            STATUS=$(jq -r '.status' "$file")
+            
+            if [ "$STATUS" = "success" ]; then
+              STATUS_ICON="✅"
+            else
+              STATUS_ICON="❌"
+            fi
+            
+            echo "| $WX_VER | $PLATFORM | $STATUS_ICON $STATUS |" >> $GITHUB_STEP_SUMMARY
+          done
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📊 [Download Full Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+
+  summary:
+    name: Compatibility Test Summary
+    runs-on: ubuntu-latest
+    needs: [compatibility-test]
+    if: always()
+    steps:
+      - name: Check if all tests passed
+        run: |
+          if [ "${{ needs.compatibility-test.result }}" != "success" ]; then
+            echo "⚠️ Some compatibility tests failed or were cancelled"
+            echo "Check the detailed results above for more information"
+            exit 1
+          else
+            echo "✅ All compatibility tests passed!"
+          fi
