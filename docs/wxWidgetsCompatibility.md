@@ -133,6 +133,8 @@ Update minimum requirements if needed:
 - **wxWidgets**: 3.2.5 or later
 ```
 
+**Note:** If adding a new major/minor version (e.g., wxWidgets 3.4.0), consider creating a version-specific workflow like `.github/workflows/wxwidgets_3.4_compat.yml` for a dedicated badge. See the [Workflow Architecture](#workflow-architecture) section.
+
 6. **Commit and test:**
 
 ```bash
@@ -144,6 +146,49 @@ git push origin main
 Then manually trigger the workflow to verify.
 
 ## CI/CD Details
+
+### Workflow Architecture
+
+The compatibility testing uses a **reusable workflow** architecture:
+
+- **[`wxwidgets_compat_reusable.yml`](../.github/workflows/wxwidgets_compat_reusable.yml)** - Core test logic (reusable)
+- **[`wxwidgets_compatibility.yml`](../.github/workflows/wxwidgets_compatibility.yml)** - Comprehensive testing (all versions)
+- **[`wxwidgets_3.2_compat.yml`](../.github/workflows/wxwidgets_3.2_compat.yml)** - 3.2.x specific testing (for badge)
+- **[`wxwidgets_3.3_compat.yml`](../.github/workflows/wxwidgets_3.3_compat.yml)** - 3.3.x testing (when released)
+
+**Benefits:**
+- ✅ No code duplication - all workflows use the same test logic
+- ✅ Version-specific badges (e.g., "wxWidgets 3.2.x")
+- ✅ Easy to add new version families
+- ✅ Can reuse in other workflows (like regular CI)
+
+**Example: Using in your own workflow**
+```yaml
+jobs:
+  test-custom-versions:
+    uses: ./.github/workflows/wxwidgets_compat_reusable.yml
+    with:
+      wxwidgets_versions: '["v3.2.6", "v3.2.5"]'
+      workflow_name: 'My Custom Test'
+```
+
+**Example: Adding to regular CI (ci_automation.yml)**
+
+You can add a job to your regular CI to test against a specific wxWidgets version alongside vcpkg:
+
+```yaml
+jobs:
+  build:
+    # ... your existing vcpkg-based build ...
+
+  test-specific-wxwidgets:
+    uses: ./.github/workflows/wxwidgets_compat_reusable.yml
+    with:
+      wxwidgets_versions: '["v3.2.6"]'
+      workflow_name: 'CI with wxWidgets 3.2.6'
+```
+
+This ensures PRs are tested against both the vcpkg version and a pinned version like 3.2.6.
 
 ### Manual Triggering
 
