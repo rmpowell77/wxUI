@@ -1,0 +1,24 @@
+# wxWidgets 3.2.x Compatibility Testing
+# Tests wxUI specifically against wxWidgets 3.2.x versions, and provides a dedicated badge for 3.2.x compatibility
+# This means we run when a new tag is pushed, and regularly to make sure we're still compatible.
+
+name: wxWidgets 3.2.x Compatibility
+
+on:
+  push:
+    tags:
+      - 'v*'
+    # branches:
+    #   - 'test-compat-*'  # Allow testing on branches named test-compat-*
+  schedule:
+    # Run weekly on Mondays at 01:00 UTC (offset from main compat test)
+    - cron: '0 1 * * 1'
+  workflow_dispatch:
+
+jobs:
+  test-3-2-x:
+    name: wxWidgets 3.2.x Tests
+    uses: ./.github/workflows/wxwidgets_compat_reusable.yml
+    with:
+      wxwidgets_versions: '["v3.2.10"]'
+      workflow_name: 'wxWidgets 3.2.x Compatibility'
