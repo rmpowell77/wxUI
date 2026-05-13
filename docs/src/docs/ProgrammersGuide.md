@@ -160,6 +160,14 @@ This table shows which Layout to use for the desired behavior
 >
 > This only holds for `wxBoxSizer`.  Grid and FlexGrid allow nesting.
 
+#### Spacer/StretchSpacer
+
+`wxUI` provides `Spacer` and `StretchSpacer` objects that may be added to Layout.  These act similarly to the [`AddSpacer()`](https://docs.wxwidgets.org/3.3/classwx_sizer.html#aedfc0bfd98114c348766431dcb49c9f3) and [`AddStretchSpacer()`](https://docs.wxwidgets.org/3.3/classwx_sizer.html#af529134a9dc74a0551d12e747af5c976) member functions for the `wxSizer` class, allowing you to create dynamic layouts that expand appropriately.
+
+```
+{{{ examples/HelloWidgets/ExtendedExample.cpp SpacerExample "    // ..." }}}
+```
+
 #### LayoutIf
 
 `LayoutIf` is useful for when parts of a Layout are not needed depending on runtime logic.  `LayoutIf` takes a boolean which determines if a set of "Items" should be created or not.

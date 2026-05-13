@@ -104,3 +104,8 @@ public:
     explicit ComboUpdate(wxWindow* parent);
     wxUI::ComboBox::Proxy proxy2;
 };
+
+class SpacerExample : public wxDialog {
+public:
+    explicit SpacerExample(wxWindow* parent);
+};

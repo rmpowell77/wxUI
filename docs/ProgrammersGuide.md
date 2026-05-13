@@ -178,6 +178,9 @@ Items { "Name", "Help", Handler }
             wxUI::Item { "&ComboUpdate...", [this] {
                             ComboUpdate { this }.ShowModal();
                         } },
+            wxUI::Item { "&SpacerExample...", [this] {
+                            SpacerExample { this }.ShowModal();
+                        } },
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello Widgets!");
                         } },
@@ -293,6 +296,29 @@ This table shows which Layout to use for the desired behavior
 > ```
 >
 > This only holds for `wxBoxSizer`.  Grid and FlexGrid allow nesting.
+
+#### Spacer/StretchSpacer
+
+`wxUI` provides `Spacer` and `StretchSpacer` objects that may be added to Layout.  These act similarly to the [`AddSpacer()`](https://docs.wxwidgets.org/3.3/classwx_sizer.html#aedfc0bfd98114c348766431dcb49c9f3) and [`AddStretchSpacer()`](https://docs.wxwidgets.org/3.3/classwx_sizer.html#af529134a9dc74a0551d12e747af5c976) member functions for the `wxSizer` class, allowing you to create dynamic layouts that expand appropriately.
+
+```
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        HSizer {
+            Text { "Before spacer" },
+            Spacer { 20 },
+            Text { "After spacer" },
+        },
+        Spacer { 40 },
+        HSizer {
+            Button { "A" },
+            Button { "Before" },
+            StretchSpacer {},
+            Button { "After" },
+        },
+    }
+        .fitTo(this);
+```
 
 #### LayoutIf
 

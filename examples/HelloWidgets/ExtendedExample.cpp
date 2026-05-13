@@ -640,3 +640,29 @@ ComboUpdate::ComboUpdate(wxWindow* parent)
     proxy2->Clear();
     proxy2->Append(arr);
 }
+
+SpacerExample::SpacerExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "SpacerExample",
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    // snippet SpacerExample
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        HSizer {
+            Text { "Before spacer" },
+            Spacer { 20 },
+            Text { "After spacer" },
+        },
+        Spacer { 40 },
+        HSizer {
+            Button { "A" },
+            Button { "Before" },
+            StretchSpacer {},
+            Button { "After" },
+        },
+    }
+        .fitTo(this);
+    // endsnippet SpacerExample
+}
