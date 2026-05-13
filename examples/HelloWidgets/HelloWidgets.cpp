@@ -194,6 +194,9 @@ HelloWidgetsFrame::HelloWidgetsFrame()
             wxUI::Item { "&ComboUpdate...", [this] {
                             ComboUpdate { this }.ShowModal();
                         } },
+            wxUI::Item { "&SpacerExample...", [this] {
+                            SpacerExample { this }.ShowModal();
+                        } },
             // snippet wxUIMenuExample1
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello Widgets!");

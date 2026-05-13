@@ -33,6 +33,9 @@ SOFTWARE.
 
 namespace wxUI {
 
+using Spacer = details::Spacer;
+using StretchSpacer = details::StretchSpacer;
+
 template <details::SizerItem... Items>
 struct VSizer {
     template <details::SizerItem... UItems>
@@ -380,7 +383,6 @@ FlexGridSizer(int, UItems&&... items) -> FlexGridSizer<UItems...>;
 
 template <details::SizerItem... UItems>
 FlexGridSizer(int, wxSizerFlags const& flags, UItems&&... items) -> FlexGridSizer<UItems...>;
-
 }
 
 #include <wxUI/detail/ZapMacros.hpp>

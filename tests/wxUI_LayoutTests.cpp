@@ -333,6 +333,27 @@ TEST_CASE("Size")
         wxUI::VSizer { wxUI_String {}, caption1, wxUI::HSizer { wxUI_String {}, caption2 } }.fitTo(&frame);
         CHECK(frame.dump() == sizerWithChildDump(wxVERTICAL, "Parent", wxHORIZONTAL, "Child"));
     }
+    SECTION("vSizer.Spacer")
+    {
+        TestParent frame;
+        wxUI::VSizer { wxUI::Button { "Hello" }, wxUI::Spacer { 10 }, wxUI::StretchSpacer { 0 }, wxUI::Button { "Goodbye" } }.fitTo(&frame);
+        CHECK(frame.dump() == std::vector<std::string> {
+                  "Create:Sizer[orientation=wxVERTICAL]",
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Goodbye\"]",
+                  "topsizer:Sizer[orientation=wxVERTICAL]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Goodbye\"]",
+                  "SetEnabled:true",
+                  "sizer:Sizer[orientation=wxVERTICAL]",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]:flags:(0,0x0,0)",
+                  "AddSpacer:10",
+                  "AddStretchSpacer:0",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Goodbye\"]:flags:(0,0x0,0)",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+              });
+    }
 
     // <<<< HSizer >>>>
     SECTION("hSizer.empty")
@@ -498,6 +519,27 @@ TEST_CASE("Size")
         TestParent frame;
         wxUI::HSizer { "Parent", wxUI::HSizer { "Child" } }.fitTo(&frame);
         CHECK(frame.dump() == sizerWithChildDump(wxHORIZONTAL, "Parent", wxHORIZONTAL, "Child"));
+    }
+    SECTION("vSizer.Spacer")
+    {
+        TestParent frame;
+        wxUI::HSizer { wxUI::Button { "Hello" }, wxUI::Spacer { 10 }, wxUI::StretchSpacer { 0 }, wxUI::Button { "Goodbye" } }.fitTo(&frame);
+        CHECK(frame.dump() == std::vector<std::string> {
+                  "Create:Sizer[orientation=wxHORIZONTAL]",
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Goodbye\"]",
+                  "topsizer:Sizer[orientation=wxHORIZONTAL]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Goodbye\"]",
+                  "SetEnabled:true",
+                  "sizer:Sizer[orientation=wxHORIZONTAL]",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]:flags:(0,0x0,0)",
+                  "AddSpacer:10",
+                  "AddStretchSpacer:0",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Goodbye\"]:flags:(0,0x0,0)",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+              });
     }
 
     // <<<< VWrapSizer >>>>
