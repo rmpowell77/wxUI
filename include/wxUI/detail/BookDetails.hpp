@@ -51,7 +51,11 @@ struct BookItem {
 
     template <details::SizerItem UItem>
     explicit BookItem(std::string_view title, bool select, UItem&& item)
+#ifdef wxHAS_STD_STRING_VIEW
         : BookItem(wxUI_String {}, wxString::FromUTF8(title), select, std::forward<UItem>(item))
+#else
+        : BookItem(wxUI_String {}, wxString(title.data(), title.size()), select, std::forward<UItem>(item))
+#endif
     {
     }
 

@@ -113,7 +113,11 @@ struct Item {
     }
 
     explicit Item(wxStandardID identity, std::string_view name = "", std::string_view help = "")
+#ifdef wxHAS_STD_STRING_VIEW
         : Item(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help))
+#else
+        : Item(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()))
+#endif
     {
     }
 
@@ -123,7 +127,11 @@ struct Item {
     }
 
     Item(wxStandardID identity, std::string_view name, std::string_view help, details::function_t function)
+#ifdef wxHAS_STD_STRING_VIEW
         : Item(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+#else
+        : Item(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+#endif
     {
     }
 
@@ -133,7 +141,11 @@ struct Item {
     }
 
     Item(std::string_view name, std::string_view help, details::function_t function)
+#ifdef wxHAS_STD_STRING_VIEW
         : Item(wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+#else
+        : Item(wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+#endif
     {
     }
 
@@ -206,7 +218,11 @@ struct CheckItem {
     }
 
     explicit CheckItem(wxStandardID identity, std::string_view name = "", std::string_view help = "")
+#ifdef wxHAS_STD_STRING_VIEW
         : CheckItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help))
+#else
+        : CheckItem(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()))
+#endif
     {
     }
 
@@ -216,7 +232,11 @@ struct CheckItem {
     }
 
     CheckItem(wxStandardID identity, std::string_view name, std::string_view help, details::function_t function)
+#ifdef wxHAS_STD_STRING_VIEW
         : CheckItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+#else
+        : CheckItem(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+#endif
     {
     }
 
@@ -226,7 +246,11 @@ struct CheckItem {
     }
 
     CheckItem(std::string_view name, std::string_view help, details::function_t function)
+#ifdef wxHAS_STD_STRING_VIEW
         : CheckItem(wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+#else
+        : CheckItem(wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+#endif
     {
     }
 
@@ -299,7 +323,11 @@ struct RadioItem {
     }
 
     explicit RadioItem(wxStandardID identity, std::string_view name = "", std::string_view help = "")
+#ifdef wxHAS_STD_STRING_VIEW
         : RadioItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help))
+#else
+        : RadioItem(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()))
+#endif
     {
     }
 
@@ -309,7 +337,11 @@ struct RadioItem {
     }
 
     RadioItem(wxStandardID identity, std::string_view name, std::string_view help, details::function_t function)
+#ifdef wxHAS_STD_STRING_VIEW
         : RadioItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+#else
+        : RadioItem(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+#endif
     {
     }
 
@@ -319,7 +351,11 @@ struct RadioItem {
     }
 
     RadioItem(std::string_view name, std::string_view help, details::function_t function)
+#ifdef wxHAS_STD_STRING_VIEW
         : RadioItem(wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+#else
+        : RadioItem(wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+#endif
     {
     }
 
@@ -429,7 +465,11 @@ struct Menu {
     }
 
     explicit Menu(std::string_view name, std::tuple<M...> const& items)
+#ifdef wxHAS_STD_STRING_VIEW
         : Menu(wxUI_String {}, wxString::FromUTF8(name), items)
+#else
+        : Menu(wxUI_String {}, wxString(name.data(), name.size()), items)
+#endif
     {
     }
 
