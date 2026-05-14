@@ -41,7 +41,11 @@ struct Hyperlink {
     }
 
     Hyperlink(wxWindowID identity, std::string_view text, std::string_view url)
+#ifdef wxHAS_STD_STRING_VIEW
         : Hyperlink(identity, wxUI_String {}, wxString::FromUTF8(text), wxString::FromUTF8(url))
+#else
+        : Hyperlink(identity, wxUI_String {}, wxString(text.data(), text.size()), wxString(url.data(), url.size()))
+#endif
     {
     }
 

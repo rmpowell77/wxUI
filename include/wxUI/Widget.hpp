@@ -93,7 +93,11 @@ inline auto convertToUtf8(std::initializer_list<std::string_view> choices) -> st
     auto result = std::vector<wxString> {};
     result.reserve(choices.size());
     for (auto const choice : choices) {
+#ifdef wxHAS_STD_STRING_VIEW
         result.push_back(wxString::FromUTF8(choice));
+#else
+        result.push_back(wxString(choice.data(), choice.size()));
+#endif
     }
     return result;
 }
@@ -169,7 +173,11 @@ inline auto ToVectorUtf8(Range&& range) -> std::vector<wxString>
         });
     } else if constexpr (std::same_as<value_t, std::string_view>) {
         std::ranges::transform(std::forward<Range>(range), std::back_inserter(result), [](auto const choice) {
+#ifdef wxHAS_STD_STRING_VIEW
             return wxString::FromUTF8(choice);
+#else
+            return wxString(choice.data(), choice.size());
+#endif
         });
     } else {
         std::ranges::transform(std::forward<Range>(range), std::back_inserter(result), [](auto const* choice) {

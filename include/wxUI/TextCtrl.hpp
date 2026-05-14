@@ -42,7 +42,11 @@ struct TextCtrl {
     }
 
     explicit TextCtrl(wxWindowID identity, std::string_view text = "")
+#ifdef wxHAS_STD_STRING_VIEW
         : TextCtrl(identity, wxUI_String {}, wxString::FromUTF8(text))
+#else
+        : TextCtrl(identity, wxUI_String {}, wxString(text.data(), text.size()))
+#endif
     {
     }
 

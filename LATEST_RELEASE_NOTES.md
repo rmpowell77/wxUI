@@ -2,6 +2,8 @@
 
 Bugs addressed in this release:
 
+* [#328](../../issues/328) Bunch of UTF8 errors
+
 Other changes:
 
 * [#319](../../issues/319) Simplify header tests with VERIFY_INTERFACE_HEADER_SETS

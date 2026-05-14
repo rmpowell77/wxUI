@@ -198,7 +198,11 @@ struct BoxSizer {
     BoxSizer(wxOrientation orientation, std::string_view caption, UItems&&... items)
         : details_(std::forward<UItems>(items)...)
         , orientation_(orientation)
+#ifdef wxHAS_STD_STRING_VIEW
         , caption_(wxString::FromUTF8(caption))
+#else
+        , caption_(wxString(caption.data(), caption.size()))
+#endif
     {
     }
 
@@ -214,7 +218,11 @@ struct BoxSizer {
     BoxSizer(wxOrientation orientation, std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
         : details_(flags, std::forward<UItems>(items)...)
         , orientation_(orientation)
+#ifdef wxHAS_STD_STRING_VIEW
         , caption_(wxString::FromUTF8(caption))
+#else
+        , caption_(wxString(caption.data(), caption.size()))
+#endif
     {
     }
 
