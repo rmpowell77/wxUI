@@ -49,7 +49,7 @@ struct VSizer {
 #ifdef wxHAS_STD_STRING_VIEW
         : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption), std::forward<UItems>(items)...)
 #else
-        : details_(wxVERTICAL, wxUI_String {}, wxString(caption.data(), caption.size()), std::forward<UItems>(items)...)
+        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), std::forward<UItems>(items)...)
 #endif
     {
     }
@@ -71,7 +71,7 @@ struct VSizer {
 #ifdef wxHAS_STD_STRING_VIEW
         : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption), flags, std::forward<UItems>(items)...)
 #else
-        : details_(wxVERTICAL, wxUI_String {}, wxString(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
+        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
 #endif
     {
     }
@@ -126,7 +126,7 @@ struct HSizer {
 #ifdef wxHAS_STD_STRING_VIEW
         : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption), std::forward<UItems>(items)...)
 #else
-        : details_(wxHORIZONTAL, wxUI_String {}, wxString(caption.data(), caption.size()), std::forward<UItems>(items)...)
+        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), std::forward<UItems>(items)...)
 #endif
     {
     }
@@ -148,7 +148,7 @@ struct HSizer {
 #ifdef wxHAS_STD_STRING_VIEW
         : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption), flags, std::forward<UItems>(items)...)
 #else
-        : details_(wxHORIZONTAL, wxUI_String {}, wxString(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
+        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
 #endif
     {
     }

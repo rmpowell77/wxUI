@@ -96,7 +96,7 @@ inline auto convertToUtf8(std::initializer_list<std::string_view> choices) -> st
 #ifdef wxHAS_STD_STRING_VIEW
         result.push_back(wxString::FromUTF8(choice));
 #else
-        result.push_back(wxString(choice.data(), choice.size()));
+        result.push_back(wxString::FromUTF8(choice.data(), choice.size()));
 #endif
     }
     return result;
@@ -176,7 +176,7 @@ inline auto ToVectorUtf8(Range&& range) -> std::vector<wxString>
 #ifdef wxHAS_STD_STRING_VIEW
             return wxString::FromUTF8(choice);
 #else
-            return wxString(choice.data(), choice.size());
+            return wxString::FromUTF8(choice.data(), choice.size());
 #endif
         });
     } else {

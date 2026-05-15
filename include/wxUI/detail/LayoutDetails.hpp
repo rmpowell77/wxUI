@@ -201,7 +201,7 @@ struct BoxSizer {
 #ifdef wxHAS_STD_STRING_VIEW
         , caption_(wxString::FromUTF8(caption))
 #else
-        , caption_(wxString(caption.data(), caption.size()))
+        , caption_(wxString::FromUTF8(caption.data(), caption.size()))
 #endif
     {
     }
@@ -221,7 +221,7 @@ struct BoxSizer {
 #ifdef wxHAS_STD_STRING_VIEW
         , caption_(wxString::FromUTF8(caption))
 #else
-        , caption_(wxString(caption.data(), caption.size()))
+        , caption_(wxString::FromUTF8(caption.data(), caption.size()))
 #endif
     {
     }
