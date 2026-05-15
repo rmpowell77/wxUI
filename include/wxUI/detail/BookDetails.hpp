@@ -54,7 +54,7 @@ struct BookItem {
 #ifdef wxHAS_STD_STRING_VIEW
         : BookItem(wxUI_String {}, wxString::FromUTF8(title), select, std::forward<UItem>(item))
 #else
-        : BookItem(wxUI_String {}, wxString(title.data(), title.size()), select, std::forward<UItem>(item))
+        : BookItem(wxUI_String {}, wxString::FromUTF8(title.data(), title.size()), select, std::forward<UItem>(item))
 #endif
     {
     }

@@ -116,7 +116,7 @@ struct Item {
 #ifdef wxHAS_STD_STRING_VIEW
         : Item(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help))
 #else
-        : Item(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()))
+        : Item(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()))
 #endif
     {
     }
@@ -130,7 +130,7 @@ struct Item {
 #ifdef wxHAS_STD_STRING_VIEW
         : Item(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
 #else
-        : Item(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+        : Item(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
 #endif
     {
     }
@@ -144,7 +144,7 @@ struct Item {
 #ifdef wxHAS_STD_STRING_VIEW
         : Item(wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
 #else
-        : Item(wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+        : Item(wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
 #endif
     {
     }
@@ -221,7 +221,7 @@ struct CheckItem {
 #ifdef wxHAS_STD_STRING_VIEW
         : CheckItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help))
 #else
-        : CheckItem(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()))
+        : CheckItem(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()))
 #endif
     {
     }
@@ -235,7 +235,7 @@ struct CheckItem {
 #ifdef wxHAS_STD_STRING_VIEW
         : CheckItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
 #else
-        : CheckItem(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+        : CheckItem(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
 #endif
     {
     }
@@ -249,7 +249,7 @@ struct CheckItem {
 #ifdef wxHAS_STD_STRING_VIEW
         : CheckItem(wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
 #else
-        : CheckItem(wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+        : CheckItem(wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
 #endif
     {
     }
@@ -326,7 +326,7 @@ struct RadioItem {
 #ifdef wxHAS_STD_STRING_VIEW
         : RadioItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help))
 #else
-        : RadioItem(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()))
+        : RadioItem(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()))
 #endif
     {
     }
@@ -340,7 +340,7 @@ struct RadioItem {
 #ifdef wxHAS_STD_STRING_VIEW
         : RadioItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
 #else
-        : RadioItem(identity, wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+        : RadioItem(identity, wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
 #endif
     {
     }
@@ -354,7 +354,7 @@ struct RadioItem {
 #ifdef wxHAS_STD_STRING_VIEW
         : RadioItem(wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
 #else
-        : RadioItem(wxUI_String {}, wxString(name.data(), name.size()), wxString(help.data(), help.size()), std::move(function))
+        : RadioItem(wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), wxString::FromUTF8(help.data(), help.size()), std::move(function))
 #endif
     {
     }
@@ -468,7 +468,7 @@ struct Menu {
 #ifdef wxHAS_STD_STRING_VIEW
         : Menu(wxUI_String {}, wxString::FromUTF8(name), items)
 #else
-        : Menu(wxUI_String {}, wxString(name.data(), name.size()), items)
+        : Menu(wxUI_String {}, wxString::FromUTF8(name.data(), name.size()), items)
 #endif
     {
     }

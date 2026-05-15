@@ -44,7 +44,7 @@ struct CheckBox {
 #ifdef wxHAS_STD_STRING_VIEW
         : CheckBox(identity, wxUI_String {}, wxString::FromUTF8(text))
 #else
-        : CheckBox(identity, wxUI_String {}, wxString(text.data(), text.size()))
+        : CheckBox(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()))
 #endif
     {
     }

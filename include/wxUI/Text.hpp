@@ -45,7 +45,7 @@ struct Text {
 #ifdef wxHAS_STD_STRING_VIEW
         : Text(identity, wxUI_String {}, wxString::FromUTF8(text))
 #else
-        : Text(identity, wxUI_String {}, wxString(text.data(), text.size()))
+        : Text(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()))
 #endif
     {
     }

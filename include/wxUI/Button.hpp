@@ -43,7 +43,7 @@ struct Button {
 #ifdef wxHAS_STD_STRING_VIEW
         : Button(identity, wxUI_String {}, wxString::FromUTF8(text))
 #else
-        : Button(identity, wxUI_String {}, wxString(text.data(), text.size()))
+        : Button(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()))
 #endif
     {
     }
