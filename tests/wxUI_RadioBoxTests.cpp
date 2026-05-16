@@ -51,19 +51,19 @@ TEST_CASE("RadioBox")
     SECTION("compile test")
     {
         // This just confirms which of the forms of construction are correct.
+        // RadioBox with zero choices is intentionally not supported - semantically meaningless:
         // TypeUnderTest { TypeUnderTest::withChoices {} };
         TypeUnderTest { TypeUnderTest::withChoices {}, "hi" };
         TypeUnderTest { TypeUnderTest::withChoices {}, "hi", "bye" };
-        TypeUnderTest { TypeUnderTest::withChoices {}, "hi", "bye", "goodbye" };
-        // TypeUnderTest { TypeUnderTest::withChoices {}, {} };
+        TypeUnderTest { TypeUnderTest::withChoices {}, "hi", "bye", "goodbye" }; // Empty choices list - also not supported:        // TypeUnderTest { TypeUnderTest::withChoices {}, {} };
         TypeUnderTest { TypeUnderTest::withChoices {}, { "hi" } };
         TypeUnderTest { TypeUnderTest::withChoices {}, { "hi", "bye" } };
         TypeUnderTest { TypeUnderTest::withChoices {}, { "hi", "bye", "goodbye" } };
-        // TypeUnderTest(TypeUnderTest::withChoices {});
+        // TypeUnderTest(TypeUnderTest::withChoices {}); // Not supported
         TypeUnderTest(TypeUnderTest::withChoices {}, "hi");
         TypeUnderTest(TypeUnderTest::withChoices {}, "hi", "bye");
         TypeUnderTest(TypeUnderTest::withChoices {}, "hi", "bye", "goodbye");
-        // TypeUnderTest(TypeUnderTest::withChoices {}, {});
+        // TypeUnderTest(TypeUnderTest::withChoices {}, {}); // Not supported
         TypeUnderTest(TypeUnderTest::withChoices {}, { "hi" });
         TypeUnderTest(TypeUnderTest::withChoices {}, { "hi", "bye" });
         TypeUnderTest(TypeUnderTest::withChoices {}, { "hi", "bye", "goodbye" });

@@ -676,6 +676,10 @@ RadioBoxExample::RadioBoxExample(wxWindow* parent)
     // snippet RadioBoxExample
     VSizer {
         wxSizerFlags().Expand().Border(),
+        Choice { "hello👋", "by" },
+        Choice { { "hello👋", "by" } },
+        Choice { wxString { "hello" }, wxString { "by" } },
+        Choice { { wxString { "hello" }, wxString { "by" } } },
         RadioBox { RadioBox::withChoices {}, "hello👋" },
         RadioBox { RadioBox::withChoices {}, { "hello👋" } },
         RadioBox { RadioBox::withChoices {}, { "hello👋", "bye✌️" } },

@@ -5,4 +5,5 @@ Bugs addressed in this release:
 Other changes:
 
 * [#339](../../issues/339) variadic template constructors to allow direct parameter pack syntax
+* [#343](../../issues/343) We should simplify the initializer_list logic
 

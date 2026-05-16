@@ -35,7 +35,11 @@ namespace wxUI {
 struct Choice {
     using underlying_t = wxChoice;
 
-    explicit Choice(std::initializer_list<char const*> choices)
+    Choice() = default;
+
+    template <typename String>
+    requires details::utf8_text_choice<String>
+    explicit Choice(std::initializer_list<String> choices)
         : Choice(wxID_ANY, choices)
     {
     }
@@ -45,17 +49,26 @@ struct Choice {
     {
     }
 
-    explicit Choice(std::initializer_list<std::string_view> choices)
-        : Choice(wxID_ANY, choices)
+    explicit Choice(details::Ranges::utf8_text_input_range auto&& choices)
+        : Choice(wxID_ANY, std::forward<decltype(choices)>(choices))
     {
     }
 
-    explicit Choice(std::initializer_list<std::string> choices = {})
-        : Choice(wxID_ANY, choices)
+    template <typename... Strings>
+    requires(sizeof...(Strings) > 0) && (details::utf8_text_choice<Strings> && ...)
+    Choice(Strings&&... choices)
+        : Choice(wxID_ANY, std::forward<Strings>(choices)...)
     {
     }
 
-    explicit Choice(wxWindowID identity, std::initializer_list<char const*> choices)
+    explicit Choice(wxWindowID identity)
+        : Choice(identity, std::initializer_list<char const*> {})
+    {
+    }
+
+    template <typename String>
+    requires details::utf8_text_choice<String>
+    explicit Choice(wxWindowID identity, std::initializer_list<String> choices)
         : details_(identity)
         , choices_(details::Ranges::convertTo(choices))
     {
@@ -67,34 +80,9 @@ struct Choice {
     {
     }
 
-    explicit Choice(wxWindowID identity, std::initializer_list<std::string_view> choices)
-        : details_(identity)
-        , choices_(details::Ranges::convertTo(choices))
-    {
-    }
-
-    explicit Choice(wxWindowID identity, std::initializer_list<std::string> choices = {})
-        : details_(identity)
-        , choices_(details::Ranges::convertTo(choices))
-    {
-    }
-
-    explicit Choice(details::Ranges::utf8_text_input_range auto&& choices)
-        : Choice(wxID_ANY, std::forward<decltype(choices)>(choices))
-    {
-    }
-
     Choice(wxWindowID identity, details::Ranges::utf8_text_input_range auto&& choices)
         : details_(identity)
         , choices_(details::Ranges::ToVectorUtf8(std::forward<decltype(choices)>(choices)))
-    {
-    }
-
-    // Variadic template constructors for direct parameter pack usage
-    template <typename... Strings>
-    requires(sizeof...(Strings) > 0) && (details::utf8_text_choice<Strings> && ...)
-    Choice(Strings&&... choices)
-        : Choice(wxID_ANY, std::forward<Strings>(choices)...)
     {
     }
 
