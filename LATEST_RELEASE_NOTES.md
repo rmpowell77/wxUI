@@ -2,6 +2,7 @@
 
 Bugs addressed in this release:
 
+* [#327](../../issues/327) restore wxUI::ForEach
 * [#328](../../issues/328) Bunch of UTF8 errors
 * [#334](../../issues/334) Should RadioBox be using std::string_view?
 
