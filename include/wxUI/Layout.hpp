@@ -46,11 +46,7 @@ struct VSizer {
 
     template <details::SizerItem... UItems>
     VSizer(std::string_view caption, UItems&&... items)
-#ifdef wxHAS_STD_STRING_VIEW
-        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption), std::forward<UItems>(items)...)
-#else
-        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), std::forward<UItems>(items)...)
-#endif
+        : details_(wxVERTICAL, wxUI_String {}, details::toWxString(caption), std::forward<UItems>(items)...)
     {
     }
 
@@ -68,11 +64,7 @@ struct VSizer {
 
     template <details::SizerItem... UItems>
     VSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
-#ifdef wxHAS_STD_STRING_VIEW
-        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption), flags, std::forward<UItems>(items)...)
-#else
-        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
-#endif
+        : details_(wxVERTICAL, wxUI_String {}, details::toWxString(caption), flags, std::forward<UItems>(items)...)
     {
     }
 
@@ -123,11 +115,7 @@ struct HSizer {
 
     template <details::SizerItem... UItems>
     HSizer(std::string_view caption, UItems&&... items)
-#ifdef wxHAS_STD_STRING_VIEW
-        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption), std::forward<UItems>(items)...)
-#else
-        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), std::forward<UItems>(items)...)
-#endif
+        : details_(wxHORIZONTAL, wxUI_String {}, details::toWxString(caption), std::forward<UItems>(items)...)
     {
     }
 
@@ -145,11 +133,7 @@ struct HSizer {
 
     template <details::SizerItem... UItems>
     HSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
-#ifdef wxHAS_STD_STRING_VIEW
-        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption), flags, std::forward<UItems>(items)...)
-#else
-        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption.data(), caption.size()), flags, std::forward<UItems>(items)...)
-#endif
+        : details_(wxHORIZONTAL, wxUI_String {}, details::toWxString(caption), flags, std::forward<UItems>(items)...)
     {
     }
 

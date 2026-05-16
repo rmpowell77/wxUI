@@ -109,3 +109,8 @@ class SpacerExample : public wxDialog {
 public:
     explicit SpacerExample(wxWindow* parent);
 };
+
+class RadioBoxExample : public wxDialog {
+public:
+    explicit RadioBoxExample(wxWindow* parent);
+};

@@ -57,7 +57,7 @@ struct ComboBox {
 
     explicit ComboBox(wxWindowID identity, std::initializer_list<char const*> choices)
         : details_(identity)
-        , choices_(details::Ranges::convertToUtf8(choices))
+        , choices_(details::Ranges::convertTo(choices))
     {
     }
 
@@ -69,7 +69,7 @@ struct ComboBox {
 
     explicit ComboBox(wxWindowID identity, std::initializer_list<std::string_view> choices)
         : details_(identity)
-        , choices_(details::Ranges::convertToUtf8(choices))
+        , choices_(details::Ranges::convertTo(choices))
     {
     }
 
@@ -87,6 +87,22 @@ struct ComboBox {
     ComboBox(wxWindowID identity, details::Ranges::utf8_text_input_range auto&& choices)
         : details_(identity)
         , choices_(details::Ranges::ToVectorUtf8(std::forward<decltype(choices)>(choices)))
+    {
+    }
+
+    // Variadic template constructors for direct parameter pack usage
+    template <typename... Strings>
+    requires(sizeof...(Strings) > 0) && (details::utf8_text_choice<Strings> && ...)
+    ComboBox(Strings&&... choices)
+        : ComboBox(wxID_ANY, std::forward<Strings>(choices)...)
+    {
+    }
+
+    template <typename... Strings>
+    requires(sizeof...(Strings) > 0) && (details::utf8_text_choice<Strings> && ...)
+    ComboBox(wxWindowID identity, Strings&&... choices)
+        : details_(identity)
+        , choices_(details::Ranges::toVectorUtf8(std::forward<Strings>(choices)...))
     {
     }
 

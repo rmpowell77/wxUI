@@ -40,11 +40,7 @@ struct Button {
     }
 
     explicit Button(wxWindowID identity, std::string_view text = "")
-#ifdef wxHAS_STD_STRING_VIEW
-        : Button(identity, wxUI_String {}, wxString::FromUTF8(text))
-#else
-        : Button(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()))
-#endif
+        : Button(identity, wxUI_String {}, details::toWxString(text))
     {
     }
 

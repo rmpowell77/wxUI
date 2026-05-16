@@ -142,52 +142,6 @@ Items { "Name", "Help", Handler }
             wxUI::Item { "&MultibindExample...", [this] {
                             MultibindExample { this }.ShowModal();
                         } },
-            wxUI::Item { "&SplitterExample...", [this] {
-                            SplitterExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&WrapperExample...", [this] {
-                            WrapperExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&FactoryExample...", [this] {
-                            FactoryExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&ForEachExample...", [this] {
-                            ForEachExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&ListExample...", [this] {
-                            ListExample(this).ShowModal();
-                        } },
-            wxUI::Item { "&LayoutIf...", [this] {
-                            LayoutIfExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&WrapSizer...", [this] {
-                            WrapSizerExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&GridSizer...", [this] {
-                            GridSizerExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&FlexGridSizer...", [this] {
-                            FlexGridSizerExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&NotebookExample...", [this] {
-                            NotebookExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&GridSizer...", [this] {
-                            GridSizerExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&ComboUpdate...", [this] {
-                            ComboUpdate { this }.ShowModal();
-                        } },
-            wxUI::Item { "&SpacerExample...", [this] {
-                            SpacerExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&Example Item...", [] {
-                            wxLogMessage("Hello Widgets!");
-                        } },
-            wxUI::CheckItem { "&Example Checked Item...", [](wxCommandEvent& event) {
-                                 wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
-                             } },
-        },
 ```
 
 The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primitives on construction.  When `fitTo` a frame is invoked does the underlying logic construct the menu structure.

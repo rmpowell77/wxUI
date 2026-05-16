@@ -42,11 +42,7 @@ struct Text {
     }
 
     explicit Text(wxWindowID identity, std::string_view text = "")
-#ifdef wxHAS_STD_STRING_VIEW
-        : Text(identity, wxUI_String {}, wxString::FromUTF8(text))
-#else
-        : Text(identity, wxUI_String {}, wxString::FromUTF8(text.data(), text.size()))
-#endif
+        : Text(identity, wxUI_String {}, details::toWxString(text))
     {
     }
 
