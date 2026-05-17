@@ -1,0 +1,23 @@
+# wxWidgets 3.3.x Windows Compatibility Testing
+
+name: wxWidgets 3.3.x Windows
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - 'test-compat-*'  # Allow testing on branches named test-compat-*
+  schedule:
+    # Run weekly on Mondays at 02:00 UTC (offset from main compat test)
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  test-3-3-x:
+    name: wxWidgets 3.3.x Tests
+    uses: ./.github/workflows/wxwidgets_compat_reusable.yml
+    with:
+      wxwidgets_versions: '["v3.3.2"]'
+      os: '["windows"]'
+      workflow_name: 'wxWidgets 3.3.x Windows'

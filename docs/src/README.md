@@ -2,8 +2,12 @@
 
 [![CI Status](https://github.com/rmpowell77/wxUI/actions/workflows/ci_automation.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/ci_automation.yml)
 [![wxWidgets Compatibility](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_compatibility.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_compatibility.yml)
-[![wxWidgets 3.3.x](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_compat.yml)
-[![wxWidgets 3.2.x](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_compat.yml)
+[![wxWidgets 3.3.x MacOS](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_macos_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_macos_compat.yml)
+[![wxWidgets 3.3.x Windows](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_windows_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_windows_compat.yml)
+[![wxWidgets 3.3.x Ubuntu](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_ubuntu_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_ubuntu_compat.yml)
+[![wxWidgets 3.2.x MacOS](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_macos_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_macos_compat.yml)
+[![wxWidgets 3.2.x Windows](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_windows_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_windows_compat.yml)
+[![wxWidgets 3.2.x Ubuntu](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_ubuntu_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_ubuntu_compat.yml)
 
 C++ header-only library to make declarative UIs for wxWidgets.
 

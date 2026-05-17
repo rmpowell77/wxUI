@@ -11,6 +11,11 @@ on:
         description: 'Comma-separated list of wxWidgets versions to test'
         required: true
         type: string
+      os:
+        description: 'JSON array of OS to test: ["ubuntu", "macos", "windows"]'
+        required: false
+        type: string
+        default: '["ubuntu", "macos", "windows"]'
       workflow_name:
         description: 'Name to display in test results'
         required: false
@@ -25,14 +30,17 @@ jobs:
       fail-fast: false
       matrix:
         wxwidgets-version: ${{ fromJson(inputs.wxwidgets_versions) }}
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os_name: ${{ fromJson(inputs.os) }}
         build_type: [Release]
         include:
-          - os: ubuntu-latest
+          - os_name: ubuntu
+            os: ubuntu-latest
             name: "Ubuntu GCC"
-          - os: macos-latest
+          - os_name: macos
+            os: macos-latest
             name: "macOS Clang"
-          - os: windows-latest
+          - os_name: windows
+            os: windows-latest
             name: "Windows MSVC"
 
     steps:
