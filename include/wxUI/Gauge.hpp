@@ -38,17 +38,17 @@ struct Gauge {
     struct withRange { };
     struct withIdentity { };
 
-    explicit Gauge()
+    Gauge()
         : Gauge(withIdentity {}, wxID_ANY, 100)
     {
     }
 
-    explicit Gauge(withRange, int range)
+    Gauge(withRange, int range)
         : Gauge(withIdentity {}, wxID_ANY, range)
     {
     }
 
-    explicit Gauge(withIdentity, wxWindowID identity, int range = 100)
+    Gauge(withIdentity, wxWindowID identity, int range = 100)
         : details_(identity)
         , range_(range)
     {

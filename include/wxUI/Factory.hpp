@@ -75,7 +75,7 @@ struct Factory {
 
     template <typename Callable>
     requires std::constructible_from<Function, Callable>
-    explicit Factory(wxSizerFlags const& flags, Callable&& windowFunction)
+    Factory(wxSizerFlags const& flags, Callable&& windowFunction)
         : flags_(flags)
         , closure_(std::forward<Callable>(windowFunction))
     {

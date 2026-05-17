@@ -46,12 +46,12 @@ struct Text {
     {
     }
 
-    explicit Text(wxUI_String tag, wxString text)
+    Text(wxUI_String tag, wxString text)
         : Text(wxID_ANY, tag, std::move(text))
     {
     }
 
-    explicit Text(wxWindowID identity, wxUI_String, wxString text)
+    Text(wxWindowID identity, wxUI_String, wxString text)
         : details_(identity)
         , text_(std::move(text))
     {

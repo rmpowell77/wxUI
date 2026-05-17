@@ -45,7 +45,7 @@ struct VSizer {
     }
 
     template <details::SizerItem... UItems>
-    VSizer(std::string_view caption, UItems&&... items)
+    explicit VSizer(std::string_view caption, UItems&&... items)
         : details_(wxVERTICAL, wxUI_String {}, details::toWxString(caption), std::forward<UItems>(items)...)
     {
     }
@@ -114,7 +114,7 @@ struct HSizer {
     }
 
     template <details::SizerItem... UItems>
-    HSizer(std::string_view caption, UItems&&... items)
+    explicit HSizer(std::string_view caption, UItems&&... items)
         : details_(wxHORIZONTAL, wxUI_String {}, details::toWxString(caption), std::forward<UItems>(items)...)
     {
     }
@@ -309,7 +309,7 @@ struct FlexGridSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit FlexGridSizer(int cols, wxSizerFlags const& flags, UItems&&... items)
+    FlexGridSizer(int cols, wxSizerFlags const& flags, UItems&&... items)
         : details_(flags, std::forward<UItems>(items)...)
         , cols_(cols)
     {

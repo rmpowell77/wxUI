@@ -68,13 +68,13 @@ struct ListBox {
 
     template <typename String>
     requires details::utf8_text_choice<String>
-    explicit ListBox(wxWindowID identity, std::initializer_list<String> choices)
+    ListBox(wxWindowID identity, std::initializer_list<String> choices)
         : details_(identity)
         , choices_(details::Ranges::convertTo(choices))
     {
     }
 
-    explicit ListBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
+    ListBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
         : details_(identity)
         , choices_(details::Ranges::flattenToUtf8(choices))
     {

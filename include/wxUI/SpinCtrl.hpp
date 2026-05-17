@@ -56,7 +56,7 @@ struct SpinCtrl {
     }
 
     // Convenience overload with explicit identity
-    explicit SpinCtrl(wxWindowID identity, std::pair<int, int> range, std::optional<int> initial = std::nullopt)
+    SpinCtrl(wxWindowID identity, std::pair<int, int> range, std::optional<int> initial = std::nullopt)
         : details_(identity)
         , range_(range)
         , initial_(initial)

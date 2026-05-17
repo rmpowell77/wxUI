@@ -46,12 +46,12 @@ struct TextCtrl {
     {
     }
 
-    explicit TextCtrl(wxUI_String tag, wxString text)
+    TextCtrl(wxUI_String tag, wxString text)
         : TextCtrl(wxID_ANY, tag, std::move(text))
     {
     }
 
-    explicit TextCtrl(wxWindowID identity, wxUI_String, wxString text)
+    TextCtrl(wxWindowID identity, wxUI_String, wxString text)
         : details_(identity)
         , text_(std::move(text))
     {

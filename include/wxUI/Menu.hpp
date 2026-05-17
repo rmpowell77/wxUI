@@ -429,7 +429,7 @@ struct Menu {
     {
     }
 
-    explicit Menu(std::string_view name, std::tuple<M...> const& items)
+    Menu(std::string_view name, std::tuple<M...> const& items)
         : Menu(wxUI_String {}, details::toWxString(name), items)
     {
     }
@@ -514,6 +514,7 @@ struct MenuBar {
         : MenuBar(std::make_tuple(menus...))
     {
     }
+
     explicit MenuBar(std::tuple<M...> const& menus)
         : menus(menus)
     {
