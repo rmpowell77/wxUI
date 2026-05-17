@@ -188,7 +188,7 @@ struct BoxSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit BoxSizer(wxOrientation orientation, wxSizerFlags const& flags, UItems&&... items)
+    BoxSizer(wxOrientation orientation, wxSizerFlags const& flags, UItems&&... items)
         : details_(flags, std::forward<UItems>(items)...)
         , orientation_(orientation)
     {
@@ -227,7 +227,7 @@ struct BoxSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit BoxSizer(withWrap, wxOrientation orientation, UItems&&... items)
+    BoxSizer(withWrap, wxOrientation orientation, UItems&&... items)
         : details_(std::forward<UItems>(items)...)
         , orientation_(orientation)
         , wrap_(true)
@@ -235,7 +235,7 @@ struct BoxSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit BoxSizer(withWrap, wxOrientation orientation, wxSizerFlags const& flags, UItems&&... items)
+    BoxSizer(withWrap, wxOrientation orientation, wxSizerFlags const& flags, UItems&&... items)
         : details_(flags, std::forward<UItems>(items)...)
         , orientation_(orientation)
         , wrap_(true)

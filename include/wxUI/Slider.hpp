@@ -56,7 +56,7 @@ struct Slider {
     }
 
     // Convenience overload with explicit identity
-    explicit Slider(wxWindowID identity, std::pair<int, int> range, std::optional<int> initial = std::nullopt)
+    Slider(wxWindowID identity, std::pair<int, int> range, std::optional<int> initial = std::nullopt)
         : details_(identity)
         , range_(range)
         , initial_(initial)

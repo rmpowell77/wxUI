@@ -44,12 +44,12 @@ struct Button {
     {
     }
 
-    explicit Button(wxUI_String tag, wxString text)
+    Button(wxUI_String tag, wxString text)
         : Button(wxID_ANY, tag, std::move(text))
     {
     }
 
-    explicit Button(wxWindowID identity, wxUI_String, wxString text)
+    Button(wxWindowID identity, wxUI_String, wxString text)
         : details_(identity)
         , text_(std::move(text))
     {

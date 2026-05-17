@@ -37,7 +37,7 @@ struct GetterSetter {
     static_assert(std::is_invocable_v<Setter, Type>);
     static_assert(std::is_invocable_v<Setter, std::invoke_result_t<Getter>>);
 
-    explicit GetterSetter(Getter getter, Setter setter)
+    GetterSetter(Getter getter, Setter setter)
         : getter_(getter)
         , setter_(setter)
     {
@@ -106,7 +106,7 @@ struct GetterSetter<bool, Getter, Setter> {
     static_assert(std::is_invocable_v<Setter, Type>);
     static_assert(std::is_invocable_v<Setter, Type>);
 
-    explicit GetterSetter(Getter getter, Setter setter)
+    GetterSetter(Getter getter, Setter setter)
         : getter_(getter)
         , setter_(setter)
     {
@@ -189,7 +189,7 @@ struct GetterSetter<Type, Getter, Setter> {
     static_assert(std::is_invocable_v<Setter, Type>);
     static_assert(std::is_invocable_v<Setter, std::invoke_result_t<Getter>>);
 
-    explicit GetterSetter(Getter getter, Setter setter)
+    GetterSetter(Getter getter, Setter setter)
         : getter_(getter)
         , setter_(setter)
     {
@@ -340,7 +340,7 @@ struct GetterSetter<Type, Getter, Setter> {
     static_assert(std::is_invocable_v<Setter, Type>);
     static_assert(std::is_invocable_v<Setter, std::invoke_result_t<Getter>>);
 
-    explicit GetterSetter(Getter getter, Setter setter)
+    GetterSetter(Getter getter, Setter setter)
         : getter_(getter)
         , setter_(setter)
     {

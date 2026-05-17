@@ -56,7 +56,7 @@ struct Choice {
 
     template <typename... Strings>
     requires(sizeof...(Strings) > 0) && (details::utf8_text_choice<Strings> && ...)
-    Choice(Strings&&... choices)
+    explicit Choice(Strings&&... choices)
         : Choice(wxID_ANY, std::forward<Strings>(choices)...)
     {
     }
@@ -68,13 +68,13 @@ struct Choice {
 
     template <typename String>
     requires details::utf8_text_choice<String>
-    explicit Choice(wxWindowID identity, std::initializer_list<String> choices)
+    Choice(wxWindowID identity, std::initializer_list<String> choices)
         : details_(identity)
         , choices_(details::Ranges::convertTo(choices))
     {
     }
 
-    explicit Choice(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
+    Choice(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
         : details_(identity)
         , choices_(details::Ranges::flattenToUtf8(choices))
     {

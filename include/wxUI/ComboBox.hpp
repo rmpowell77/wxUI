@@ -39,7 +39,7 @@ struct ComboBox {
 
     template <typename String>
     requires details::utf8_text_choice<String>
-    ComboBox(std::initializer_list<String> choices)
+    explicit ComboBox(std::initializer_list<String> choices)
         : ComboBox(wxID_ANY, choices)
     {
     }
@@ -56,7 +56,7 @@ struct ComboBox {
 
     template <typename... Strings>
     requires(sizeof...(Strings) > 0) && (details::utf8_text_choice<Strings> && ...)
-    ComboBox(Strings&&... choices)
+    explicit ComboBox(Strings&&... choices)
         : ComboBox(wxID_ANY, std::forward<Strings>(choices)...)
     {
     }
@@ -68,13 +68,13 @@ struct ComboBox {
 
     template <typename String>
     requires details::utf8_text_choice<String>
-    explicit ComboBox(wxWindowID identity, std::initializer_list<String> choices)
+    ComboBox(wxWindowID identity, std::initializer_list<String> choices)
         : details_(identity)
         , choices_(details::Ranges::convertTo(choices))
     {
     }
 
-    explicit ComboBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
+    ComboBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
         : details_(identity)
         , choices_(details::Ranges::flattenToUtf8(choices))
     {
