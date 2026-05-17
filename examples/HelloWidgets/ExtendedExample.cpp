@@ -666,3 +666,21 @@ SpacerExample::SpacerExample(wxWindow* parent)
         .fitTo(this);
     // endsnippet SpacerExample
 }
+
+RadioBoxExample::RadioBoxExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "RadioBoxExample",
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    // snippet RadioBoxExample
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        RadioBox { RadioBox::withChoices {}, "hello👋" },
+        RadioBox { RadioBox::withChoices {}, { "hello👋" } },
+        RadioBox { RadioBox::withChoices {}, { "hello👋", "bye✌️" } },
+        RadioBox { RadioBox::withChoices {}, "hello👋", "bye✌️" },
+    }
+        .fitTo(this);
+    // endsnippet RadioBoxExample
+}

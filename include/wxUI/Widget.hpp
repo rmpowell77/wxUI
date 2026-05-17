@@ -57,79 +57,50 @@ concept Createable = requires(T widget, wxWindow* window) {
     widget.create(window);
 };
 
+// Concept to check if a type can be used as a UTF-8 text choice
+template <typename T>
+concept utf8_text_choice = std::same_as<std::remove_cvref_t<T>, wxString>
+    || std::same_as<std::remove_cvref_t<T>, std::string>
+    || std::same_as<std::remove_cvref_t<T>, std::string_view>
+    || std::same_as<std::remove_cvref_t<T>, char const*>
+    || std::convertible_to<std::remove_cvref_t<T>, std::string_view>;
+
+// Helper functions to convert a single value to wxString
+inline auto toWxString(wxString const& str) -> wxString
+{
+    return str;
+}
+
+inline auto toWxString(std::string const& str) -> wxString
+{
+    return wxString::FromUTF8(str);
+}
+
+inline auto toWxString(std::string_view str) -> wxString
+{
+#ifdef wxHAS_STD_STRING_VIEW
+    return wxString::FromUTF8(str);
+#else
+    return wxString::FromUTF8(str.data(), str.size());
+#endif
+}
+
+inline auto toWxString(char const* str) -> wxString
+{
+    return wxString::FromUTF8(str);
+}
+
 }
 
 namespace wxUI::details::Ranges {
 
-template <typename T>
-concept ConvertTowxString = std::is_convertible_v<T, wxString>;
-
-template <ConvertTowxString T>
+template <details::utf8_text_choice T>
 inline auto convertTo(std::initializer_list<T> choices) -> std::vector<wxString>
 {
     std::vector<wxString> result;
-    if constexpr (std::is_same_v<T, std::string>) {
-        for (auto const& choice : choices) {
-            result.push_back(wxString::FromUTF8(choice));
-        }
-    } else {
-        std::ranges::copy(choices, std::back_inserter(result));
-    }
-    return result;
-}
-
-inline auto convertToUtf8(std::initializer_list<char const*> choices) -> std::vector<wxString>
-{
-    auto result = std::vector<wxString> {};
-    result.reserve(choices.size());
-    for (auto const* choice : choices) {
-        result.push_back(wxString::FromUTF8(choice));
-    }
-    return result;
-}
-
-inline auto convertToUtf8(std::initializer_list<std::string_view> choices) -> std::vector<wxString>
-{
-    auto result = std::vector<wxString> {};
-    result.reserve(choices.size());
-    for (auto const choice : choices) {
-#ifdef wxHAS_STD_STRING_VIEW
-        result.push_back(wxString::FromUTF8(choice));
-#else
-        result.push_back(wxString::FromUTF8(choice.data(), choice.size()));
-#endif
-    }
-    return result;
-}
-
-template <size_t N>
-inline auto convertToUtf8(std::array<char const*, N> const& choices) -> std::vector<wxString>
-{
-    auto result = std::vector<wxString> {};
-    result.reserve(choices.size());
-    for (auto const* choice : choices) {
-        result.push_back(wxString::FromUTF8(choice));
-    }
-    return result;
-}
-
-template <size_t N>
-inline auto convertToUtf8(std::array<std::string, N> const& choices) -> std::vector<wxString>
-{
-    auto result = std::vector<wxString> {};
     result.reserve(choices.size());
     for (auto const& choice : choices) {
-        result.push_back(wxString::FromUTF8(choice));
-    }
-    return result;
-}
-
-inline auto convertToUtf8(std::vector<char const*> const& choices) -> std::vector<wxString>
-{
-    auto result = std::vector<wxString> {};
-    result.reserve(choices.size());
-    for (auto const* choice : choices) {
-        result.push_back(wxString::FromUTF8(choice));
+        result.push_back(details::toWxString(choice));
     }
     return result;
 }
@@ -144,7 +115,7 @@ inline auto flattenToUtf8(std::initializer_list<std::initializer_list<char const
     result.reserve(count);
     for (auto const& group : choices) {
         for (auto const* choice : group) {
-            result.push_back(wxString::FromUTF8(choice));
+            result.push_back(details::toWxString(choice));
         }
     }
     return result;
@@ -160,30 +131,26 @@ concept utf8_text_input_range = std::ranges::input_range<R>
         || std::same_as<std::ranges::range_value_t<R>, std::string_view>
         || std::same_as<std::ranges::range_value_t<R>, char const*>);
 
+// Convert variadic arguments to vector of wxString
+template <details::utf8_text_choice... Strings>
+inline auto toVectorUtf8(Strings&&... strings) -> std::vector<wxString>
+{
+    auto result = std::vector<wxString> {};
+    result.reserve(sizeof...(strings));
+    (result.push_back(details::toWxString(std::forward<Strings>(strings))), ...);
+    return result;
+}
+
 template <utf8_text_input_range Range>
 inline auto ToVectorUtf8(Range&& range) -> std::vector<wxString>
 {
-    using value_t = std::ranges::range_value_t<Range>;
     auto result = std::vector<wxString> {};
-    if constexpr (std::same_as<value_t, wxString>) {
-        std::ranges::copy(std::forward<Range>(range), std::back_inserter(result));
-    } else if constexpr (std::same_as<value_t, std::string>) {
-        std::ranges::transform(std::forward<Range>(range), std::back_inserter(result), [](auto const& choice) {
-            return wxString::FromUTF8(choice);
-        });
-    } else if constexpr (std::same_as<value_t, std::string_view>) {
-        std::ranges::transform(std::forward<Range>(range), std::back_inserter(result), [](auto const choice) {
-#ifdef wxHAS_STD_STRING_VIEW
-            return wxString::FromUTF8(choice);
-#else
-            return wxString::FromUTF8(choice.data(), choice.size());
-#endif
-        });
-    } else {
-        std::ranges::transform(std::forward<Range>(range), std::back_inserter(result), [](auto const* choice) {
-            return wxString::FromUTF8(choice);
-        });
+    if constexpr (std::ranges::sized_range<Range>) {
+        result.reserve(std::ranges::size(range));
     }
+    std::ranges::transform(std::forward<Range>(range), std::back_inserter(result), [](auto const& choice) {
+        return details::toWxString(choice);
+    });
     return result;
 }
 
