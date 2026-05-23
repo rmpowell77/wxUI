@@ -23,25 +23,53 @@ on:
         default: 'Compatibility Test'
 
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Generate matrix
+        id: set-matrix
+        run: |
+          # Parse inputs
+          wxwidgets_versions='${{ inputs.wxwidgets_versions }}'
+          os_list='${{ inputs.os }}'
+          
+          # Build matrix JSON
+          matrix='{"include":[]}'
+          
+          for wx_version in $(echo "$wxwidgets_versions" | jq -r '.[]'); do
+            for os_name in $(echo "$os_list" | jq -r '.[]'); do
+              case "$os_name" in
+                ubuntu)
+                  os="ubuntu-latest"
+                  name="Ubuntu GCC"
+                  ;;
+                macos)
+                  os="macos-latest"
+                  name="macOS Clang"
+                  ;;
+                windows)
+                  os="windows-latest"
+                  name="Windows MSVC"
+                  ;;
+              esac
+              
+              matrix=$(echo "$matrix" | jq --arg wx "$wx_version" --arg os "$os" --arg name "$name" \
+                '.include += [{"wxwidgets-version": $wx, "os": $os, "name": $name, "build_type": "Release"}]')
+            done
+          done
+          
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          echo "Generated matrix: $matrix"
+  
   compatibility-test:
+    needs: generate-matrix
     name: ${{ matrix.name }} - ${{ matrix.wxwidgets-version }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      matrix:
-        wxwidgets-version: ${{ fromJson(inputs.wxwidgets_versions) }}
-        os_name: ${{ fromJson(inputs.os) }}
-        build_type: [Release]
-        include:
-          - os_name: ubuntu
-            os: ubuntu-latest
-            name: "Ubuntu GCC"
-          - os_name: macos
-            os: macos-latest
-            name: "macOS Clang"
-          - os_name: windows
-            os: windows-latest
-            name: "Windows MSVC"
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
 
     steps:
       - name: Checkout wxUI
