@@ -55,13 +55,15 @@ jobs:
                   ;;
               esac
               
-              matrix=$(echo "$matrix" | jq --arg wx "$wx_version" --arg os "$os" --arg name "$name" \
+              matrix=$(echo "$matrix" | jq -c --arg wx "$wx_version" --arg os "$os" --arg name "$name" \
                 '.include += [{"wxwidgets-version": $wx, "os": $os, "name": $name, "build_type": "Release"}]')
             done
           done
           
+          # Output as compact JSON (single line)
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
-          echo "Generated matrix: $matrix"
+          echo "Generated matrix:"
+          echo "$matrix" | jq .
   
   compatibility-test:
     needs: generate-matrix
