@@ -113,7 +113,14 @@ jobs:
           cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DWXUI_WITH_TESTS=ON -DWXUI_WITH_EXAMPLE=ON -DWXUI_FETCH_WXWIDGETS=ON -DWXUI_WXWIDGETS_GIT_TAG="${{ matrix.wxwidgets-version }}" -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/wxwidgets-install
 
       - name: Build
-        run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }} --parallel
+        run: |
+          # Limit parallel jobs on Linux to avoid OOM issues
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }} --parallel 2
+          else
+            cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }} --parallel
+          fi
+        shell: bash
 
       - name: Run tests
         run: |
