@@ -197,9 +197,9 @@ jobs:
       # Limit parallel jobs on Linux to avoid OOM issues with wxWidgets compilation
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-          cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}} --parallel 2
+          cmake --build "${{github.workspace}}/build" --config ${{matrix.build_type}} --parallel 2
         else
-          cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
+          cmake --build "${{github.workspace}}/build" --config ${{matrix.build_type}}
         fi
       shell: bash
 

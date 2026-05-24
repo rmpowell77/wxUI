@@ -60,8 +60,8 @@ jobs:
             done
           done
           
-          # Output as compact JSON (single line)
-          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          # Output as compact JSON (single line) - ensure proper escaping
+          echo "matrix=$(echo "$matrix" | jq -c .)" >> $GITHUB_OUTPUT
           echo "Generated matrix:"
           echo "$matrix" | jq .
   
@@ -110,15 +110,15 @@ jobs:
 
       - name: Configure CMake
         run: |
-          cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DWXUI_WITH_TESTS=ON -DWXUI_WITH_EXAMPLE=ON -DWXUI_FETCH_WXWIDGETS=ON -DWXUI_WXWIDGETS_GIT_TAG="${{ matrix.wxwidgets-version }}" -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/wxwidgets-install
+          cmake -B "${{ github.workspace }}/build" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DWXUI_WITH_TESTS=ON -DWXUI_WITH_EXAMPLE=ON -DWXUI_FETCH_WXWIDGETS=ON -DWXUI_WXWIDGETS_GIT_TAG="${{ matrix.wxwidgets-version }}" -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/wxwidgets-install"
 
       - name: Build
         run: |
           # Limit parallel jobs on Linux to avoid OOM issues
           if [ "$RUNNER_OS" == "Linux" ]; then
-            cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }} --parallel 2
+            cmake --build "${{ github.workspace }}/build" --config ${{ matrix.build_type }} --parallel 2
           else
-            cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }} --parallel
+            cmake --build "${{ github.workspace }}/build" --config ${{ matrix.build_type }} --parallel
           fi
         shell: bash
 
@@ -148,13 +148,13 @@ jobs:
       - name: Generate test report
         if: always()
         run: |
-          mkdir -p ${{ github.workspace }}/test-reports
+          mkdir -p "${{ github.workspace }}/test-reports"
           
           # Get wxUI version
           WXUI_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "dev-$(git rev-parse --short HEAD)")
           
           # Create a simple JSON report
-          cat > ${{ github.workspace }}/test-reports/result.json << EOF
+          cat > "${{ github.workspace }}/test-reports/result.json" << EOF
           {
             "wxui_version": "$WXUI_VERSION",
             "wxwidgets_version": "${{ matrix.wxwidgets-version }}",
@@ -167,7 +167,7 @@ jobs:
           }
           EOF
           
-          cat ${{ github.workspace }}/test-reports/result.json
+          cat "${{ github.workspace }}/test-reports/result.json"
         shell: bash
 
       - name: Upload test results
