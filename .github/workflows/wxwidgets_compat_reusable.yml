@@ -69,6 +69,7 @@ jobs:
     needs: generate-matrix
     name: ${{ matrix.name }} - ${{ matrix.wxwidgets-version }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
@@ -114,9 +115,11 @@ jobs:
 
       - name: Build
         run: |
-          # Limit parallel jobs on Linux to avoid OOM issues
+          # Limit parallel jobs on Linux and macOS to avoid OOM issues
           if [ "$RUNNER_OS" == "Linux" ]; then
             cmake --build "${{ github.workspace }}/build" --config ${{ matrix.build_type }} --parallel 2
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            cmake --build "${{ github.workspace }}/build" --config ${{ matrix.build_type }} --parallel 3
           else
             cmake --build "${{ github.workspace }}/build" --config ${{ matrix.build_type }} --parallel
           fi
