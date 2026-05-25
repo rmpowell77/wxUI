@@ -23,25 +23,56 @@ on:
         default: 'Compatibility Test'
 
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Generate matrix
+        id: set-matrix
+        run: |
+          # Parse inputs
+          wxwidgets_versions='${{ inputs.wxwidgets_versions }}'
+          os_list='${{ inputs.os }}'
+          
+          # Build matrix JSON
+          matrix='{"include":[]}'
+          
+          for wx_version in $(echo "$wxwidgets_versions" | jq -r '.[]'); do
+            for os_name in $(echo "$os_list" | jq -r '.[]'); do
+              case "$os_name" in
+                ubuntu)
+                  os="ubuntu-latest"
+                  name="Ubuntu GCC"
+                  ;;
+                macos)
+                  os="macos-latest"
+                  name="macOS Clang"
+                  ;;
+                windows)
+                  os="windows-latest"
+                  name="Windows MSVC"
+                  ;;
+              esac
+              
+              matrix=$(echo "$matrix" | jq -c --arg wx "$wx_version" --arg os "$os" --arg name "$name" \
+                '.include += [{"wxwidgets-version": $wx, "os": $os, "name": $name, "build_type": "Release"}]')
+            done
+          done
+          
+          # Output as compact JSON (single line) - ensure proper escaping
+          echo "matrix=$(echo "$matrix" | jq -c .)" >> $GITHUB_OUTPUT
+          echo "Generated matrix:"
+          echo "$matrix" | jq .
+  
   compatibility-test:
+    needs: generate-matrix
     name: ${{ matrix.name }} - ${{ matrix.wxwidgets-version }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
     strategy:
       fail-fast: false
-      matrix:
-        wxwidgets-version: ${{ fromJson(inputs.wxwidgets_versions) }}
-        os_name: ${{ fromJson(inputs.os) }}
-        build_type: [Release]
-        include:
-          - os_name: ubuntu
-            os: ubuntu-latest
-            name: "Ubuntu GCC"
-          - os_name: macos
-            os: macos-latest
-            name: "macOS Clang"
-          - os_name: windows
-            os: windows-latest
-            name: "Windows MSVC"
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
 
     steps:
       - name: Checkout wxUI
@@ -80,10 +111,19 @@ jobs:
 
       - name: Configure CMake
         run: |
-          cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DWXUI_WITH_TESTS=ON -DWXUI_WITH_EXAMPLE=ON -DWXUI_FETCH_WXWIDGETS=ON -DWXUI_WXWIDGETS_GIT_TAG="${{ matrix.wxwidgets-version }}" -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/wxwidgets-install
+          cmake -B "${{ github.workspace }}/build" -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DWXUI_WITH_TESTS=ON -DWXUI_WITH_EXAMPLE=ON -DWXUI_FETCH_WXWIDGETS=ON -DWXUI_WXWIDGETS_GIT_TAG="${{ matrix.wxwidgets-version }}" -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/wxwidgets-install"
 
       - name: Build
-        run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }} --parallel
+        run: |
+          # Limit parallel jobs on Linux and macOS to avoid OOM issues
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            cmake --build "${{ github.workspace }}/build" --config ${{ matrix.build_type }} --parallel 2
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            cmake --build "${{ github.workspace }}/build" --config ${{ matrix.build_type }} --parallel 3
+          else
+            cmake --build "${{ github.workspace }}/build" --config ${{ matrix.build_type }} --parallel
+          fi
+        shell: bash
 
       - name: Run tests
         run: |
@@ -111,13 +151,13 @@ jobs:
       - name: Generate test report
         if: always()
         run: |
-          mkdir -p ${{ github.workspace }}/test-reports
+          mkdir -p "${{ github.workspace }}/test-reports"
           
           # Get wxUI version
           WXUI_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "dev-$(git rev-parse --short HEAD)")
           
           # Create a simple JSON report
-          cat > ${{ github.workspace }}/test-reports/result.json << EOF
+          cat > "${{ github.workspace }}/test-reports/result.json" << EOF
           {
             "wxui_version": "$WXUI_VERSION",
             "wxwidgets_version": "${{ matrix.wxwidgets-version }}",
@@ -130,7 +170,7 @@ jobs:
           }
           EOF
           
-          cat ${{ github.workspace }}/test-reports/result.json
+          cat "${{ github.workspace }}/test-reports/result.json"
         shell: bash
 
       - name: Upload test results

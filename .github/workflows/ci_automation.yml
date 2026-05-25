@@ -47,6 +47,7 @@ jobs:
   build:
     name: ${{ matrix.config.name }} (${{ matrix.build_type }})
     runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
@@ -194,7 +195,16 @@ jobs:
  
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
+      # Limit parallel jobs on Linux and macOS to avoid OOM issues with wxWidgets compilation
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          cmake --build "${{github.workspace}}/build" --config ${{matrix.build_type}} --parallel 2
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          cmake --build "${{github.workspace}}/build" --config ${{matrix.build_type}} --parallel 3
+        else
+          cmake --build "${{github.workspace}}/build" --config ${{matrix.build_type}}
+        fi
+      shell: bash
 
     - name: Run tests
       run: |
