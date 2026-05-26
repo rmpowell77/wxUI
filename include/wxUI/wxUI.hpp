@@ -35,6 +35,7 @@
 #include <wxUI/BitmapToggleButton.hpp>
 #include <wxUI/BookCtrl.hpp>
 #include <wxUI/Button.hpp>
+#include <wxUI/CalendarCtrl.hpp>
 #include <wxUI/CheckBox.hpp>
 #include <wxUI/Choice.hpp>
 #include <wxUI/ColorPickerCtrl.hpp>
