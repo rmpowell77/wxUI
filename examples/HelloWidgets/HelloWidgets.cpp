@@ -158,6 +158,7 @@ HelloWidgetsFrame::HelloWidgetsFrame()
                             MultibindExample { this }.ShowModal();
                         } },
             // endsnippet wxUIMenuExample1
+            // endsnippet wxUIMenuSubMenu
             wxUI::Item { "&SplitterExample...", [this] {
                             SplitterExample { this }.ShowModal();
                         } },
@@ -194,6 +195,12 @@ HelloWidgetsFrame::HelloWidgetsFrame()
             wxUI::Item { "&ComboUpdate...", [this] {
                             ComboUpdate { this }.ShowModal();
                         } },
+            wxUI::Item { "&SpacerExample...", [this] {
+                            SpacerExample { this }.ShowModal();
+                        } },
+            wxUI::Item { "&RadioBoxExample...", [this] {
+                            RadioBoxExample { this }.ShowModal();
+                        } },
             // snippet wxUIMenuExample1
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello Widgets!");
@@ -203,7 +210,6 @@ HelloWidgetsFrame::HelloWidgetsFrame()
                              } },
             // endsnippet wxUIMenuExample1
         },
-        // endsnippet wxUIMenuSubMenu
         wxUI::Menu {
             "&Help",
             wxUI::Item { wxID_ABOUT, [] {

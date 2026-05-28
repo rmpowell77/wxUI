@@ -38,6 +38,22 @@ struct Wrapper;
 
 namespace wxUI::details {
 
+struct Spacer {
+    explicit Spacer(int size)
+        : size_(size)
+    {
+    }
+    int size_ {};
+};
+
+struct StretchSpacer {
+    explicit StretchSpacer(int stretch = 1)
+        : stretch_(stretch)
+    {
+    }
+    int stretch_ {};
+};
+
 template <typename T>
 struct is_Wrapper : std::false_type { };
 template <typename W>
@@ -48,7 +64,9 @@ inline constexpr bool is_Wrapper_v = is_Wrapper<T>::value;
 template <typename T>
 concept SizerItem = details::CreateAndAddable<T>
     || is_Wrapper_v<T>
-    || (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>);
+    || (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>)
+    || std::is_same_v<T, Spacer>
+    || std::is_same_v<T, StretchSpacer>;
 
 template <typename T, typename Parent, typename Sizer>
 static inline auto createAndAddVisiter(T& arg, Parent* parent, Sizer* sizer, wxSizerFlags const& flags)
@@ -59,6 +77,10 @@ static inline auto createAndAddVisiter(T& arg, Parent* parent, Sizer* sizer, wxS
         sizer->Add(arg, flags);
     } else if constexpr (is_Wrapper_v<T>) {
         sizer->Add(arg.create(), flags);
+    } else if constexpr (std::is_same_v<T, Spacer>) {
+        sizer->AddSpacer(arg.size_);
+    } else if constexpr (std::is_same_v<T, StretchSpacer>) {
+        sizer->AddStretchSpacer(arg.stretch_);
     } else {
         static_assert(always_false_v<T>, "createAndAdd not available for this item with these Parent/Sizer types; provide a customization");
     }
@@ -166,7 +188,7 @@ struct BoxSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit BoxSizer(wxOrientation orientation, wxSizerFlags const& flags, UItems&&... items)
+    BoxSizer(wxOrientation orientation, wxSizerFlags const& flags, UItems&&... items)
         : details_(flags, std::forward<UItems>(items)...)
         , orientation_(orientation)
     {
@@ -176,7 +198,7 @@ struct BoxSizer {
     BoxSizer(wxOrientation orientation, std::string_view caption, UItems&&... items)
         : details_(std::forward<UItems>(items)...)
         , orientation_(orientation)
-        , caption_(wxString::FromUTF8(caption))
+        , caption_(toWxString(caption))
     {
     }
 
@@ -192,7 +214,7 @@ struct BoxSizer {
     BoxSizer(wxOrientation orientation, std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
         : details_(flags, std::forward<UItems>(items)...)
         , orientation_(orientation)
-        , caption_(wxString::FromUTF8(caption))
+        , caption_(toWxString(caption))
     {
     }
 
@@ -205,7 +227,7 @@ struct BoxSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit BoxSizer(withWrap, wxOrientation orientation, UItems&&... items)
+    BoxSizer(withWrap, wxOrientation orientation, UItems&&... items)
         : details_(std::forward<UItems>(items)...)
         , orientation_(orientation)
         , wrap_(true)
@@ -213,7 +235,7 @@ struct BoxSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit BoxSizer(withWrap, wxOrientation orientation, wxSizerFlags const& flags, UItems&&... items)
+    BoxSizer(withWrap, wxOrientation orientation, wxSizerFlags const& flags, UItems&&... items)
         : details_(flags, std::forward<UItems>(items)...)
         , orientation_(orientation)
         , wrap_(true)

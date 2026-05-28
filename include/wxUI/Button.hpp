@@ -40,16 +40,16 @@ struct Button {
     }
 
     explicit Button(wxWindowID identity, std::string_view text = "")
-        : Button(identity, wxUI_String {}, wxString::FromUTF8(text))
+        : Button(identity, wxUI_String {}, details::toWxString(text))
     {
     }
 
-    explicit Button(wxUI_String tag, wxString text)
+    Button(wxUI_String tag, wxString text)
         : Button(wxID_ANY, tag, std::move(text))
     {
     }
 
-    explicit Button(wxWindowID identity, wxUI_String, wxString text)
+    Button(wxWindowID identity, wxUI_String, wxString text)
         : details_(identity)
         , text_(std::move(text))
     {

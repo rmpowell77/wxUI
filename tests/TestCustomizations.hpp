@@ -275,6 +275,8 @@ struct TestSizer {
     void SetSizeHints(TestParent*);
     void Add(TestParent*, wxSizerFlags const& flags);
     void Add(TestSizer*, wxSizerFlags const& flags);
+    void AddSpacer(int size);
+    void AddStretchSpacer(int proportion);
     std::vector<std::string> log {};
 };
 
@@ -520,6 +522,16 @@ inline void TestSizer::Add(TestParent* controller, wxSizerFlags const& flags)
 inline void TestSizer::Add(TestSizer* sizer, wxSizerFlags const& flags)
 {
     log.push_back(std::format("AddSizer:{}:flags:{}", *sizer, flags));
+}
+
+inline void TestSizer::AddSpacer(int size)
+{
+    log.push_back(std::format("AddSpacer:{}", size));
+}
+
+inline void TestSizer::AddStretchSpacer(int proportion)
+{
+    log.push_back(std::format("AddStretchSpacer:{}", proportion));
 }
 
 }

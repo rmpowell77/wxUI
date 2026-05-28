@@ -35,7 +35,11 @@ namespace wxUI {
 struct ListBox {
     using underlying_t = wxListBox;
 
-    explicit ListBox(std::initializer_list<char const*> choices)
+    ListBox() = default;
+
+    template <typename String>
+    requires details::utf8_text_choice<String>
+    explicit ListBox(std::initializer_list<String> choices)
         : ListBox(wxID_ANY, choices)
     {
     }
@@ -45,48 +49,48 @@ struct ListBox {
     {
     }
 
-    explicit ListBox(std::initializer_list<std::string_view> choices)
-        : ListBox(wxID_ANY, choices)
+    explicit ListBox(details::Ranges::utf8_text_input_range auto&& choices)
+        : ListBox(wxID_ANY, std::forward<decltype(choices)>(choices))
     {
     }
 
-    explicit ListBox(std::initializer_list<std::string> choices = {})
-        : ListBox(wxID_ANY, choices)
+    template <typename... Strings>
+    requires(sizeof...(Strings) > 0) && (details::utf8_text_choice<Strings> && ...)
+    ListBox(Strings&&... choices)
+        : ListBox(wxID_ANY, std::forward<Strings>(choices)...)
     {
     }
 
-    explicit ListBox(wxWindowID identity, std::initializer_list<char const*> choices)
-        : details_(identity)
-        , choices_(details::Ranges::convertToUtf8(choices))
+    explicit ListBox(wxWindowID identity)
+        : ListBox(identity, std::initializer_list<char const*> {})
     {
     }
 
-    explicit ListBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
-        : details_(identity)
-        , choices_(details::Ranges::flattenToUtf8(choices))
-    {
-    }
-
-    explicit ListBox(wxWindowID identity, std::initializer_list<std::string_view> choices)
-        : details_(identity)
-        , choices_(details::Ranges::convertToUtf8(choices))
-    {
-    }
-
-    explicit ListBox(wxWindowID identity, std::initializer_list<std::string> choices = {})
+    template <typename String>
+    requires details::utf8_text_choice<String>
+    ListBox(wxWindowID identity, std::initializer_list<String> choices)
         : details_(identity)
         , choices_(details::Ranges::convertTo(choices))
     {
     }
 
-    explicit ListBox(details::Ranges::utf8_text_input_range auto&& choices)
-        : ListBox(wxID_ANY, std::forward<decltype(choices)>(choices))
+    ListBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
+        : details_(identity)
+        , choices_(details::Ranges::flattenToUtf8(choices))
     {
     }
 
     ListBox(wxWindowID identity, details::Ranges::utf8_text_input_range auto&& choices)
         : details_(identity)
         , choices_(details::Ranges::ToVectorUtf8(std::forward<decltype(choices)>(choices)))
+    {
+    }
+
+    template <typename... Strings>
+    requires(sizeof...(Strings) > 0) && (details::utf8_text_choice<Strings> && ...)
+    ListBox(wxWindowID identity, Strings&&... choices)
+        : details_(identity)
+        , choices_(details::Ranges::toVectorUtf8(std::forward<Strings>(choices)...))
     {
     }
 

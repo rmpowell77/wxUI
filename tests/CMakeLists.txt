@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.28)
 
-find_package(Catch2 CONFIG REQUIRED)
+if(NOT WXUI_FETCH_WXWIDGETS)
+  find_package(Catch2 CONFIG REQUIRED)
+endif()
 
 add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_BitmapTests.cpp

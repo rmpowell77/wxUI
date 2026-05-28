@@ -33,6 +33,9 @@ SOFTWARE.
 
 namespace wxUI {
 
+using Spacer = details::Spacer;
+using StretchSpacer = details::StretchSpacer;
+
 template <details::SizerItem... Items>
 struct VSizer {
     template <details::SizerItem... UItems>
@@ -42,8 +45,8 @@ struct VSizer {
     }
 
     template <details::SizerItem... UItems>
-    VSizer(std::string_view caption, UItems&&... items)
-        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption), std::forward<UItems>(items)...)
+    explicit VSizer(std::string_view caption, UItems&&... items)
+        : details_(wxVERTICAL, wxUI_String {}, details::toWxString(caption), std::forward<UItems>(items)...)
     {
     }
 
@@ -61,7 +64,7 @@ struct VSizer {
 
     template <details::SizerItem... UItems>
     VSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
-        : details_(wxVERTICAL, wxUI_String {}, wxString::FromUTF8(caption), flags, std::forward<UItems>(items)...)
+        : details_(wxVERTICAL, wxUI_String {}, details::toWxString(caption), flags, std::forward<UItems>(items)...)
     {
     }
 
@@ -112,8 +115,8 @@ struct HSizer {
     }
 
     template <details::SizerItem... UItems>
-    HSizer(std::string_view caption, UItems&&... items)
-        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption), std::forward<UItems>(items)...)
+    explicit HSizer(std::string_view caption, UItems&&... items)
+        : details_(wxHORIZONTAL, wxUI_String {}, details::toWxString(caption), std::forward<UItems>(items)...)
     {
     }
 
@@ -131,7 +134,7 @@ struct HSizer {
 
     template <details::SizerItem... UItems>
     HSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
-        : details_(wxHORIZONTAL, wxUI_String {}, wxString::FromUTF8(caption), flags, std::forward<UItems>(items)...)
+        : details_(wxHORIZONTAL, wxUI_String {}, details::toWxString(caption), flags, std::forward<UItems>(items)...)
     {
     }
 
@@ -311,7 +314,7 @@ struct FlexGridSizer {
     }
 
     template <details::SizerItem... UItems>
-    explicit FlexGridSizer(int cols, wxSizerFlags const& flags, UItems&&... items)
+    FlexGridSizer(int cols, wxSizerFlags const& flags, UItems&&... items)
         : details_(flags, std::forward<UItems>(items)...)
         , cols_(cols)
     {
@@ -386,7 +389,6 @@ FlexGridSizer(int, UItems&&... items) -> FlexGridSizer<UItems...>;
 
 template <details::SizerItem... UItems>
 FlexGridSizer(int, wxSizerFlags const& flags, UItems&&... items) -> FlexGridSizer<UItems...>;
-
 }
 
 #include <wxUI/detail/ZapMacros.hpp>

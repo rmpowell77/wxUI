@@ -35,47 +35,12 @@ namespace wxUI {
 struct ComboBox {
     using underlying_t = wxComboBox;
 
-    ComboBox(std::initializer_list<char const*> choices)
+    ComboBox() = default;
+
+    template <typename String>
+    requires details::utf8_text_choice<String>
+    explicit ComboBox(std::initializer_list<String> choices)
         : ComboBox(wxID_ANY, choices)
-    {
-    }
-
-    ComboBox(std::initializer_list<std::initializer_list<char const*>> choices)
-        : ComboBox(wxID_ANY, choices)
-    {
-    }
-
-    ComboBox(std::initializer_list<std::string_view> choices)
-        : ComboBox(wxID_ANY, choices)
-    {
-    }
-
-    ComboBox(std::initializer_list<std::string> choices = {})
-        : ComboBox(wxID_ANY, choices)
-    {
-    }
-
-    explicit ComboBox(wxWindowID identity, std::initializer_list<char const*> choices)
-        : details_(identity)
-        , choices_(details::Ranges::convertToUtf8(choices))
-    {
-    }
-
-    explicit ComboBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
-        : details_(identity)
-        , choices_(details::Ranges::flattenToUtf8(choices))
-    {
-    }
-
-    explicit ComboBox(wxWindowID identity, std::initializer_list<std::string_view> choices)
-        : details_(identity)
-        , choices_(details::Ranges::convertToUtf8(choices))
-    {
-    }
-
-    explicit ComboBox(wxWindowID identity, std::initializer_list<std::string> choices = {})
-        : details_(identity)
-        , choices_(details::Ranges::convertTo(choices))
     {
     }
 
@@ -84,9 +49,48 @@ struct ComboBox {
     {
     }
 
+    ComboBox(std::initializer_list<std::initializer_list<char const*>> choices)
+        : ComboBox(wxID_ANY, choices)
+    {
+    }
+
+    template <typename... Strings>
+    requires(sizeof...(Strings) > 0) && (details::utf8_text_choice<Strings> && ...)
+    explicit ComboBox(Strings&&... choices)
+        : ComboBox(wxID_ANY, std::forward<Strings>(choices)...)
+    {
+    }
+
+    explicit ComboBox(wxWindowID identity)
+        : ComboBox(identity, std::initializer_list<char const*> {})
+    {
+    }
+
+    template <typename String>
+    requires details::utf8_text_choice<String>
+    ComboBox(wxWindowID identity, std::initializer_list<String> choices)
+        : details_(identity)
+        , choices_(details::Ranges::convertTo(choices))
+    {
+    }
+
+    ComboBox(wxWindowID identity, std::initializer_list<std::initializer_list<char const*>> choices)
+        : details_(identity)
+        , choices_(details::Ranges::flattenToUtf8(choices))
+    {
+    }
+
     ComboBox(wxWindowID identity, details::Ranges::utf8_text_input_range auto&& choices)
         : details_(identity)
         , choices_(details::Ranges::ToVectorUtf8(std::forward<decltype(choices)>(choices)))
+    {
+    }
+
+    template <typename... Strings>
+    requires(sizeof...(Strings) > 0) && (details::utf8_text_choice<Strings> && ...)
+    ComboBox(wxWindowID identity, Strings&&... choices)
+        : details_(identity)
+        , choices_(details::Ranges::toVectorUtf8(std::forward<Strings>(choices)...))
     {
     }
 

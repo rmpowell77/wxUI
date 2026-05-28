@@ -19,7 +19,7 @@ C++ header-only library to make declarative UIs for wxWidgets.
   - [Proxy](#proxy)
   - [Supported Controllers](#supported-controllers)
   - [Custom](#custom)
-- [Miscellaneous Notes](#miscellaneous-notes)
+  - [Miscellaneous Notes](#miscellaneous-notes)
 
 ## Overview
 
@@ -142,49 +142,6 @@ Items { "Name", "Help", Handler }
             wxUI::Item { "&MultibindExample...", [this] {
                             MultibindExample { this }.ShowModal();
                         } },
-            wxUI::Item { "&SplitterExample...", [this] {
-                            SplitterExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&WrapperExample...", [this] {
-                            WrapperExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&FactoryExample...", [this] {
-                            FactoryExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&ForEachExample...", [this] {
-                            ForEachExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&ListExample...", [this] {
-                            ListExample(this).ShowModal();
-                        } },
-            wxUI::Item { "&LayoutIf...", [this] {
-                            LayoutIfExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&WrapSizer...", [this] {
-                            WrapSizerExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&GridSizer...", [this] {
-                            GridSizerExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&FlexGridSizer...", [this] {
-                            FlexGridSizerExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&NotebookExample...", [this] {
-                            NotebookExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&GridSizer...", [this] {
-                            GridSizerExample { this }.ShowModal();
-                        } },
-            wxUI::Item { "&ComboUpdate...", [this] {
-                            ComboUpdate { this }.ShowModal();
-                        } },
-            wxUI::Item { "&Example Item...", [] {
-                            wxLogMessage("Hello Widgets!");
-                        } },
-            wxUI::CheckItem { "&Example Checked Item...", [](wxCommandEvent& event) {
-                                 wxLogMessage(event.IsChecked() ? "is checked" : "is not checked");
-                             } },
-        },
 ```
 
 The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primitives on construction.  When `fitTo` a frame is invoked does the underlying logic construct the menu structure.
@@ -293,6 +250,29 @@ This table shows which Layout to use for the desired behavior
 > ```
 >
 > This only holds for `wxBoxSizer`.  Grid and FlexGrid allow nesting.
+
+#### Spacer/StretchSpacer
+
+`wxUI` provides `Spacer` and `StretchSpacer` objects that may be added to Layout.  These act similarly to the [`AddSpacer()`](https://docs.wxwidgets.org/3.3/classwx_sizer.html#aedfc0bfd98114c348766431dcb49c9f3) and [`AddStretchSpacer()`](https://docs.wxwidgets.org/3.3/classwx_sizer.html#af529134a9dc74a0551d12e747af5c976) member functions for the `wxSizer` class, allowing you to create dynamic layouts that expand appropriately.
+
+```
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        HSizer {
+            Text { "Before spacer" },
+            Spacer { 20 },
+            Text { "After spacer" },
+        },
+        Spacer { 40 },
+        HSizer {
+            Button { "A" },
+            Button { "Before" },
+            StretchSpacer {},
+            Button { "After" },
+        },
+    }
+        .fitTo(this);
+```
 
 #### LayoutIf
 
@@ -604,8 +584,32 @@ An example of how to use could be as follows:
         CreateStdDialogButtonSizer(wxOK),
 ```
 
+#### String data
+
+Some *Controllers* use lists of *Strings* to display information, such as `wxRadioBox`, `wxChoice`, etc.  `wxUI` provides several forms of construction to allow several different forms of construction:
+
+```cpp
+Choice { "one", "two", "three" }, // homegenous "String"-like things
+Choice { wxID_OK, "one", "two", "three" }, // homegenous "String"-like things with identifier
+
+Choice { "one", wxString{"two"}, "three" }, // heterogenous "String"-like things
+Choice { wxID_OK, "one", wxString{"two"}, "three" }, // heterogenous "String"-like things with identifier
+
+std::vector<std::string> data {...};
+Choice { data }, // "range" of "String"-like things
+Choice { wxID_OK, data }, // range of "String"-like things with identifier
+```
+
+We currently support both homogenous (all the same) type of *String*, as well as *Range*-like constructs such as `std::vector`.
+
+Note: `wxRadioBox` requires a non-zero list of strings to operate correctly.  It is possible to construct `RadioBox` with an empty number of *Strings* requires a `std::vector` of strings, but a crash may occur if you do so.
+
 #### Miscellaneous Notes
 
-`wxRadioBox` requires a list of strings to operate correctly, so `RadioBox` requires a `std::vector` of strings.  Note, you *can* provide an empty `std::vector`, but a crash may occur if you do so.  In addition, because `RadioBox` can take in a string as a "caption", a key-value is necessary to prevent `char`-arrays from being interpreted as `initializer_list<std::string>`.
-
 `Button` and `BitmapButton` support the `setDefault` function which allows you to set them as the default button.
+
+`RadioBox` uses a constructor "tag" `withChoices` to separate the controller name from the "choices":
+
+```cpp
+RadioBox{"The Radio Box Name", withChoices {}, "Choice 1", "Choice 2", "Choice 3" }
+```

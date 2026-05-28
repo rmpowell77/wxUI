@@ -1,4 +1,14 @@
 # wxUI
+
+[![CI Status](https://github.com/rmpowell77/wxUI/actions/workflows/ci_automation.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/ci_automation.yml)
+[![wxWidgets Compatibility](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_compatibility.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_compatibility.yml)
+[![wxWidgets 3.3.x MacOS](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_macos_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_macos_compat.yml)
+[![wxWidgets 3.3.x Windows](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_windows_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_windows_compat.yml)
+[![wxWidgets 3.3.x Ubuntu](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_ubuntu_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.3_ubuntu_compat.yml)
+[![wxWidgets 3.2.x MacOS](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_macos_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_macos_compat.yml)
+[![wxWidgets 3.2.x Windows](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_windows_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_windows_compat.yml)
+[![wxWidgets 3.2.x Ubuntu](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_ubuntu_compat.yml/badge.svg)](https://github.com/rmpowell77/wxUI/actions/workflows/wxwidgets_3.2_ubuntu_compat.yml)
+
 C++ header-only library to make declarative UIs for wxWidgets.
 
 ```cpp
@@ -79,6 +89,12 @@ This separates the "what" from the "where", and often makes it challenging to id
 `wxUI` is not intended to be a replacement for `wxWidgets`, but instead is a library to simplify usage.  It is written such that it should be easy to "step outside" of `wxUI` and access `wxWidgets` directly.
 
 Please consult the [Programmer's Guide](docs/ProgrammersGuide.md) for more information on Library details.
+
+## Documentation
+
+- **[Programmer's Guide](docs/ProgrammersGuide.md)** - Comprehensive guide to wxUI patterns, controllers, layouts, and advanced usage
+- **[wxWidgets Compatibility](docs/wxWidgetsCompatibility.md)** - Information about tested wxWidgets versions, compatibility matrix, and testing locally
+- **[Contributor's Guide](docs/ContributorsGuide.md)** - Guidelines for contributing to the project
 
 ## Contributing
 

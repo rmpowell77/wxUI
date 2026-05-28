@@ -32,6 +32,7 @@ SOFTWARE.
 #include <wx/menu.h>
 #include <wxUI/Customizations.hpp>
 #include <wxUI/Proxy.hpp>
+#include <wxUI/Widget.hpp>
 #include <wxUI/wxUITypes.hpp>
 
 namespace wxUI::details {
@@ -113,7 +114,7 @@ struct Item {
     }
 
     explicit Item(wxStandardID identity, std::string_view name = "", std::string_view help = "")
-        : Item(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help))
+        : Item(identity, wxUI_String {}, details::toWxString(name), details::toWxString(help))
     {
     }
 
@@ -123,7 +124,7 @@ struct Item {
     }
 
     Item(wxStandardID identity, std::string_view name, std::string_view help, details::function_t function)
-        : Item(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+        : Item(identity, wxUI_String {}, details::toWxString(name), details::toWxString(help), std::move(function))
     {
     }
 
@@ -133,7 +134,7 @@ struct Item {
     }
 
     Item(std::string_view name, std::string_view help, details::function_t function)
-        : Item(wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+        : Item(wxUI_String {}, details::toWxString(name), details::toWxString(help), std::move(function))
     {
     }
 
@@ -206,7 +207,7 @@ struct CheckItem {
     }
 
     explicit CheckItem(wxStandardID identity, std::string_view name = "", std::string_view help = "")
-        : CheckItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help))
+        : CheckItem(identity, wxUI_String {}, details::toWxString(name), details::toWxString(help))
     {
     }
 
@@ -216,7 +217,7 @@ struct CheckItem {
     }
 
     CheckItem(wxStandardID identity, std::string_view name, std::string_view help, details::function_t function)
-        : CheckItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+        : CheckItem(identity, wxUI_String {}, details::toWxString(name), details::toWxString(help), std::move(function))
     {
     }
 
@@ -226,7 +227,7 @@ struct CheckItem {
     }
 
     CheckItem(std::string_view name, std::string_view help, details::function_t function)
-        : CheckItem(wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+        : CheckItem(wxUI_String {}, details::toWxString(name), details::toWxString(help), std::move(function))
     {
     }
 
@@ -299,7 +300,7 @@ struct RadioItem {
     }
 
     explicit RadioItem(wxStandardID identity, std::string_view name = "", std::string_view help = "")
-        : RadioItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help))
+        : RadioItem(identity, wxUI_String {}, details::toWxString(name), details::toWxString(help))
     {
     }
 
@@ -309,7 +310,7 @@ struct RadioItem {
     }
 
     RadioItem(wxStandardID identity, std::string_view name, std::string_view help, details::function_t function)
-        : RadioItem(identity, wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+        : RadioItem(identity, wxUI_String {}, details::toWxString(name), details::toWxString(help), std::move(function))
     {
     }
 
@@ -319,7 +320,7 @@ struct RadioItem {
     }
 
     RadioItem(std::string_view name, std::string_view help, details::function_t function)
-        : RadioItem(wxUI_String {}, wxString::FromUTF8(name), wxString::FromUTF8(help), std::move(function))
+        : RadioItem(wxUI_String {}, details::toWxString(name), details::toWxString(help), std::move(function))
     {
     }
 
@@ -428,8 +429,8 @@ struct Menu {
     {
     }
 
-    explicit Menu(std::string_view name, std::tuple<M...> const& items)
-        : Menu(wxUI_String {}, wxString::FromUTF8(name), items)
+    Menu(std::string_view name, std::tuple<M...> const& items)
+        : Menu(wxUI_String {}, details::toWxString(name), items)
     {
     }
 
@@ -513,6 +514,7 @@ struct MenuBar {
         : MenuBar(std::make_tuple(menus...))
     {
     }
+
     explicit MenuBar(std::tuple<M...> const& menus)
         : menus(menus)
     {

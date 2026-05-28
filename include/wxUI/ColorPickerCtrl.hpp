@@ -30,7 +30,7 @@ SOFTWARE.
 
 namespace wxUI {
 
-// https://docs.wxwidgets.org/latest/classwx_button.html
+// https://docs.wxwidgets.org/latest/classwx_colour_picker_ctrl.html
 struct ColorPickerCtrl {
     using underlying_t = wxColourPickerCtrl;
 

@@ -640,3 +640,51 @@ ComboUpdate::ComboUpdate(wxWindow* parent)
     proxy2->Clear();
     proxy2->Append(arr);
 }
+
+SpacerExample::SpacerExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "SpacerExample",
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    // snippet SpacerExample
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        HSizer {
+            Text { "Before spacer" },
+            Spacer { 20 },
+            Text { "After spacer" },
+        },
+        Spacer { 40 },
+        HSizer {
+            Button { "A" },
+            Button { "Before" },
+            StretchSpacer {},
+            Button { "After" },
+        },
+    }
+        .fitTo(this);
+    // endsnippet SpacerExample
+}
+
+RadioBoxExample::RadioBoxExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "RadioBoxExample",
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    // snippet RadioBoxExample
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+        Choice { "hello👋", "by" },
+        Choice { { "hello👋", "by" } },
+        Choice { wxString { "hello" }, wxString { "by" } },
+        Choice { { wxString { "hello" }, wxString { "by" } } },
+        RadioBox { RadioBox::withChoices {}, "hello👋" },
+        RadioBox { RadioBox::withChoices {}, { "hello👋" } },
+        RadioBox { RadioBox::withChoices {}, { "hello👋", "bye✌️" } },
+        RadioBox { RadioBox::withChoices {}, "hello👋", "bye✌️" },
+    }
+        .fitTo(this);
+    // endsnippet RadioBoxExample
+}

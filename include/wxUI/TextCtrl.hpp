@@ -42,16 +42,16 @@ struct TextCtrl {
     }
 
     explicit TextCtrl(wxWindowID identity, std::string_view text = "")
-        : TextCtrl(identity, wxUI_String {}, wxString::FromUTF8(text))
+        : TextCtrl(identity, wxUI_String {}, details::toWxString(text))
     {
     }
 
-    explicit TextCtrl(wxUI_String tag, wxString text)
+    TextCtrl(wxUI_String tag, wxString text)
         : TextCtrl(wxID_ANY, tag, std::move(text))
     {
     }
 
-    explicit TextCtrl(wxWindowID identity, wxUI_String, wxString text)
+    TextCtrl(wxWindowID identity, wxUI_String, wxString text)
         : details_(identity)
         , text_(std::move(text))
     {

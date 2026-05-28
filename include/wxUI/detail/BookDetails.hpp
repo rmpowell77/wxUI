@@ -36,7 +36,7 @@ namespace wxUI {
 template <details::SizerItem Item>
 struct BookItem {
     template <details::SizerItem UItem>
-    explicit BookItem(wxUI_String, wxString const& title, bool select, UItem&& item)
+    BookItem(wxUI_String, wxString const& title, bool select, UItem&& item)
         : title_(std::move(title))
         , item_(std::forward<UItem>(item))
         , select_(select)
@@ -44,19 +44,19 @@ struct BookItem {
     }
 
     template <details::SizerItem UItem>
-    explicit BookItem(wxUI_String, wxString const& title, UItem&& item)
+    BookItem(wxUI_String, wxString const& title, UItem&& item)
         : BookItem(wxUI_String {}, title, false, std::forward<UItem>(item))
     {
     }
 
     template <details::SizerItem UItem>
-    explicit BookItem(std::string_view title, bool select, UItem&& item)
-        : BookItem(wxUI_String {}, wxString::FromUTF8(title), select, std::forward<UItem>(item))
+    BookItem(std::string_view title, bool select, UItem&& item)
+        : BookItem(wxUI_String {}, details::toWxString(title), select, std::forward<UItem>(item))
     {
     }
 
     template <details::SizerItem UItem>
-    explicit BookItem(std::string_view title, UItem&& item)
+    BookItem(std::string_view title, UItem&& item)
         : BookItem(title, false, std::forward<UItem>(item))
     {
     }

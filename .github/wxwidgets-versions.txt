@@ -1,0 +1,14 @@
+# wxWidgets versions to test in the compatibility matrix
+# One version per line, use exact git tags from https://github.com/wxWidgets/wxWidgets/tags
+# Lines starting with # are ignored
+# Keep this list updated when new stable wxWidgets versions are released
+
+v3.3.2
+#v3.3.1
+#v3.3.0
+v3.2.10
+#v3.2.9
+#v3.2.8
+#v3.2.7
+#v3.2.6
+#v3.2.5
