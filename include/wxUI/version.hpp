@@ -34,9 +34,9 @@ namespace wxUI {
 // clang-format off
 #define WXUI_VERSION_MAJOR 0
 #define WXUI_VERSION_MINOR 4
-#define WXUI_VERSION_PATCH 1
+#define WXUI_VERSION_PATCH 2
 #define WXUI_VERSION_TWEAK 0
-#define WXUI_VERSION_STRING "0.4.1"
+#define WXUI_VERSION_STRING "0.4.2"
 // clang-format on
 
 struct Version {
