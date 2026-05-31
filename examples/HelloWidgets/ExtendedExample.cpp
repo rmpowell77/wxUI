@@ -688,3 +688,26 @@ RadioBoxExample::RadioBoxExample(wxWindow* parent)
         .fitTo(this);
     // endsnippet RadioBoxExample
 }
+
+SizerProxyExample::SizerProxyExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "SizerProxyExample",
+          wxDefaultPosition, wxDefaultSize,
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    SizerProxy sizerProxy {};
+    VSizer {
+        wxSizerFlags().Expand().Border(2),
+        HSizer {
+            Text { "Text 1" },
+            Text { "Text 2" },
+        }
+            .withProxy(sizerProxy),
+        Button { "Toggle Sizer" }
+            .bind([this, sizerProxy]() {
+                shown = !shown;
+                sizerProxy->Show(shown);
+            }),
+    }
+        .fitTo(this);
+}

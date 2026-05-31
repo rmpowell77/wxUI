@@ -114,3 +114,11 @@ class RadioBoxExample : public wxDialog {
 public:
     explicit RadioBoxExample(wxWindow* parent);
 };
+
+class SizerProxyExample : public wxDialog {
+public:
+    explicit SizerProxyExample(wxWindow* parent);
+
+private:
+    bool shown = true;
+};
