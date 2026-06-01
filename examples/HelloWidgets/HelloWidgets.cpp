@@ -201,6 +201,9 @@ HelloWidgetsFrame::HelloWidgetsFrame()
             wxUI::Item { "&RadioBoxExample...", [this] {
                             RadioBoxExample { this }.ShowModal();
                         } },
+            wxUI::Item { "&SizerProxyExample...", [this] {
+                            SizerProxyExample { this }.ShowModal();
+                        } },
             // snippet wxUIMenuExample1
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello Widgets!");

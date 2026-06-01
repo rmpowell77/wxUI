@@ -498,7 +498,7 @@ For convenience the event parameter of the function can be omitted in cases wher
 
 #### Proxy
 
-Often the value of a *Controller* in a layout needs to be referenced, or sometimes the backing `wxWindow` itself needs to be used directly.  This could be for reading a currently typed in value in a `TextCtrl`, or to change the selection of a `Choice`.  *Controllers* support `Proxy` objects, a way to get the handle to the underlying `wxWindow` that is created for the *Controller*.
+Often the value of a *Controller* or *Sizer* in a layout needs to be referenced, or sometimes the backing `wxWindow` itself needs to be used directly.  This could be for reading a currently typed in value in a `TextCtrl`, or to change the selection of a `Choice`.  *Controllers* and *Layout* support `Proxy` objects, a way to get the handle to the underlying `wxWindow` that is created for the *Controller*.
 
 Some *Controllers* do not support values that are intended to change, such as a `Line`, and others can have several values of interest, such as a `ComboBox`.  `Proxy` objects can have several accessors that allow access to these, most commonly called `value()` and `selection()` (see Supported Controllers for details of each supported *Controller*).  These accessors are proxy objects support `get()` and `set()` functions, as well as a set of appropriate overloads for the underlying type, allowing more ergonomic interaction with the code.  `Proxy` also supplies `operator*` which reference the most common accessor.
 
@@ -545,9 +545,10 @@ The "Controllers" currently supported by `wxUI`:
 | `Button`             | `wxButton`             | `EVT_BUTTON`       | n/a                   |
 | `CheckBox`           | `wxCheckBox`           | `EVT_CHECKBOX`     | `value` -> `bool`<BR>*default*: `value` |
 | `Choice`             | `wxChoice`             | `EVT_CHOICE`       | `selection` -> `int`<BR>*default*: `selection` |
+| `ColorPickerCtrl`    | `wxColourPickerCtrl`   | `EVT_COLOURPICKER_CHANGED` | n/a                   |
 | `ComboBox`           | `wxComboBox`           | `EVT_COMBOBOX`     | `selection` -> `int`<BR>`value` -> `std::string`<BR>*default*: `value` |
 | `Gauge`              | `wxGauge`              | n/a                | `range` -> `int`<BR>`value` -> `int`<BR>*default*: `value` |
-| `Hypertext`          | `wxHypertextCtrl`      | n/a                | n/a                   |
+| `Hyperlink`          | `wxHyperlinkCtrl`      | n/a                | n/a                   |
 | `Line`               | `wxStaticLine`         | n/a                | n/a                   |
 | `ListBox`            | `wxListBox`            | `EVT_LISTBOX`      | `selection` -> `int`<BR>`selections` -> `std::vector<int>`<BR>*default*: `selection` |
 | `RadioBox`           | `wxRadioBox`           | `EVT_RADIOBOX`     | `selection` -> `int`<BR>*default*: `selection` |
