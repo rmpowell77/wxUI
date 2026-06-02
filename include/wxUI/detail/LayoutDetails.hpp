@@ -255,7 +255,7 @@ struct BoxSizer {
     }
 
     WXUI_FORWARD_TO_DETAILS(BoxSizer, withFlags, wxSizerFlags, flags)
-    WXUI_FORWARD_TO_DETAILS(BoxSizer, withProxy, wxUI::details::Proxy<wxSizer>, proxy)
+    WXUI_FORWARD_TO_DETAILS(BoxSizer, withProxy, SizerProxy, proxy)
 
 private:
     template <typename Parent>
