@@ -82,7 +82,7 @@ struct VSizer {
 
     WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS(VSizer, fitTo, Parent, parent)
     WXUI_FORWARD_TO_DETAILS(VSizer, withFlags, wxSizerFlags, flags)
-    WXUI_FORWARD_TO_DETAILS(VSizer, withProxy, wxUI::details::Proxy<wxSizer>, proxy)
+    WXUI_FORWARD_TO_DETAILS(VSizer, withProxy, SizerProxy, proxy)
 
 private:
     details::BoxSizer<Items...> details_;
@@ -152,7 +152,7 @@ struct HSizer {
 
     WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS(HSizer, fitTo, Parent, parent)
     WXUI_FORWARD_TO_DETAILS(HSizer, withFlags, wxSizerFlags, flags)
-    WXUI_FORWARD_TO_DETAILS(HSizer, withProxy, wxUI::details::Proxy<wxSizer>, proxy)
+    WXUI_FORWARD_TO_DETAILS(HSizer, withProxy, SizerProxy, proxy)
 
 private:
     details::BoxSizer<Items...> details_;
@@ -198,7 +198,7 @@ struct VWrapSizer {
 
     WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS(VWrapSizer, fitTo, Parent, parent)
     WXUI_FORWARD_TO_DETAILS(VWrapSizer, withFlags, wxSizerFlags, flags)
-    WXUI_FORWARD_TO_DETAILS(VWrapSizer, withProxy, wxUI::details::Proxy<wxSizer>, proxy)
+    WXUI_FORWARD_TO_DETAILS(VWrapSizer, withProxy, SizerProxy, proxy)
 
 private:
     details::BoxSizer<Items...> details_;
@@ -232,7 +232,7 @@ struct HWrapSizer {
 
     WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS(HWrapSizer, fitTo, Parent, parent)
     WXUI_FORWARD_TO_DETAILS(HWrapSizer, withFlags, wxSizerFlags, flags)
-    WXUI_FORWARD_TO_DETAILS(HWrapSizer, withProxy, wxUI::details::Proxy<wxSizer>, proxy)
+    WXUI_FORWARD_TO_DETAILS(HWrapSizer, withProxy, SizerProxy, proxy)
 
 private:
     details::BoxSizer<Items...> details_;
@@ -281,7 +281,7 @@ struct GridSizer {
     }
 
     WXUI_FORWARD_TO_DETAILS(GridSizer, withFlags, wxSizerFlags, flags)
-    WXUI_FORWARD_TO_DETAILS(GridSizer, withProxy, wxUI::details::Proxy<wxSizer>, proxy)
+    WXUI_FORWARD_TO_DETAILS(GridSizer, withProxy, SizerProxy, proxy)
 
 private:
     template <typename Parent>
@@ -365,7 +365,7 @@ struct FlexGridSizer {
     }
 
     WXUI_FORWARD_TO_DETAILS(FlexGridSizer, withFlags, wxSizerFlags, flags)
-    WXUI_FORWARD_TO_DETAILS(FlexGridSizer, withProxy, wxUI::details::Proxy<wxSizer>, proxy)
+    WXUI_FORWARD_TO_DETAILS(FlexGridSizer, withProxy, SizerProxy, proxy)
 
 private:
     template <typename Parent>
