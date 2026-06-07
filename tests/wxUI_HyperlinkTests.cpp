@@ -24,6 +24,7 @@ SOFTWARE.
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/Hyperlink.hpp>
+#include <wxUI/Layout.hpp>
 #include <wxUI/wxUITypes.hpp>
 
 #include <wx/wx.h>
@@ -45,104 +46,124 @@ struct HyperlinkTestPolicy {
 };
 static auto createUUT() { return HyperlinkTestPolicy::createUUT(); }
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::string& text,
+    const std::string& url)
+{
+    return std::format("wxHyperlinkCtrl[id={}, pos=({},{}), size=({},{}), style={}, text=\"{}\", text2=\"{}\"]", identity, pos.x, pos.y, size.x, size.y, style, text, url);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::string& text,
+    const std::string& url)
+{
+    auto controller = makeController(identity, pos, size, style, text, url);
+    return {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+        "SetEnabled:true",
+        "sizer:Sizer[orientation=wxVERTICAL]",
+        "Add:" + controller + ":flags:(0,0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]"
+    };
+}
+}
+
 TEST_CASE("Hyperlink")
 {
     SECTION("name.url")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 2097161, "Hello", "www.github.com"));
     }
 
     SECTION("name.url_unicode")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { "🐨", "https://example.com" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"🐨\", text2=\"https://example.com\"]",
-                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"🐨\", text2=\"https://example.com\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { "🐨", "https://example.com" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 2097161, "🐨", "https://example.com"));
     }
 
     SECTION("name.url_tag")
     {
-        TestParent provider;
+        TestParent frame;
         wxString wx_text { "Hello" };
         wxString wx_url { "www.github.com" };
-        auto uut = TypeUnderTest { wxUI_String {}, wx_text, wx_url };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "SetEnabled:true",
-              });
+        wxUI::VSizer {
+            TypeUnderTest { wxUI_String {}, wx_text, wx_url }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 2097161, "Hello", "www.github.com"));
     }
 
     SECTION("id.name.url")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, "Hello", "www.github.com" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxHyperlinkCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "controller:wxHyperlinkCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, "Hello", "www.github.com" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 2097161, "Hello", "www.github.com"));
     }
 
     SECTION("style")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 2097161, "Hello", "www.github.com"));
     }
 
     SECTION("withStyle")
     {
-        TestParent provider;
-        auto uut = createUUT().withoutStyle(wxHL_ALIGN_CENTRE).withStyle(wxHL_ALIGN_LEFT);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097155, text=\"Hello\", text2=\"www.github.com\"]",
-                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=2097155, text=\"Hello\", text2=\"www.github.com\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withoutStyle(wxHL_ALIGN_CENTRE).withStyle(wxHL_ALIGN_LEFT)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 2097155, "Hello", "www.github.com"));
     }
 
     SECTION("pos")
     {
-        TestParent provider;
-        auto uut = createUUT().withPosition({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxHyperlinkCtrl[id=-1, pos=(1,2), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "controller:wxHyperlinkCtrl[id=-1, pos=(1,2), size=(-1,-1), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withPosition({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { 1, 2 }, { -1, -1 }, 2097161, "Hello", "www.github.com"));
     }
 
     SECTION("size")
     {
-        TestParent provider;
-        auto uut = createUUT().withSize({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(1,2), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "controller:wxHyperlinkCtrl[id=-1, pos=(-1,-1), size=(1,2), style=2097161, text=\"Hello\", text2=\"www.github.com\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withSize({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { 1, 2 }, 2097161, "Hello", "www.github.com"));
     }
 
     COMMON_TESTS(HyperlinkTestPolicy)

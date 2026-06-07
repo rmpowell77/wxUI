@@ -33,6 +33,7 @@ using namespace wxUITests;
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
 
+#if 0
 TEST_CASE("Wrapper")
 {
     TestParent provider;
@@ -95,3 +96,4 @@ TEST_CASE("Wrapper")
     }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)
+#endif

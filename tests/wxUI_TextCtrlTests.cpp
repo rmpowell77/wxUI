@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <wxUI/Layout.hpp>
 #include <wxUI/TextCtrl.hpp>
 #include <wxUI/wxUITypes.hpp>
 
@@ -45,115 +46,131 @@ struct TextCtrlTestPolicy {
 };
 static auto createUUT() { return TextCtrlTestPolicy::createUUT(); }
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::string& text)
+{
+    return std::format("wxTextCtrl[id={}, pos=({},{}), size=({},{}), style={}, text=\"{}\"]", identity, pos.x, pos.y, size.x, size.y, style, text);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::string& text)
+{
+    auto controller = makeController(identity, pos, size, style, text);
+    return {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+        "SetEnabled:true",
+        "sizer:Sizer[orientation=wxVERTICAL]",
+        "Add:" + controller + ":flags:(0,0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]"
+    };
+}
+}
+
 TEST_CASE("TextCtrl")
 {
     SECTION("noargs")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "controller:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, ""));
     }
 
     SECTION("name")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { "Hello" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "controller:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { "Hello" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "Hello"));
     }
 
     SECTION("name_unicode")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { "🐨" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"🐨\"]",
-                  "controller:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"🐨\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { "🐨" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "🐨"));
     }
 
     SECTION("name_tag")
     {
-        TestParent provider;
+        TestParent frame;
         wxString wx_label { "Hello" };
-        auto uut = TypeUnderTest { wxUI_String {}, wx_label };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "controller:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "SetEnabled:true",
-              });
+        wxUI::VSizer {
+            TypeUnderTest { wxUI_String {}, wx_label }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "Hello"));
     }
 
     SECTION("id")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxTextCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "controller:wxTextCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, ""));
     }
 
     SECTION("id.name")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, "Hello" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxTextCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "controller:wxTextCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, "Hello" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, "Hello"));
     }
 
     SECTION("style")
     {
-        TestParent provider;
-        auto uut = createUUT().withStyle(wxTE_PROCESS_ENTER);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=1024, text=\"\"]",
-                  "controller:wxTextCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=1024, text=\"\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withStyle(wxTE_PROCESS_ENTER)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 1024, ""));
     }
 
     SECTION("pos")
     {
-        TestParent provider;
-        auto uut = createUUT().withPosition({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxTextCtrl[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
-                  "controller:wxTextCtrl[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withPosition({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { 1, 2 }, { -1, -1 }, 0, ""));
     }
 
     SECTION("size")
     {
-        TestParent provider;
-        auto uut = createUUT().withSize({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxTextCtrl[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
-                  "controller:wxTextCtrl[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\"]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withSize({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { 1, 2 }, 0, ""));
     }
 
     COMMON_TESTS(TextCtrlTestPolicy)

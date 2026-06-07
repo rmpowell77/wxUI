@@ -24,6 +24,7 @@ SOFTWARE.
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/ColorPickerCtrl.hpp>
+#include <wxUI/Layout.hpp>
 #include <wxUI/wxUITypes.hpp>
 
 #include <wx/wx.h>
@@ -45,30 +46,60 @@ struct ColorPickerCtrlTestPolicy {
 };
 static auto createUUT() { return ColorPickerCtrlTestPolicy::createUUT(); }
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::string& color)
+{
+    return std::format("wxColourPickerCtrl[id={}, pos=({},{}), size=({},{}), style={}, color={}]", identity, pos.x, pos.y, size.x, size.y, style, color);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::string& color)
+{
+    auto controller = makeController(identity, pos, size, style, color);
+    return {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+        "SetEnabled:true",
+        "sizer:Sizer[orientation=wxVERTICAL]",
+        "Add:" + controller + ":flags:(0,0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]"
+    };
+}
+}
+
 TEST_CASE("ColorPickerCtrl")
 {
     SECTION("noargs")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxColourPickerCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, color=black]",
-                  "controller:wxColourPickerCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, color=black]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "black"));
     }
 
     SECTION("color")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { *wxWHITE };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxColourPickerCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, color=white]",
-                  "controller:wxColourPickerCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, color=white]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { *wxWHITE }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "white"));
     }
 
     COMMON_TESTS(ColorPickerCtrlTestPolicy)

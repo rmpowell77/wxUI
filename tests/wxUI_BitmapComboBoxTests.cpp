@@ -44,6 +44,51 @@ struct BitmapComboBoxTestPolicy {
 };
 static auto createUUT() { return BitmapComboBoxTestPolicy::createUUT(); }
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    std::string const& text,
+    std::vector<std::string> const& choices)
+{
+    auto fmtChoices = [&]() {
+        std::string result;
+        for (size_t i = 0; i < choices.size(); ++i) {
+            result += std::string { "\"" } + choices[i] + "\"";
+            result += ",";
+        }
+        return result;
+    }();
+    return std::format("wxBitmapComboBox[id={}, pos=({},{}), size=({},{}), style={}, text=\"{}\", choices=({})]", identity, pos.x, pos.y, size.x, size.y, style, text, fmtChoices);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    std::string const& text,
+    std::vector<std::string> const& choices,
+    int selection = 0)
+{
+    auto controller = makeController(identity, pos, size, style, text, choices);
+    std::vector<std::string> results = {
+        "Create:" + controller,
+        "controller:" + controller,
+    };
+    for (auto i : std::views::iota(0UL, choices.size())) {
+        results.push_back(std::format("SetItemBitmap:{}:(-1,-1)", i));
+    }
+    results.push_back(std::format("SetSelection:{}", selection));
+    results.push_back("SetEnabled:true");
+    return results;
+}
+}
+
 TEST_CASE("BitmapComboBox")
 {
     SECTION("bitmap")
@@ -51,14 +96,7 @@ TEST_CASE("BitmapComboBox")
         TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "controller:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "SetItemBitmap:0:(-1,-1)",
-                  "SetItemBitmap:1:(-1,-1)",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "", { "", "" }));
     }
 
     SECTION("id.bitmap")
@@ -66,14 +104,7 @@ TEST_CASE("BitmapComboBox")
         TestParent provider;
         auto uut = TypeUnderTest { 10000, { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "controller:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "SetItemBitmap:0:(-1,-1)",
-                  "SetItemBitmap:1:(-1,-1)",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, "", { "", "" }));
     }
 
     SECTION("size.bitmap")
@@ -81,14 +112,7 @@ TEST_CASE("BitmapComboBox")
         TestParent provider;
         auto uut = TypeUnderTest { { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "controller:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "SetItemBitmap:0:(-1,-1)",
-                  "SetItemBitmap:1:(-1,-1)",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "", { "", "" }));
     }
 
     SECTION("size.id.bitmap")
@@ -96,14 +120,7 @@ TEST_CASE("BitmapComboBox")
         TestParent provider;
         auto uut = TypeUnderTest { 10000, { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "controller:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "SetItemBitmap:0:(-1,-1)",
-                  "SetItemBitmap:1:(-1,-1)",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, "", { "", "" }));
     }
 
     SECTION("bitmap.ranges")
@@ -111,14 +128,7 @@ TEST_CASE("BitmapComboBox")
         TestParent provider;
         auto uut = TypeUnderTest { std::vector<std::tuple<std::string, wxBitmap>> { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "controller:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "SetItemBitmap:0:(-1,-1)",
-                  "SetItemBitmap:1:(-1,-1)",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "", { "", "" }));
     }
 
     SECTION("id.bitmap.ranges")
@@ -126,14 +136,7 @@ TEST_CASE("BitmapComboBox")
         TestParent provider;
         auto uut = TypeUnderTest { 10000, std::vector<std::tuple<std::string, wxBitmap>> { { std::string {}, wxBitmap {} }, { std::string {}, wxBitmap {} } } };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "controller:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "SetItemBitmap:0:(-1,-1)",
-                  "SetItemBitmap:1:(-1,-1)",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, "", { "", "" }));
     }
 
     SECTION("pos")
@@ -141,14 +144,7 @@ TEST_CASE("BitmapComboBox")
         TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapComboBox[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "controller:wxBitmapComboBox[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "SetItemBitmap:0:(-1,-1)",
-                  "SetItemBitmap:1:(-1,-1)",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(-1, { 1, 2 }, { -1, -1 }, 0, "", { "", "" }));
     }
 
     SECTION("size")
@@ -156,14 +152,7 @@ TEST_CASE("BitmapComboBox")
         TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "controller:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\", choices=(\"\",\"\",)]",
-                  "SetItemBitmap:0:(-1,-1)",
-                  "SetItemBitmap:1:(-1,-1)",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(-1, { -1, -1 }, { 1, 2 }, 0, "", { "", "" }));
     }
 
     SECTION("setSelection")
@@ -171,14 +160,7 @@ TEST_CASE("BitmapComboBox")
         TestParent provider;
         auto uut = TypeUnderTest { 10000, { { "Hello 🐨", wxBitmap {} }, { "Goodbye", wxBitmap {} } } }.withSize({ 1, 2 }).withSelection(1);
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxBitmapComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetItemBitmap:0:(-1,-1)",
-                  "SetItemBitmap:1:(-1,-1)",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(10000, { -1, -1 }, { 1, 2 }, 0, "Hello 🐨", { "Hello 🐨", "Goodbye" }, 1));
     }
 
     SECTION("Empty")
@@ -186,13 +168,7 @@ TEST_CASE("BitmapComboBox")
         TestParent provider;
         auto uut = wxUI::BitmapComboBox { {} };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "controller:wxBitmapComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "SetItemBitmap:0:(-1,-1)",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "", { "" }));
     }
     COMMON_TESTS(BitmapComboBoxTestPolicy)
 }

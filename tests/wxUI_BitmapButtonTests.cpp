@@ -24,6 +24,7 @@ SOFTWARE.
 #include "TestCustomizations.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/BitmapButton.hpp>
+#include <wxUI/Layout.hpp>
 
 #include "wxUI_TestControlCommon.hpp"
 
@@ -45,66 +46,88 @@ struct BitmapButtonTestPolicy {
 };
 static auto createUUT() { return BitmapButtonTestPolicy::createUUT(); }
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style)
+{
+    return std::format("wxBitmapButton[id={}, pos=({},{}), size=({},{}), style={}, bitmap=(-1,-1)]", identity, pos.x, pos.y, size.x, size.y, style);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style)
+{
+    auto controller = makeController(identity, pos, size, style);
+    return {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+        "SetEnabled:true",
+        "sizer:Sizer[orientation=wxVERTICAL]",
+        "Add:" + controller + ":flags:(0,0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]"
+    };
+}
+}
+
 TEST_CASE("BitmapButton")
 {
     SECTION("bitmap")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "controller:wxBitmapButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0));
     }
 
     SECTION("id.bitmap")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, wxBitmap {} };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "controller:wxBitmapButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, wxBitmap {} }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0));
     }
 
     SECTION("style")
     {
-        TestParent provider;
-        auto uut = createUUT().withStyle(wxBU_LEFT);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapButton[id=-1, pos=(-1,-1), size=(-1,-1), style=64, bitmap=(-1,-1)]",
-                  "controller:wxBitmapButton[id=-1, pos=(-1,-1), size=(-1,-1), style=64, bitmap=(-1,-1)]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withStyle(wxBU_LEFT)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 64));
     }
 
     SECTION("pos")
     {
-        TestParent provider;
-        auto uut = createUUT().withPosition({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapButton[id=-1, pos=(1,2), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "controller:wxBitmapButton[id=-1, pos=(1,2), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withPosition({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { 1, 2 }, { -1, -1 }, 0));
     }
 
     SECTION("size")
     {
-        TestParent provider;
-        auto uut = createUUT().withSize({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapButton[id=-1, pos=(-1,-1), size=(1,2), style=0, bitmap=(-1,-1)]",
-                  "controller:wxBitmapButton[id=-1, pos=(-1,-1), size=(1,2), style=0, bitmap=(-1,-1)]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withSize({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { 1, 2 }, 0));
     }
 
     COMMON_TESTS(BitmapButtonTestPolicy)

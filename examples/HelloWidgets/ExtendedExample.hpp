@@ -49,10 +49,10 @@ private:
     wxUI::TextCtrl::Proxy rightUpper;
 };
 
-class WrapperExample : public wxDialog {
-public:
-    explicit WrapperExample(wxWindow* parent);
-};
+// class WrapperExample : public wxDialog {
+// public:
+//     explicit WrapperExample(wxWindow* parent);
+// };
 
 class FactoryExample : public wxDialog {
 public:
