@@ -162,9 +162,6 @@ HelloWidgetsFrame::HelloWidgetsFrame()
             wxUI::Item { "&SplitterExample...", [this] {
                             SplitterExample { this }.ShowModal();
                         } },
-            // wxUI::Item { "&WrapperExample...", [this] {
-            //                 WrapperExample { this }.ShowModal();
-            //             } },
             wxUI::Item { "&FactoryExample...", [this] {
                             FactoryExample { this }.ShowModal();
                         } },

@@ -215,34 +215,6 @@ SplitterExample::SplitterExample(wxWindow* parent)
     *rightUpper = std::string { proxy->GetLabel() };
 }
 
-#if 0
-WrapperExample::WrapperExample(wxWindow* parent)
-    : wxDialog(parent, wxID_ANY, "WrapperExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
-{
-    using namespace wxUI;
-    Wrapper<wxButton>::Proxy proxy {};
-    // snippet WrapperExample
-    VSizer {
-        wxSizerFlags().Expand().Border(),
-        Wrapper {
-            [window = this] {
-                return new wxButton(window, wxID_ANY, "Wrapper");
-            }() },
-        // endsnippet WrapperExample
-        Wrapper<wxButton> {
-            [window = this] {
-                return new wxButton(window, wxID_ANY, "Proxy");
-            }() }
-            .withProxy(proxy),
-        // snippet WrapperExample
-        CreateStdDialogButtonSizer(wxOK),
-    }
-        .fitTo(this);
-    // endsnippet WrapperExample
-    assert(proxy->GetLabel() == "Proxy");
-}
-#endif
-
 FactoryExample::FactoryExample(wxWindow* parent)
     : wxDialog(parent, wxID_ANY, "FactoryExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
