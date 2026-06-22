@@ -6,8 +6,20 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ROOT_DIR="${SCRIPT_DIR}/.."
 
+# Headers that are intentionally not included in wxUI.hpp
+# (e.g., deprecated headers or special-purpose headers)
+EXCEPTIONS=(
+    "Generic.hpp"
+    "Wrapper.hpp"
+)
+
 # Get all headers except wxUI.hpp itself
 ALL_HEADERS=$(find "${ROOT_DIR}/include/wxUI" -maxdepth 1 -name "*.hpp" -type f ! -name "wxUI.hpp" | xargs -n1 basename | sort)
+
+# Filter out exceptions
+for exception in "${EXCEPTIONS[@]}"; do
+    ALL_HEADERS=$(echo "$ALL_HEADERS" | grep -v "^${exception}$")
+done
 
 # Get headers included in wxUI.hpp
 INCLUDED_HEADERS=$(grep "^#include <wxUI/" "${ROOT_DIR}/include/wxUI/wxUI.hpp" | sed 's/.*<wxUI\///' | sed 's/>//' | sort)
