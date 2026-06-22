@@ -57,6 +57,7 @@
 #include <wxUI/Slider.hpp>
 #include <wxUI/SpinCtrl.hpp>
 #include <wxUI/Splitter.hpp>
+#include <wxUI/StdDialogButtons.hpp>
 #include <wxUI/Text.hpp>
 #include <wxUI/TextCtrl.hpp>
 #include <wxUI/Widget.hpp>

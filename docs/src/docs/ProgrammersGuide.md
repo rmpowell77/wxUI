@@ -12,6 +12,7 @@ C++ header-only library to make declarative UIs for `wxWidgets`.
   - [ForEach](#foreach)
   - [BookCtrl](#bookctrl)
   - [Splitter](#splitter)
+  - [StdDialogButtons](#stddialogbuttons)
 - [Controllers](#controllers)
   - [Bind](#bind)
   - [Proxy](#proxy)
@@ -215,6 +216,16 @@ All book controls are populated with `BookItem` declarations, which can contain 
 ```cpp
 {{{ examples/HelloWidgets/ExtendedExample.cpp SplitterExample "    // ..." }}}
 ```
+
+### StdDialogButtons
+
+`StdDialogButtons` allows you to insert a `wxStdDialogButtonSizer`, similar to `CreateStdDialogButtonSizer`:
+
+```cpp
+{{{ examples/HelloWidgets/HelloWidgets.cpp StdDialogButtons "    // ..." }}}
+```
+
+It should be noted that due to how `wxUI` handles construction of *Windows* and may nest *Controllers*, using a `wxStdDialogButtonSizer` returned by `CreateStdDialogButtonSizer()` can lead to issues.  It is recommended to use `StdDialogButtons` to get consistent behavior.
 
 ## Controllers
 

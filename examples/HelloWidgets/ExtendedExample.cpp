@@ -118,7 +118,7 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
                 },
             },
         },
-        CreateStdDialogButtonSizer(wxOK),
+        StdDialogButtons(this, wxOK),
         // endsnippet CustomExample
     }
         .fitTo(this);
@@ -148,7 +148,7 @@ MultibindExample::MultibindExample(wxWindow* parent)
             Text { "0" }.withProxy(timesTyped),
             Text { "0" }.withProxy(timesEntered),
         },
-        CreateStdDialogButtonSizer(wxOK),
+        StdDialogButtons(this, wxOK),
     }
         .fitTo(this);
 }
@@ -207,7 +207,7 @@ SplitterExample::SplitterExample(wxWindow* parent)
             TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
         },
         // snippet SplitterExample
-        CreateStdDialogButtonSizer(wxOK),
+        StdDialogButtons(this, wxOK),
     }
         .fitTo(this);
     // endsnippet SplitterFactoryExample
@@ -232,7 +232,7 @@ FactoryExample::FactoryExample(wxWindow* parent)
                 return new wxButton(window, wxID_ANY, "Proxy");
             } }
             .withProxy(proxy),
-        CreateStdDialogButtonSizer(wxOK),
+        StdDialogButtons(this, wxOK),
     }
         .fitTo(this);
     // endsnippet FactoryExample
@@ -347,7 +347,7 @@ ForEachExample::ForEachExample(wxWindow* parent)
             [](auto identity, auto name) {
                 return wxUI::Button { identity, name };
             }),
-        CreateStdDialogButtonSizer(wxOK),
+        StdDialogButtons(this, wxOK),
     }
         .fitTo(this);
 }
@@ -406,7 +406,7 @@ ListExample::ListExample(wxWindow* parent)
         CreateSelect("Single select", 0),
         CreateSelect("Multi select", wxLB_EXTENDED),
 
-        CreateStdDialogButtonSizer(wxOK),
+        StdDialogButtons(this, wxOK),
     }
         .fitTo(this);
 }
