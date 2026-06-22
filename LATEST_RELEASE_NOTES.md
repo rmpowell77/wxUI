@@ -8,4 +8,5 @@ Other changes:
 
 * [#359](../../issues/359) fitTo should return the thing we just fit to
 * [#363](../../issues/363) We should have a StdDialogButtons to make easy and correct to have standard dialog buttons
+* [#361](../../issues/361) Need wxScrolled for scrollable windows with child controls
 

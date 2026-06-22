@@ -111,6 +111,20 @@ SOFTWARE.
     }
 #endif
 
+#if !defined(WXUI_FORWARD_SCROLL_TO_DETAILS)
+#define WXUI_FORWARD_SCROLL_TO_DETAILS(ControllerType)                                                                                       \
+    auto withScrollBars(std::optional<int> xScrollRate = std::nullopt, std::optional<int> yScrollRate = std::nullopt) & -> ControllerType&   \
+    {                                                                                                                                        \
+        details_.withScrollBars(xScrollRate, yScrollRate);                                                                                   \
+        return *this;                                                                                                                        \
+    }                                                                                                                                        \
+    auto withScrollBars(std::optional<int> xScrollRate = std::nullopt, std::optional<int> yScrollRate = std::nullopt) && -> ControllerType&& \
+    {                                                                                                                                        \
+        details_.withScrollBars(xScrollRate, yScrollRate);                                                                                   \
+        return std::move(*this);                                                                                                             \
+    }
+#endif
+
 #if !defined(WXUI_FORWARD_ALL_TO_DETAILS)
 #define WXUI_FORWARD_ALL_TO_DETAILS(ControllerType)                                                \
     WXUI_RULE_OF_SIX_BOILERPLATE(ControllerType)                                                   \

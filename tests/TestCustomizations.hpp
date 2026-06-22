@@ -305,7 +305,12 @@ struct TestParent {
     std::list<TestMenuBar> menuBars {}; // Storage for mock menubars
 
     TestSizer* currentSizer {};
-    TestParent* currentMenu {};
+    std::list<TestParent> scrollers {};
+    void SetScrollRate(int x, int y)
+    {
+        log.push_back(std::format("SetScrollRate:{},{}", x, y));
+    }
+
     void SetSizer(TestSizer* sizer) { currentSizer = sizer; }
     void SetSashGravity(double gravity)
     {
@@ -505,6 +510,9 @@ inline auto TestParent::dump() const -> std::vector<std::string>
     for (auto sizer : sizers) {
         result.push_back(std::format("sizer:{}", sizer));
         result.insert(result.end(), sizer.log.begin(), sizer.log.end());
+    }
+    for (auto const& scroller : scrollers) {
+        result.push_back(std::format("scroller:{}", scroller));
     }
     return result;
 }
@@ -986,6 +994,12 @@ inline auto SizerCreate(wxUITests::TestParent* parent, SizerInfo const& info) ->
                           } },
 
         info);
+}
+
+inline auto ScrolledWindowCreate(wxUITests::TestParent* parent) -> wxUITests::TestParent*
+{
+    parent->scrollers.emplace_back();
+    return parent;
 }
 
 // Menu customization overloads for TestParent - creates mock menus instead of real wx objects

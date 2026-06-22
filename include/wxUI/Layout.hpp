@@ -38,39 +38,33 @@ using StretchSpacer = details::StretchSpacer;
 
 template <details::SizerItem... Items>
 struct VSizer {
-    template <details::SizerItem... UItems>
-    explicit VSizer(UItems&&... items)
-        : details_(wxVERTICAL, std::forward<UItems>(items)...)
+    explicit VSizer(Items&&... items)
+        : details_(wxVERTICAL, std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    explicit VSizer(std::string_view caption, UItems&&... items)
-        : details_(wxVERTICAL, wxUI_String {}, details::toWxString(caption), std::forward<UItems>(items)...)
+    explicit VSizer(std::string_view caption, Items&&... items)
+        : details_(wxVERTICAL, wxUI_String {}, details::toWxString(caption), std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    VSizer(wxUI_String, wxString caption, UItems&&... items)
-        : details_(wxVERTICAL, wxUI_String {}, std::move(caption), std::forward<UItems>(items)...)
+    VSizer(wxUI_String, wxString caption, Items&&... items)
+        : details_(wxVERTICAL, wxUI_String {}, std::move(caption), std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    explicit VSizer(wxSizerFlags const& flags, UItems&&... items)
-        : details_(wxVERTICAL, flags, std::forward<UItems>(items)...)
+    explicit VSizer(wxSizerFlags const& flags, Items&&... items)
+        : details_(wxVERTICAL, flags, std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    VSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
-        : details_(wxVERTICAL, wxUI_String {}, details::toWxString(caption), flags, std::forward<UItems>(items)...)
+    VSizer(std::string_view caption, wxSizerFlags const& flags, Items&&... items)
+        : details_(wxVERTICAL, wxUI_String {}, details::toWxString(caption), flags, std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    VSizer(wxUI_String, wxString caption, wxSizerFlags const& flags, UItems&&... items)
-        : details_(wxVERTICAL, wxUI_String {}, std::move(caption), flags, std::forward<UItems>(items)...)
+    VSizer(wxUI_String, wxString caption, wxSizerFlags const& flags, Items&&... items)
+        : details_(wxVERTICAL, wxUI_String {}, std::move(caption), flags, std::forward<Items>(items)...)
     {
     }
 
@@ -83,6 +77,7 @@ struct VSizer {
     WXUI_FITTO_DETAILS()
     WXUI_FORWARD_TO_DETAILS(VSizer, withFlags, wxSizerFlags, flags)
     WXUI_FORWARD_TO_DETAILS(VSizer, withProxy, SizerProxy, proxy)
+    WXUI_FORWARD_SCROLL_TO_DETAILS(VSizer)
 
 private:
     details::BoxSizer<Items...> details_;
@@ -108,39 +103,33 @@ VSizer(wxUI_String, wxString caption, wxSizerFlags const& flags, UItems&&... ite
 
 template <details::SizerItem... Items>
 struct HSizer {
-    template <details::SizerItem... UItems>
-    explicit HSizer(UItems&&... items)
-        : details_(wxHORIZONTAL, std::forward<UItems>(items)...)
+    explicit HSizer(Items&&... items)
+        : details_(wxHORIZONTAL, std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    explicit HSizer(std::string_view caption, UItems&&... items)
-        : details_(wxHORIZONTAL, wxUI_String {}, details::toWxString(caption), std::forward<UItems>(items)...)
+    explicit HSizer(std::string_view caption, Items&&... items)
+        : details_(wxHORIZONTAL, wxUI_String {}, details::toWxString(caption), std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    HSizer(wxUI_String, wxString caption, UItems&&... items)
-        : details_(wxHORIZONTAL, wxUI_String {}, std::move(caption), std::forward<UItems>(items)...)
+    HSizer(wxUI_String, wxString caption, Items&&... items)
+        : details_(wxHORIZONTAL, wxUI_String {}, std::move(caption), std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    explicit HSizer(wxSizerFlags const& flags, UItems&&... items)
-        : details_(wxHORIZONTAL, flags, std::forward<UItems>(items)...)
+    explicit HSizer(wxSizerFlags const& flags, Items&&... items)
+        : details_(wxHORIZONTAL, flags, std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    HSizer(std::string_view caption, wxSizerFlags const& flags, UItems&&... items)
-        : details_(wxHORIZONTAL, wxUI_String {}, details::toWxString(caption), flags, std::forward<UItems>(items)...)
+    HSizer(std::string_view caption, wxSizerFlags const& flags, Items&&... items)
+        : details_(wxHORIZONTAL, wxUI_String {}, details::toWxString(caption), flags, std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    HSizer(wxUI_String, wxString caption, wxSizerFlags const& flags, UItems&&... items)
-        : details_(wxHORIZONTAL, wxUI_String {}, std::move(caption), flags, std::forward<UItems>(items)...)
+    HSizer(wxUI_String, wxString caption, wxSizerFlags const& flags, Items&&... items)
+        : details_(wxHORIZONTAL, wxUI_String {}, std::move(caption), flags, std::forward<Items>(items)...)
     {
     }
 
@@ -153,6 +142,7 @@ struct HSizer {
     WXUI_FITTO_DETAILS()
     WXUI_FORWARD_TO_DETAILS(HSizer, withFlags, wxSizerFlags, flags)
     WXUI_FORWARD_TO_DETAILS(HSizer, withProxy, SizerProxy, proxy)
+    WXUI_FORWARD_SCROLL_TO_DETAILS(HSizer)
 
 private:
     details::BoxSizer<Items...> details_;
@@ -178,15 +168,13 @@ HSizer(wxUI_String, wxString const& caption, wxSizerFlags const& flags, UItems&&
 
 template <details::SizerItem... Items>
 struct VWrapSizer {
-    template <details::SizerItem... UItems>
-    explicit VWrapSizer(UItems&&... items)
-        : details_(details::withWrap {}, wxVERTICAL, std::forward<UItems>(items)...)
+    explicit VWrapSizer(Items&&... items)
+        : details_(details::withWrap {}, wxVERTICAL, std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    explicit VWrapSizer(wxSizerFlags const& flags, UItems&&... items)
-        : details_(details::withWrap {}, wxVERTICAL, flags, std::forward<UItems>(items)...)
+    explicit VWrapSizer(wxSizerFlags const& flags, Items&&... items)
+        : details_(details::withWrap {}, wxVERTICAL, flags, std::forward<Items>(items)...)
     {
     }
 
@@ -199,6 +187,7 @@ struct VWrapSizer {
     WXUI_FITTO_DETAILS()
     WXUI_FORWARD_TO_DETAILS(VWrapSizer, withFlags, wxSizerFlags, flags)
     WXUI_FORWARD_TO_DETAILS(VWrapSizer, withProxy, SizerProxy, proxy)
+    WXUI_FORWARD_SCROLL_TO_DETAILS(VWrapSizer)
 
 private:
     details::BoxSizer<Items...> details_;
@@ -212,15 +201,13 @@ VWrapSizer(wxSizerFlags const& flags, UItems&&... items) -> VWrapSizer<UItems...
 
 template <details::SizerItem... Items>
 struct HWrapSizer {
-    template <details::SizerItem... UItems>
-    explicit HWrapSizer(UItems&&... items)
-        : details_(details::withWrap {}, wxHORIZONTAL, std::forward<UItems>(items)...)
+    explicit HWrapSizer(Items&&... items)
+        : details_(details::withWrap {}, wxHORIZONTAL, std::forward<Items>(items)...)
     {
     }
 
-    template <details::SizerItem... UItems>
-    explicit HWrapSizer(wxSizerFlags const& flags, UItems&&... items)
-        : details_(details::withWrap {}, wxHORIZONTAL, flags, std::forward<UItems>(items)...)
+    explicit HWrapSizer(wxSizerFlags const& flags, Items&&... items)
+        : details_(details::withWrap {}, wxHORIZONTAL, flags, std::forward<Items>(items)...)
     {
     }
 
@@ -233,6 +220,7 @@ struct HWrapSizer {
     WXUI_FITTO_DETAILS()
     WXUI_FORWARD_TO_DETAILS(HWrapSizer, withFlags, wxSizerFlags, flags)
     WXUI_FORWARD_TO_DETAILS(HWrapSizer, withProxy, SizerProxy, proxy)
+    WXUI_FORWARD_SCROLL_TO_DETAILS(HWrapSizer)
 
 private:
     details::BoxSizer<Items...> details_;
@@ -246,16 +234,14 @@ HWrapSizer(wxSizerFlags const& flags, UItems&&... items) -> HWrapSizer<UItems...
 
 template <details::SizerItem... Items>
 struct GridSizer {
-    template <details::SizerItem... UItems>
-    explicit GridSizer(int cols, UItems&&... items)
-        : details_(std::forward<UItems>(items)...)
+    explicit GridSizer(int cols, Items&&... items)
+        : details_(std::forward<Items>(items)...)
         , cols_(cols)
     {
     }
 
-    template <details::SizerItem... UItems>
-    GridSizer(int cols, wxSizerFlags const& flags, UItems&&... items)
-        : details_(flags, std::forward<UItems>(items)...)
+    GridSizer(int cols, wxSizerFlags const& flags, Items&&... items)
+        : details_(flags, std::forward<Items>(items)...)
         , cols_(cols)
     {
     }
@@ -274,6 +260,7 @@ struct GridSizer {
 
     WXUI_FORWARD_TO_DETAILS(GridSizer, withFlags, wxSizerFlags, flags)
     WXUI_FORWARD_TO_DETAILS(GridSizer, withProxy, SizerProxy, proxy)
+    WXUI_FORWARD_SCROLL_TO_DETAILS(GridSizer)
 
 private:
     template <typename Parent>
@@ -298,16 +285,14 @@ GridSizer(int, wxSizerFlags const& flags, UItems&&... items) -> GridSizer<UItems
 
 template <details::SizerItem... Items>
 struct FlexGridSizer {
-    template <details::SizerItem... UItems>
-    explicit FlexGridSizer(int cols, UItems&&... items)
-        : details_(std::forward<UItems>(items)...)
+    explicit FlexGridSizer(int cols, Items&&... items)
+        : details_(std::forward<Items>(items)...)
         , cols_(cols)
     {
     }
 
-    template <details::SizerItem... UItems>
-    FlexGridSizer(int cols, wxSizerFlags const& flags, UItems&&... items)
-        : details_(flags, std::forward<UItems>(items)...)
+    FlexGridSizer(int cols, wxSizerFlags const& flags, Items&&... items)
+        : details_(flags, std::forward<Items>(items)...)
         , cols_(cols)
     {
     }
@@ -350,6 +335,7 @@ struct FlexGridSizer {
 
     WXUI_FORWARD_TO_DETAILS(FlexGridSizer, withFlags, wxSizerFlags, flags)
     WXUI_FORWARD_TO_DETAILS(FlexGridSizer, withProxy, SizerProxy, proxy)
+    WXUI_FORWARD_SCROLL_TO_DETAILS(FlexGridSizer)
 
 private:
     template <typename Parent>

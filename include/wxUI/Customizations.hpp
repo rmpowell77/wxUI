@@ -30,6 +30,7 @@ SOFTWARE.
 #include <vector>
 #include <wx/frame.h>
 #include <wx/menu.h>
+#include <wx/scrolwin.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/wrapsizer.h>
@@ -129,6 +130,20 @@ inline auto SizerCreate(Parent* parent, SizerInfo const& info) -> wxSizer*
         // implementation is not appropriate. Tests should provide a
         // specialization of ParentCreateImpl for non-wx parents.
         static_assert(std::is_convertible_v<Parent*, wxWindow*>, "CreateSizerImpl must be specialized for non-wx parents");
+        return nullptr; // unreachable, satisfies return type
+    }
+}
+
+template <typename Parent>
+inline auto ScrolledWindowCreate(Parent* parent) -> wxScrolledWindow*
+{
+    if constexpr (std::is_convertible_v<Parent*, wxWindow*>) {
+        return new wxScrolledWindow(parent);
+    } else {
+        // If Parent is not a wxWindow-derived type then this default
+        // implementation is not appropriate. Tests should provide a
+        // specialization of ParentCreateImpl for non-wx parents.
+        static_assert(std::is_convertible_v<Parent*, wxWindow*>, "ScrolledWindowCreate must be specialized for non-wx parents");
         return nullptr; // unreachable, satisfies return type
     }
 }

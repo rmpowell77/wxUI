@@ -236,7 +236,28 @@ struct BoxSizer {
     template <typename Parent>
     auto fitTo(Parent* parent) -> Parent*
     {
+        if (std::get<0>(scrollRate_).has_value() || std::get<1>(scrollRate_).has_value()) {
+            using ::wxUI::customizations::ScrolledWindowCreate;
+            auto scroller = ScrolledWindowCreate(parent);
+            details_.fitTo(this->template createImpl<std::remove_pointer_t<decltype(scroller)>>(), scroller);
+            auto xScrollRate = std::get<0>(scrollRate_).value_or(1);
+            auto yScrollRate = std::get<1>(scrollRate_).value_or(xScrollRate);
+            scroller->SetScrollRate(xScrollRate, yScrollRate);
+            return parent;
+        }
         return details_.fitTo(this->template createImpl<Parent>(), parent);
+    }
+
+    auto withScrollBars(std::optional<int> xScrollRate = std::nullopt, std::optional<int> yScrollRate = std::nullopt) & -> BoxSizer&
+    {
+        scrollRate_ = { xScrollRate, yScrollRate };
+        return *this;
+    }
+
+    auto withScrollBars(std::optional<int> xScrollRate = std::nullopt, std::optional<int> yScrollRate = std::nullopt) && -> BoxSizer&&
+    {
+        scrollRate_ = { xScrollRate, yScrollRate };
+        return std::move(*this);
     }
 
     WXUI_FORWARD_TO_DETAILS(BoxSizer, withFlags, wxSizerFlags, flags)
@@ -261,6 +282,7 @@ private:
     wxOrientation orientation_ {};
     bool wrap_ = false;
     std::optional<wxString> caption_ = std::nullopt;
+    std::tuple<std::optional<int>, std::optional<int>> scrollRate_ { std::nullopt, std::nullopt };
 };
 
 }

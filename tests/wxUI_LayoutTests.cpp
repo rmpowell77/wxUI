@@ -739,5 +739,39 @@ TEST_CASE("Size")
         wxUI::FlexGridSizer { 2, wxSizerFlags(1), wxUI::Button { "Hello" } }.fitTo(&frame);
         CHECK(frame.dump() == gridSizerWithButtonDump(2, true, 1));
     }
+
+    SECTION("scroller.vSizer.withButton")
+    {
+        TestParent frame;
+        wxUI::VSizer { wxUI::Button { "Hello" } }.withScrollBars(2, 3).fitTo(&frame);
+        CHECK(frame.dump() == std::vector<std::string> {
+                  "Create:Sizer[orientation=wxVERTICAL]",
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetScrollRate:2,3",
+                  "topsizer:Sizer[orientation=wxVERTICAL]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
+                  "sizer:Sizer[orientation=wxVERTICAL]",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]:flags:(0,0x0,0)",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+                  "scroller:[id=0, pos=(0,0), size=(0,0), style=0]",
+              });
+    }
+
+    SECTION("noscroller.vSizer.withButton")
+    {
+        TestParent frame;
+        wxUI::VSizer { wxUI::Button { "Hello" } }.withScrollBars(2, 3).withScrollBars(std::nullopt, std::nullopt).fitTo(&frame);
+        CHECK(frame.dump() == std::vector<std::string> {
+                  "Create:Sizer[orientation=wxVERTICAL]",
+                  "Create:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "topsizer:Sizer[orientation=wxVERTICAL]",
+                  "controller:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]",
+                  "SetEnabled:true",
+                  "sizer:Sizer[orientation=wxVERTICAL]",
+                  "Add:wxButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"Hello\"]:flags:(0,0x0,0)",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
+              });
+    }
 }
 // NOLINTEND(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity)

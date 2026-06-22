@@ -8,6 +8,8 @@ C++ header-only library to make declarative UIs for `wxWidgets`.
   - [Menu Proxy](#menu-proxy)
   - [Menu ForEach](#menu-foreach)
 - [Layout](#layout)
+  - [Spacer/StretchSpacer](#spacerstretchspacer)
+  - [Scrolled](#scrolled)
   - [LayoutIf](#layoutif)
   - [ForEach](#foreach)
   - [BookCtrl](#bookctrl)
@@ -276,6 +278,22 @@ This table shows which Layout to use for the desired behavior
     }
         .fitTo(this);
 ```
+
+### Scrolled
+
+Often when a Layout has many *Controllers* you would need to be able to have scrollbars to allow scrolling around the dialog.  The `withScrollRate` member function on *Layout* objects controls both if there should be scrollbars, and if so, that the rate of scrolling should be.  Providing a single value would set the scroll rate for both X and Y directions, or two arguments would set them individually.  
+
+```
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+    // ...
+        StdDialogButtons(this, wxOK),
+    }
+        .withScrollBars(5)
+        .fitTo(this);
+```
+
+Scrolling is achieved by creating a `wxScrolledWindow` into which the layout is then inserted.  Note that this means that for `Factory` the parent *Window* object that is supplied may not be the same object that the *Layout* used for the call `fitTo`.  It also means that *Dialogs* that use `CreateStdDialogButtonSizer` in a *Layout* would not work correctly as the Sizer where the `wxStdDialogButtonSizer` is inserted would not be the Dialog sizer.  See [StdDialogButtons](#stddialogbuttons) for further information.
 
 ### LayoutIf
 

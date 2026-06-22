@@ -34,8 +34,10 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
 {
     using namespace wxUI;
     ComboBox::Proxy proxy2;
+    // snippet ScrolledExample
     VSizer {
         wxSizerFlags().Expand().Border(),
+        // endsnippet ScrolledExample
         // incr example
         HSizer {
             SpinCtrl { std::pair { 1, 3 } }.withProxy(spinProxy),
@@ -118,10 +120,13 @@ ExtendedExample::ExtendedExample(wxWindow* parent)
                 },
             },
         },
+        // snippet ScrolledExample
         StdDialogButtons(this, wxOK),
         // endsnippet CustomExample
     }
+        .withScrollBars(5)
         .fitTo(this);
+    // endsnippet ScrolledExample
     proxy2->SetFocus();
 }
 
