@@ -26,6 +26,7 @@ SOFTWARE.
 
 #include "ExtendedExample.hpp"
 // snippet Example headers to include
+#include <format>
 #include <numeric>
 #include <wx/wx.h>
 #include <wxUI/wxUI.hpp>
@@ -88,12 +89,14 @@ HelloWidgetsFrame::HelloWidgetsFrame()
             wxUI::Separator {},
             wxUI::Item { "&Example...\tCtrl-D", [this] {
                             ExampleDialogWidgets dialog(this);
-                            dialog.ShowModal();
+                            auto result = dialog.ShowModal();
+                            SetStatusText(std::format("Dialog result: {}", result), 1);
                         } },
             // snippet wxUIMenu
             wxUI::Item { "&Example with wxUI...\tCtrl-F", [this] {
                             ExampleDialog dialog(this);
-                            dialog.ShowModal();
+                            auto result = dialog.ShowModal();
+                            SetStatusText(std::format("Dialog result: {}", result), 1);
                         } },
             wxUI::Separator {},
             wxUI::Item { wxID_EXIT, [this] {
@@ -224,7 +227,7 @@ HelloWidgetsFrame::HelloWidgetsFrame()
     }.fitTo(this);
     // endsnippet wxUIMenu
 
-    CreateStatusBar();
+    CreateStatusBar(2);
 
     SetStatusText(wxString::Format("Welcome to wxUI! (v%s)", wxUI::version.string));
 }
@@ -346,8 +349,10 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
     using namespace wxUI;
 
     // snippet wxUILayoutBasic
+    // snippet StdDialogButtons`
     VSizer {
         wxSizerFlags().Expand().Border(),
+        // endsnippet StdDialogButtons
         VSizer {
             "Text examples",
             // endsnippet wxUILayoutBasic
@@ -404,12 +409,14 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
             // endsnippet wxUIBind
         },
 
-        CreateStdDialogButtonSizer(wxOK),
+        // snippet StdDialogButtons
+        StdDialogButtons(this, wxOK),
         // snippet withwxUI
         // snippet wxUILayoutBasic
     }
         .fitTo(this);
     // endsnippet wxUILayoutBasic
+    // endsnippet StdDialogButtons
 }
 // endsnippet withwxUI
 // endsnippet Example

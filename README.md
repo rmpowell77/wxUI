@@ -12,6 +12,7 @@
 C++ header-only library to make declarative UIs for wxWidgets.
 
 ```cpp
+#include <format>
 #include <numeric>
 #include <wx/wx.h>
 #include <wxUI/wxUI.hpp>
@@ -80,7 +81,7 @@ ExampleDialog::ExampleDialog(wxWindow* parent)
                 .bind([](wxCommandEvent&) { wxLogMessage("Pressed Right"); }),
         },
 
-        CreateStdDialogButtonSizer(wxOK),
+        StdDialogButtons(this, wxOK),
     }
         .fitTo(this);
 }
