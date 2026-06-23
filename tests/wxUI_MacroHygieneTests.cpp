@@ -59,5 +59,9 @@ SOFTWARE.
 #error "WXUI_FORWARD_ALL_TO_DETAILS leaked from wxUI headers - missing ZapMacros.hpp include"
 #endif
 
+#if defined(WXUI_FITTO_DETAILS)
+#error "WXUI_FITTO_DETAILS leaked from wxUI headers - missing ZapMacros.hpp include"
+#endif
+
 // Compile-time test - no runtime assertions needed.
 // The presence of this file in the build verifies macro hygiene.

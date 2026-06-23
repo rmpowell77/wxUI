@@ -80,7 +80,7 @@ struct VSizer {
         return details_.createAndAdd(parent, parentSizer, parentFlags);
     }
 
-    WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS(VSizer, fitTo, Parent, parent)
+    WXUI_FITTO_DETAILS()
     WXUI_FORWARD_TO_DETAILS(VSizer, withFlags, wxSizerFlags, flags)
     WXUI_FORWARD_TO_DETAILS(VSizer, withProxy, SizerProxy, proxy)
 
@@ -150,7 +150,7 @@ struct HSizer {
         return details_.createAndAdd(parent, parentSizer, parentFlags);
     }
 
-    WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS(HSizer, fitTo, Parent, parent)
+    WXUI_FITTO_DETAILS()
     WXUI_FORWARD_TO_DETAILS(HSizer, withFlags, wxSizerFlags, flags)
     WXUI_FORWARD_TO_DETAILS(HSizer, withProxy, SizerProxy, proxy)
 
@@ -196,7 +196,7 @@ struct VWrapSizer {
         return details_.createAndAdd(parent, parentSizer, parentFlags);
     }
 
-    WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS(VWrapSizer, fitTo, Parent, parent)
+    WXUI_FITTO_DETAILS()
     WXUI_FORWARD_TO_DETAILS(VWrapSizer, withFlags, wxSizerFlags, flags)
     WXUI_FORWARD_TO_DETAILS(VWrapSizer, withProxy, SizerProxy, proxy)
 
@@ -230,7 +230,7 @@ struct HWrapSizer {
         return details_.createAndAdd(parent, parentSizer, parentFlags);
     }
 
-    WXUI_FORWARD_TEMPLATEPTR_TO_DETAILS(HWrapSizer, fitTo, Parent, parent)
+    WXUI_FITTO_DETAILS()
     WXUI_FORWARD_TO_DETAILS(HWrapSizer, withFlags, wxSizerFlags, flags)
     WXUI_FORWARD_TO_DETAILS(HWrapSizer, withProxy, SizerProxy, proxy)
 
@@ -267,17 +267,9 @@ struct GridSizer {
     }
 
     template <typename Parent>
-    auto fitTo(Parent* parent) & -> GridSizer
+    auto fitTo(Parent* parent) -> Parent*
     {
-        details_.fitTo(this->template createImpl<Parent>(), parent);
-        return *this;
-    }
-
-    template <typename Parent>
-    auto fitTo(Parent* parent) && -> GridSizer&&
-    {
-        details_.fitTo(this->template createImpl<Parent>(), parent);
-        return std::move(*this);
+        return details_.fitTo(this->template createImpl<Parent>(), parent);
     }
 
     WXUI_FORWARD_TO_DETAILS(GridSizer, withFlags, wxSizerFlags, flags)
@@ -351,17 +343,9 @@ struct FlexGridSizer {
     }
 
     template <typename Parent>
-    auto fitTo(Parent* parent) &
+    auto fitTo(Parent* parent) -> Parent*
     {
-        details_.fitTo(this->template createImpl<Parent>(), parent);
-        return *this;
-    }
-
-    template <typename Parent>
-    auto fitTo(Parent* parent) &&
-    {
-        details_.fitTo(this->template createImpl<Parent>(), parent);
-        return std::move(*this);
+        return details_.fitTo(this->template createImpl<Parent>(), parent);
     }
 
     WXUI_FORWARD_TO_DETAILS(FlexGridSizer, withFlags, wxSizerFlags, flags)
