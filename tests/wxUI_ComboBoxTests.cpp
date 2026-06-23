@@ -24,6 +24,7 @@ SOFTWARE.
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/ComboBox.hpp>
+#include <wxUI/Layout.hpp>
 
 #include <array>
 #include <string_view>
@@ -45,6 +46,54 @@ struct ComboBoxTestPolicy {
     static auto expectedSize() { return testSize(); }
 };
 static auto createUUT() { return ComboBoxTestPolicy::createUUT(); }
+
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::string& text,
+    const std::vector<std::string>& choices)
+{
+    auto fmtChoices = [&]() {
+        std::string result;
+        for (const auto& choice : choices) {
+            result += std::string { "\"" } + choice + "\",";
+        }
+        return result;
+    }();
+    return std::format("wxComboBox[id={}, pos=({},{}), size=({},{}), style={}, text=\"{}\", choices=({})]", identity, pos.x, pos.y, size.x, size.y, style, text, fmtChoices);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::string& text,
+    const std::vector<std::string>& choices,
+    std::optional<int> selection)
+{
+    auto controller = makeController(identity, pos, size, style, text, choices);
+    std::vector<std::string> results = {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+    };
+    if (selection.has_value()) {
+        results.push_back(std::format("SetSelection:{}", selection.value()));
+    }
+    results.push_back("SetEnabled:true");
+    results.push_back("sizer:Sizer[orientation=wxVERTICAL]");
+    results.push_back("Add:" + controller + ":flags:(0,0x0,0)");
+    results.push_back("SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]");
+    return results;
+}
+}
 
 TEST_CASE("ComboBox")
 {
@@ -70,265 +119,209 @@ TEST_CASE("ComboBox")
     }
     SECTION("noargs")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "", { "" }, 0));
     }
 
     SECTION("id")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=()]",
-                  "controller:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=()]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, "", {}, std::nullopt));
     }
 
     SECTION("id.choice")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, { std::string {} } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "controller:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, { std::string {} } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, "", { "" }, 0));
     }
 
     SECTION("choice.ranges")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { std::vector<std::string> { std::string {} } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { std::vector<std::string> { std::string {} } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "", { "" }, 0));
     }
 
     SECTION("id.choice.ranges")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, std::vector<std::string> { std::string {} } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "controller:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, std::vector<std::string> { std::string {} } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, "", { "" }, 0));
     }
 
     SECTION("pos")
     {
-        TestParent provider;
-        auto uut = createUUT().withPosition({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "controller:wxComboBox[id=-1, pos=(1,2), size=(-1,-1), style=0, text=\"\", choices=(\"\",)]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withPosition({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { 1, 2 }, { -1, -1 }, 0, "", { "" }, 0));
     }
 
     SECTION("size")
     {
-        TestParent provider;
-        auto uut = createUUT().withSize({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\", choices=(\"\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(1,2), style=0, text=\"\", choices=(\"\",)]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withSize({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { 1, 2 }, 0, "", { "" }, 0));
     }
 
     SECTION("setSelection")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withSize({ 1, 2 }).withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxComboBox[id=10000, pos=(-1,-1), size=(1,2), style=0, text=\"Hello 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withSize({ 1, 2 }).withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { 1, 2 }, 0, "Hello 🐨", { "Hello 🐨", "Goodbye" }, 1));
     }
 
     SECTION("empty")
     {
-        TestParent provider;
-        auto uut = wxUI::ComboBox {};
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=()]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"\", choices=()]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            wxUI::ComboBox {}
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "", {}, std::nullopt));
     }
 
     SECTION("string.literals")
     {
-        TestParent provider;
-        auto uut = wxUI::ComboBox { "one 🐨", "two" }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            wxUI::ComboBox { "one 🐨", "two" }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "one 🐨", { "one 🐨", "two" }, 1));
     }
 
     SECTION("id.string.literals")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, { "one 🐨", "two" } }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, { "one 🐨", "two" } }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, "one 🐨", { "one 🐨", "two" }, 1));
     }
 
     SECTION("id.string.literals.nested.braces")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, { { "one 🐨", "two" } } }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, { { "one 🐨", "two" } } }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, "one 🐨", { "one 🐨", "two" }, 1));
     }
 
     SECTION("choice.ranges.wxString")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { std::vector<wxString> { wxString("one"), wxString("two") } }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one\", choices=(\"one\",\"two\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one\", choices=(\"one\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { std::vector<wxString> { wxString("one"), wxString("two") } }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "one", { "one", "two" }, 1));
     }
 
     SECTION("choice.ranges.wxString.utf8")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { std::vector<wxString> { wxString::FromUTF8("one 🐨"), wxString::FromUTF8("two") } }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { std::vector<wxString> { wxString::FromUTF8("one 🐨"), wxString::FromUTF8("two") } }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "one 🐨", { "one 🐨", "two" }, 1));
     }
 
     SECTION("choice.initializer_list.string_view")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { { std::string_view { "one 🐨" }, std::string_view { "two" } } }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { { std::string_view { "one 🐨" }, std::string_view { "two" } } }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "one 🐨", { "one 🐨", "two" }, 1));
     }
 
     SECTION("choice.array.string.literals")
     {
-        TestParent provider;
+        TestParent frame;
         auto const choices = std::array<char const*, 2> { "one 🐨", "two" };
-        auto uut = TypeUnderTest { choices }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        wxUI::VSizer {
+            TypeUnderTest { choices }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "one 🐨", { "one 🐨", "two" }, 1));
     }
 
     SECTION("choice.array.strings")
     {
-        TestParent provider;
+        TestParent frame;
         auto const choices = std::array<std::string, 2> { std::string { "one 🐨" }, std::string { "two" } };
-        auto uut = TypeUnderTest { choices }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        wxUI::VSizer {
+            TypeUnderTest { choices }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "one 🐨", { "one 🐨", "two" }, 1));
     }
 
     SECTION("id.choice.array.string.literals")
     {
-        TestParent provider;
+        TestParent frame;
         auto const choices = std::array<char const*, 2> { "one 🐨", "two" };
-        auto uut = TypeUnderTest { 10000, choices }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxComboBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        wxUI::VSizer {
+            TypeUnderTest { 10000, choices }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, "one 🐨", { "one 🐨", "two" }, 1));
     }
 
     SECTION("choice.vector.string.literals")
     {
-        TestParent provider;
+        TestParent frame;
         auto const choices = std::vector<char const*> { "one 🐨", "two" };
-        auto uut = TypeUnderTest { choices }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        wxUI::VSizer {
+            TypeUnderTest { choices }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, "one 🐨", { "one 🐨", "two" }, 1));
     }
 
     SECTION("string.literals.nested.braces")
     {
-        TestParent provider;
-        auto uut = wxUI::ComboBox { { "one 🐨", "two" } }.withSelection(1).bind([] { });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxComboBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, text=\"one 🐨\", choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-                  "BindEvents:1",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            wxUI::ComboBox { { "one 🐨", "two" } }.withSelection(1).bind([] { })
+        }
+            .fitTo(&frame);
+
+        auto result = testDump(-1, { -1, -1 }, { -1, -1 }, 0, "one 🐨", { "one 🐨", "two" }, 1);
+        result.insert(result.begin() + 6, "BindEvents:1");
+        CHECK(frame.dump() == result);
     }
 
     COMMON_TESTS(ComboBoxTestPolicy)

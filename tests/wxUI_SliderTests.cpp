@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <wxUI/Layout.hpp>
 #include <wxUI/Slider.hpp>
 
 #include <wx/wx.h>
@@ -43,90 +44,123 @@ struct SliderTestPolicy {
 };
 static auto createUUT() { return SliderTestPolicy::createUUT(); }
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    int value,
+    int minRange,
+    int maxRange)
+{
+    return std::format("wxSlider[id={}, pos=({},{}), size=({},{}), style={}, value={}, range=[{},{}]]", identity, pos.x, pos.y, size.x, size.y, style, value, minRange, maxRange);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    int value,
+    int minRange,
+    int maxRange)
+{
+    auto controller = makeController(identity, pos, size, style, value, minRange, maxRange);
+    return {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+        "SetEnabled:true",
+        "sizer:Sizer[orientation=wxVERTICAL]",
+        "Add:" + controller + ":flags:(0,0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]"
+    };
+}
+}
+
 TEST_CASE("Slider")
 {
     SECTION("noargs")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
-                  "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, 0, 0, 100));
     }
 
     SECTION("range")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { std::pair { 1, 5 } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
-                  "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { std::pair { 1, 5 } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, 1, 1, 5));
     }
 
     SECTION("range.init")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { std::pair { 1, 5 }, 3 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
-                  "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { std::pair { 1, 5 }, 3 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, 3, 1, 5));
     }
 
     SECTION("id")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
-                  "controller:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, 0, 0, 100));
     }
 
     SECTION("id.range")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, std::pair { 1, 5 } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
-                  "controller:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, std::pair { 1, 5 } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, 1, 1, 5));
     }
 
     SECTION("id.range.init")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, std::pair { 1, 5 }, 3 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
-                  "controller:wxSlider[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, std::pair { 1, 5 }, 3 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, 3, 1, 5));
     }
 
     SECTION("AI")
     {
-        TestParent provider;
-        auto uut = wxUI::Slider { { 10, 20 }, 12 }.bind([] { });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
+        TestParent frame;
+        wxUI::VSizer {
+            wxUI::Slider { { 10, 20 }, 12 }.bind([] { })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == std::vector<std::string> {
+                  "Create:Sizer[orientation=wxVERTICAL]",
                   "Create:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=12, range=[10,20]]",
+                  "topsizer:Sizer[orientation=wxVERTICAL]",
                   "controller:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=12, range=[10,20]]",
                   "SetEnabled:true",
                   "BindEvents:1",
+                  "sizer:Sizer[orientation=wxVERTICAL]",
+                  "Add:wxSlider[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=12, range=[10,20]]:flags:(0,0x0,0)",
+                  "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]",
               });
     }
 

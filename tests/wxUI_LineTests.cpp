@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <wxUI/Layout.hpp>
 #include <wxUI/Line.hpp>
 
 #include <wx/wx.h>
@@ -43,30 +44,58 @@ struct LineTestPolicy {
 };
 static auto createUUT() { return LineTestPolicy::createUUT(); }
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style)
+{
+    return std::format("wxStaticLine[id={}, pos=({},{}), size=({},{}), style={}]", identity, pos.x, pos.y, size.x, size.y, style);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style)
+{
+    auto controller = makeController(identity, pos, size, style);
+    return {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+        "SetEnabled:true",
+        "sizer:Sizer[orientation=wxVERTICAL]",
+        "Add:" + controller + ":flags:(0,0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]"
+    };
+}
+}
+
 TEST_CASE("Line")
 {
     SECTION("noargs")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxStaticLine[id=-1, pos=(-1,-1), size=(-1,-1), style=0]",
-                  "controller:wxStaticLine[id=-1, pos=(-1,-1), size=(-1,-1), style=0]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0));
     }
 
     SECTION("id")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxStaticLine[id=10000, pos=(-1,-1), size=(-1,-1), style=0]",
-                  "controller:wxStaticLine[id=10000, pos=(-1,-1), size=(-1,-1), style=0]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0));
     }
 
     COMMON_TESTS(LineTestPolicy)

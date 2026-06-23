@@ -43,6 +43,33 @@ struct BitmapTestPolicy {
 };
 static auto createUUT() { return BitmapTestPolicy::createUUT(); }
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style)
+{
+    return std::format("wxStaticBitmap[id={}, pos=({},{}), size=({},{}), style={}, bitmap=(-1,-1)]", identity, pos.x, pos.y, size.x, size.y, style);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style)
+{
+    auto controller = makeController(identity, pos, size, style);
+    return {
+        "Create:" + controller,
+        "controller:" + controller,
+        "SetEnabled:true",
+    };
+}
+}
+
 TEST_CASE("Bitmap")
 {
     SECTION("bitmap")
@@ -50,11 +77,7 @@ TEST_CASE("Bitmap")
         TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxStaticBitmap[id=-1, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "controller:wxStaticBitmap[id=-1, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0));
     }
 
     SECTION("id.bitmap")
@@ -62,11 +85,7 @@ TEST_CASE("Bitmap")
         TestParent provider;
         auto uut = TypeUnderTest { 10000, wxBitmap {} };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxStaticBitmap[id=10000, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "controller:wxStaticBitmap[id=10000, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0));
     }
 
     COMMON_TESTS(BitmapTestPolicy)

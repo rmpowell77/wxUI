@@ -43,6 +43,38 @@ struct BitmapToggleButtonTestPolicy {
 };
 static auto createUUT() { return BitmapToggleButtonTestPolicy::createUUT(); }
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style)
+{
+    return std::format("wxBitmapToggleButton[id={}, pos=({},{}), size=({},{}), style={}, bitmap=(-1,-1)]", identity, pos.x, pos.y, size.x, size.y, style);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    bool pressed)
+{
+    auto controller = makeController(identity, pos, size, style);
+    Dump results = {
+        "Create:" + controller,
+        "controller:" + controller,
+    };
+    if (pressed) {
+        results.push_back("SetBitmapPressed:(-1,-1)");
+    }
+    results.push_back("SetEnabled:true");
+    return results;
+}
+}
+
 TEST_CASE("BitmapToggleButton")
 {
     SECTION("bitmap")
@@ -50,11 +82,7 @@ TEST_CASE("BitmapToggleButton")
         TestParent provider;
         auto uut = createUUT();
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapToggleButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "controller:wxBitmapToggleButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, false));
     }
 
     SECTION("bitmap.toggle")
@@ -62,12 +90,7 @@ TEST_CASE("BitmapToggleButton")
         TestParent provider;
         auto uut = TypeUnderTest { wxBitmap {}, wxBitmap {} };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapToggleButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "controller:wxBitmapToggleButton[id=-1, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "SetBitmapPressed:(-1,-1)",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, true));
     }
 
     SECTION("id.bitmap")
@@ -75,11 +98,7 @@ TEST_CASE("BitmapToggleButton")
         TestParent provider;
         auto uut = TypeUnderTest { 10000, wxBitmap {} };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapToggleButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "controller:wxBitmapToggleButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, false));
     }
 
     SECTION("id.bitmap.toggle")
@@ -87,12 +106,7 @@ TEST_CASE("BitmapToggleButton")
         TestParent provider;
         auto uut = TypeUnderTest { 10000, wxBitmap {}, wxBitmap {} };
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapToggleButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "controller:wxBitmapToggleButton[id=10000, pos=(-1,-1), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "SetBitmapPressed:(-1,-1)",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, true));
     }
 
     SECTION("pos")
@@ -100,11 +114,7 @@ TEST_CASE("BitmapToggleButton")
         TestParent provider;
         auto uut = createUUT().withPosition({ 1, 2 });
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapToggleButton[id=-1, pos=(1,2), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "controller:wxBitmapToggleButton[id=-1, pos=(1,2), size=(-1,-1), style=0, bitmap=(-1,-1)]",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(-1, { 1, 2 }, { -1, -1 }, 0, false));
     }
 
     SECTION("size")
@@ -112,11 +122,7 @@ TEST_CASE("BitmapToggleButton")
         TestParent provider;
         auto uut = createUUT().withSize({ 1, 2 });
         uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxBitmapToggleButton[id=-1, pos=(-1,-1), size=(1,2), style=0, bitmap=(-1,-1)]",
-                  "controller:wxBitmapToggleButton[id=-1, pos=(-1,-1), size=(1,2), style=0, bitmap=(-1,-1)]",
-                  "SetEnabled:true",
-              });
+        CHECK(provider.dump() == testDump(-1, { -1, -1 }, { 1, 2 }, 0, false));
     }
 
     COMMON_TESTS(BitmapToggleButtonTestPolicy)

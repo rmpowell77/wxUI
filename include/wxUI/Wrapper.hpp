@@ -35,7 +35,7 @@ namespace wxUI {
 
 // Wrapper is for use where we are not creating the underlying widget, but still want to be able to bind events and use proxies.  This is useful for example when we want to wrap an entire wxDialog, or a wxSplitterWindow where the underlying widget is created by the controller itself and not by the caller.
 template <typename Window = wxWindow>
-struct Wrapper {
+struct [[deprecated("Use wxUI::Factory instead")]] Wrapper {
     struct Proxy;
 
     explicit Wrapper(Window* window)
@@ -47,12 +47,6 @@ struct Wrapper {
         : flags_(flags)
         , child_(window)
     {
-    }
-
-    auto create()
-    {
-        bindProxy(child_);
-        return child_;
     }
 
     template <typename Parent, typename Sizer>
@@ -104,6 +98,12 @@ struct Wrapper {
     }
 
 private:
+    auto create()
+    {
+        bindProxy(child_);
+        return child_;
+    }
+
     auto bindProxy(Window* widget)
     {
         for (auto& proxyHandle : proxyHandles_) {

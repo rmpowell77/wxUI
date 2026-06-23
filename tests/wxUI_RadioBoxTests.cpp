@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <wxUI/Layout.hpp>
 #include <wxUI/RadioBox.hpp>
 
 #include <array>
@@ -45,6 +46,54 @@ struct RadioBoxTestPolicy {
     static auto expectedSize() { return testSize(); }
 };
 static auto createUUT() { return RadioBoxTestPolicy::createUUT(); }
+
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::string& text,
+    const std::vector<std::string>& choices)
+{
+    auto fmtChoices = [&]() {
+        std::string result;
+        for (const auto& choice : choices) {
+            result += std::string { "\"" } + choice + "\",";
+        }
+        return result;
+    }();
+    return std::format("wxRadioBox[id={}, pos=({},{}), size=({},{}), style={}, text=\"{}\", choices=({}), majorDim=0]", identity, pos.x, pos.y, size.x, size.y, style, text, fmtChoices);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::string& text,
+    const std::vector<std::string>& choices,
+    std::optional<int> selection)
+{
+    auto controller = makeController(identity, pos, size, style, text, choices);
+    std::vector<std::string> results = {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+    };
+    if (selection.has_value()) {
+        results.push_back(std::format("SetSelection:{}", selection.value()));
+    }
+    results.push_back("SetEnabled:true");
+    results.push_back("sizer:Sizer[orientation=wxVERTICAL]");
+    results.push_back("Add:" + controller + ":flags:(0,0x0,0)");
+    results.push_back("SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]");
+    return results;
+}
+}
 
 TEST_CASE("RadioBox")
 {
@@ -70,280 +119,217 @@ TEST_CASE("RadioBox")
     }
     SECTION("choices")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, "", { "Hello", "Goodbye" }, 0));
     }
 
     SECTION("name.choice")
     {
-        TestParent provider;
+        TestParent frame;
         using namespace std::literals;
-        auto uut = TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, { "Hello 🐨"s, "Goodbye"s } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        wxUI::VSizer {
+            TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, { "Hello 🐨"s, "Goodbye"s } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, "Greetings 🐨", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("id.choices")
     {
-        TestParent provider;
+        TestParent frame;
         using namespace std::literals;
-        auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, { "Hello 🐨"s, "Goodbye"s } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        wxUI::VSizer {
+            TypeUnderTest { 10000, TypeUnderTest::withChoices {}, { "Hello 🐨"s, "Goodbye"s } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 4, "", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("id.name.choice")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, { "Hello 🐨", "Goodbye" } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, "Greetings", TypeUnderTest::withChoices {}, { "Hello 🐨", "Goodbye" } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 4, "Greetings", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("choices.single.literal")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, "Hello 🐨" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { TypeUnderTest::withChoices {}, "Hello 🐨" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, "", { "Hello 🐨" }, 0));
     }
 
     SECTION("id.choices.single.literal")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, "Hello 🐨" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",), majorDim=0]",
-                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, TypeUnderTest::withChoices {}, "Hello 🐨" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 4, "", { "Hello 🐨" }, 0));
     }
 
     SECTION("choices.initializer_list.string_view")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, { std::string_view { "Hello 🐨" }, std::string_view { "Goodbye" } } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { TypeUnderTest::withChoices {}, { std::string_view { "Hello 🐨" }, std::string_view { "Goodbye" } } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, "", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("choices.ranges.array.string.literals")
     {
-        TestParent provider;
+        TestParent frame;
         auto const choices = std::array<char const*, 2> { "Hello 🐨", "Goodbye" };
-        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, choices };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        wxUI::VSizer {
+            TypeUnderTest { TypeUnderTest::withChoices {}, choices }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, "", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("choices.string.literals.nested.braces")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, { { "Hello 🐨", "Goodbye" } } }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { TypeUnderTest::withChoices {}, { { "Hello 🐨", "Goodbye" } } }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, "", { "Hello 🐨", "Goodbye" }, 1));
     }
 
     SECTION("choices.ranges")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨", "Goodbye" } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, "", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("name.choice.ranges")
     {
-        TestParent provider;
+        TestParent frame;
         using namespace std::literals;
-        auto uut = TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨"s, "Goodbye"s } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        wxUI::VSizer {
+            TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨"s, "Goodbye"s } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, "Greetings 🐨", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("id.choices.ranges")
     {
-        TestParent provider;
+        TestParent frame;
         using namespace std::literals;
-        auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨"s, "Goodbye"s } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        wxUI::VSizer {
+            TypeUnderTest { 10000, TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨"s, "Goodbye"s } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 4, "", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("id.name.choice.ranges")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, "Greetings 🐨", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, "Greetings 🐨", TypeUnderTest::withChoices {}, std::vector<std::string> { "Hello 🐨", "Goodbye" } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 4, "Greetings 🐨", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("choices.variadic.literals")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, "Hello 🐨", "Goodbye" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { TypeUnderTest::withChoices {}, "Hello 🐨", "Goodbye" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, "", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("choices.variadic.multiple")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { TypeUnderTest::withChoices {}, "Alpha", "Beta", "Gamma", "Delta" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Alpha\",\"Beta\",\"Gamma\",\"Delta\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Alpha\",\"Beta\",\"Gamma\",\"Delta\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { TypeUnderTest::withChoices {}, "Alpha", "Beta", "Gamma", "Delta" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, "", { "Alpha", "Beta", "Gamma", "Delta" }, 0));
     }
 
     SECTION("name.choices.variadic")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, "Hello 🐨", "Goodbye" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { "Greetings 🐨", TypeUnderTest::withChoices {}, "Hello 🐨", "Goodbye" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, "Greetings 🐨", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("id.choices.variadic")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, TypeUnderTest::withChoices {}, "Hello 🐨", "Goodbye" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, TypeUnderTest::withChoices {}, "Hello 🐨", "Goodbye" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 4, "", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("id.name.choices.variadic")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, "Greetings 🐨", TypeUnderTest::withChoices {}, "Hello 🐨", "Goodbye" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=10000, pos=(-1,-1), size=(-1,-1), style=4, text=\"Greetings 🐨\", choices=(\"Hello 🐨\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, "Greetings 🐨", TypeUnderTest::withChoices {}, "Hello 🐨", "Goodbye" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 4, "Greetings 🐨", { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("style")
     {
-        TestParent provider;
-        auto uut = createUUT().withStyle(wxRA_SPECIFY_COLS);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withStyle(wxRA_SPECIFY_COLS)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, wxRA_SPECIFY_COLS, "", { "Hello", "Goodbye" }, 0));
     }
 
     SECTION("pos")
     {
-        TestParent provider;
-        auto uut = createUUT().withPosition({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(1,2), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(1,2), size=(-1,-1), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withPosition({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { 1, 2 }, { -1, -1 }, 4, "", { "Hello", "Goodbye" }, 0));
     }
 
     SECTION("size")
     {
-        TestParent provider;
-        auto uut = createUUT().withSize({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxRadioBox[id=-1, pos=(-1,-1), size=(1,2), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "controller:wxRadioBox[id=-1, pos=(-1,-1), size=(1,2), style=4, text=\"\", choices=(\"Hello\",\"Goodbye\",), majorDim=0]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withSize({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { 1, 2 }, 4, "", { "Hello", "Goodbye" }, 0));
     }
 
     COMMON_TESTS(RadioBoxTestPolicy)

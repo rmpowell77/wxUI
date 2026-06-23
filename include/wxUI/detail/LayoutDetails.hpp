@@ -30,12 +30,6 @@ SOFTWARE.
 #include <wxUI/detail/HelperMacros.hpp>
 #include <wxUI/wxUITypes.hpp>
 
-// forward-declare Wrapper so we can detect it in traits without including its header
-namespace wxUI {
-template <typename Window>
-struct Wrapper;
-}
-
 namespace wxUI::details {
 
 struct Spacer {
@@ -55,15 +49,7 @@ struct StretchSpacer {
 };
 
 template <typename T>
-struct is_Wrapper : std::false_type { };
-template <typename W>
-struct is_Wrapper<::wxUI::Wrapper<W>> : std::true_type { };
-template <typename T>
-inline constexpr bool is_Wrapper_v = is_Wrapper<T>::value;
-
-template <typename T>
 concept SizerItem = details::CreateAndAddable<T>
-    || is_Wrapper_v<T>
     || (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>)
     || std::is_same_v<T, Spacer>
     || std::is_same_v<T, StretchSpacer>;
@@ -75,8 +61,6 @@ static inline auto createAndAddVisiter(T& arg, Parent* parent, Sizer* sizer, wxS
         arg.createAndAdd(parent, sizer, flags);
     } else if constexpr (std::is_pointer_v<T> && std::derived_from<std::remove_pointer_t<T>, wxSizer>) {
         sizer->Add(arg, flags);
-    } else if constexpr (is_Wrapper_v<T>) {
-        sizer->Add(arg.create(), flags);
     } else if constexpr (std::is_same_v<T, Spacer>) {
         sizer->AddSpacer(arg.size_);
     } else if constexpr (std::is_same_v<T, StretchSpacer>) {

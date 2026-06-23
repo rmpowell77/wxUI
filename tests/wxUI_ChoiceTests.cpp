@@ -25,6 +25,7 @@ SOFTWARE.
 #include <catch2/catch_test_macros.hpp>
 #include <ranges>
 #include <wxUI/Choice.hpp>
+#include <wxUI/Layout.hpp>
 
 #include <wx/wx.h>
 
@@ -43,6 +44,50 @@ struct ChoiceTestPolicy {
     static auto expectedSize() { return testSize(); }
 };
 static auto createUUT() { return ChoiceTestPolicy::createUUT(); }
+
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    std::vector<std::string> const& choices)
+{
+    auto fmtChoices = [&]() {
+        std::string result;
+        for (size_t i = 0; i < choices.size(); ++i) {
+            result += std::string { "\"" } + choices[i] + "\"";
+            result += ",";
+        }
+        return result;
+    }();
+    return std::format("wxChoice[id={}, pos=({},{}), size=({},{}), style={}, choices=({})]", identity, pos.x, pos.y, size.x, size.y, style, fmtChoices);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    std::vector<std::string> const& choices,
+    int selection)
+{
+    auto controller = makeController(identity, pos, size, style, choices);
+    return {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+        "SetSelection:" + std::to_string(selection),
+        "SetEnabled:true",
+        "sizer:Sizer[orientation=wxVERTICAL]",
+        "Add:" + controller + ":flags:(0,0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]"
+    };
+}
+}
 
 TEST_CASE("Choice")
 {
@@ -68,172 +113,134 @@ TEST_CASE("Choice")
     }
     SECTION("noargs")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
-                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, {}, 0));
     }
 
     SECTION("choice")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { "Hello 🐨", "Goodbye" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { "Hello 🐨", "Goodbye" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("id")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
-                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, {}, 0));
     }
 
     SECTION("id.choice")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("choice.ranges")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { std::vector<std::string> { "Hello 🐨", "Goodbye" } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { std::vector<std::string> { "Hello 🐨", "Goodbye" } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("id.choice.ranges")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, std::vector<std::string> { "Hello 🐨", "Goodbye" } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, { "Hello 🐨", "Goodbye" }, 0));
     }
 
     SECTION("choice.ranges.1")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { std::views::iota(0, 2) | std::views::transform([](auto i) { return std::to_string(i); }) };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"0\",\"1\",)]",
-                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"0\",\"1\",)]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { std::views::iota(0, 2) | std::views::transform([](auto i) { return std::to_string(i); }) }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, { "0", "1" }, 0));
     }
 
     SECTION("setSelection")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxChoice[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, { "Hello 🐨", "Goodbye" }, 1));
     }
 
     SECTION("style")
     {
-        TestParent provider;
-        auto uut = createUUT().withStyle(wxCB_SORT);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=8, choices=()]",
-                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=8, choices=()]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withStyle(wxCB_SORT)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 8, {}, 0));
     }
 
     SECTION("pos")
     {
-        TestParent provider;
-        auto uut = createUUT().withPosition({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(1,2), size=(-1,-1), style=0, choices=()]",
-                  "controller:wxChoice[id=-1, pos=(1,2), size=(-1,-1), style=0, choices=()]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withPosition({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { 1, 2 }, { -1, -1 }, 0, {}, 0));
     }
 
     SECTION("size")
     {
-        TestParent provider;
-        auto uut = createUUT().withSize({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(1,2), style=0, choices=()]",
-                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(1,2), style=0, choices=()]",
-                  "SetSelection:0",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withSize({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { 1, 2 }, 0, {}, 0));
     }
 
     SECTION("AI")
     {
-        TestParent provider;
-        auto uut = wxUI::Choice { { "one 🐨", "two", "three" } }.withSelection(1).bind([] { });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",\"three\",)]",
-                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",\"three\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-                  "BindEvents:1",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            wxUI::Choice { { "one 🐨", "two", "three" } }.withSelection(1).bind([] { })
+        }
+            .fitTo(&frame);
+        auto result = testDump(-1, { -1, -1 }, { -1, -1 }, 0, { "one 🐨", "two", "three" }, 1);
+        result.insert(result.begin() + 6, "BindEvents:1");
+        CHECK(frame.dump() == result);
     }
 
     SECTION("string.literals.nested.braces")
     {
-        TestParent provider;
-        auto uut = wxUI::Choice { { "one 🐨", "two" } }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxChoice[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            wxUI::Choice { { "one 🐨", "two" } }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, { "one 🐨", "two" }, 1));
     }
 
     COMMON_TESTS(ChoiceTestPolicy)

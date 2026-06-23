@@ -24,6 +24,7 @@ SOFTWARE.
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <wxUI/Gauge.hpp>
+#include <wxUI/Layout.hpp>
 
 #include <wx/wx.h>
 
@@ -43,90 +44,110 @@ struct GaugeTestPolicy {
 };
 static auto createUUT() { return GaugeTestPolicy::createUUT(); }
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    int value)
+{
+    return std::format("wxGauge[id={}, pos=({},{}), size=({},{}), style={}, value={}]", identity, pos.x, pos.y, size.x, size.y, style, value);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    int value)
+{
+    auto controller = makeController(identity, pos, size, style, value);
+    return {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+        "SetEnabled:true",
+        "sizer:Sizer[orientation=wxVERTICAL]",
+        "Add:" + controller + ":flags:(0,0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]"
+    };
+}
+}
+
 TEST_CASE("Gauge")
 {
     SECTION("noargs")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=100]",
-                  "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=100]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, 100));
     }
 
     SECTION("name")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { wxUI::Gauge::withRange {}, 200 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=200]",
-                  "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=200]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { wxUI::Gauge::withRange {}, 200 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, 200));
     }
 
     SECTION("id")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { wxUI::Gauge::withIdentity {}, 10000 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxGauge[id=10000, pos=(-1,-1), size=(-1,-1), style=4, value=100]",
-                  "controller:wxGauge[id=10000, pos=(-1,-1), size=(-1,-1), style=4, value=100]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { wxUI::Gauge::withIdentity {}, 10000 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 4, 100));
     }
 
     SECTION("id.name")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { wxUI::Gauge::withIdentity {}, 10000, 200 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxGauge[id=10000, pos=(-1,-1), size=(-1,-1), style=4, value=200]",
-                  "controller:wxGauge[id=10000, pos=(-1,-1), size=(-1,-1), style=4, value=200]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { wxUI::Gauge::withIdentity {}, 10000, 200 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 4, 200));
     }
 
     SECTION("style")
     {
-        TestParent provider;
-        auto uut = createUUT().setStyle(wxGA_VERTICAL);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=8, value=100]",
-                  "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=8, value=100]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().setStyle(wxGA_VERTICAL)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 8, 100));
     }
 
     SECTION("pos")
     {
-        TestParent provider;
-        auto uut = createUUT().withPosition({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxGauge[id=-1, pos=(1,2), size=(-1,-1), style=4, value=100]",
-                  "controller:wxGauge[id=-1, pos=(1,2), size=(-1,-1), style=4, value=100]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withPosition({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { 1, 2 }, { -1, -1 }, 4, 100));
     }
 
     SECTION("AI")
     {
-        TestParent provider;
-        auto uut = wxUI::Gauge { wxUI::Gauge::withRange {}, 250 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=250]",
-                  "controller:wxGauge[id=-1, pos=(-1,-1), size=(-1,-1), style=4, value=250]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            wxUI::Gauge { wxUI::Gauge::withRange {}, 250 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 4, 250));
     }
 
     COMMON_TESTS(GaugeTestPolicy)

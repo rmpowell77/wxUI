@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <wxUI/Layout.hpp>
 #include <wxUI/SpinCtrl.hpp>
 
 #include <wx/wx.h>
@@ -43,114 +44,134 @@ struct SpinCtrlTestPolicy {
 };
 static auto createUUT() { return SpinCtrlTestPolicy::createUUT(); }
 
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    int value,
+    int minRange,
+    int maxRange)
+{
+    return std::format("wxSpinCtrl[id={}, pos=({},{}), size=({},{}), style={}, value={}, range=[{},{}]]", identity, pos.x, pos.y, size.x, size.y, style, value, minRange, maxRange);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    int value,
+    int minRange,
+    int maxRange)
+{
+    auto controller = makeController(identity, pos, size, style, value, minRange, maxRange);
+    return {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+        "SetEnabled:true",
+        "sizer:Sizer[orientation=wxVERTICAL]",
+        "Add:" + controller + ":flags:(0,0x0,0)",
+        "SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]"
+    };
+}
+}
+
 TEST_CASE("SpinCtrl")
 {
     SECTION("noargs")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
-                  "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, 0, 0, 100));
     }
 
     SECTION("range")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { std::pair { 1, 5 } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
-                  "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { std::pair { 1, 5 } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, 1, 1, 5));
     }
 
     SECTION("range.init")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { std::pair { 1, 5 }, 3 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
-                  "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { std::pair { 1, 5 }, 3 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, 3, 1, 5));
     }
 
     SECTION("id")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
-                  "controller:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=0, range=[0,100]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, 0, 0, 100));
     }
 
     SECTION("id.range")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, std::pair { 1, 5 } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
-                  "controller:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=1, range=[1,5]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, std::pair { 1, 5 } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, 1, 1, 5));
     }
 
     SECTION("id.range.init")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, std::pair { 1, 5 }, 3 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
-                  "controller:wxSpinCtrl[id=10000, pos=(-1,-1), size=(-1,-1), style=0, value=3, range=[1,5]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, std::pair { 1, 5 }, 3 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, 3, 1, 5));
     }
 
     SECTION("style")
     {
-        TestParent provider;
-        auto uut = createUUT().withStyle(wxTE_PROCESS_ENTER);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=1024, value=0, range=[0,100]]",
-                  "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(-1,-1), style=1024, value=0, range=[0,100]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withStyle(wxTE_PROCESS_ENTER)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 1024, 0, 0, 100));
     }
 
     SECTION("pos")
     {
-        TestParent provider;
-        auto uut = createUUT().withPosition({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSpinCtrl[id=-1, pos=(1,2), size=(-1,-1), style=0, value=0, range=[0,100]]",
-                  "controller:wxSpinCtrl[id=-1, pos=(1,2), size=(-1,-1), style=0, value=0, range=[0,100]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withPosition({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { 1, 2 }, { -1, -1 }, 0, 0, 0, 100));
     }
 
     SECTION("size")
     {
-        TestParent provider;
-        auto uut = createUUT().withSize({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxSpinCtrl[id=-1, pos=(-1,-1), size=(1,2), style=0, value=0, range=[0,100]]",
-                  "controller:wxSpinCtrl[id=-1, pos=(-1,-1), size=(1,2), style=0, value=0, range=[0,100]]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withSize({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { 1, 2 }, 0, 0, 0, 100));
     }
 
     SECTION("AI")

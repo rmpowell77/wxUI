@@ -36,7 +36,7 @@ namespace wxUI {
 // Generic is for use in contexts where we are Creating and possibly Adding the
 // object into a sizing hierachy.
 template <typename Window = wxWindow>
-struct Generic {
+struct [[deprecated("Use wxUI::Factory instead")]] Generic {
     struct Proxy;
 
     explicit Generic(Window* window)
@@ -48,12 +48,6 @@ struct Generic {
         : flags_(flags)
         , child_(window)
     {
-    }
-
-    auto create()
-    {
-        bindProxy(child_);
-        return child_;
     }
 
     template <typename Parent>
@@ -111,6 +105,12 @@ struct Generic {
     }
 
 private:
+    auto create()
+    {
+        bindProxy(child_);
+        return child_;
+    }
+
     auto bindProxy(Window* widget)
     {
         for (auto& proxyHandle : proxyHandles_) {

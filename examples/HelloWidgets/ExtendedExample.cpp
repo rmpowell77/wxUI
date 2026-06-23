@@ -159,8 +159,10 @@ SplitterExample::SplitterExample(wxWindow* parent)
     using namespace wxUI;
     Factory<wxButton>::Proxy proxy {};
     // snippet SplitterExample
+    // snippet SplitterFactoryExample
     VSizer {
         wxSizerFlags().Expand().Border(),
+        // endsnippet SplitterFactoryExample
         VSplitter {
             TextCtrl { "This is Left Side.\n" }
                 .withStyle(wxTE_MULTILINE)
@@ -196,6 +198,7 @@ SplitterExample::SplitterExample(wxWindow* parent)
         },
         // endsnippet SplitterCompileFail
 #endif
+        // snippet SplitterFactoryExample
         VSplitter {
             Factory<wxButton> { [](wxWindow* parent) {
                 return new wxButton(parent, wxID_ANY, "Raw button");
@@ -207,34 +210,9 @@ SplitterExample::SplitterExample(wxWindow* parent)
         CreateStdDialogButtonSizer(wxOK),
     }
         .fitTo(this);
+    // endsnippet SplitterFactoryExample
     // endsnippet SplitterExample
     *rightUpper = std::string { proxy->GetLabel() };
-}
-
-WrapperExample::WrapperExample(wxWindow* parent)
-    : wxDialog(parent, wxID_ANY, "WrapperExample", wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
-{
-    using namespace wxUI;
-    Wrapper<wxButton>::Proxy proxy {};
-    // snippet WrapperExample
-    VSizer {
-        wxSizerFlags().Expand().Border(),
-        Wrapper {
-            [window = this] {
-                return new wxButton(window, wxID_ANY, "Wrapper");
-            }() },
-        // endsnippet WrapperExample
-        Wrapper<wxButton> {
-            [window = this] {
-                return new wxButton(window, wxID_ANY, "Proxy");
-            }() }
-            .withProxy(proxy),
-        // snippet WrapperExample
-        CreateStdDialogButtonSizer(wxOK),
-    }
-        .fitTo(this);
-    // endsnippet WrapperExample
-    assert(proxy->GetLabel() == "Proxy");
 }
 
 FactoryExample::FactoryExample(wxWindow* parent)
@@ -249,13 +227,11 @@ FactoryExample::FactoryExample(wxWindow* parent)
             [](wxWindow* window) {
                 return new wxButton(window, wxID_ANY, "Factory");
             } },
-        // endsnippet FactoryExample
         Factory<wxButton> {
             [](wxWindow* window) {
                 return new wxButton(window, wxID_ANY, "Proxy");
             } }
             .withProxy(proxy),
-        // snippet FactoryExample
         CreateStdDialogButtonSizer(wxOK),
     }
         .fitTo(this);

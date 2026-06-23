@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include "wxUI_TestControlCommon.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <wxUI/Layout.hpp>
 #include <wxUI/ListBox.hpp>
 
 #include <wx/wx.h>
@@ -42,6 +43,54 @@ struct ListBoxTestPolicy {
     static auto expectedSize() { return testSize(); }
 };
 static auto createUUT() { return ListBoxTestPolicy::createUUT(); }
+
+namespace {
+using Dump = std::vector<std::string>;
+
+std::string makeController(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::vector<std::string>& choices)
+{
+    auto fmtChoices = [&]() {
+        std::string result;
+        for (const auto& choice : choices) {
+            result += std::string { "\"" } + choice + "\",";
+        }
+        return result;
+    }();
+    return std::format("wxListBox[id={}, pos=({},{}), size=({},{}), style={}, choices=({})]", identity, pos.x, pos.y, size.x, size.y, style, fmtChoices);
+}
+
+Dump testDump(
+    int identity,
+    wxPoint pos,
+    wxSize size,
+    int style,
+    const std::vector<std::string>& choices,
+    const std::vector<int>& selection)
+{
+    auto controller = makeController(identity, pos, size, style, choices);
+    std::vector<std::string> results = {
+        "Create:Sizer[orientation=wxVERTICAL]",
+        "Create:" + controller,
+        "topsizer:Sizer[orientation=wxVERTICAL]",
+        "controller:" + controller,
+    };
+    if (!selection.empty()) {
+        for (const auto& sel : selection) {
+            results.push_back(std::format("SetSelection:{}", sel));
+        }
+    }
+    results.push_back("SetEnabled:true");
+    results.push_back("sizer:Sizer[orientation=wxVERTICAL]");
+    results.push_back("Add:" + controller + ":flags:(0,0x0,0)");
+    results.push_back("SetSizeHints:[id=0, pos=(0,0), size=(0,0), style=0]");
+    return results;
+}
+}
 
 TEST_CASE("ListBox")
 {
@@ -67,126 +116,102 @@ TEST_CASE("ListBox")
     }
     SECTION("noargs")
     {
-        TestParent provider;
-        auto uut = createUUT();
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
-                  "controller:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT()
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, {}, {}));
     }
 
     SECTION("ListBox")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { "Hello 🐨", "Goodbye" };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { "Hello 🐨", "Goodbye" }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, { "Hello 🐨", "Goodbye" }, {}));
     }
 
     SECTION("id")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000 };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
-                  "controller:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=()]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000 }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, {}, {}));
     }
 
     SECTION("id.ListBox")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, { "Hello 🐨", "Goodbye" }, {}));
     }
 
     SECTION("id.ListBox.ranges")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, std::vector<std::string> { "Hello 🐨", "Goodbye" } };
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, std::vector<std::string> { "Hello 🐨", "Goodbye" } }
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, { "Hello 🐨", "Goodbye" }, {}));
     }
 
     SECTION("string.literals.nested.braces")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { { "one 🐨", "two" } }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",)]",
-                  "controller:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"one 🐨\",\"two\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { { "one 🐨", "two" } }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, { "one 🐨", "two" }, { 1 }));
     }
 
     SECTION("setSelection")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withSelection(1);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=0, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withSelection(1)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 0, { "Hello 🐨", "Goodbye" }, { 1 }));
     }
 
     SECTION("setSelections")
     {
-        TestParent provider;
-        auto uut = TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withStyle(wxLB_MULTIPLE).withSelections({ 0, 1 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=64, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "controller:wxListBox[id=10000, pos=(-1,-1), size=(-1,-1), style=64, choices=(\"Hello 🐨\",\"Goodbye\",)]",
-                  "SetSelection:0",
-                  "SetSelection:1",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { 10000, { "Hello 🐨", "Goodbye" } }.withStyle(wxLB_MULTIPLE).withSelections({ 0, 1 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(10000, { -1, -1 }, { -1, -1 }, 64, { "Hello 🐨", "Goodbye" }, { 0, 1 }));
     }
 
     SECTION("style")
     {
-        TestParent provider;
-        auto uut = createUUT().withStyle(wxLB_MULTIPLE);
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=64, choices=()]",
-                  "controller:wxListBox[id=-1, pos=(-1,-1), size=(-1,-1), style=64, choices=()]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withStyle(wxLB_MULTIPLE)
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 64, {}, {}));
     }
 
     SECTION("pos")
     {
-        TestParent provider;
-        auto uut = createUUT().withPosition({ 1, 2 });
-        uut.create(&provider);
-        CHECK(provider.dump() == std::vector<std::string> {
-                  "Create:wxListBox[id=-1, pos=(1,2), size=(-1,-1), style=0, choices=()]",
-                  "controller:wxListBox[id=-1, pos=(1,2), size=(-1,-1), style=0, choices=()]",
-                  "SetEnabled:true",
-              });
+        TestParent frame;
+        wxUI::VSizer {
+            createUUT().withPosition({ 1, 2 })
+        }
+            .fitTo(&frame);
+        CHECK(frame.dump() == testDump(-1, { 1, 2 }, { -1, -1 }, 0, {}, {}));
     }
 
     COMMON_TESTS(ListBoxTestPolicy)

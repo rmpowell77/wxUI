@@ -1,5 +1,5 @@
 # wxUI
-C++ header-only library to make declarative UIs for wxWidgets.
+C++ header-only library to make declarative UIs for `wxWidgets`.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -10,16 +10,17 @@ C++ header-only library to make declarative UIs for wxWidgets.
 - [Layout](#layout)
   - [LayoutIf](#layoutif)
   - [ForEach](#foreach)
+  - [BookCtrl](#bookctrl)
   - [Splitter](#splitter)
-  - [BookCtrl](#bootctrl)
-  - [Wrapper](#wrapper)
-  - [Factory](#factory)
 - [Controllers](#controllers)
   - [Bind](#bind)
   - [Proxy](#proxy)
   - [Supported Controllers](#supported-controllers)
+  - [Factory](#factory)
   - [Custom](#custom)
-  - [Miscellaneous Notes](#miscellaneous-notes)
+  - [String data](#string-data)
+- [Miscellaneous Notes](#miscellaneous-notes)
+  - [Deprecated](#deprecated)
 
 ## Overview
 
@@ -29,9 +30,9 @@ In `wxUI`, you use `wxUI::Menu` to declare the layout of your menu items and the
 
 ## String Encoding and UTF-8
 
-`wxUI` uses `wxString` as the internal representation for all string data. This provides proper Unicode support and compatibility with the underlying wxWidgets library.
+`wxUI` uses `wxString` as the internal representation for all string data. This provides proper Unicode support and compatibility with the underlying `wxWidgets` library.
 
-When supplying string values to `wxUI` controllers and menu items, you can provide either `std::string` or `wxString`. All `std::string` inputs are **assumed to be UTF-8 encoded**. If your strings use a different encoding, you should convert them to UTF-8 before passing them to wxUI, or create `wxString` objects directly using the appropriate wxWidgets conversion methods.
+When supplying string values to `wxUI` controllers and menu items, you can provide either `std::string` or `wxString`. All `std::string` inputs are **assumed to be UTF-8 encoded**. If your strings use a different encoding, you should convert them to UTF-8 before passing them to wxUI, or create `wxString` objects directly using the appropriate `wxWidgets` conversion methods.
 
 To help disambiguate between `std::string` and `wxString`, the tag `wxUI_String` is required as an argument. 
 
@@ -46,7 +47,7 @@ Example:
 {{{ examples/HelloWidgets/ExtendedExample.cpp UnicodeExample "    // ..." }}}
 ```
 
-### Menu
+## Menu
 
 `wxUI::Menu` is a way to lay out menus in a declarative, visual way.
 
@@ -87,9 +88,9 @@ Items { "Name", "Help", Handler }
 {{{ examples/HelloWidgets/HelloWidgets.cpp wxUIMenuSubMenu "    // ..." }}}
 ```
 
-The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any wxWidget primitives on construction.  When `fitTo` a frame is invoked does the underlying logic construct the menu structure.
+The `wxUI::MenuBar` and related objects are generally "lazy" objects.  They hold the details of the menu layout, but do not call any `wxWidget` primitives on construction.  When `fitTo` a frame is invoked does the underlying logic construct the menu structure.
 
-#### Menu Proxy
+### Menu Proxy
 
 Sometime the `wxMenuItem` needs to be referenced.  *Menu* supports `MenuItemProxy` objects, a way to get the handle to the underlying `wxMenuItem` that is created for the *Menu*.
 
@@ -97,7 +98,7 @@ Sometime the `wxMenuItem` needs to be referenced.  *Menu* supports `MenuItemProx
 {{{ examples/HelloWidgets/HelloWidgets.cpp wxUIMenuProxy "    // ..." }}}
 ```
 
-#### Menu ForEach
+### Menu ForEach
 
 `MenuForEach` Allows you to specify a range of values or `std::tuples` that are arguments to a closure that will returns a *MenuItem*.  These will then be added one at a time.
 
@@ -105,7 +106,7 @@ Sometime the `wxMenuItem` needs to be referenced.  *Menu* supports `MenuItemProx
 {{{ examples/HelloWidgets/HelloWidgets.cpp wxUIMenuForEach "    // ..." }}}
 ```
 
-### Layout
+## Layout
 
 The `wxUI` library provides several ways to form the UI via *Layout* objects.  You use a specific type of *Layout*, with the `wxUI::VSizer` (Vertical Sizer or "row") and `wxUI::HSizer` (Horizontal Sizer or "column") being the most common. When a *Layout* is set as the top level, it uses the layout as a sort of "blueprint" for stamping out the UI by constructing the ownership hierarchy and layout.
 
@@ -160,7 +161,7 @@ This table shows which Layout to use for the desired behavior
 >
 > This only holds for `wxBoxSizer`.  Grid and FlexGrid allow nesting.
 
-#### Spacer/StretchSpacer
+### Spacer/StretchSpacer
 
 `wxUI` provides `Spacer` and `StretchSpacer` objects that may be added to Layout.  These act similarly to the [`AddSpacer()`](https://docs.wxwidgets.org/3.3/classwx_sizer.html#aedfc0bfd98114c348766431dcb49c9f3) and [`AddStretchSpacer()`](https://docs.wxwidgets.org/3.3/classwx_sizer.html#af529134a9dc74a0551d12e747af5c976) member functions for the `wxSizer` class, allowing you to create dynamic layouts that expand appropriately.
 
@@ -168,7 +169,7 @@ This table shows which Layout to use for the desired behavior
 {{{ examples/HelloWidgets/ExtendedExample.cpp SpacerExample "    // ..." }}}
 ```
 
-#### LayoutIf
+### LayoutIf
 
 `LayoutIf` is useful for when parts of a Layout are not needed depending on runtime logic.  `LayoutIf` takes a boolean which determines if a set of "Items" should be created or not.
 
@@ -176,7 +177,7 @@ This table shows which Layout to use for the desired behavior
 {{{ examples/HelloWidgets/ExtendedExample.cpp LayoutIfExample "    // ..." }}}
 ```
 
-#### ForEach
+### ForEach
 
 Often times you will need to layout several widgets which only are different in their wxWindowID and Name.  Or perhaps there are cases where the items to be laid out are dynamic.  `HForEach` and `VForEach` allow you to specify a range of values or `std::tuples` that are arguments to a closure that will return a *Controller*.  These will then be added one at a time.
 
@@ -192,7 +193,7 @@ Often times you will need to layout several widgets which only are different in 
 
 `HForEach` utilizes a Horizontal Sizer and `VForEach` uses a Vertical Sizer.
 
-#### BookCtrl
+### BookCtrl
 
 `wxUI` supports several book control types for tabbed/paged interfaces:
 - `Notebook` (wxNotebook) - standard tabbed interface
@@ -207,7 +208,7 @@ Often times you will need to layout several widgets which only are different in 
 
 All book controls are populated with `BookItem` declarations, which can contain Layouts and Controllers.
 
-#### Splitter
+### Splitter
 
 `HSplitter` and `VSplitter` are special types of *Layout* objects that take in two *Controllers*.
 
@@ -215,35 +216,7 @@ All book controls are populated with `BookItem` declarations, which can contain 
 {{{ examples/HelloWidgets/ExtendedExample.cpp SplitterExample "    // ..." }}}
 ```
 
-Note: Because the Splitter requires both parts to be children of the Splitter itself, you cannot use `Wrapper` as a *Controller*.  This will not compile:
-
-```cpp
-{{{ examples/HelloWidgets/ExtendedExample.cpp SplitterCompileFail "    // ..." }}}
-```
-
-
-#### Wrapper
-
-There are cases where you have a `Window` object constructed by some other mechanism you need to insert in the *Layout*.  This is a case to use `Wrapper`:
-
-```cpp
-{{{ examples/HelloWidgets/ExtendedExample.cpp WrapperExample "    // ..." }}}
-```
-
-Essentially, you supply a object that converts to `wxSizer*` or `wxWindow*`, and it will be inserted into the *Layout*.
-
-#### Factory
-
-One special case is when a *Controller* needs the parent `Window` to be constructed.  This is a case to use `Factory`:
-
-```cpp
-{{{ examples/HelloWidgets/ExtendedExample.cpp FactoryExample "    // ..." }}}
-```
-
-Essentially, you supply a closure or function that returns something convertable to `wxWindow*` when supplied with a `wxWindow*`, and it will be inserted into the *Layout*.
-
-
-### Controllers
+## Controllers
 
 *Controllers* are the general term to refer to items that behave like a [`wxContol`](https://docs.wxwidgets.org/3.0/classwx_control.html).  In `wxUI` we attempt to conform a consistent style that favors the common things you do with a specific `wxControl`.
 
@@ -266,7 +239,7 @@ The list of Methods supported by all controllers:
  * `setFont(wxFontInfo)` : Sets the font of the `wxControl`.
  * `setEnabled(bool)` : Enables or disables the `wxControl`.
 
-#### Bind
+### Bind
 
 *Controllers* support "binding" a function call to their event handlers.  When the event for that *controller* is emitted, the function-like object supplied will be called.  You can bind multiple events on a single *controller*.  *Controllers* `bind` the most common events, and supply additional `bind` extensions (like `ListBox::bindDClick`) for more specialized events.
 
@@ -276,7 +249,7 @@ The list of Methods supported by all controllers:
 
 For convenience the event parameter of the function can be omitted in cases where it is unused.
 
-#### Proxy
+### Proxy
 
 Often the value of a *Controller* or *Sizer* in a layout needs to be referenced, or sometimes the backing `wxWindow` itself needs to be used directly.  This could be for reading a currently typed in value in a `TextCtrl`, or to change the selection of a `Choice`.  *Controllers* and *Layout* support `Proxy` objects, a way to get the handle to the underlying `wxWindow` that is created for the *Controller*.
 
@@ -312,11 +285,11 @@ ExtendedExample::Reset() {
 
 Care must be taken to not access `Proxy` objects outside the lifetime of the *Controller* and parent window lifetime.  It is undefined what occurs if a `Proxy` object is used after a the underlying *Controller* is destroyed.
 
-#### Supported Controllers
+### Supported Controllers
 
 The "Controllers" currently supported by `wxUI`:
 
-| wxUI                 | wxWidget               | Default Event      | Proxy accessors value |
+| `wxUI`                 | `wxWidget`               | Default Event      | Proxy accessors value |
 | :------------------- | :--------------------- | :----------------- | :-------------------- |
 | `Bitmap`             | `wxStaticBitmap`       | n/a                | n/a                   |
 | `BitmapButton`       | `wxBitmapButton`       | `EVT_BUTTON`       | n/a                   |
@@ -339,9 +312,26 @@ The "Controllers" currently supported by `wxUI`:
 
 Additional "Controllers" should be easy to add in future updates.
 
-#### Custom
+### Factory
 
-From time to time you may need to do some complicated custom wxWidget "controller" construction.  Use `Custom` "controller" to hook into the construction of the widget tree.  A `Custom` object is created supplying a function that conforms to the `CreateAndAdd` function.
+One special case is when a *Controller* needs the parent `Window` to be constructed.  This is a case to use `Factory`:
+
+```cpp
+{{{ examples/HelloWidgets/ExtendedExample.cpp FactoryExample "    // ..." }}}
+```
+
+Essentially, you supply a closure or function that returns something convertable to `wxWindow*` when supplied with a `wxWindow*`, and it will be inserted into the *Layout*.
+
+There are cases where you have a `Window` object constructed by some other mechanism you need to insert in the *Layout*.  This is a case to use `Factory`:
+
+```cpp
+{{{ examples/HelloWidgets/ExtendedExample.cpp SplitterFactoryExample "    // ..." }}}
+```
+
+
+### Custom
+
+From time to time you may need to do some complicated custom `wxWidget` "controller" construction.  Use `Custom` "controller" to hook into the construction of the widget tree.  A `Custom` object is created supplying a function that conforms to the `CreateAndAdd` function.
 
 ```cpp
 {{{ include/wxUI/Custom.hpp requires "    // ..." }}}
@@ -353,7 +343,7 @@ An example of how to use could be as follows:
 {{{ examples/HelloWidgets/ExtendedExample.cpp CustomExample "    // ..." }}}
 ```
 
-#### String data
+### String data
 
 Some *Controllers* use lists of *Strings* to display information, such as `wxRadioBox`, `wxChoice`, etc.  `wxUI` provides several forms of construction to allow several different forms of construction:
 
@@ -373,7 +363,7 @@ We currently support both homogenous (all the same) type of *String*, as well as
 
 Note: `wxRadioBox` requires a non-zero list of strings to operate correctly.  It is possible to construct `RadioBox` with an empty number of *Strings* requires a `std::vector` of strings, but a crash may occur if you do so.
 
-#### Miscellaneous Notes
+## Miscellaneous Notes
 
 `Button` and `BitmapButton` support the `setDefault` function which allows you to set them as the default button.
 
@@ -381,4 +371,14 @@ Note: `wxRadioBox` requires a non-zero list of strings to operate correctly.  It
 
 ```cpp
 RadioBox{"The Radio Box Name", withChoices {}, "Choice 1", "Choice 2", "Choice 3" }
+```
+
+### Deprecated
+
+`wxWidgets` often requires that the parent of a *Controller* should be the object directly containing it.  Previous objects such as `Wrapper` and `Generic` did not provide a way to create a controller with a parent object -- the assumption was that the client would "bring your own" controller -- and made it easy to "do the wrong thing.
+
+For example: Because the `Splitter` requires both parts to be children of the `Splitter` itself, you cannot use `Wrapper` as a *Controller* in `Splitter`.  This will not run:
+
+```cpp
+{{{ examples/HelloWidgets/ExtendedExample.cpp SplitterCompileFail "    // ..." }}}
 ```
