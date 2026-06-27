@@ -132,3 +132,12 @@ SOFTWARE.
     [[nodiscard]] auto getSize() const { return details_.getSize(); }                              \
     [[nodiscard]] auto getStyle() const { return details_.getStyle(); }
 #endif
+
+#if !defined(WXUI_FITTO_DETAILS)
+#define WXUI_FITTO_DETAILS()              \
+    template <typename Parent>            \
+    auto fitTo(Parent* parent) -> Parent* \
+    {                                     \
+        return details_.fitTo(parent);    \
+    }
+#endif

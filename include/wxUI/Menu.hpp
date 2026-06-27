@@ -533,7 +533,7 @@ struct MenuBar {
     }
 
     template <typename Frame>
-    auto fitTo(Frame* frame) -> auto&
+    auto fitTo(Frame* frame) -> Frame*
     {
         using ::wxUI::customizations::MenuBarCreate;
         using ::wxUI::customizations::MenuSetMenuBar;
@@ -545,7 +545,7 @@ struct MenuBar {
             menus);
         bindProxy(menuBar);
         MenuSetMenuBar(frame, menuBar);
-        return *this;
+        return frame;
     }
 
 private:

@@ -126,11 +126,12 @@ struct Sizer {
     }
 
     template <typename CreatorFunction, typename Parent>
-    auto fitTo(CreatorFunction creator, Parent* parent)
+    auto fitTo(CreatorFunction creator, Parent* parent) -> Parent*
     {
         auto* sizer = createAndAddWidgets(creator, parent, flags_.value_or(wxSizerFlags {}));
         parent->SetSizer(sizer);
         sizer->SetSizeHints(parent);
+        return parent;
     }
 
 private:
@@ -233,7 +234,7 @@ struct BoxSizer {
     }
 
     template <typename Parent>
-    auto fitTo(Parent* parent)
+    auto fitTo(Parent* parent) -> Parent*
     {
         return details_.fitTo(this->template createImpl<Parent>(), parent);
     }

@@ -57,3 +57,7 @@ SOFTWARE.
 #if defined(WXUI_FORWARD_ALL_TO_DETAILS)
 #undef WXUI_FORWARD_ALL_TO_DETAILS
 #endif
+
+#if defined(WXUI_FITTO_DETAILS)
+#undef WXUI_FITTO_DETAILS
+#endif

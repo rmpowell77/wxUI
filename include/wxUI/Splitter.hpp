@@ -86,9 +86,7 @@ private:
             auto createWindow = [widget](auto& item) {
                 if constexpr (requires { item.fitTo(widget); }) {
                     // It's a sizer - create a container window and fit the sizer to it
-                    auto* window = customizations::ParentCreate<wxWindow>(widget, wxID_ANY);
-                    item.fitTo(window);
-                    return window;
+                    return item.fitTo(customizations::ParentCreate<wxWindow>(widget, wxID_ANY));
                 } else {
                     // It's a controller - use create() directly
                     return item.create(widget);
@@ -160,9 +158,7 @@ private:
             auto createWindow = [widget](auto& item) {
                 if constexpr (requires { item.fitTo(widget); }) {
                     // It's a sizer - create a container window and fit the sizer to it
-                    auto* window = customizations::ParentCreate<wxWindow>(widget, wxID_ANY);
-                    item.fitTo(window);
-                    return window;
+                    return item.fitTo(customizations::ParentCreate<wxWindow>(widget, wxID_ANY));
                 } else {
                     // It's a controller - use create() directly
                     return item.create(widget);

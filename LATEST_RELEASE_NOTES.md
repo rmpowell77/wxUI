@@ -6,3 +6,5 @@ Bugs addressed in this release:
 
 Other changes:
 
+* [#359](../../issues/359) fitTo should return the thing we just fit to
+
