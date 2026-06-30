@@ -12,6 +12,7 @@ C++ header-only library to make declarative UIs for `wxWidgets`.
   - [ForEach](#foreach)
   - [BookCtrl](#bookctrl)
   - [Splitter](#splitter)
+  - [StdDialogButtons](#stddialogbuttons)
 - [Controllers](#controllers)
   - [Bind](#bind)
   - [Proxy](#proxy)
@@ -70,7 +71,8 @@ HelloWidgetsFrame::HelloWidgetsFrame()
     // ...
             wxUI::Item { "&Example with wxUI...\tCtrl-F", [this] {
                             ExampleDialog dialog(this);
-                            dialog.ShowModal();
+                            auto result = dialog.ShowModal();
+                            SetStatusText(std::format("Dialog result: {}", result), 1);
                         } },
             wxUI::Separator {},
             wxUI::Item { wxID_EXIT, [this] {
@@ -394,10 +396,25 @@ All book controls are populated with `BookItem` declarations, which can contain 
                     }),
             } },
     // ...
-        CreateStdDialogButtonSizer(wxOK),
+        StdDialogButtons(this, wxOK),
     }
         .fitTo(this);
 ```
+
+### StdDialogButtons
+
+`StdDialogButtons` allows you to insert a `wxStdDialogButtonSizer`, similar to `CreateStdDialogButtonSizer`:
+
+```cpp
+    VSizer {
+        wxSizerFlags().Expand().Border(),
+    // ...
+        StdDialogButtons(this, wxOK),
+    }
+        .fitTo(this);
+```
+
+It should be noted that due to how `wxUI` handles construction of *Windows* and may nest *Controllers*, using a `wxStdDialogButtonSizer` returned by `CreateStdDialogButtonSizer()` can lead to issues.  It is recommended to use `StdDialogButtons` to get consistent behavior.
 
 ## Controllers
 
@@ -523,7 +540,7 @@ One special case is when a *Controller* needs the parent `Window` to be construc
                 return new wxButton(window, wxID_ANY, "Proxy");
             } }
             .withProxy(proxy),
-        CreateStdDialogButtonSizer(wxOK),
+        StdDialogButtons(this, wxOK),
     }
         .fitTo(this);
 ```
@@ -543,7 +560,7 @@ There are cases where you have a `Window` object constructed by some other mecha
                 .withProxy(proxy),
             TextCtrl {}.withStyle(wxTE_MULTILINE | wxHSCROLL | wxTE_PROCESS_TAB),
         },
-        CreateStdDialogButtonSizer(wxOK),
+        StdDialogButtons(this, wxOK),
     }
         .fitTo(this);
 ```
@@ -572,7 +589,7 @@ An example of how to use could be as follows:
                 },
             },
         },
-        CreateStdDialogButtonSizer(wxOK),
+        StdDialogButtons(this, wxOK),
 ```
 
 ### String data
