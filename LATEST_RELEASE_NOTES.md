@@ -3,6 +3,8 @@
 Bugs addressed in this release:
 
 * [#356](../../issues/356) deprecate Generic and Wrapper taking "raw" window
+* [#366](../../issues/366) We should use wxWindow::NewControlId() to allocate new IDs in menu and other places
+
 
 Other changes:
 

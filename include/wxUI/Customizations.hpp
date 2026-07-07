@@ -272,4 +272,10 @@ void MenuBindToFrame(Frame& frame, int identity, std::variant<std::function<void
     }
 }
 
+template <typename Frame>
+inline auto MenuNewControlId(Frame&)
+{
+    return wxWindow::NewControlId();
+}
+
 }

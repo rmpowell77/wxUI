@@ -303,6 +303,7 @@ struct TestParent {
     std::list<TestSizer> sizers {};
     std::list<TestMenu> menus {}; // Storage for mock menus
     std::list<TestMenuBar> menuBars {}; // Storage for mock menubars
+    mutable int nextMenuControlId { wxID_AUTO_LOWEST }; // Per-frame counter for menu control IDs
 
     TestSizer* currentSizer {};
     std::list<TestParent> scrollers {};
@@ -1105,6 +1106,13 @@ inline void MenuBindToFrame(wxUITests::TestParent& frame, int identity, std::var
 {
     auto count = std::ranges::count_if(frame.log, [identity](auto const& e) { return e.starts_with(std::format("BindMenu:{}", identity)); });
     frame.log.push_back(std::format("BindMenu:{}:{}", identity, count + 1));
+}
+
+inline int MenuNewControlId(wxUITests::TestParent& frame)
+{
+    // For tests, provide predictable IDs starting at wxID_AUTO_LOWEST
+    // Each TestParent gets its own counter for test isolation
+    return frame.nextMenuControlId++;
 }
 
 // Proxy binding customization points for menu items in tests
