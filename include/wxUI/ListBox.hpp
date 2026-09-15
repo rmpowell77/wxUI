@@ -206,7 +206,7 @@ struct ListBox {
     };
 
 private:
-    details::WidgetDetails<ListBox, wxListBox> details_;
+    details::WidgetDetails<ListBox, underlying_t> details_;
     std::vector<wxString> choices_ {};
     std::vector<int> selection_;
     std::optional<int> ensureVisible_ {};

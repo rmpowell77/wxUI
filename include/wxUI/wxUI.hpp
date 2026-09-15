@@ -51,6 +51,7 @@
 #include <wxUI/LayoutIf.hpp>
 #include <wxUI/Line.hpp>
 #include <wxUI/ListBox.hpp>
+#include <wxUI/ListCtrl.hpp>
 #include <wxUI/Menu.hpp>
 #include <wxUI/Proxy.hpp>
 #include <wxUI/RadioBox.hpp>
