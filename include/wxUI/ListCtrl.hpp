@@ -378,7 +378,11 @@ private:
             }
 
             for (auto&& item : items) {
-                widget->InsertItem(item);
+                if (item.GetColumn() == 0) {
+                    widget->InsertItem(item);
+                } else {
+                    widget->SetItem(item);
+                }
             }
 
             if (ensureVisible) {
