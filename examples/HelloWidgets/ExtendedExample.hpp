@@ -117,3 +117,8 @@ public:
 private:
     bool shown = true;
 };
+
+class TreeListExample : public wxDialog {
+public:
+    explicit TreeListExample(wxWindow* parent);
+};

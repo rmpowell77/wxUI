@@ -20,3 +20,8 @@ leak:_gtk_accessibility_init
 # Additional GTK internal leaks during initialization
 leak:gtk_init_check
 leak:gdk_display_manager_open_display
+
+# Fontconfig configuration parsing during Pango initialization leaks at shutdown,
+# including when the test executable only lists tests.
+# https://github.com/rmpowell77/wxUI/actions/runs/45068652159/job/137350418826
+leak:FcParsePattern
