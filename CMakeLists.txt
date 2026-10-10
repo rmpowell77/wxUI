@@ -73,6 +73,7 @@ target_sources(wxUI
     include/wxUI/Splitter.hpp
     include/wxUI/Text.hpp
     include/wxUI/TextCtrl.hpp
+    include/wxUI/TreeList.hpp
     include/wxUI/version.hpp
     include/wxUI/Widget.hpp
     include/wxUI/Wrapper.hpp
@@ -80,8 +81,11 @@ target_sources(wxUI
     include/wxUI/wxUITypes.hpp
     include/wxUI/detail/BindInfo.hpp
     include/wxUI/detail/BookDetails.hpp
+    include/wxUI/detail/Column.hpp
     include/wxUI/detail/HelperMacros.hpp
+    include/wxUI/detail/Images.hpp
     include/wxUI/detail/LayoutDetails.hpp
+    include/wxUI/detail/TreeListDetails.hpp
     include/wxUI/detail/ZapMacros.hpp
 )
 

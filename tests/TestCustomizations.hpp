@@ -43,6 +43,7 @@ SOFTWARE.
 #include <wx/listbook.h>
 #include <wx/listbox.h>
 #include <wx/menu.h>
+#include <wx/treelist.h>
 #include <wx/notebook.h>
 #include <wx/radiobox.h>
 #include <wx/simplebook.h>
@@ -367,6 +368,30 @@ struct TestParent {
     {
         log.push_back(std::format("SetDefault:{}", id));
     }
+    // Tree items are faked as small integers carried in the handle, so the log can show the parent/child structure.
+    static auto treeItem(std::uintptr_t id) { return wxTreeListItem { reinterpret_cast<wxTreeListModelNode*>(id) }; }
+    static auto treeItemId(wxTreeListItem const& item) { return reinterpret_cast<std::uintptr_t>(item.GetID()); }
+    auto GetRootItem() const { return treeItem(1); }
+    void AppendColumn(wxString const& title, int width, wxAlignment align, int flags)
+    {
+        log.push_back(std::format("AppendColumn:\"{}\",{},{},{}", title.utf8_string(), width, static_cast<int>(align), flags));
+    }
+    void SetImageList(wxImageList* imageList)
+    {
+        log.push_back(std::format("SetImageList:{}", imageList->GetImageCount()));
+        delete imageList;
+    }
+    auto AppendItem(wxTreeListItem const& parent, wxString const& text, int imageClosed, int imageOpened)
+    {
+        auto id = ++nextTreeItem;
+        log.push_back(std::format("AppendItem:{}:parent={}:\"{}\",{},{}", id, treeItemId(parent), text.utf8_string(), imageClosed, imageOpened));
+        return treeItem(id);
+    }
+    void SetItemText(wxTreeListItem const& item, unsigned column, wxString const& text)
+    {
+        log.push_back(std::format("SetItemText:{}:{}:\"{}\"", treeItemId(item), column, text.utf8_string()));
+    }
+    std::uintptr_t nextTreeItem { 1 };
     void SetSizerAndFit(TestSizer* sizer);
     void AddPage(TestParent* page, wxString const& title, bool select);
 
@@ -751,6 +776,20 @@ struct ParentCreateImpl<wxStaticLine, wxUITests::TestParent> {
     {
         return parent->add({
             .type = "wxStaticLine",
+            .id = id,
+            .pos = pos,
+            .size = size,
+            .style = style,
+        });
+    }
+};
+
+template <>
+struct ParentCreateImpl<wxTreeListCtrl, wxUITests::TestParent> {
+    static auto create(wxUITests::TestParent* parent, wxWindowID id, wxPoint pos, wxSize size, int64_t style)
+    {
+        return parent->add({
+            .type = "wxTreeListCtrl",
             .id = id,
             .pos = pos,
             .size = size,

@@ -519,7 +519,7 @@ Care must be taken to not access `Proxy` objects outside the lifetime of the *Co
 
 The "Controllers" currently supported by `wxUI`:
 
-| `wxUI`                 | `wxWidget`               | Default Event      | Proxy accessors value |
+| `wxUI`               | `wxWidget`             | Default Event      | Proxy accessors value |
 | :------------------- | :--------------------- | :----------------- | :-------------------- |
 | `Bitmap`             | `wxStaticBitmap`       | n/a                | n/a                   |
 | `BitmapButton`       | `wxBitmapButton`       | `EVT_BUTTON`       | n/a                   |
@@ -537,6 +537,7 @@ The "Controllers" currently supported by `wxUI`:
 | `RadioBox`           | `wxRadioBox`           | `EVT_RADIOBOX`     | `selection` -> `int`<BR>*default*: `selection` |
 | `Slider`             | `wxSlider`             | `EVT_SLIDER`       | `value` -> `int`<BR>*default*: `value` |
 | `SpinCtrl`           | `wxSpinCtrl`           | `EVT_SPINCTRL`     | `value` -> `int`<BR>*default*: `value` |
+| `TreeList`           | `wxTreeListCtrl`       | `EVT_TREELIST_SELECTION_CHANGED` | `selections` -> `std::vector<wxTreeListItem>`<BR>*default*: `selections` |
 | `Text`               | `wxStaticText`         | n/a                | `label` -> `std::string`<BR>*default*: `label` |
 | `TextCtrl`           | `wxTextCtrl`           | `EVT_TEXT`         | `label` -> `std::string`<BR>*default*: `label` |
 
@@ -638,6 +639,24 @@ Note: `wxRadioBox` requires a non-zero list of strings to operate correctly.  It
 
 ```cpp
 RadioBox{"The Radio Box Name", withChoices {}, "Choice 1", "Choice 2", "Choice 3" }
+```
+
+`TreeList` enforces a fixed number of Columns.  Column entries can either a string, or specialized type that allows the  "tag" `withChoices` to separate the controller name from the "choices":
+
+```cpp
+    VSizer {
+        wxSizerFlags().Border(wxALL, 2).Expand(),
+        TreeList {
+            Columns { "one"_col.alignRight(), Column { "two" }.alignCenter(), "three" },
+            Entry<3> {
+                .parent = { "a", "b", "c" },
+                .children = { { { "1", "2", "3" } } },
+                .imageClosed = wxART_ERROR,
+                .imageOpened = wxART_QUESTION,
+            },
+        }
+    // ...
+    }
 ```
 
 ### Deprecated
