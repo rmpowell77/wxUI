@@ -34,6 +34,7 @@ add_executable(wxUI_Tests
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_Tests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_TextCtrlTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_TextTests.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_TreeListTests.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/wxUI_VSplitterTests.cpp
 )
 

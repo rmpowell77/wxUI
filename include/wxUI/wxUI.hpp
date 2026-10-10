@@ -61,5 +61,6 @@
 #include <wxUI/StdDialogButtons.hpp>
 #include <wxUI/Text.hpp>
 #include <wxUI/TextCtrl.hpp>
+#include <wxUI/TreeList.hpp>
 #include <wxUI/Widget.hpp>
 #include <wxUI/wxUITypes.hpp>

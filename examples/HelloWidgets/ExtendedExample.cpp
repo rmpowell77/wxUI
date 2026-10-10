@@ -678,7 +678,7 @@ SizerProxyExample::SizerProxyExample(wxWindow* parent)
     using namespace wxUI;
     SizerProxy sizerProxy {};
     VSizer {
-        wxSizerFlags().Expand().Border(2),
+        wxSizerFlags().Expand().Border(),
         HSizer {
             Text { "Text 1" },
             Text { "Text 2" },
@@ -690,5 +690,102 @@ SizerProxyExample::SizerProxyExample(wxWindow* parent)
                 sizerProxy->Show(shown);
             }),
     }
+        .fitTo(this);
+}
+
+namespace {
+// these trace down to find the item in the tree if it exists
+auto FindTheEntryHelper(wxUI::TreeListItems const& items, wxTreeListItem item) -> std::optional<std::vector<size_t>>
+{
+    if (items.parent == item) {
+        return std::vector<size_t> {};
+    }
+    for (std::size_t i = 0; i < items.children.size(); ++i) {
+        if (auto result = FindTheEntryHelper(items.children[i], item)) {
+            auto path = *result;
+            path.insert(path.begin(), i);
+            return path;
+        }
+    }
+    return std::nullopt;
+}
+auto FindTheEntry(std::vector<wxUI::TreeListItems> const& items, wxTreeListItem item) -> std::vector<size_t>
+{
+    for (std::size_t i = 0; i < items.size(); ++i) {
+        if (auto result = FindTheEntryHelper(items[i], item)) {
+            auto path = *result;
+            path.insert(path.begin(), i);
+            return path;
+        }
+    }
+    return {};
+}
+}
+
+TreeListExample::TreeListExample(wxWindow* parent)
+    : wxDialog(parent, wxID_ANY, "TreeListExample",
+          wxDefaultPosition, wxSize { 300, 300 },
+          wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+    using namespace wxUI;
+    TreeList<3>::Proxy proxy;
+    wxUI::Text::Proxy whichEntry;
+    // snippet TreeListExample
+    VSizer {
+        wxSizerFlags().Border(wxALL, 2).Expand(),
+        TreeList {
+            Columns { "one"_col.alignRight(), Column { "two" }.alignCenter(), "three" },
+            {
+                {
+                    { "a", "b", "c" },
+                    { { { "1", "2", "3" } } },
+                    .imageClosed = wxART_ERROR,
+                    .imageOpened = wxART_QUESTION,
+                },
+            } }
+            // endsnippet TreeListExample
+            .withFlags(wxSizerFlags().Border(wxALL, 2).Proportion(1).Expand())
+            .withSize(wxSize { 300, 300 })
+            .withProxy(proxy)
+            .bind([whichEntry, proxy](auto&& event) {
+                auto items = FindTheEntry(proxy.getAllItems(), event.GetItem());
+                auto name = std::format("Selected items: {}", items);
+                *whichEntry = name;
+            }),
+        Button { "Change TreeList" }
+            .bind([proxy]() mutable {
+                proxy.setAllItems({
+                    {
+                        { "x", "y", "z" },
+                        { {
+                            { "4", "5", "6" },
+                            .imageClosed = wxART_GO_UP,
+                            .imageOpened = wxART_GO_DOWN,
+                        } },
+                        .imageClosed = wxART_INFORMATION,
+                        .imageOpened = wxART_WARNING,
+                    },
+                    {
+                        { "next", "1", "2" },
+                        {
+                            {
+                                { "4", "5", "6" },
+                            },
+                            {
+                                { "7", "8", "9" },
+                            },
+                        },
+
+                    },
+                    {
+                        { "next", "1", "2" },
+                    },
+                });
+            }),
+        Text { "0" }.withProxy(whichEntry),
+        StdDialogButtons(this, wxOK),
+        // snippet TreeListExample
+    }
+        // endsnippet TreeListExample
         .fitTo(this);
 }

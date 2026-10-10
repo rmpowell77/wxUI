@@ -104,7 +104,6 @@ struct GetterSetter<bool, Getter, Setter> {
     using Type = bool;
     static_assert(std::is_invocable_v<Getter>);
     static_assert(std::is_invocable_v<Setter, Type>);
-    static_assert(std::is_invocable_v<Setter, Type>);
 
     GetterSetter(Getter getter, Setter setter)
         : getter_(getter)
