@@ -26,6 +26,8 @@ SOFTWARE.
 #include <wxUI/Layout.hpp>
 #include <wxUI/TreeList.hpp>
 
+#include <array>
+#include <list>
 #include <wx/wx.h>
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers, readability-function-cognitive-complexity, misc-use-anonymous-namespace, cppcoreguidelines-avoid-do-while)
@@ -98,6 +100,17 @@ TEST_CASE("TreeList")
         TypeUnderTest { wxUI::Columns { "a", "b" }, std::vector<wxUI::Entry<2>> {} };
         TypeUnderTest { 10000, wxUI::Columns { "a", "b" }, std::vector<wxUI::Entry<2>> {} };
         wxUI::TreeList { wxUI::Columns { "a", "b", "c" } };
+        using E = wxUI::Entry<2>;
+        auto cols = [] { return wxUI::Columns { "a", "b" }; };
+        TypeUnderTest { cols(), E { { "1", "2" } }, E { { "3", "4" } } };
+        TypeUnderTest { 10000, cols(), E { { "1", "2" } }, E { { "3", "4" } } };
+        TypeUnderTest { cols(), std::vector<E> { E { { "1", "2" } } } };
+        TypeUnderTest { cols(), { E { { "1", "2" } }, E { { "3", "4" } } } };
+        TypeUnderTest { 10000, cols(), { E { { "1", "2" } } } };
+        TypeUnderTest { cols(), std::array<E, 1> { E { { "1", "2" } } } };
+        TypeUnderTest { cols(), std::list<E> { E { { "1", "2" } } } };
+        TypeUnderTest { 10000, cols(), std::list<E> { E { { "1", "2" } } } };
+        wxUI::TreeList { cols(), E { { "1", "2" } } };
     }
 
     SECTION("noitems")
@@ -134,11 +147,80 @@ TEST_CASE("TreeList")
                                                                       }));
     }
 
+    SECTION("item")
+    {
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { wxUI::Columns { "Name", "Value" }, wxUI::Entry<2> { { "a 🐨", "1" } }, wxUI::Entry<2> { { "b", "2" } } }
+        }
+            .fitTo(&frame);
+        auto creation = columns;
+        creation.insert(creation.end(), {
+                                            "AppendItem:2:parent=1:\"a 🐨\",-1,-1",
+                                            "SetItemText:2:1:\"1\"",
+                                            "AppendItem:3:parent=1:\"b\",-1,-1",
+                                            "SetItemText:3:1:\"2\"",
+                                        });
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, creation));
+    }
+
+    SECTION("item.noNum")
+    {
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { wxUI::Columns { "Name", "Value" }, wxUI::Entry { { "a 🐨", "1" } }, wxUI::Entry<2> { { "b", "2" } } }
+        }
+            .fitTo(&frame);
+        auto creation = columns;
+        creation.insert(creation.end(), {
+                                            "AppendItem:2:parent=1:\"a 🐨\",-1,-1",
+                                            "SetItemText:2:1:\"1\"",
+                                            "AppendItem:3:parent=1:\"b\",-1,-1",
+                                            "SetItemText:3:1:\"2\"",
+                                        });
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, creation));
+    }
+
     SECTION("items")
     {
         TestParent frame;
         wxUI::VSizer {
             TypeUnderTest { wxUI::Columns { "Name", "Value" }, { { { "a 🐨", "1" } }, { { "b", "2" } } } }
+        }
+            .fitTo(&frame);
+        auto creation = columns;
+        creation.insert(creation.end(), {
+                                            "AppendItem:2:parent=1:\"a 🐨\",-1,-1",
+                                            "SetItemText:2:1:\"1\"",
+                                            "AppendItem:3:parent=1:\"b\",-1,-1",
+                                            "SetItemText:3:1:\"2\"",
+                                        });
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, creation));
+    }
+
+    SECTION("vector")
+    {
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { wxUI::Columns { "Name", "Value" }, std::vector { wxUI::Entry { { "a 🐨", "1" } }, wxUI::Entry { { "b", "2" } } } }
+        }
+            .fitTo(&frame);
+        auto creation = columns;
+        creation.insert(creation.end(), {
+                                            "AppendItem:2:parent=1:\"a 🐨\",-1,-1",
+                                            "SetItemText:2:1:\"1\"",
+                                            "AppendItem:3:parent=1:\"b\",-1,-1",
+                                            "SetItemText:3:1:\"2\"",
+                                        });
+        CHECK(frame.dump() == testDump(-1, { -1, -1 }, { -1, -1 }, 0, creation));
+    }
+
+    SECTION("list")
+    {
+        auto items = std::list { wxUI::Entry { { "a 🐨", "1" } }, wxUI::Entry { { "b", "2" } } };
+        TestParent frame;
+        wxUI::VSizer {
+            TypeUnderTest { wxUI::Columns { "Name", "Value" }, items }
         }
             .fitTo(&frame);
         auto creation = columns;

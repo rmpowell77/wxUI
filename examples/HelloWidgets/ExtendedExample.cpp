@@ -735,14 +735,13 @@ TreeListExample::TreeListExample(wxWindow* parent)
         wxSizerFlags().Border(wxALL, 2).Expand(),
         TreeList {
             Columns { "one"_col.alignRight(), Column { "two" }.alignCenter(), "three" },
-            {
-                {
-                    { "a", "b", "c" },
-                    { { { "1", "2", "3" } } },
-                    .imageClosed = wxART_ERROR,
-                    .imageOpened = wxART_QUESTION,
-                },
-            } }
+            Entry<3> {
+                .parent = { "a", "b", "c" },
+                .children = { { { "1", "2", "3" } } },
+                .imageClosed = wxART_ERROR,
+                .imageOpened = wxART_QUESTION,
+            },
+        }
             // endsnippet TreeListExample
             .withFlags(wxSizerFlags().Border(wxALL, 2).Proportion(1).Expand())
             .withSize(wxSize { 300, 300 })
@@ -758,12 +757,12 @@ TreeListExample::TreeListExample(wxWindow* parent)
                     {
                         { "x", "y", "z" },
                         { {
-                            { "4", "5", "6" },
+                            .parent = { "4", "5", "6" },
                             .imageClosed = wxART_GO_UP,
                             .imageOpened = wxART_GO_DOWN,
                         } },
-                        .imageClosed = wxART_INFORMATION,
-                        .imageOpened = wxART_WARNING,
+                        wxART_INFORMATION,
+                        wxART_WARNING,
                     },
                     {
                         { "next", "1", "2" },

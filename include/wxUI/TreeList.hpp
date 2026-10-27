@@ -27,7 +27,11 @@ SOFTWARE.
 #include <wxUI/GetterSetter.hpp>
 #include <wxUI/Widget.hpp>
 
+#include <concepts>
+#include <ranges>
 #include <set>
+#include <type_traits>
+#include <vector>
 #include <wxUI/detail/Column.hpp>
 #include <wxUI/detail/HelperMacros.hpp>
 #include <wxUI/detail/Images.hpp>
@@ -103,8 +107,54 @@ struct TreeList {
         return SetAllItems(tree, tree->GetRootItem(), normalImages, items);
     }
 
-    explicit TreeList(Columns<N> columns)
-        : TreeList(wxID_ANY, std::move(columns))
+private:
+    template <typename T>
+    static constexpr bool isEntry = std::same_as<std::remove_cvref_t<T>, Entry<N>>;
+
+    template <typename R>
+    static constexpr bool isEntryRange = []() consteval {
+        if constexpr (std::ranges::input_range<R>) {
+            return !std::same_as<std::remove_cvref_t<R>, std::vector<Entry<N>>>
+                && std::convertible_to<std::ranges::range_reference_t<R>, Entry<N>>;
+        } else {
+            return false;
+        }
+    }();
+
+    template <typename... Es>
+    static auto makeEntries(Es&&... entries) -> std::vector<Entry<N>>
+    {
+        std::vector<Entry<N>> result;
+        result.reserve(sizeof...(Es));
+        (result.emplace_back(std::forward<Es>(entries)), ...);
+        return result;
+    }
+
+    template <typename R>
+    static auto makeEntriesFromRange(R&& range) -> std::vector<Entry<N>>
+    {
+        std::vector<Entry<N>> result;
+        if constexpr (std::ranges::sized_range<R>) {
+            result.reserve(std::ranges::size(range));
+        }
+        for (auto&& entry : range) {
+            result.emplace_back(std::forward<decltype(entry)>(entry));
+        }
+        return result;
+    }
+
+public:
+    template <typename... Es>
+    requires(isEntry<Es> && ...)
+    explicit TreeList(Columns<N> columns, Es&&... items)
+        : TreeList(wxID_ANY, std::move(columns), makeEntries(std::forward<Es>(items)...))
+    {
+    }
+
+    template <typename R>
+    requires(isEntryRange<R>)
+    TreeList(Columns<N> columns, R&& items)
+        : TreeList(wxID_ANY, std::move(columns), makeEntriesFromRange(std::forward<R>(items)))
     {
     }
 
@@ -113,9 +163,17 @@ struct TreeList {
     {
     }
 
-    TreeList(wxWindowID identity, Columns<N> columns)
-        : details_(identity)
-        , columns_(std::move(columns))
+    template <typename... Es>
+    requires(isEntry<Es> && ...)
+    TreeList(wxWindowID identity, Columns<N> columns, Es&&... items)
+        : TreeList(identity, std::move(columns), makeEntries(std::forward<Es>(items)...))
+    {
+    }
+
+    template <typename R>
+    requires(isEntryRange<R>)
+    TreeList(wxWindowID identity, Columns<N> columns, R&& items)
+        : TreeList(identity, std::move(columns), makeEntriesFromRange(std::forward<R>(items)))
     {
     }
 
@@ -217,14 +275,10 @@ public:
 };
 
 // CTAD (Class Template Argument Deduction)
-template <std::size_t N>
-TreeList(Columns<N>) -> TreeList<N>;
-template <std::size_t N>
-TreeList(Columns<N> columns, std::vector<Entry<N>> items) -> TreeList<N>;
-template <std::size_t N>
-TreeList(wxWindowID, Columns<N>) -> TreeList<N>;
-template <std::size_t N>
-TreeList(wxWindowID, Columns<N> columns, std::vector<Entry<N>> items) -> TreeList<N>;
+template <std::size_t N, typename... Rest>
+TreeList(Columns<N>, Rest&&...) -> TreeList<N>;
+template <std::size_t N, typename... Rest>
+TreeList(wxWindowID, Columns<N>, Rest&&...) -> TreeList<N>;
 
 }
 

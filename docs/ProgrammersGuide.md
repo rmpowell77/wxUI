@@ -648,14 +648,13 @@ RadioBox{"The Radio Box Name", withChoices {}, "Choice 1", "Choice 2", "Choice 3
         wxSizerFlags().Border(wxALL, 2).Expand(),
         TreeList {
             Columns { "one"_col.alignRight(), Column { "two" }.alignCenter(), "three" },
-            {
-                {
-                    { "a", "b", "c" },
-                    { { { "1", "2", "3" } } },
-                    .imageClosed = wxART_ERROR,
-                    .imageOpened = wxART_QUESTION,
-                },
-            } }
+            Entry<3> {
+                .parent = { "a", "b", "c" },
+                .children = { { { "1", "2", "3" } } },
+                .imageClosed = wxART_ERROR,
+                .imageOpened = wxART_QUESTION,
+            },
+        }
     // ...
     }
 ```

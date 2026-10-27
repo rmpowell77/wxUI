@@ -168,4 +168,8 @@ struct Entry {
     std::optional<wxArtID> imageOpened = std::nullopt;
 };
 
+// Deduces N from a braced row: Entry{ { "a", "b" } } -> Entry<2>
+template <std::size_t N, class... Rest>
+Entry(wxString const (&)[N], Rest&&...) -> Entry<N>;
+
 }
