@@ -204,6 +204,9 @@ HelloWidgetsFrame::HelloWidgetsFrame()
             wxUI::Item { "&SizerProxyExample...", [this] {
                             SizerProxyExample { this }.ShowModal();
                         } },
+            wxUI::Item { "&TreeListExample...", [this] {
+                            TreeListExample { this }.ShowModal();
+                        } },
             // snippet wxUIMenuExample1
             wxUI::Item { "&Example Item...", [] {
                             wxLogMessage("Hello Widgets!");
