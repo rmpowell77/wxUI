@@ -25,28 +25,15 @@ SOFTWARE.
 
 #include <memory>
 #include <optional>
+#include <type_traits>
 #include <wx/sizer.h>
 
 namespace wxUI::details {
 
-// https://stackoverflow.com/questions/27866909/get-function-arity-from-template-parameter
-template <typename T>
-constexpr bool noarg_callable_impl(
-    typename std::enable_if<bool(sizeof((std::declval<T>()(), 0)))>::type*)
-{
-    return true;
-}
-
-template <typename T>
-constexpr bool noarg_callable_impl(...)
-{
-    return false;
-}
-
 template <typename T>
 constexpr bool is_noarg_callable()
 {
-    return noarg_callable_impl<T>(nullptr);
+    return std::is_invocable_v<T>;
 }
 
 // BindInfo uses type erase to allow any binding for any Event type.
