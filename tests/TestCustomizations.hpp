@@ -43,7 +43,6 @@ SOFTWARE.
 #include <wx/listbook.h>
 #include <wx/listbox.h>
 #include <wx/menu.h>
-#include <wx/treelist.h>
 #include <wx/notebook.h>
 #include <wx/radiobox.h>
 #include <wx/simplebook.h>
@@ -58,6 +57,7 @@ SOFTWARE.
 #include <wx/textctrl.h>
 #include <wx/tglbtn.h>
 #include <wx/treebook.h>
+#include <wx/treelist.h>
 #include <wxUI/Customizations.hpp>
 
 // Forward declarations to avoid including Widget.hpp here. We want the
