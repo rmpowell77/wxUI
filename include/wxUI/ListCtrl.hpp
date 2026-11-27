@@ -31,7 +31,7 @@ SOFTWARE.
 
 namespace wxUI::details {
 
-inline auto toWxListItem(auto&& text) -> wxListItem 
+inline auto toWxListItem(auto&& text) -> wxListItem
 {
     auto item = wxListItem {};
     item.SetText(std::forward<decltype(text)>(text));
@@ -273,7 +273,7 @@ struct ListCtrl {
         return std::move(*this);
     }
 
-    struct Proxy : details::Proxy<underlying_t> { 
+    struct Proxy : details::Proxy<underlying_t> {
     private:
         [[nodiscard]] static auto selected(underlying_t* controller)
         {
@@ -291,7 +291,7 @@ struct ListCtrl {
             return selectedItems;
         }
 
-        static void select(underlying_t* controller, long index, bool selected) 
+        static void select(underlying_t* controller, long index, bool selected)
         {
             wxListItem item;
 
@@ -299,7 +299,7 @@ struct ListCtrl {
             item.SetMask(wxLIST_MASK_STATE);
             item.SetStateMask(wxLIST_STATE_SELECTED);
             item.SetState(selected ? wxLIST_STATE_SELECTED : 0);
-            
+
             controller->SetItem(item);
         }
 
@@ -309,9 +309,9 @@ struct ListCtrl {
             auto* controller = control();
             return details::GetterSetter {
                 [controller] { return controller->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED); },
-                [controller](int selection) { 
+                [controller](int selection) {
                     auto existingSelections = selected(controller);
-                    
+
                     for (auto&& existing : existingSelections) {
                         select(controller, existing, false);
                     }
@@ -332,11 +332,11 @@ struct ListCtrl {
                 },
                 [controller](std::vector<int> const& selections) {
                     auto existingSelections = selected(controller);
-                    
+
                     for (auto&& existing : existingSelections) {
                         select(controller, existing, false);
                     }
-                    
+
                     for (auto&& selection : selections) {
                         select(controller, selection, true);
                     }
